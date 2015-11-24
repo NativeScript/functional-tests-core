@@ -1,0 +1,9 @@
+IMAGE_TITLE
+<table>
+	<tr>
+		<td>Screenshot:</td>
+	</tr>
+	<tr>
+		<td><a target="_blank" href="IMAGE_URL"><img width="60" height="80" src="IMAGE_URL"></src></a></td>
+	</tr>
+</table>

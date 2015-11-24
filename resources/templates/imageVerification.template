@@ -1,0 +1,13 @@
+IMAGE_TITLE
+<table>
+	<tr>
+		<td>Expected:</td>
+		<td>Diff:</td>
+		<td>Actual:</td>
+	</tr>
+	<tr>
+		<td><a target="_blank" href="EXPECTED_IMAGE_URL"><img width="60" height="80" src="EXPECTED_IMAGE_URL"></src></a></td>
+		<td><a target="_blank" href="DIFF_IMAGE_URL"><img width="60" height="80" src="DIFF_IMAGE_URL"></src></a></td>
+		<td><a target="_blank" href="ACTUAL_IMAGE_URL"><img width="60" height="80" src="ACTUAL_IMAGE_URL"></src></a></td>
+	</tr>
+</table>
