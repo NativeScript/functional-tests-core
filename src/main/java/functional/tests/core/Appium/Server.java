@@ -3,6 +3,7 @@ package functional.tests.core.Appium;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -18,6 +19,12 @@ public class Server {
 
     public static void initAppiumServer() throws IOException, AppiumException {
         Log.info("Init Appium server...");
+
+        // On Windows sometimes (when you force stop test run in the middle of execution)
+        // test log file is locked by node.exe, kill it!
+        if (Settings.OS == OSType.Windows) {
+            OSUtils.stopProcess("node.exe");
+        }
 
         File logFile = new File(Settings.appiumLogFile);
         Files.deleteIfExists(logFile.toPath());

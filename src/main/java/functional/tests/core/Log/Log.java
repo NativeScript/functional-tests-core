@@ -36,14 +36,14 @@ public class Log {
         return new String(encoded, Charset.defaultCharset());
     }
 
-    private static  String readResource(String resourcePath) throws IOException {
+    private static String readResource(String resourcePath) throws IOException {
         InputStream resourceStream = Log.getClass().getResourceAsStream(resourcePath);
         StringBuilder builder = new StringBuilder();
         int ch;
-        while((ch = resourceStream.read()) != -1){
-            builder.append((char)ch);
+        while ((ch = resourceStream.read()) != -1) {
+            builder.append((char) ch);
         }
-        return  builder.toString();
+        return builder.toString();
     }
 
     public static void initLogging() throws IOException {
@@ -156,7 +156,7 @@ public class Log {
             String imageTitle = String.format("%s looks OK", filePrefix);
             if (result.diffPixels > 100) { // TODO: Read it from global config
                 String diffPercentString = new DecimalFormat("##.##").format(result.diffPercent);
-                imageTitle = String.format("%s does not look OK. Diff: %s %", filePrefix, diffPercentString);
+                imageTitle = String.format(filePrefix + " does not look OK. Diff: " + diffPercentString + " %");
             }
 
             String logTemplatePath = templatePath + File.separator + "imageVerification.template";
@@ -165,8 +165,7 @@ public class Log {
 
             if (!logTemplateFile.exists()) {
                 logMessage = readResource("/templates/imageVerification.template");
-               }
-            else {
+            } else {
                 logMessage = readFile(logTemplatePath);
             }
 

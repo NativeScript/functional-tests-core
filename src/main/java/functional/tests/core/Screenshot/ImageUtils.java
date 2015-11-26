@@ -56,5 +56,4 @@ public class ImageUtils {
         Log.debug("Save Picture: " + f.getAbsolutePath());
         ImageIO.write(img, "png", f);
     }
-
 }
