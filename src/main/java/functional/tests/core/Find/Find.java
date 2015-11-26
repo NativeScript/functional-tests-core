@@ -6,9 +6,14 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static functional.tests.core.Find.Locators.findByTextLocator;
 
 public class Find {
 
@@ -20,55 +25,40 @@ public class Find {
         return (List<MobileElement>) Client.driver.findElements(locator);
     }
 
-    private static By findByTextLocator(String controlType, String value,
-                                        boolean exactMatch) {
-        if (Settings.platform == PlatformType.Andorid) {
-            if (exactMatch) {
-                return By.xpath("//" + controlType + "[@content-desc=\""
-                        + value + "\" or @resource-id=\"" + value
-                        + "\" or @text=\"" + value + "\"]");
-            } else {
-                return By.xpath("//" + controlType + "[@content-desc=\""
-                        + value + "\" or @resource-id=\"" + value
-                        + "\" or @text=\"" + value
-                        + "\"] | //*[contains(translate(@content-desc,\""
-                        + value + "\",\"" + value + "\"), \"" + value
-                        + "\") or contains(translate(@text,\"" + value
-                        + "\",\"" + value + "\"), \"" + value
-                        + "\") or @resource-id=\"" + value + "\"]");
-            }
-        } else if (Settings.platform == PlatformType.iOS) {
-            if (exactMatch) {
-                // TODO : Fix the logic in this if statement
-                String up = value.toUpperCase();
-                String down = value.toLowerCase();
-                return By.xpath("//" + controlType
-                        + "[@visible=\"true\" and (contains(translate(@name,\""
-                        + up + "\",\"" + down + "\"), \"" + down
-                        + "\") or contains(translate(@hint,\"" + up + "\",\""
-                        + down + "\"), \"" + down
-                        + "\") or contains(translate(@label,\"" + up + "\",\""
-                        + down + "\"), \"" + down
-                        + "\") or contains(translate(@value,\"" + up + "\",\""
-                        + down + "\"), \"" + down + "\"))]");
-            } else {
-                String up = value.toUpperCase();
-                String down = value.toLowerCase();
-                return By.xpath("//" + controlType
-                        + "[@visible=\"true\" and (contains(translate(@name,\""
-                        + up + "\",\"" + down + "\"), \"" + down
-                        + "\") or contains(translate(@hint,\"" + up + "\",\""
-                        + down + "\"), \"" + down
-                        + "\") or contains(translate(@label,\"" + up + "\",\""
-                        + down + "\"), \"" + down
-                        + "\") or contains(translate(@value,\"" + up + "\",\""
-                        + down + "\"), \"" + down + "\"))]");
-            }
-        } else {
-            String error = "findByText not implemented for platform: " + Settings.platform;
-            Log.fatal(error);
-            throw new NotImplementedException(error);
+    /**
+     * Get String description of MobileElement
+     */
+    private static String getDescription(MobileElement element) {
+        String elementText = element.getText();
+        String elementTag = element.getTagName();
+        String elementCoordinates = String.valueOf(element.getLocation().x)
+                + ":" + String.valueOf(element.getLocation().y);
+
+        String descString = elementText;
+        if (elementText == null) {
+            descString = elementTag + " at " + elementCoordinates;
         }
+
+        return descString;
+    }
+
+    /**
+     * Get xpath of element
+     */
+    public static String getXpath(MobileElement element) {
+
+        String foundBy = "";
+
+        try {
+            foundBy = FieldUtils.readField(element, "foundBy", true).toString();
+        } catch (IllegalAccessException e) {
+            Log.error("Failed to get find filed 'foundBy' of element: " + getDescription(element));
+        }
+
+        String[] split = foundBy.split("xpath: ");
+        String xpathString = split[1];
+
+        return xpathString;
     }
 
     /**
@@ -89,6 +79,38 @@ public class Find {
      * Find an element that has some attribute with specified value.
      */
     public static MobileElement findByText(String value) {
-        return element(findByTextLocator("*", value, true));
+        return (MobileElement) element(findByTextLocator("*", value, true));
+    }
+
+    /**
+     * Find an element that has some attribute with specified value
+     * Search is based on specified MobileElement
+     */
+    public static MobileElement findByText(MobileElement element, String value) {
+        return (MobileElement) element(findByTextLocator(getXpath(element), value, true));
+    }
+
+    /**
+     * Find parent of an element
+     */
+    public static MobileElement getParent(MobileElement element) {
+        String xpathString = getXpath(element) + "/..";
+        Log.debug("Looking for parent with following xpath:" + xpathString);
+        return (MobileElement) Client.driver.findElement(By.xpath(xpathString));
+    }
+
+    /**
+     * Return true if element is visible and false if it does not exists or not visible
+     */
+    public static boolean isVisible(MobileElement element) {
+        try {
+            if (element.isDisplayed()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
