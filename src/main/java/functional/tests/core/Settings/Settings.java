@@ -45,6 +45,10 @@ public class Settings {
     public static String appiumLogFile;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
 
+    public static final int fastTapDuration = 100;
+    public static final int defaultTapDuration = 250;
+    public static final int slowTapDuration = 1000;
+
     private static OSType getOSType() {
         OSType detectedOS;
 

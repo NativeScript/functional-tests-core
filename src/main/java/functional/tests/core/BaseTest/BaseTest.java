@@ -36,7 +36,7 @@ public class BaseTest {
 
         // Report results
         if (result.getStatus() == ITestResult.SUCCESS) {
-            Log.logScreen(testCase, "Screenshot after " + testCase);
+            Log.logScreen(testCase + "_final_screen", "Screenshot after " + testCase);
             Log.info("=> Test " + testCase + " passed!");
         } else if (result.getStatus() == ITestResult.SKIP) {
             Log.error("=> Test " + testCase + " skipped!");

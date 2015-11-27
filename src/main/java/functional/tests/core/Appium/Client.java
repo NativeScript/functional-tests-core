@@ -2,6 +2,7 @@ package functional.tests.core.Appium;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import functional.tests.core.Enums.PlatformType;

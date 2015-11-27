@@ -1,14 +1,12 @@
 package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.Enums.PlatformType;
+import functional.tests.core.Element.Element;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NotFoundException;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -26,23 +24,6 @@ public class Find {
     }
 
     /**
-     * Get String description of MobileElement
-     */
-    private static String getDescription(MobileElement element) {
-        String elementText = element.getText();
-        String elementTag = element.getTagName();
-        String elementCoordinates = String.valueOf(element.getLocation().x)
-                + ":" + String.valueOf(element.getLocation().y);
-
-        String descString = elementText;
-        if (elementText == null) {
-            descString = elementTag + " at " + elementCoordinates;
-        }
-
-        return descString;
-    }
-
-    /**
      * Get xpath of element
      */
     public static String getXpath(MobileElement element) {
@@ -52,7 +33,7 @@ public class Find {
         try {
             foundBy = FieldUtils.readField(element, "foundBy", true).toString();
         } catch (IllegalAccessException e) {
-            Log.error("Failed to get find filed 'foundBy' of element: " + getDescription(element));
+            Log.error("Failed to get find filed 'foundBy' of element: " + Element.getDescription(element));
         }
 
         String[] split = foundBy.split("xpath: ");
@@ -87,7 +68,17 @@ public class Find {
      * Search is based on specified MobileElement
      */
     public static MobileElement findByText(MobileElement element, String value) {
-        return (MobileElement) element(findByTextLocator(getXpath(element), value, true));
+        String parentXpath = getXpath(element);
+        parentXpath = parentXpath.substring(2);
+
+        By locator = Locators.findByTextLocator(value, true);
+        String childXpath = locator.toString().replace("By.xpath: //", "").replace("//*", "");
+
+        String finalXpath = "//" + parentXpath + "/" + childXpath;
+        Log.debug("Looking for element with following xpath:" + finalXpath);
+        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(finalXpath));
+        Log.debug("Found " + Element.getDescription(e));
+        return e;
     }
 
     /**
@@ -96,21 +87,27 @@ public class Find {
     public static MobileElement getParent(MobileElement element) {
         String xpathString = getXpath(element) + "/..";
         Log.debug("Looking for parent with following xpath:" + xpathString);
-        return (MobileElement) Client.driver.findElement(By.xpath(xpathString));
+        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(xpathString));
+        Log.debug("Found " + Element.getDescription(e));
+        return e;
     }
 
     /**
      * Return true if element is visible and false if it does not exists or not visible
      */
     public static boolean isVisible(MobileElement element) {
+        Client.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        boolean visibility = false;
         try {
             if (element.isDisplayed()) {
-                return true;
+                visibility = true;
             } else {
-                return false;
+                visibility = false;
             }
         } catch (Exception e) {
-            return false;
+            visibility = false;
         }
+        Client.driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
+        return visibility;
     }
 }
