@@ -15,6 +15,7 @@ public class Element {
     public static String getDescription(MobileElement element) {
         String elementText = "";
         String elementTag = "";
+
         try {
             elementText = element.getText();
         } catch (Exception e) {
@@ -28,9 +29,12 @@ public class Element {
                 String.valueOf(element.getCenter().x)
                 + ":" + String.valueOf(element.getCenter().y);
 
-        String descString = elementText + " " + elementTag;
-        descString = elementTag + " at " + elementCoordinates;
-        return descString;
+        if ((elementText == "") && (elementTag =="")){
+            return "at " + elementCoordinates;
+        }
+        else {
+            return elementText + " " + elementTag + " at " + elementCoordinates;
+        }
     }
 
     /**
