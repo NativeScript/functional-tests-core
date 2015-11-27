@@ -139,6 +139,7 @@ public class Log {
                     .replace("IMAGE_TITLE", title)
                     .replace("IMAGE_URL", "../screenshots/" + fileName + ".png");
 
+            debug(logMessage);
             image(logMessage);
         } catch (Exception e) {
             error("Failed to log current screen.");

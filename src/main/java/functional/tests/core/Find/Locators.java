@@ -1,12 +1,9 @@
 package functional.tests.core.Find;
 
-import functional.tests.core.Appium.Client;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
 
 import java.util.List;

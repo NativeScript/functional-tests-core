@@ -14,8 +14,8 @@ public class BaseTest {
 
     @BeforeSuite(alwaysRun = true)
     public static void beforeClass() throws Exception {
-		Log.initLogging();
-		Settings.initSettings();
+        Log.initLogging();
+        Settings.initSettings();
         BaseDevice.stopDevice();
         BaseDevice.initDevice();
         BaseDevice.initTestApp();
@@ -25,7 +25,14 @@ public class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) throws Exception {
+        Log.info("=============================================");
         Log.info("Start test: " + method.getName());
+
+        try {
+            Client.driver.resetApp();
+        } catch (Exception e) {
+            Log.error("Failed to restart the app.");
+        }
     }
 
     @AfterMethod(alwaysRun = true)
@@ -36,12 +43,12 @@ public class BaseTest {
 
         // Report results
         if (result.getStatus() == ITestResult.SUCCESS) {
-            Log.logScreen(testCase + "_final_screen", "Screenshot after " + testCase);
+            Log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
             Log.info("=> Test " + testCase + " passed!");
         } else if (result.getStatus() == ITestResult.SKIP) {
             Log.error("=> Test " + testCase + " skipped!");
         } else if (result.getStatus() == ITestResult.FAILURE) {
-            Log.logScreen(testCase, "Screenshot after " + testCase);
+            Log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             Log.saveXmlTree(testCase + "_VisualTree.xml");
             Log.error("=> Test " + testCase + " failed!");
         }

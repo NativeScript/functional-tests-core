@@ -2,7 +2,6 @@ package functional.tests.core.Appium;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import functional.tests.core.Enums.PlatformType;
@@ -45,7 +44,7 @@ public class Client {
 
         // BaseDevice Specific Settings
         if (Settings.platform == PlatformType.Andorid) {
-            driver = new AndroidDriver<WebElement>(Server.service.getUrl(), capabilities);
+            driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
         }
 
         // iOS Specific Settings
@@ -53,7 +52,7 @@ public class Client {
             capabilities.setCapability("screenshotWaitTimeout", Settings.defaultTimeout);
             capabilities.setCapability("autoAcceptAlerts", true);
             capabilities.setCapability("launchTimeout", Settings.deviceBootTimeout * 1000);
-            driver = new IOSDriver<WebElement>(Server.service.getUrl(), capabilities);
+            driver = new IOSDriver<>(Server.service.getUrl(), capabilities);
         }
 
         // Set default timeout
@@ -71,5 +70,12 @@ public class Client {
         }
 
         Log.info("Appium client stoped.");
+    }
+
+    /**
+     * Set implicit wait in seconds *
+     */
+    public static void setWait(int seconds) {
+        driver.manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
     }
 }

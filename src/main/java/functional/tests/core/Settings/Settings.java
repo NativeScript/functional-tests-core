@@ -27,6 +27,7 @@ public class Settings {
     public static PlatformType platform;
     public static DeviceType deviceType;
     public static boolean isRealDevice;
+    public static int shortTimeout;
     public static int defaultTimeout;
     public static int deviceBootTimeout;
     public static String platformVersion;
@@ -196,6 +197,8 @@ public class Settings {
         } else {
             defaultTimeout = 30;
         }
+
+        shortTimeout = defaultTimeout / 7;
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         String deviceBootTimeoutString = properties.getProperty("deviceBootTimeout");
