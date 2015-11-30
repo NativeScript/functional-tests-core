@@ -3,6 +3,7 @@ package functional.tests.core.Screenshot;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.ImageVerificationException;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
@@ -27,7 +28,7 @@ public class ImageVerification {
     private static final int SIMILAR_PIXEL_TOLERANCE = 50;
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
-    private static final VerificationType VERIFICATION_TYPE = VerificationType.FirstTimeCapture;
+    private static final VerificationType VERIFICATION_TYPE = VerificationType.JustCapture;
 
     /**
      * Compares two BufferedImage and return ImageVerificationResult
@@ -123,7 +124,6 @@ public class ImageVerification {
     }
 
     /**
-     * fdsfsdfsdf
      * Verify current screen
      **/
     public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
@@ -140,11 +140,13 @@ public class ImageVerification {
         if (VERIFICATION_TYPE == VerificationType.Skip) {
             Log.warn("Image comparison skipped!");
         } else if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
             Log.warn("Image comparison skipped. Actual images will be also saved at expected image location.");
             FileSystem.makeDir(expectedImageBasePath);
             ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
             Log.logScreen(pageName, pageName + " saved as expected image");
         } else if (VERIFICATION_TYPE == VerificationType.JustCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
             Log.warn("Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
             FileSystem.makeDir(Settings.screenshotOutDir + File.separator + "actual");
             ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + pageName + ".png");

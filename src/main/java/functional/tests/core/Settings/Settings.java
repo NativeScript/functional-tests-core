@@ -1,9 +1,5 @@
 package functional.tests.core.Settings;
 
-import java.io.*;
-import java.util.Locale;
-import java.util.Properties;
-
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
@@ -13,6 +9,9 @@ import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
+
+import java.io.*;
+import java.util.Properties;
 
 public class Settings {
 
@@ -27,6 +26,7 @@ public class Settings {
     public static PlatformType platform;
     public static DeviceType deviceType;
     public static boolean isRealDevice;
+    public static boolean restartApp;
     public static int shortTimeout;
     public static int defaultTimeout;
     public static int deviceBootTimeout;
@@ -182,6 +182,15 @@ public class Settings {
         simulatorType = properties.getProperty("simulatorType");
         appiumVersion = properties.getProperty("appiumVersion");
 
+        // Set restartApp
+        String restartAppString = properties.getProperty("restartApp");
+        restartApp = true;
+        if (restartAppString != null) {
+            if (restartAppString.equalsIgnoreCase("false")) {
+                restartApp = false;
+            }
+        }
+
         // Set automation name
         String automationNameString = properties.getProperty("automationName");
         if ((automationNameString != null) && (automationNameString.equalsIgnoreCase("selendroid"))) {
@@ -232,6 +241,7 @@ public class Settings {
         Log.info("Base TestApp Path: " + baseTestAppDir);
         Log.info("TestApp Name: " + testAppName);
         Log.info("TestApp Archive: " + testAppArchive);
+        Log.info("Restart App: " + String.valueOf(restartApp));
         Log.info("Appium Version: " + appiumVersion);
         Log.info("Automation Name: " + automationName);
         Log.info("Emulator Options: " + emulatorOptions);

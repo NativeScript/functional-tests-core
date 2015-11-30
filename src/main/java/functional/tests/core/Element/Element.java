@@ -4,9 +4,6 @@ import functional.tests.core.Log.Log;
 import io.appium.java_client.MobileElement;
 import org.apache.commons.lang.reflect.FieldUtils;
 
-/**
- * Created by topuzov on 27.11.15 г..
- */
 public class Element {
 
     /**

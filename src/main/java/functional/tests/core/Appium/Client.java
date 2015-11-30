@@ -1,25 +1,23 @@
 package functional.tests.core.Appium;
 
+import functional.tests.core.Enums.PlatformType;
+import functional.tests.core.Log.Log;
+import functional.tests.core.Settings.Settings;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
-
-import functional.tests.core.Enums.PlatformType;
-import functional.tests.core.Settings.Settings;
-import io.appium.java_client.ios.IOSDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import functional.tests.core.Log.Log;
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
 
 public class Client {
 
     public static AppiumDriver<?> driver;
 
-    public static void initAppiumDriver() throws FileNotFoundException {
+    public static void initAppiumDriver() {
 
         Log.info("Start Appium client...");
 

@@ -10,9 +10,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by vchimev on 11/2/2015.
- */
 public class ImageUtils {
 
     /**

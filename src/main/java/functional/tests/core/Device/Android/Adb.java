@@ -2,6 +2,7 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Exceptions.DeviceException;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
@@ -130,8 +131,7 @@ public class Adb {
         Log.info("Emulator killed.");
     }
 
-    public static void waitForDevice(String deviceId, int timeOut)
-            throws TimeoutException, InterruptedException {
+    public static void waitForDevice(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
         for (int i = 0; i < 999; i++) {
 
@@ -154,7 +154,7 @@ public class Adb {
                     break;
                 } else {
                     Log.info("Device " + deviceId + " not found. Wait...");
-                    Thread.sleep(3000);
+                    Wait.sleep(3000);
                 }
             } else {
                 String error = "Failed to find device "
