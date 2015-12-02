@@ -6,75 +6,86 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
+import org.testng.Assert;
 
 import java.util.Date;
 import java.util.List;
 
 public class Wait {
 
-    public static boolean waitForVisible(By locator, int timeOut, int retryPeriod, boolean failOnNotVisible) throws AppiumException {
+    // Timeout in seconds
+    // retryPeriod in miliseconds
+    public static boolean waitForVisible(By locator, int timeOut, int retryPeriod, boolean failOnNotVisible) {
         Client.setWait(0);
-        long startTime = new Date().getTime();
+        long startTime = (new Date()).getTime();
         boolean found = false;
-        for (int i = 0; i < 1000; i++) {
-            if (retryPeriod > 0) {
-                try {
-                    Thread.sleep(retryPeriod);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            long currentTime = new Date().getTime();
-            if ((currentTime - startTime) < timeOut * 1000) {
-                List<MobileElement> elements = Find.findElementsByLocator(locator);
 
-                if (elements.size() == 0) {
-                    Log.debug("Element does not exist: " + locator.toString());
-                } else {
+        for (int error = 0; error < 1000; ++error) {
+            if (retryPeriod > 0) {
+                Wait.sleep(retryPeriod);
+            }
+
+            long currentTime = (new Date()).getTime();
+            if (currentTime - startTime < (long) (timeOut * 1000)) {
+                List<MobileElement> elements = null;
+                try {
+                    elements = Find.findElementsByLocator(locator);
+                } catch (Exception e) {
+                }
+                if ((elements != null) && (elements.size() != 0)) {
                     found = true;
                     break;
                 }
+
+                Log.debug("Element does not exist: " + locator.toString());
             }
         }
+
         Client.setWait(Settings.defaultTimeout);
         if (found) {
             Log.debug("Element found: " + locator.toString());
         } else {
             String error = "Element not found: " + locator.toString();
             Log.error(error);
-            if (failOnNotVisible){
-                throw new AppiumException(error);
+            if (failOnNotVisible) {
+                Assert.fail(error);
             }
         }
+
         return found;
     }
 
-    public static boolean waitForVisible(By locator, boolean failOnNotVisible) throws AppiumException {
-        return waitForVisible(locator, Settings.defaultTimeout, 0, failOnNotVisible);
+    public static boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
+        return waitForVisible(locator, timeOut, 0, failOnNotVisible);
     }
 
-    public static boolean waitForVisible(By locator, int timeOut) throws AppiumException {
-        return waitForVisible(locator, timeOut, 0, false);
+    public static boolean waitForVisible(By locator, boolean failOnNotVisible) {
+        return waitForVisible(locator, Settings.defaultTimeout, 0, failOnNotVisible);
     }
 
     public static boolean waitForVisible(By locator) throws AppiumException {
         return waitForVisible(locator, Settings.defaultTimeout, 0, false);
     }
 
-    public static boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) throws AppiumException {
+    public static boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) {
         Client.setWait(0);
         long startTime = new Date().getTime();
         boolean found = true;
         for (int i = 0; i < 1000; i++) {
             long currentTime = new Date().getTime();
             if ((currentTime - startTime) < timeOut * 1000) {
-                List<MobileElement> elements = Find.findElementsByLocator(locator);
+                List<MobileElement> elements = null;
+                try {
+                    elements = Find.findElementsByLocator(locator);
+                } catch (Exception e) {
+                }
 
-                if (elements.size() == 0) {
+                if ((elements != null) && (elements.size() != 0)) {
+                    Log.debug("Element exists: " + locator.toString());
+                }
+                else{
                     found = false;
                     break;
-                } else {
-                    Log.debug("Element exists: " + locator.toString());
                 }
             }
         }
@@ -83,7 +94,7 @@ public class Wait {
             String error = "Element still visible: " + locator.toString();
             Log.error(error);
             if (failOnVisble) {
-                throw new AppiumException(error);
+                Assert.fail(error);
             }
         } else {
             Log.debug("Element not found: " + locator.toString());

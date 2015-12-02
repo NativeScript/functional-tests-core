@@ -67,8 +67,14 @@ public class Server {
 
     public static void stopAppiumServer() {
         if (service != null) {
-            service.stop();
+            try {
+                service.stop();
+                Log.info("Appium server stopped.");
+            } catch (Exception e) {
+                Log.fatal("Failed to stop Appium server.");
+            }
+        } else {
+            Log.info("Appium server already stopped.");
         }
-        Log.info("Appium server stopped.");
     }
 }

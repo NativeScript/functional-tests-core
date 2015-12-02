@@ -144,13 +144,11 @@ public class ImageVerification {
             Log.warn("Image comparison skipped. Actual images will be also saved at expected image location.");
             FileSystem.makeDir(expectedImageBasePath);
             ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
-            Log.logScreen(pageName, pageName + " saved as expected image");
         } else if (VERIFICATION_TYPE == VerificationType.JustCapture) {
             Wait.sleep(1000); // Wait some time until animations finish
             Log.warn("Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
             FileSystem.makeDir(Settings.screenshotOutDir + File.separator + "actual");
             ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + pageName + ".png");
-            Log.logScreen(pageName, pageName + " saved at $SCREENSHOT_LOCATION/actual");
         } else if (VERIFICATION_TYPE == VerificationType.Default) {
             expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
             ImageVerificationResult result = compareImages(actualImage, expectedImage);

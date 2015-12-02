@@ -10,7 +10,6 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
@@ -64,10 +63,15 @@ public class Client {
         Log.info("Stop Appium client...");
 
         if (driver != null) {
-            driver.quit();
+            try {
+                driver.quit();
+                Log.info("Appium client stopped.");
+            } catch (Exception e) {
+                Log.fatal("Failed to stop Appium client.");
+            }
+        } else {
+            Log.info("Appium client already stopped.");
         }
-
-        Log.info("Appium client stoped.");
     }
 
     /**

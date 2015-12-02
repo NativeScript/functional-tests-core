@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Locators {
 
-    protected static By findByTextLocator(String controlType, String value,
+    public static By findByTextLocator(String controlType, String value,
                                           boolean exactMatch) {
         if (Settings.platform == PlatformType.Andorid) {
             if (exactMatch) {
@@ -63,5 +63,29 @@ public class Locators {
 
     public static By findByTextLocator(String value, boolean exactMatch){
         return findByTextLocator("*", value, exactMatch);
+    }
+
+    public static By switchLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.Switch");
+        } else {
+            return By.className("UIASwitch");
+        }
+    }
+
+    public static By scrollViewLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ScrollView");
+        } else {
+            return By.className("UIAScrollView");
+        }
+    }
+
+    public static By activityIndicatorLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ProgressBar");
+        } else {
+            return By.className("UIAActivityIndicator");
+        }
     }
 }

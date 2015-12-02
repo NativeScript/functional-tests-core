@@ -2,9 +2,14 @@ package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Exceptions.AppiumException;
+import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
+import functional.tests.core.Settings.Settings;
+import io.appium.java_client.MobileElement;
+import org.openqa.selenium.By;
+import org.testng.Assert;
 
 /**
  * Created by topuzov on 11/27/2015.
@@ -25,5 +30,29 @@ public class BasePage {
     public static void verifyTextVisible(String text) throws AppiumException {
         Wait.waitForVisible(Locators.findByTextLocator(text, true), true);
         Log.info("Text " + text + " found.");
+    }
+
+    /**
+     * Verify text visible *
+     */
+    public static void verifyTextVisible(String text, boolean exactMatch) throws AppiumException {
+        Wait.waitForVisible(Locators.findByTextLocator(text, true), exactMatch);
+        Log.info("Text " + text + " found.");
+    }
+
+    /**
+     * Verify text visible *
+     */
+    public static void verifyElementVisible(By locator, int timeout) {
+        MobileElement element = Find.findElementByLocator(locator, timeout);
+        Assert.assertNotNull(element, "Can not find: " + locator.toString());
+    }
+
+    /**
+     * Verify text visible *
+     */
+    public static void verifyElementVisible(By locator) {
+        MobileElement element = Find.findElementByLocator(locator, Settings.defaultTimeout);
+        Assert.assertNotNull(element, "Can not find: " + locator.toString());
     }
 }
