@@ -49,6 +49,10 @@ public class Wait {
         return found;
     }
 
+    public static boolean waitForVisible(By locator, boolean failOnNotVisible) throws AppiumException {
+        return waitForVisible(locator, Settings.defaultTimeout, 0, failOnNotVisible);
+    }
+
     public static boolean waitForVisible(By locator, int timeOut) throws AppiumException {
         return waitForVisible(locator, timeOut, 0, false);
     }

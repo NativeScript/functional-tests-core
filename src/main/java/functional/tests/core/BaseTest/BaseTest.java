@@ -52,6 +52,8 @@ public class BaseTest {
             if (Client.driver == null) {
                 Client.initAppiumDriver();
             }
+            // Restart app
+            App.restart(true);
         }
     }
 
@@ -64,7 +66,9 @@ public class BaseTest {
         // Report results
         previousTestStatus = result.getStatus();
         if (previousTestStatus == ITestResult.SUCCESS) {
-            Log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
+            if (Settings.takeScreenShotAtTheEnd) {
+                Log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
+            }
             Log.info("=> Test " + testCase + " passed!");
         } else if (previousTestStatus == ITestResult.SKIP) {
             Log.error("=> Test " + testCase + " skipped!");

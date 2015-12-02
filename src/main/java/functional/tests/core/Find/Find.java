@@ -8,6 +8,7 @@ import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
 import java.util.List;
+import java.util.Set;
 
 public class Find {
 
@@ -45,7 +46,7 @@ public class Find {
             result = null;
         }
         Client.setWait(Settings.defaultTimeout);
-        return  result;
+        return result;
     }
 
     /**
@@ -71,6 +72,21 @@ public class Find {
      */
     public static MobileElement findElementByLocator(By locator) {
         return (MobileElement) Client.driver.findElement(locator);
+    }
+
+    /**
+     * Find an element by locator
+     */
+    public static MobileElement findElementByLocator(By locator, int timeout) {
+        Client.setWait(0);
+        MobileElement result;
+        try {
+            result = findElementByLocator(locator);
+        } catch (Exception e) {
+            result = null;
+        }
+        Client.setWait(Settings.defaultTimeout);
+        return result;
     }
 
     /**

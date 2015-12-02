@@ -28,7 +28,7 @@ public class ImageVerification {
     private static final int SIMILAR_PIXEL_TOLERANCE = 50;
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
-    private static final VerificationType VERIFICATION_TYPE = VerificationType.JustCapture;
+    private static final VerificationType VERIFICATION_TYPE = VerificationType.FirstTimeCapture;
 
     /**
      * Compares two BufferedImage and return ImageVerificationResult

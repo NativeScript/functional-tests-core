@@ -27,6 +27,7 @@ public class Settings {
     public static DeviceType deviceType;
     public static boolean isRealDevice;
     public static boolean restartApp;
+    public static boolean takeScreenShotAtTheEnd;
     public static int shortTimeout;
     public static int defaultTimeout;
     public static int deviceBootTimeout;
@@ -191,6 +192,15 @@ public class Settings {
             }
         }
 
+        // Set takeScreenShotAtTheEnd
+        String takeScreenShotAtTheEndString = properties.getProperty("restartApp");
+        takeScreenShotAtTheEnd = true;
+        if (takeScreenShotAtTheEndString != null) {
+            if (takeScreenShotAtTheEndString.equalsIgnoreCase("false")) {
+                takeScreenShotAtTheEnd = false;
+            }
+        }
+
         // Set automation name
         String automationNameString = properties.getProperty("automationName");
         if ((automationNameString != null) && (automationNameString.equalsIgnoreCase("selendroid"))) {
@@ -236,6 +246,8 @@ public class Settings {
         Log.info("Device Name: " + deviceName);
         Log.info("Real Device: " + isRealDevice);
         Log.info("Device Id: " + deviceId);
+        Log.info("Restart App Between Tests: " + restartAppString);
+        Log.info("Take Screenshot After Test: " + takeScreenShotAtTheEndString);
         Log.info("Default Timeout: " + defaultTimeout);
         Log.info("Device Boot Time: " + deviceBootTimeout);
         Log.info("Base TestApp Path: " + baseTestAppDir);
