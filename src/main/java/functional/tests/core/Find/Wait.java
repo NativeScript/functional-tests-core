@@ -16,11 +16,11 @@ public class Wait {
     // Timeout in seconds
     // retryPeriod in miliseconds
     public static boolean waitForVisible(By locator, int timeOut, int retryPeriod, boolean failOnNotVisible) {
-        Client.setWait(0);
+        Client.setWait(1);
         long startTime = (new Date()).getTime();
         boolean found = false;
 
-        for (int error = 0; error < 1000; ++error) {
+        for (int i = 0; i < 1000; i++) {
             if (retryPeriod > 0) {
                 Wait.sleep(retryPeriod);
             }
@@ -56,15 +56,15 @@ public class Wait {
     }
 
     public static boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
-        return waitForVisible(locator, timeOut, 0, failOnNotVisible);
+        return waitForVisible(locator, timeOut, Settings.defaultTapDuration, failOnNotVisible);
     }
 
     public static boolean waitForVisible(By locator, boolean failOnNotVisible) {
-        return waitForVisible(locator, Settings.defaultTimeout, 0, failOnNotVisible);
+        return waitForVisible(locator, Settings.defaultTimeout, Settings.defaultTapDuration, failOnNotVisible);
     }
 
     public static boolean waitForVisible(By locator) throws AppiumException {
-        return waitForVisible(locator, Settings.defaultTimeout, 0, false);
+        return waitForVisible(locator, Settings.defaultTimeout, Settings.defaultTapDuration, false);
     }
 
     public static boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) {
@@ -82,8 +82,7 @@ public class Wait {
 
                 if ((elements != null) && (elements.size() != 0)) {
                     Log.debug("Element exists: " + locator.toString());
-                }
-                else{
+                } else {
                     found = false;
                     break;
                 }

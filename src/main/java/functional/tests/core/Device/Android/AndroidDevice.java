@@ -2,8 +2,10 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.DeviceException;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import org.testng.Assert;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -20,6 +22,17 @@ public class AndroidDevice {
             Adb.startEmulator(Settings.deviceName, Integer.valueOf(port));
         }
         Adb.waitForDevice(Settings.deviceId, Settings.deviceBootTimeout);
+        if (!Settings.isRealDevice) {
+            // Wait until emulator boot
+            Adb.waitUntilEmulatorBoot(Settings.deviceName, Settings.deviceBootTimeout);
+            // Unlock if locked
+            if (Adb.isLocked(Settings.deviceId)) {
+                Log.info("Device is locked.");
+                Adb.unlock(Settings.deviceId);
+                Wait.sleep(3000);
+                Log.info("Device locked: " + String.valueOf(Adb.isLocked(Settings.deviceId)));
+            }
+        }
     }
 
     public static void stopDevice() {
@@ -31,7 +44,7 @@ public class AndroidDevice {
 
         for (String appToUninstall : uninstallAppsList) {
             for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)){
+                if (appId.contains(appToUninstall)) {
                     Log.info("Stop " + appId);
                     Adb.stopApp(appId);
                 }
@@ -44,7 +57,7 @@ public class AndroidDevice {
 
         for (String appToUninstall : uninstallAppsList) {
             for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)){
+                if (appId.contains(appToUninstall)) {
                     Adb.uninstallApp(appId);
                 }
             }

@@ -165,4 +165,53 @@ public class Adb {
             }
         }
     }
+
+    public static void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
+        long startTime = new Date().getTime();
+        for (int i = 0; i < 999; i++) {
+
+            boolean found = false;
+            long currentTime = new Date().getTime();
+
+            if ((currentTime - startTime) < timeOut * 1000) {
+
+                String rowData = runAdbCommand("-s " + Settings.deviceId + " shell dumpsys activity");
+                String[] list = rowData.split("\\r?\\n");
+
+                for (String line : list) {
+                    if (line.contains("Recent #0") && line.contains("com.android.launcher")) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found) {
+                    Log.info("Emulator is up and running.");
+                    break;
+                } else {
+                    Log.info("Booting...");
+                    Wait.sleep(3000);
+                }
+            } else {
+                String error = "Failed to load com.android.launcher activity in "
+                        + String.valueOf(timeOut)
+                        + " seconds.";
+                Log.fatal(error);
+                throw new TimeoutException(error);
+            }
+        }
+    }
+
+    public static boolean isLocked(String deviceId) {
+        String output = OSUtils.runProcess(true, "adb -s " + deviceId + " shell dumpsys window windows");
+        if (output.contains("mDrawState=HAS_DRAWN mLastHidden=true")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void unlock(String deviceId) {
+        OSUtils.runProcess(true, "adb -s " + deviceId + " shell input keyevent 82");
+    }
 }

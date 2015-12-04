@@ -121,7 +121,7 @@ public class Log {
     /**
      * Log current screen *
      */
-    public static void logScreen(String fileName, String title) throws AppiumException {
+    public static void logScreen(String fileName, String title) {
         try {
             ImageVerification.saveScreen(fileName);
 
@@ -143,21 +143,21 @@ public class Log {
             image(logMessage);
         } catch (Exception e) {
             error("Failed to log current screen.");
-            throw new AppiumException("Failed to log current screen. Error: " + e);
         }
     }
 
     /**
      * Log image verification result *
      */
-    public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix) throws AppiumException {
+    public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix) {
         try {
             ImageVerification.saveImageVerificationResult(result, filePrefix);
 
             String imageTitle = String.format("%s looks OK", filePrefix);
             if (result.diffPixels > 100) { // TODO: Read it from global config
                 String diffPercentString = new DecimalFormat("##.##").format(result.diffPercent);
-                imageTitle = String.format(filePrefix + " does not look OK. Diff: " + diffPercentString + " %");
+                imageTitle = filePrefix + " does not look OK. Diff: " + diffPercentString + " %";
+                Log.info(imageTitle);
             }
 
             String logTemplatePath = templatePath + File.separator + "imageVerification.template";
@@ -172,14 +172,13 @@ public class Log {
 
             logMessage = logMessage
                     .replace("IMAGE_TITLE", imageTitle)
-                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + String.format("_%s.png", result.actualSuffix))
-                    .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + String.format("_%s.png", result.diffSuffix))
-                    .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + String.format("_%s.png", result.expectedSuffix));
+                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.actualSuffix + ".png")
+                    .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.diffSuffix + ".png")
+                    .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png");
 
             image(logMessage);
         } catch (Exception e) {
             error("Failed to log current screen.");
-            throw new AppiumException("Failed to log image verification result. Error: " + e);
         }
     }
 }

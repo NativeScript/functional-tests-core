@@ -7,6 +7,8 @@ import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownOSException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.Screenshot.ImageVerification;
+import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
 
@@ -27,7 +29,8 @@ public class Settings {
     public static DeviceType deviceType;
     public static boolean isRealDevice;
     public static boolean restartApp;
-    public static boolean takeScreenShotAtTheEnd;
+    public static boolean takeScreenShotAfterTest;
+    public static VerificationType imageVerificationType;
     public static int shortTimeout;
     public static int defaultTimeout;
     public static int deviceBootTimeout;
@@ -192,28 +195,51 @@ public class Settings {
             }
         }
 
-        // Set takeScreenShotAtTheEnd
-        String takeScreenShotAtTheEndString = properties.getProperty("restartApp");
-        takeScreenShotAtTheEnd = true;
-        if (takeScreenShotAtTheEndString != null) {
-            if (takeScreenShotAtTheEndString.equalsIgnoreCase("false")) {
-                takeScreenShotAtTheEnd = false;
+        // Set takeScreenShotAfterTest
+        String takeScreenShotAfterTestString = properties.getProperty("takeScreenShotAfterTest");
+        takeScreenShotAfterTest = true;
+        if (takeScreenShotAfterTestString != null) {
+            if (takeScreenShotAfterTestString.equalsIgnoreCase("false")) {
+                takeScreenShotAfterTest = false;
+            }
+        }
+
+        // Set image verification type
+        String imageVerificationTypeString = properties.getProperty("imageVerificationType");
+        imageVerificationType = VerificationType.Default;
+        if (imageVerificationTypeString != null) {
+            if (imageVerificationTypeString.equalsIgnoreCase("justcapture")) {
+                imageVerificationType = VerificationType.JustCapture;
+            } else if (imageVerificationTypeString.equalsIgnoreCase("firsttimecapture")) {
+                imageVerificationType = VerificationType.FirstTimeCapture;
+            } else if (imageVerificationTypeString.equalsIgnoreCase("skip")) {
+                imageVerificationType = VerificationType.Skip;
+            } else {
+                imageVerificationTypeString = "Default";
             }
         }
 
         // Set automation name
         String automationNameString = properties.getProperty("automationName");
-        if ((automationNameString != null) && (automationNameString.equalsIgnoreCase("selendroid"))) {
+        if ((automationNameString != null) && (automationNameString.equalsIgnoreCase("selendroid")))
+
+        {
             automationName = AutomationName.SELENDROID;
-        } else {
+        } else
+
+        {
             automationName = AutomationName.APPIUM;
         }
 
         // If defaultTimeout is not specified set it to 30 sec.
         String defaultTimeoutString = properties.getProperty("defaultTimeout");
-        if (defaultTimeoutString != null) {
+        if (defaultTimeoutString != null)
+
+        {
             defaultTimeout = Integer.valueOf(defaultTimeoutString);
-        } else {
+        } else
+
+        {
             defaultTimeout = 30;
         }
 
@@ -221,9 +247,13 @@ public class Settings {
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         String deviceBootTimeoutString = properties.getProperty("deviceBootTimeout");
-        if (deviceBootTimeoutString != null) {
+        if (deviceBootTimeoutString != null)
+
+        {
             deviceBootTimeout = Integer.valueOf(deviceBootTimeoutString);
-        } else {
+        } else
+
+        {
             deviceBootTimeout = defaultTimeout;
         }
 
@@ -231,7 +261,9 @@ public class Settings {
         verifyTestAppPath();
 
         // Verify OS and Mobile Platform
-        if ((platform == PlatformType.iOS) && (OS != OSType.MacOS)) {
+        if ((platform == PlatformType.iOS) && (OS != OSType.MacOS))
+
+        {
             String error = "Can not run iOS tests on Windows and Linux";
             Log.fatal(error);
             throw new Exception(error);
@@ -247,7 +279,8 @@ public class Settings {
         Log.info("Real Device: " + isRealDevice);
         Log.info("Device Id: " + deviceId);
         Log.info("Restart App Between Tests: " + restartAppString);
-        Log.info("Take Screenshot After Test: " + takeScreenShotAtTheEndString);
+        Log.info("Take Screenshot After Test: " + takeScreenShotAfterTestString);
+        Log.info("Image Verification Type: " + imageVerificationTypeString);
         Log.info("Default Timeout: " + defaultTimeout);
         Log.info("Device Boot Time: " + deviceBootTimeout);
         Log.info("Base TestApp Path: " + baseTestAppDir);

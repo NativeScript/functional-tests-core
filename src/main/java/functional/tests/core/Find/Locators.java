@@ -6,12 +6,10 @@ import functional.tests.core.Settings.Settings;
 import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 
-import java.util.List;
-
 public class Locators {
 
     public static By findByTextLocator(String controlType, String value,
-                                          boolean exactMatch) {
+                                       boolean exactMatch) {
         if (Settings.platform == PlatformType.Andorid) {
             if (exactMatch) {
                 return By.xpath("//" + controlType + "[@content-desc=\""
@@ -61,7 +59,7 @@ public class Locators {
         }
     }
 
-    public static By findByTextLocator(String value, boolean exactMatch){
+    public static By findByTextLocator(String value, boolean exactMatch) {
         return findByTextLocator("*", value, exactMatch);
     }
 
@@ -86,6 +84,54 @@ public class Locators {
             return By.className("android.widget.ProgressBar");
         } else {
             return By.className("UIAActivityIndicator");
+        }
+    }
+
+    public static By progressLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ProgressBar");
+        } else {
+            return By.className("UIAProgressIndicator");
+        }
+    }
+
+    public static By sliderLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.SeekBar");
+        } else {
+            return By.className("UIASlider");
+        }
+    }
+
+    public static By searchBoxLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.xpath("//android.widget.LinearLayout/android.widget.EditText");
+        } else {
+            return By.className("UIASearchBar");
+        }
+    }
+
+    public static By listViewLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ListView");
+        } else {
+            return By.className("UIATableView");
+        }
+    }
+
+    public static By listViewItemsLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.xpath("//android.widget.ListView/android.view.View");
+        } else {
+            return By.xpath("//UIATableView/UIATableCell");
+        }
+    }
+
+    public static By imageLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ImageView");
+        } else {
+            return By.className("UIAImage");
         }
     }
 }

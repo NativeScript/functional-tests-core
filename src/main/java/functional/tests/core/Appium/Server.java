@@ -42,7 +42,8 @@ public class Server {
         AppiumServiceBuilder serviceBuilder = new AppiumServiceBuilder()
                 .withLogFile(logFile)
                 .usingAnyFreePort()
-                .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName);
+                .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName)
+                .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout));
 
         // On Linux and OSX use appium version manager
         if ((Settings.OS == OSType.Linux) || (Settings.OS == OSType.MacOS)) {
@@ -60,6 +61,7 @@ public class Server {
             }
         }
 
+        Log.info(serviceBuilder.toString());
         service = AppiumDriverLocalService.buildService(serviceBuilder);
         service.start();
         Log.info("Appium server started.");

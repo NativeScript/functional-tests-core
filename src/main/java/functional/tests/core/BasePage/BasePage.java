@@ -1,7 +1,6 @@
 package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
@@ -27,16 +26,16 @@ public class BasePage {
     /**
      * Verify text visible *
      */
-    public static void verifyTextVisible(String text) throws AppiumException {
-        Wait.waitForVisible(Locators.findByTextLocator(text, true), true);
+    public static void verifyTextVisible(String text) {
+        boolean visible = Wait.waitForVisible(Locators.findByTextLocator(text, true), true);
         Log.info("Text " + text + " found.");
     }
 
     /**
      * Verify text visible *
      */
-    public static void verifyTextVisible(String text, boolean exactMatch) throws AppiumException {
-        Wait.waitForVisible(Locators.findByTextLocator(text, true), exactMatch);
+    public static void verifyTextVisible(String text, boolean exactMatch) {
+        boolean visible = Wait.waitForVisible(Locators.findByTextLocator(text, exactMatch), true);
         Log.info("Text " + text + " found.");
     }
 

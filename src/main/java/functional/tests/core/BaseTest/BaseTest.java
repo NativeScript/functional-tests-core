@@ -4,6 +4,7 @@ import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
+import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
@@ -12,9 +13,10 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
-public class BaseTest {
+public abstract class BaseTest {
 
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
@@ -58,7 +60,7 @@ public class BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown(ITestResult result) throws Exception {
+    public void tearDown(ITestResult result) {
 
         // Get test case name
         String testCase = result.getMethod().getMethodName();
@@ -66,7 +68,7 @@ public class BaseTest {
         // Report results
         previousTestStatus = result.getStatus();
         if (previousTestStatus == ITestResult.SUCCESS) {
-            if (Settings.takeScreenShotAtTheEnd) {
+            if (Settings.takeScreenShotAfterTest) {
                 Log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
             }
             Log.info("=> Test " + testCase + " passed!");

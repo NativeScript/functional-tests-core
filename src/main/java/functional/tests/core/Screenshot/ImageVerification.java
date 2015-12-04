@@ -8,6 +8,7 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
+import org.testng.Assert;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,19 +17,20 @@ import java.io.IOException;
 
 public class ImageVerification {
 
-    private enum VerificationType {
-        Default, // Default image verification
-        JustCapture,  // Just capture current images in screenshot/actual/ folder
-        FirstTimeCapture, // Just capture current images at location where expected image should be
-        Skip // This will skip image verification
-    }
-
     // TODO: Read this from global config
     private static final boolean IGNORE_HEADER = true;
     private static final int SIMILAR_PIXEL_TOLERANCE = 50;
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
-    private static final VerificationType VERIFICATION_TYPE = VerificationType.FirstTimeCapture;
+    private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
+
+    private static BufferedImage copyImage(BufferedImage source) {
+        BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+        Graphics g = b.getGraphics();
+        g.drawImage(source, 0, 0, null);
+        g.dispose();
+        return b;
+    }
 
     /**
      * Compares two BufferedImage and return ImageVerificationResult
@@ -40,12 +42,12 @@ public class ImageVerification {
         double diffPercent;
 
         // Generate diff image
-        BufferedImage diffImage = actualImage;
+        BufferedImage diffImage = copyImage(actualImage);
 
         // Get image sizes
-        int width1 = actualImage.getWidth(null);
+        int width1 = diffImage.getWidth(null);
         int width2 = expectedImage.getWidth(null);
-        int height1 = actualImage.getHeight(null);
+        int height1 = diffImage.getHeight(null);
         int height2 = expectedImage.getHeight(null);
 
         // If image size is different then skip comparison
@@ -74,7 +76,7 @@ public class ImageVerification {
             // Compare pixel by pixel
             for (int i = startY; i < height1; i++) {
                 for (int j = 0; j < width1; j++) {
-                    int rgb1 = actualImage.getRGB(j, i);
+                    int rgb1 = diffImage.getRGB(j, i);
                     int blue1 = rgb1 & 0xFF;
                     int green1 = (rgb1 >> 8) & 0xFF;
                     int red1 = (rgb1 >> 16) & 0xFF;
@@ -155,9 +157,9 @@ public class ImageVerification {
 
             Log.logImageVerificationResult(result, pageName);
             if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                String errorString = String.format("%s does not look OK. Diff: %s %", pageName, result.diffPercent);
+                String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
                 Log.error(errorString);
-                throw new ImageVerificationException(errorString);
+                Assert.fail(errorString);
             }
         }
     }
