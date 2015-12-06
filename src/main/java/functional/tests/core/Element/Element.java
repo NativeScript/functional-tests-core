@@ -24,13 +24,14 @@ public class Element {
 
         String elementCoordinates =
                 String.valueOf(element.getCenter().x)
-                + ":" + String.valueOf(element.getCenter().y);
+                        + ":" + String.valueOf(element.getCenter().y);
 
-        if ((elementText == "") && (elementTag =="")){
+        if (elementText != "") {
+            return elementText + " at " + elementCoordinates;
+        } else if (elementTag != "") {
+            return elementTag + " at " + elementCoordinates;
+        } else {
             return "at " + elementCoordinates;
-        }
-        else {
-            return elementText + " " + elementTag + " at " + elementCoordinates;
         }
     }
 

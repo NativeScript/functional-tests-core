@@ -7,7 +7,6 @@ import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownOSException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
-import functional.tests.core.Screenshot.ImageVerification;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
@@ -269,7 +268,7 @@ public class Settings {
             throw new Exception(error);
         }
 
-        Log.info("=============================================");
+        Log.separator();
         Log.info("Settings  initialized properly:");
         Log.info("OS Type: " + OS);
         Log.info("Mobile Platoform: " + platform);
@@ -296,7 +295,6 @@ public class Settings {
         Log.info("Screenshot Output Folder: " + screenshotOutDir);
         Log.info("Screenshot Resources Folder: " + screenshotResDir);
         Log.info("Appium Log File: " + appiumLogFile);
-        Log.info("=============================================");
-        Log.info("");
+        Log.separator();
     }
 }

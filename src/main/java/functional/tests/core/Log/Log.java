@@ -1,7 +1,6 @@
 package functional.tests.core.Log;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Screenshot.ImageVerification;
 import functional.tests.core.Screenshot.ImageVerificationResult;
 import functional.tests.core.Settings.Settings;
@@ -9,7 +8,10 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.testng.Reporter;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -98,6 +100,12 @@ public class Log {
     public static void fatal(String msg) {
         Log.fatal(msg);
         Reporter.log(formatLogMessage(msg, "FATAL"));
+    }
+
+    public static void separator() {
+        String msg = "=============================================";
+        Log.info(msg);
+        Reporter.log(formatLogMessage(msg, "INFO"));
     }
 
     public static void image(String msg) {

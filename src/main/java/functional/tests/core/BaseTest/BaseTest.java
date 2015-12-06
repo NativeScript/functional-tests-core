@@ -4,7 +4,6 @@ import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
-import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
@@ -13,7 +12,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 public abstract class BaseTest {
@@ -34,7 +32,7 @@ public abstract class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) throws Exception {
-        Log.info("=============================================");
+        Log.separator();
         Log.info("Start test: " + method.getName());
 
         if (isFistTest) {

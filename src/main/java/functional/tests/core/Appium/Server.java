@@ -28,10 +28,10 @@ public class Server {
 
         File logFile = new File(Settings.appiumLogFile);
         Files.deleteIfExists(logFile.toPath());
-        boolean mkdirResult = logFile.getParentFile().mkdirs();
+        logFile.getParentFile().mkdirs();
         boolean createLogFileResult = logFile.createNewFile();
 
-        if (mkdirResult && createLogFileResult) {
+        if (createLogFileResult) {
             Log.debug("Appium log file created.");
         } else {
             Log.fatal("Failed to create appium log file.");
@@ -61,7 +61,6 @@ public class Server {
             }
         }
 
-        Log.info(serviceBuilder.toString());
         service = AppiumDriverLocalService.buildService(serviceBuilder);
         service.start();
         Log.info("Appium server started.");

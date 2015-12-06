@@ -44,6 +44,7 @@ public class Client {
         // BaseDevice Specific Settings
         if (Settings.platform == PlatformType.Andorid) {
             try {
+                capabilities.setCapability("noSign", "true");
                 driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);
