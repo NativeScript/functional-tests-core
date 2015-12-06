@@ -20,10 +20,21 @@ public class Adb {
     private static final String emulatorPath = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "emulator";
 
     private static String runAdbCommand(String command) {
-        String output = OSUtils.runProcess(true, adbPath + " " + command);
+        String adbCommand = adbPath + " " + command;
+        String output = OSUtils.runProcess(true, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
-            output = OSUtils.runProcess(true, adbPath + " " + command);
+            output = OSUtils.runProcess(true, adbCommand);
+        }
+        return output;
+    }
+
+    private static String runAdbCommand(String deviceId, String command) {
+        String adbCommand = adbPath + " -s " + deviceId + " " + command;
+        String output = OSUtils.runProcess(true, adbCommand);
+        if (output.toLowerCase().contains("address already in use")) {
+            killAdbProcess();
+            output = OSUtils.runProcess(true, adbCommand);
         }
         return output;
     }
@@ -53,21 +64,21 @@ public class Adb {
     }
 
     public static List<String> getInstalledApps() {
-        String rowData = runAdbCommand("-s " + Settings.deviceId + " shell pm list packages");
+        String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages");
         String trimData = rowData.replace("package:", "");
         String[] list = trimData.split("\\r?\\n");
         return Arrays.asList(list);
     }
 
     public static void stopApp(String appId) {
-        String stopCommand = runAdbCommand("-s " + Settings.deviceId + " shell am force-stop " + appId);
+        String stopCommand = runAdbCommand(Settings.deviceId, "shell am force-stop " + appId);
         OSUtils.runProcess(true, stopCommand);
     }
 
     public static void uninstallApp(String appId) {
         stopApp(appId);
 
-        String uninstallResult = runAdbCommand("-s " + Settings.deviceId + " shell pm uninstall -k " + appId);
+        String uninstallResult = runAdbCommand(Settings.deviceId, "shell pm uninstall -k " + appId);
 
         if (uninstallResult.contains("Success")) {
             Log.info(appId + " successfully uninstalled.");
@@ -175,7 +186,7 @@ public class Adb {
 
             if ((currentTime - startTime) < timeOut * 1000) {
 
-                String rowData = runAdbCommand("-s " + Settings.deviceId + " shell dumpsys activity");
+                String rowData = runAdbCommand(deviceId, "shell dumpsys activity");
                 String[] list = rowData.split("\\r?\\n");
 
                 for (String line : list) {
@@ -203,7 +214,7 @@ public class Adb {
     }
 
     public static boolean isLocked(String deviceId) {
-        String output = OSUtils.runProcess(true, "adb -s " + deviceId + " shell dumpsys window windows");
+        String output = runAdbCommand(deviceId, "shell dumpsys window windows");
         if (output.contains("mDrawState=HAS_DRAWN mLastHidden=true")) {
             return true;
         } else {
@@ -212,6 +223,6 @@ public class Adb {
     }
 
     public static void unlock(String deviceId) {
-        OSUtils.runProcess(true, "adb -s " + deviceId + " shell input keyevent 82");
+        runAdbCommand(deviceId, "shell input keyevent 82");
     }
 }
