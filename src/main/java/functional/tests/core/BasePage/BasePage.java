@@ -24,6 +24,18 @@ public class BasePage {
     }
 
     /**
+     * Hide keyboard *
+     */
+    public static void hideKeyboard() {
+        try {
+            Client.driver.hideKeyboard();
+            Log.info("Hide heyboard.");
+        } catch (Exception e) {
+            Log.info("Soft keyboard not present.");
+        }
+    }
+
+    /**
      * Verify text visible *
      */
     public static void verifyTextVisible(String text) {

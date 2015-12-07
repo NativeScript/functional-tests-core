@@ -24,7 +24,7 @@ public class AndroidDevice {
         Adb.waitForDevice(Settings.deviceId, Settings.deviceBootTimeout);
         if (!Settings.isRealDevice) {
             // Wait until emulator boot
-            Adb.waitUntilEmulatorBoot(Settings.deviceName, Settings.deviceBootTimeout);
+            Adb.waitUntilEmulatorBoot(Settings.deviceId, Settings.deviceBootTimeout);
             // Unlock if locked
             if (Adb.isLocked(Settings.deviceId)) {
                 Log.info("Device is locked.");
