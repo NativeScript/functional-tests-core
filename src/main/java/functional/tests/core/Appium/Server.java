@@ -12,6 +12,7 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class Server {
 
@@ -50,24 +51,35 @@ public class Server {
             // Get appium path via appium-version-manager
             String appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
             // If appium is not instaled try to install it
-            if (appiumPath.contains("not installed")){
+            if (appiumPath.contains("not installed")) {
+                Log.info("Appium " + Settings.appiumVersion + " not found.");
                 String installAppium = OSUtils.runProcess(true, "avm " + Settings.appiumVersion);
-                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")){
+                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
                     String error = "Failed to install appium. Error: " + installAppium;
                     Log.fatal(error);
                     throw new AppiumException(error);
-                }
-                else if (installAppium.contains("installed : " + Settings.appiumVersion)){
+                } else if (installAppium.contains("installed : " + Settings.appiumVersion)) {
                     Log.info("Appium " + Settings.appiumVersion + " installed.");
                 }
                 appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
             }
 
+            String[] appiumPathLines = appiumPath.split("\\r?\\n");
+            Arrays.asList(appiumPathLines);
+            for (String line : appiumPathLines) {
+                if (line.contains("avm")) {
+                    appiumPath = line;
+                }
+            }
+
+
             File appiumExecutable = new File(appiumPath);
-            if (!appiumExecutable.exists()){
+            if (!appiumExecutable.exists()) {
                 String error = "Appium does not exist at: " + appiumPath;
                 Log.fatal(error);
                 throw new AppiumException(error);
+            } else {
+                Log.info("Appium Executable: " + appiumPath);
             }
 
             if (logFile.exists()) {
