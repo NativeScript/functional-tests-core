@@ -47,11 +47,29 @@ public class Server {
 
         // On Linux and OSX use appium version manager
         if ((Settings.OS == OSType.Linux) || (Settings.OS == OSType.MacOS)) {
-            // TODO: Use "avm bin <version>" to get path of appium executable
-            String appiumPath = "/usr/local/avm/versions/" +
-                    Settings.appiumVersion +
-                    "/node_modules/appium/bin/appium.js";
+            // Get appium path via appium-version-manager
+            String appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
+            // If appium is not instaled try to install it
+            if (appiumPath.contains("not installed")){
+                String installAppium = OSUtils.runProcess(true, "avm " + Settings.appiumVersion);
+                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")){
+                    String error = "Failed to install appium. Error: " + installAppium;
+                    Log.fatal(error);
+                    throw new AppiumException(error);
+                }
+                else if (installAppium.contains("installed : " + Settings.appiumVersion)){
+                    Log.info("Appium " + Settings.appiumVersion + " installed.");
+                }
+                appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
+            }
+
             File appiumExecutable = new File(appiumPath);
+            if (!appiumExecutable.exists()){
+                String error = "Appium does not exist at: " + appiumPath;
+                Log.fatal(error);
+                throw new AppiumException(error);
+            }
+
             if (logFile.exists()) {
                 serviceBuilder.withAppiumJS(appiumExecutable);
             } else {
