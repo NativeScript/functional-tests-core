@@ -38,9 +38,8 @@ public class BasePage {
                 Log.info("Soft keyboard not present.");
             }
         } else {
-            By doneButtonLocator = By.xpath("//UIAKeyboard/UIAButton[@name='" + "Done" + "']");
-            By returnButtonLocator = By.xpath("//UIAKeyboard/UIAButton[@name='" + "Return" + "']");
-
+            By doneButtonLocator = By.name("Done");
+            By returnButtonLocator = By.name("Return");
             MobileElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
             if (doneButton != null) {
                 ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
