@@ -7,31 +7,50 @@ import org.apache.commons.lang.reflect.FieldUtils;
 public class Element {
 
     /**
-     * Get String description of MobileElement
+     * Get text of MobileElement
      */
-    public static String getDescription(MobileElement element) {
-        String elementText = "";
-        String elementTag = "";
-
+    public static String getText(MobileElement element) {
+        String elementText = null;
         try {
             elementText = element.getText();
         } catch (Exception e) {
         }
+        return elementText;
+    }
+
+    /**
+     * Get text of MobileElement
+     */
+    public static String getTagName(MobileElement element) {
+        String tagName = null;
         try {
-            elementTag = element.getTagName();
+            tagName = element.getTagName();
         } catch (Exception e) {
         }
+        return tagName;
+    }
 
-        String elementCoordinates =
-                String.valueOf(element.getCenter().x)
-                        + ":" + String.valueOf(element.getCenter().y);
+    /**
+     * Get text of MobileElement
+     */
+    public static String getCoordinates(MobileElement element) {
+        return String.valueOf(element.getCenter().x) + ":" + String.valueOf(element.getCenter().y);
+    }
 
-        if (elementText != "") {
-            return elementText + " at " + elementCoordinates;
-        } else if (elementTag != "") {
-            return elementTag + " at " + elementCoordinates;
+    /**
+     * Get String description of MobileElement
+     */
+    public static String getDescription(MobileElement element) {
+        String elementText = getText(element);
+        if (elementText != null) {
+            return elementText;
         } else {
-            return "at " + elementCoordinates;
+            String elementTag = getTagName(element);
+            if (elementTag != null) {
+                return elementTag + " at " + getCoordinates(element);
+            } else {
+                return "Element at " + getCoordinates(element);
+            }
         }
     }
 
