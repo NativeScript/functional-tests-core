@@ -162,16 +162,6 @@ public class Adb {
                     if (device.contains(deviceId) && device.contains("device")) {
                         found = true;
                         break;
-                    } else if (Settings.deviceType == DeviceType.Emulator) {
-                        try {
-                            emulatorStartupLog = FileSystem.readFile(emulatorStartLogPath);
-                        } catch (IOException e) {
-                            Log.error("Failed to read emulator log: " + emulatorStartLogPath);
-                        }
-                        if (emulatorStartupLog.contains("ERROR")) {
-                            found = false;
-                            break;
-                        }
                     }
                 }
 
@@ -180,6 +170,17 @@ public class Adb {
                     break;
                 } else {
                     Log.info("Device " + deviceId + " not found. Wait...");
+
+                    try {
+                        emulatorStartupLog = FileSystem.readFile(emulatorStartLogPath);
+                    } catch (IOException e) {
+                        Log.error("Failed to read emulator log: " + emulatorStartLogPath);
+                    }
+
+                    if (emulatorStartupLog.contains("ERROR")) {
+                        break;
+                    }
+
                     Wait.sleep(3000);
                 }
             } else {
@@ -187,9 +188,10 @@ public class Adb {
                         + deviceId + " in " + String.valueOf(timeOut)
                         + " seconds.";
                 Log.fatal(error);
+
                 if (Settings.deviceType == DeviceType.Emulator) {
                     Log.separator();
-                    Log.error(emulatorStartupLog);
+                    Log.info(emulatorStartupLog);
                 }
 
                 throw new TimeoutException(error);

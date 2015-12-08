@@ -22,19 +22,26 @@ public class iOSDevice {
 
             // Create simulator specified by settings
             String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
-            Log.info("Result of create emulator: ");
-            Log.info(result);
             if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
                 Log.fatal("Failed to create simulator. Error: " + result);
                 throw new DeviceException("Failed to create simulator. Error: " + result);
             } else {
                 simulatorGuid = result;
+                Log.info("Simulator created: " + result);
             }
 
             // Verify simulator exists
             List<String> simulators = Simctl.getSimulatorsIdsByName(Settings.deviceName);
-            for (String sim : simulators) {
-                Log.info("Simulator exist: " + sim);
+            if (simulators.size() == 1) {
+                Log.info("Simulator " + Settings.deviceName + " exists.");
+            } else if (simulators.size() > 1) {
+                String error = "Ambiguous simulators. More than one simulator with name " + Settings.deviceName + " found.";
+                Log.fatal(error);
+                throw new DeviceException(error);
+            } else if (simulators.size() == 0) {
+                String error = "Simulator with name " + Settings.deviceName + " not found.";
+                Log.fatal(error);
+                throw new DeviceException(error);
             }
         }
     }
