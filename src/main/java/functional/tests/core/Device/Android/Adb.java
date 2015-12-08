@@ -1,13 +1,16 @@
 package functional.tests.core.Device.Android;
 
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +21,7 @@ public class Adb {
     private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
     private static final String androidPath = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "android";
     private static final String emulatorPath = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "emulator";
+    private static final String emulatorStartLogPath = Settings.baseLogDir + File.separator + "emulator.logs";
 
     private static String runAdbCommand(String command) {
         String adbCommand = adbPath + " " + command;
@@ -124,7 +128,7 @@ public class Adb {
         if (Settings.emulatorOptions != null) {
             command = command + " " + Settings.emulatorOptions;
         }
-        command = command + " &";
+        command = command + " > " + emulatorStartLogPath + " &";
         Log.info("Starting emulator with command: " + command);
         OSUtils.runProcess(false, command);
     }
@@ -149,6 +153,7 @@ public class Adb {
             boolean found = false;
             long currentTime = new Date().getTime();
 
+            String emulatorStartupLog = "";
             if ((currentTime - startTime) < timeOut * 1000) {
 
                 List<String> devices = getDevices();
@@ -157,6 +162,16 @@ public class Adb {
                     if (device.contains(deviceId) && device.contains("device")) {
                         found = true;
                         break;
+                    } else if (Settings.deviceType == DeviceType.Emulator) {
+                        try {
+                            emulatorStartupLog = FileSystem.readFile(emulatorStartLogPath);
+                        } catch (IOException e) {
+                            Log.error("Failed to read emulator log: " + emulatorStartLogPath);
+                        }
+                        if (emulatorStartupLog.contains("ERROR")) {
+                            found = false;
+                            break;
+                        }
                     }
                 }
 
@@ -172,6 +187,11 @@ public class Adb {
                         + deviceId + " in " + String.valueOf(timeOut)
                         + " seconds.";
                 Log.fatal(error);
+                if (Settings.deviceType == DeviceType.Emulator) {
+                    Log.separator();
+                    Log.error(emulatorStartupLog);
+                }
+
                 throw new TimeoutException(error);
             }
         }

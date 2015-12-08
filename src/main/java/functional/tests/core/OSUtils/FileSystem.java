@@ -5,6 +5,10 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by Dimitar on 10/10/2015.
@@ -36,5 +40,11 @@ public class FileSystem {
             file.mkdirs();
             Log.debug("Path  " + Path + " created.");
         }
+    }
+
+    public static String readFile(String templateName) throws IOException {
+        String path = templateName;
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, Charset.defaultCharset());
     }
 }

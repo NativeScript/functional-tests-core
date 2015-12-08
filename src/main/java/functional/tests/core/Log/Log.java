@@ -12,12 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+
+import static functional.tests.core.OSUtils.FileSystem.readFile;
 
 public class Log {
 
@@ -30,12 +29,6 @@ public class Log {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
         String timestamp = sdf.format(date);
         return String.format("%s %s - %s", timestamp, level, msg);
-    }
-
-    private static String readFile(String templateName) throws IOException {
-        String path = templateName;
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, Charset.defaultCharset());
     }
 
     private static String readResource(String resourcePath) throws IOException {

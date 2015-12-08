@@ -7,12 +7,13 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.testng.Assert;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class AndroidDevice {
 
-    public static void initDevice() throws TimeoutException, InterruptedException, DeviceException {
+    public static void initDevice() throws TimeoutException, DeviceException {
         if (!Settings.isRealDevice) {
             // Create emulator if create emulator options are available
             if (Settings.emulatorCreateOptions != null)
