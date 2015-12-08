@@ -31,16 +31,25 @@ public class iOSDevice {
             }
 
             // Verify simulator exists
-            List<String> simulators = Simctl.getSimulatorsIdsByName(Settings.deviceName);
-            if (simulators.size() == 1) {
+            String rowDevices = OSUtils.runProcess(true, "instruments -s");
+            String[] deviceList = rowDevices.split("\\r?\\n");
+
+            boolean found = false;
+            for(String device: deviceList){
+                if (device.contains("iP")) {
+                    Log.info(device);
+                }
+                if (device.contains(Settings.deviceName)){
+                    found = true;
+                }
+            }
+
+            if (found){
                 Log.info("Simulator " + Settings.deviceName + " exists.");
-            } else if (simulators.size() > 1) {
-                String error = "Ambiguous simulators. More than one simulator with name " + Settings.deviceName + " found.";
-                Log.fatal(error);
-                throw new DeviceException(error);
-            } else if (simulators.size() == 0) {
-                String error = "Simulator with name " + Settings.deviceName + " not found.";
-                Log.fatal(error);
+            }
+            else{
+                String error = "Simulator " + Settings.deviceName + " does not exist.";
+                Log.error(error);
                 throw new DeviceException(error);
             }
         }
