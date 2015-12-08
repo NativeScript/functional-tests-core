@@ -1,12 +1,15 @@
 package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.HideKeyboardStrategy;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
@@ -27,11 +30,28 @@ public class BasePage {
      * Hide keyboard *
      */
     public static void hideKeyboard() {
-        try {
-            Client.driver.hideKeyboard();
-            Log.info("Hide heyboard.");
-        } catch (Exception e) {
-            Log.info("Soft keyboard not present.");
+        if (Settings.platform == PlatformType.Andorid) {
+            try {
+                Client.driver.hideKeyboard();
+                Log.info("Hide heyboard.");
+            } catch (Exception e) {
+                Log.info("Soft keyboard not present.");
+            }
+        } else {
+            By doneButtonLocator = By.xpath("//UIAKeyboard/UIAButton[@name='" + "Done" + "']");
+            By returnButtonLocator = By.xpath("//UIAKeyboard/UIAButton[@name='" + "Return" + "']");
+
+            MobileElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
+            if (doneButton != null) {
+                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
+                Log.info("Hide keyboard with Done key.");
+            } else if (Find.findElementByLocator(returnButtonLocator, 1) != null) {
+                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Return");
+                Log.info("Hide keyboard with Return key.");
+            } else {
+                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.TAP_OUTSIDE);
+                Log.info("Hide keyboard with tap outside.");
+            }
         }
     }
 
