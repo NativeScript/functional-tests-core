@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class iOSDevice {
 
-    public static String simulatorGuid = null;
+    private static String simulatorGuid = null;
 
     public static void initDevice() throws DeviceException {
         if (Settings.deviceType == DeviceType.Simulator) {
@@ -22,11 +22,19 @@ public class iOSDevice {
 
             // Create simulator specified by settings
             String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
+            Log.info("Result of create emulator: ");
+            Log.info(result);
             if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
                 Log.fatal("Failed to create simulator. Error: " + result);
                 throw new DeviceException("Failed to create simulator. Error: " + result);
             } else {
                 simulatorGuid = result;
+            }
+
+            // Verify simulator exists
+            List<String> simulators = Simctl.getSimulatorsIdsByName(Settings.deviceName);
+            for (String sim : simulators) {
+                Log.info("Simulator exist: " + sim);
             }
         }
     }

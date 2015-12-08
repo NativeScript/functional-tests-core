@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Simctl {
 
-    private static List<String> getSimulatorsIdsByName(String deviceName) {
+    protected static List<String> getSimulatorsIdsByName(String deviceName) {
         String rowData = OSUtils.runProcess(true, "xcrun simctl list devices");
         String[] rowList = rowData.split("\\r?\\n");
 
@@ -29,7 +29,6 @@ public class Simctl {
 
     public static void deleteSimulator(String deviceName) {
         List<String> simulators = getSimulatorsIdsByName(deviceName);
-
         for (String sim : simulators) {
             Log.info("Delete " + deviceName + " simulator with id: " + sim);
             OSUtils.runProcess(true, "xcrun simctl delete " + sim);
@@ -37,7 +36,6 @@ public class Simctl {
     }
 
     public static String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
-
         Log.info("Create simulator with following command:");
         Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
         String output = OSUtils.runProcess(true, "xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
