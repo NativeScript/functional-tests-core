@@ -26,8 +26,16 @@ public abstract class BaseTest {
         BaseDevice.stopDevice();
         BaseDevice.initDevice();
         BaseDevice.initTestApp();
-        Server.initAppiumServer();
-        Client.initAppiumDriver();
+        try {
+            Server.initAppiumServer();
+            Client.initAppiumDriver();
+        } catch (Exception e) {
+            Log.info("Retry initializing appium server and client");
+            Client.stopAppiumDriver();
+            Server.stopAppiumServer();
+            Server.initAppiumServer();
+            Client.initAppiumDriver();
+        }
     }
 
     @BeforeMethod(alwaysRun = true)

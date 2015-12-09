@@ -1,6 +1,7 @@
 package functional.tests.core.Appium;
 
 import functional.tests.core.Enums.OSType;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
 
@@ -72,7 +74,6 @@ public class Server {
                 }
             }
 
-
             File appiumExecutable = new File(appiumPath);
             if (!appiumExecutable.exists()) {
                 String error = "Appium does not exist at: " + appiumPath;
@@ -89,6 +90,10 @@ public class Server {
                 Log.fatal(error);
                 throw new AppiumException(error);
             }
+        }
+
+        if (Settings.platform == PlatformType.iOS) {
+            serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
         }
 
         service = AppiumDriverLocalService.buildService(serviceBuilder);
