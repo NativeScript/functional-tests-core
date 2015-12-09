@@ -2,6 +2,7 @@ package functional.tests.core.Gestures;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.Element;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
@@ -32,6 +33,13 @@ public class Gestures {
     }
 
     public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+
+        // In iOS swipe with duration < 0.5 seconds is not possible
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration < 500) {
+                duration = 500;
+            }
+        }
 
         Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
