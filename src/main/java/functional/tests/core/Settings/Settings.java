@@ -141,6 +141,7 @@ public class Settings {
     }
 
     public static void initSettings() throws Exception {
+
         // Set locations and cleanup output folders
         setupLocations();
 
@@ -266,6 +267,16 @@ public class Settings {
             String error = "Can not run iOS tests on Windows and Linux";
             Log.fatal(error);
             throw new Exception(error);
+        }
+
+        // Verify ANDROID_HOME path
+        if (platform == PlatformType.Andorid) {
+            String androidHome = System.getenv("ANDROID_HOME");
+            if (androidHome == null) {
+                String error = "Please set ANDROID_HOME environment variable.";
+                Log.info(error);
+                throw new Exception(error);
+            }
         }
 
         Log.separator();
