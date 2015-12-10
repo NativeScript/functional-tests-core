@@ -1,5 +1,6 @@
 package functional.tests.core.Device;
 
+import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Device.Android.AndroidDevice;
 import functional.tests.core.Device.iOS.iOSDevice;
 import functional.tests.core.Enums.DeviceType;
@@ -9,6 +10,7 @@ import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +63,14 @@ public class BaseDevice {
             AndroidDevice.stopApps(uninstallAppsList());
         } else if (Settings.deviceType == DeviceType.iOS) {
             iOSDevice.stopApps(uninstallAppsList());
+        }
+    }
+
+    public static void pushFile(String deviceId, String localPath, String remotePath) throws Exception {
+        if (Settings.platform == PlatformType.Andorid) {
+            Adb.pushFile(deviceId, localPath, remotePath);
+        } else {
+            throw new NotImplementedException();
         }
     }
 }

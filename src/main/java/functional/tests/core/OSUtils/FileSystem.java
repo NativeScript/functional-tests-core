@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,5 +45,10 @@ public class FileSystem {
         String path = templateName;
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, Charset.defaultCharset());
+    }
+
+    public static boolean exist(String path) throws IOException {
+        File file = new File(path);
+        return file.exists();
     }
 }

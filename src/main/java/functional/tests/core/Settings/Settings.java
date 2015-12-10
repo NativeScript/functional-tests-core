@@ -48,6 +48,7 @@ public class Settings {
     public static String screenshotResDir;
     public static String appiumLogFile;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
+    public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
     public static final int fastTapDuration = 100;
     public static final int defaultTapDuration = 250;
@@ -305,6 +306,7 @@ public class Settings {
         Log.info("Log Output Folder: " + baseLogDir);
         Log.info("Screenshot Output Folder: " + screenshotOutDir);
         Log.info("Screenshot Resources Folder: " + screenshotResDir);
+        Log.info("TestData Base Folder: " + baseTestDataDir);
         Log.info("Appium Log File: " + appiumLogFile);
         Log.separator();
     }

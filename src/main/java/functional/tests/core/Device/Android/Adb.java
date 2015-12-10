@@ -1,7 +1,6 @@
 package functional.tests.core.Device.Android;
 
-import functional.tests.core.Enums.DeviceType;
-import functional.tests.core.Enums.OSType;
+import functional.tests.core.Enums.*;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
@@ -43,23 +42,23 @@ public class Adb {
         return output;
     }
 
-    private static List<String> getDevices() {
+    protected static List<String> getDevices() {
         String rowData = runAdbCommand("devices");
         String[] list = rowData.split("\\r?\\n");
         return Arrays.asList(list);
     }
 
-    public static void startAdb() {
+    protected static void startAdb() {
         Log.info("Start adb");
         runAdbCommand("start-server");
     }
 
-    public static void stopAdb() {
+    protected static void stopAdb() {
         Log.info("Stop adb");
         runAdbCommand("kill-server");
     }
 
-    public static void killAdbProcess() {
+    protected static void killAdbProcess() {
         if (Settings.OS == OSType.Windows) {
             OSUtils.stopProcess("adb.exe");
         } else {
@@ -67,19 +66,19 @@ public class Adb {
         }
     }
 
-    public static List<String> getInstalledApps() {
+    protected static List<String> getInstalledApps() {
         String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages");
         String trimData = rowData.replace("package:", "");
         String[] list = trimData.split("\\r?\\n");
         return Arrays.asList(list);
     }
 
-    public static void stopApp(String appId) {
+    protected static void stopApp(String appId) {
         String stopCommand = runAdbCommand(Settings.deviceId, "shell am force-stop " + appId);
         OSUtils.runProcess(true, stopCommand);
     }
 
-    public static void uninstallApp(String appId) {
+    protected static void uninstallApp(String appId) {
         stopApp(appId);
 
         String uninstallResult = runAdbCommand(Settings.deviceId, "shell pm uninstall -k " + appId);
@@ -92,7 +91,7 @@ public class Adb {
     }
 
     // If emulator with same name exists, do nothing, else create emulator
-    public static void createEmulator(String avdName, String options) throws DeviceException {
+    protected static void createEmulator(String avdName, String options) throws DeviceException {
 
         String avds = OSUtils.runProcess(true, androidPath + " list avds");
         if (avds.contains(avdName + ".avd")) {
@@ -123,7 +122,7 @@ public class Adb {
         }
     }
 
-    public static void startEmulator(String avdName, int port) {
+    protected static void startEmulator(String avdName, int port) {
         String command = emulatorPath + " -port " + port + " -avd " + avdName;
         if (Settings.emulatorOptions != null) {
             command = command + " " + Settings.emulatorOptions;
@@ -133,7 +132,7 @@ public class Adb {
         OSUtils.runProcess(false, command);
     }
 
-    public static void stopEmulator() {
+    protected static void stopEmulator() {
         if (Settings.OS == OSType.Windows) {
             OSUtils.stopProcess("emulator64-x86.exe");
             OSUtils.stopProcess("emulator-x86.exe");
@@ -146,7 +145,7 @@ public class Adb {
         Log.info("Emulator killed.");
     }
 
-    public static void waitForDevice(String deviceId, int timeOut) throws TimeoutException {
+    protected static void waitForDevice(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
         for (int i = 0; i < 999; i++) {
 
@@ -199,7 +198,7 @@ public class Adb {
         }
     }
 
-    public static void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
+    protected static void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
         for (int i = 0; i < 999; i++) {
 
@@ -246,5 +245,24 @@ public class Adb {
 
     public static void unlock(String deviceId) {
         runAdbCommand(deviceId, "shell input keyevent 82");
+    }
+
+    public static void pushFile(String deviceId, String localPath, String remotePath) throws Exception {
+        runAdbCommand(Settings.deviceId, "shell mount -o rw,remount -t rootfs /");
+        String localFilePath = Settings.baseTestDataDir + File.separator + localPath;
+        if (!FileSystem.exist(localFilePath)) {
+            String error = localPath + " does not exist.";
+            Log.error(error);
+            throw new Exception(error);
+        }
+        String output = runAdbCommand(deviceId, "push " + localFilePath + " " + remotePath);
+        if (output.contains("bytes in")) {
+            Log.info(localPath + " transferred to " + remotePath);
+        } else {
+            String error = "Failed to transfer " + localPath + " to " + remotePath;
+            Log.error(error);
+            Log.error("Error: " + output);
+            throw new Exception(error);
+        }
     }
 }

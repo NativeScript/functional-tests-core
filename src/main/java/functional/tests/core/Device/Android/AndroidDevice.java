@@ -5,9 +5,7 @@ import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import org.testng.Assert;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
