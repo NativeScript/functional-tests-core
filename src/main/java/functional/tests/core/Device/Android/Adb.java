@@ -248,21 +248,38 @@ public class Adb {
     }
 
     public static void pushFile(String deviceId, String localPath, String remotePath) throws Exception {
+
         runAdbCommand(Settings.deviceId, "shell mount -o rw,remount -t rootfs /");
+
+        // Verify remotePath
+        String remoteBasePath = remotePath.substring(0, remotePath.lastIndexOf("/"));
+        String sdcardFiles = runAdbCommand(Settings.deviceId, "shell ls -la " + remoteBasePath);
+        if (sdcardFiles.contains("No such file or directory")) {
+            String error = remoteBasePath + " does not exist.";
+            Log.error(error);
+            throw new Exception(error);
+        }
+
+        // Verify localPath
+        localPath = localPath.replace("/", File.separator);
+        localPath = localPath.replace("\\", File.separator);
         String localFilePath = Settings.baseTestDataDir + File.separator + localPath;
         if (!FileSystem.exist(localFilePath)) {
             String error = localPath + " does not exist.";
             Log.error(error);
             throw new Exception(error);
         }
+
+        // Push files
         String output = runAdbCommand(deviceId, "push " + localFilePath + " " + remotePath);
-        if (output.contains("bytes in")) {
-            Log.info(localPath + " transferred to " + remotePath);
-        } else {
+        Log.info(output);
+        if ((output.toLowerCase().contains("error")) || (output.toLowerCase().contains("failed"))) {
             String error = "Failed to transfer " + localPath + " to " + remotePath;
             Log.error(error);
             Log.error("Error: " + output);
             throw new Exception(error);
+        } else {
+            Log.info(localPath + " transferred to " + remotePath);
         }
     }
 }
