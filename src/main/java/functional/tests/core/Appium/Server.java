@@ -96,6 +96,11 @@ public class Server {
             serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
         }
 
+        // Set log level (if specified in config)
+        if (Settings.appiumLogLevel != null) {
+            serviceBuilder.withArgument(GeneralServerFlag.LOG_LEVEL, Settings.appiumLogLevel);
+        }
+
         service = AppiumDriverLocalService.buildService(serviceBuilder);
         service.start();
         Log.info("Appium server started.");

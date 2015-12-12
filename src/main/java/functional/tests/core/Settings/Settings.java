@@ -47,6 +47,7 @@ public class Settings {
     public static String screenshotOutDir;
     public static String screenshotResDir;
     public static String appiumLogFile;
+    public static String appiumLogLevel;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
     public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
@@ -186,6 +187,7 @@ public class Settings {
         emulatorCreateOptions = properties.getProperty("emulatorCreateOptions");
         simulatorType = properties.getProperty("simulatorType");
         appiumVersion = properties.getProperty("appiumVersion");
+        appiumLogLevel = properties.getProperty("appiumLogLevel");
 
         // Set restartApp
         String restartAppString = properties.getProperty("restartApp");
@@ -308,6 +310,7 @@ public class Settings {
         Log.info("Screenshot Resources Folder: " + screenshotResDir);
         Log.info("TestData Base Folder: " + baseTestDataDir);
         Log.info("Appium Log File: " + appiumLogFile);
+        Log.info("Appium Log File: " + appiumLogLevel);
         Log.separator();
     }
 }
