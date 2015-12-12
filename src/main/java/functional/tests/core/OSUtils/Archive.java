@@ -7,9 +7,6 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
 import java.io.*;
 
-/**
- * Created by Dimitar on 10/10/2015.
- */
 public class Archive {
 
     public static void extractArchive(File archive, File dest) throws IOException {

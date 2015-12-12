@@ -142,12 +142,12 @@ public class ImageVerification {
         if (VERIFICATION_TYPE == VerificationType.Skip) {
             Log.warn("Image comparison skipped!");
         } else if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {
-            Wait.sleep(1000); // Wait some time until animations finish
+            Wait.sleep(3000); // Wait some time until animations finish
             Log.warn("Image comparison skipped. Actual images will be also saved at expected image location.");
             FileSystem.makeDir(expectedImageBasePath);
             ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
         } else if (VERIFICATION_TYPE == VerificationType.JustCapture) {
-            Wait.sleep(1000); // Wait some time until animations finish
+            Wait.sleep(3000); // Wait some time until animations finish
             Log.warn("Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
             FileSystem.makeDir(Settings.screenshotOutDir + File.separator + "actual");
             ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + pageName + ".png");

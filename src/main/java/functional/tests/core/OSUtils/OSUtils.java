@@ -1,18 +1,15 @@
 package functional.tests.core.OSUtils;
 
 import functional.tests.core.Enums.OSType;
+import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-/**
- * Created by Dimitar on 10/10/2015.
- */
 public class OSUtils {
 
-    public static String logPrefix;
     private static final String[] WIN_RUNTIME = {"cmd.exe", "/C"};
     private static final String[] OS_LINUX_RUNTIME = {"/bin/bash", "-l", "-c"};
 
@@ -36,7 +33,6 @@ public class OSUtils {
         try {
             if (Settings.OS == OSType.Windows) {
                 allCommand = concat(WIN_RUNTIME, command);
-                //allCommand = command;
             } else {
                 allCommand = concat(OS_LINUX_RUNTIME, command);
             }
@@ -60,17 +56,15 @@ public class OSUtils {
 
                 p.waitFor();
 
-                //Logger.logDebug("Execute command: " + finalCommand);
-                //Logger.logDebug("Result: " + output.toString());
+                Log.debug("Execute command: " + finalCommand);
+                Log.trace("Result: " + output.toString());
 
                 return output.toString();
             } else {
-                //Logger.logDebug("Execute command: " + finalCommand);
                 return null;
             }
 
         } catch (Exception e) {
-            //Logger.logError("Failed to execute command:" + finalCommand);
             e.printStackTrace();
             return null;
         }
@@ -94,7 +88,7 @@ public class OSUtils {
                 }
             }
         } catch (Exception e) {
-            //Logger.logError("Failed to stop process with name: " + name);
+            Log.debug("Failed to stop process: " + name);
         }
     }
 }

@@ -9,9 +9,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/**
- * Created by Dimitar on 10/10/2015.
- */
 public class FileSystem {
 
     public static void deletePath(String Path) throws IOException {
