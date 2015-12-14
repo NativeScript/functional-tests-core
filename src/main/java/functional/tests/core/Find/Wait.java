@@ -13,62 +13,35 @@ import java.util.List;
 
 public class Wait {
 
-    // Timeout in seconds
-    // retryPeriod in miliseconds
-    public static boolean waitForVisible(By locator, int timeOut, int retryPeriod, boolean failOnNotVisible) {
-        Client.setWait(1);
-        long startTime = (new Date()).getTime();
-        boolean found = false;
-
-        for (int i = 0; i < 1000; i++) {
-            if (retryPeriod > 0) {
-                Wait.sleep(retryPeriod);
-            }
-
-            long currentTime = (new Date()).getTime();
-            if (currentTime - startTime < (long) (timeOut * 1000)) {
-                List<MobileElement> elements = null;
-                try {
-                    elements = Find.findElementsByLocator(locator);
-                } catch (Exception e) {
-                }
-                if ((elements != null) && (elements.size() != 0)) {
-                    found = true;
-                    break;
-                }
-
-                Log.debug("Element does not exist: " + locator.toString());
-            }
-        }
-
-        Client.setWait(Settings.defaultTimeout);
-        if (found) {
-            Log.debug("Element found: " + locator.toString());
-        } else {
-            String error = "Element not found: " + locator.toString();
-            Log.error(error);
-            if (failOnNotVisible) {
-                Assert.fail(error);
-            }
-        }
-
-        return found;
-    }
-
     public static boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
-        return waitForVisible(locator, timeOut, Settings.defaultTapDuration, failOnNotVisible);
+        Client.setWait(timeOut);
+        MobileElement result;
+        try {
+            result = Find.findElementByLocator(locator);
+        } catch (Exception e) {
+            result = null;
+        }
+        Client.setWait(Settings.defaultTimeout);
+        if (result != null) {
+            return true;
+        } else {
+            if (failOnNotVisible) {
+                Assert.fail("Failed to find element: " + locator.toString());
+            }
+            return false;
+        }
     }
 
     public static boolean waitForVisible(By locator, boolean failOnNotVisible) {
-        return waitForVisible(locator, Settings.defaultTimeout, Settings.defaultTapDuration, failOnNotVisible);
+        return waitForVisible(locator, Settings.defaultTimeout, failOnNotVisible);
     }
 
-    public static boolean waitForVisible(By locator) throws AppiumException {
-        return waitForVisible(locator, Settings.defaultTimeout, Settings.defaultTapDuration, false);
+    public static boolean waitForVisible(By locator) {
+        return waitForVisible(locator, Settings.defaultTimeout, false);
     }
 
     public static boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) {
-        Client.setWait(0);
+        Client.setWait(1);
         long startTime = new Date().getTime();
         boolean found = true;
         for (int i = 0; i < 1000; i++) {
@@ -101,7 +74,7 @@ public class Wait {
         return found;
     }
 
-    public static boolean waitForNotVisible(By locator, boolean failOnVisible) throws AppiumException {
+    public static boolean waitForNotVisible(By locator, boolean failOnVisible) {
         return waitForNotVisible(locator, Settings.shortTimeout, failOnVisible);
     }
 

@@ -246,7 +246,7 @@ public class Settings {
             defaultTimeout = 30;
         }
 
-        shortTimeout = defaultTimeout / 7;
+        shortTimeout = defaultTimeout / 5;
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         String deviceBootTimeoutString = properties.getProperty("deviceBootTimeout");
