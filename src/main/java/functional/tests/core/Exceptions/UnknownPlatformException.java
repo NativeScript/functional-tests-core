@@ -1,5 +1,7 @@
 package functional.tests.core.Exceptions;
 
+import functional.tests.core.Log.Log;
+
 /**
  * Created by Dimitar on 10/26/2015.
  */

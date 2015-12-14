@@ -127,21 +127,6 @@ public class Settings {
         }
     }
 
-    private static void verifyTestAppPath() throws FileNotFoundException {
-        File appDir = new File(baseTestAppDir);
-        File app = new File(appDir, Settings.testAppName);
-
-        if (deviceType == DeviceType.Simulator) {
-            app = new File(appDir, Settings.testAppArchive);
-        }
-
-        if (!app.exists()) {
-            String message = "Failed to find test app: " + app.getAbsolutePath();
-            Log.fatal(message);
-            throw new FileNotFoundException(message);
-        }
-    }
-
     public static void initSettings() throws Exception {
 
         // Set locations and cleanup output folders
@@ -156,19 +141,9 @@ public class Settings {
 
         properties = readProperties();
 
-        // Get mobile platform and verify it
         platform = getPlatformType();
-        if ((platform == PlatformType.Other)) {
-            Log.fatal("Unknown mobile platform.");
-            throw new UnknownPlatformException("Unknown mobile platform.");
-        }
-
-        // Get device type and verify it
         deviceType = getDeviceType();
-        if ((deviceType == DeviceType.Other)) {
-            Log.fatal("Unknown device platform.");
-            throw new UnknownDeviceTypeException("Unknown device type.");
-        }
+
 
         // Set isRealDevice
         if ((deviceType == DeviceType.Simulator) || (deviceType == DeviceType.Emulator)) {
@@ -260,27 +235,13 @@ public class Settings {
             deviceBootTimeout = defaultTimeout;
         }
 
-        // Verify app under tests exists
-        verifyTestAppPath();
+        // Verify setup is correct
+        Doctor.verifyAndroidHome();
+        Doctor.verifyMobileOS();
+        Doctor.verifyDeviceType();
+        Doctor.verifyTestAppPath();
+        Doctor.verifyOSTypeAndMobilePlatform();
 
-        // Verify OS and Mobile Platform
-        if ((platform == PlatformType.iOS) && (OS != OSType.MacOS))
-
-        {
-            String error = "Can not run iOS tests on Windows and Linux";
-            Log.fatal(error);
-            throw new Exception(error);
-        }
-
-        // Verify ANDROID_HOME path
-        if (platform == PlatformType.Andorid) {
-            String androidHome = System.getenv("ANDROID_HOME");
-            if (androidHome == null) {
-                String error = "Please set ANDROID_HOME environment variable.";
-                Log.info(error);
-                throw new Exception(error);
-            }
-        }
 
         Log.separator();
         Log.info("Settings  initialized properly:");
