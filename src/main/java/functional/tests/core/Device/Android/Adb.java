@@ -1,6 +1,7 @@
 package functional.tests.core.Device.Android;
 
-import functional.tests.core.Enums.*;
+import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Enums.OSType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
@@ -32,14 +33,18 @@ public class Adb {
         return output;
     }
 
-    private static String runAdbCommand(String deviceId, String command) {
+    private static String runAdbCommand(String deviceId, String command, boolean waitFor) {
         String adbCommand = adbPath + " -s " + deviceId + " " + command;
-        String output = OSUtils.runProcess(true, adbCommand);
+        String output = OSUtils.runProcess(waitFor, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
             output = OSUtils.runProcess(true, adbCommand);
         }
         return output;
+    }
+
+    private static String runAdbCommand(String deviceId, String command) {
+        return runAdbCommand(deviceId, command, true);
     }
 
     protected static List<String> getDevices() {

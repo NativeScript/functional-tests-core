@@ -1,5 +1,6 @@
 package functional.tests.core.Device;
 
+import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Device.Android.AndroidDevice;
 import functional.tests.core.Device.iOS.iOSDevice;
@@ -10,9 +11,11 @@ import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
+import org.openqa.selenium.logging.LogEntry;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -72,5 +75,20 @@ public class BaseDevice {
         } else {
             throw new NotImplementedException();
         }
+    }
+
+    public static void cleanConsoleLog() {
+        Client.driver.manage().logs().get("logcat");
+    }
+
+    public static void getConsoleLog(String fileName) throws IOException {
+        List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
+        String logLocation = Settings.consoleLogDir + File.separator + "console_" + fileName + ".log";
+        FileWriter writer = new FileWriter(logLocation);
+        for (LogEntry log : logEntries) {
+            writer.write(log.toString());
+            writer.write(System.lineSeparator());
+        }
+        writer.close();
     }
 }

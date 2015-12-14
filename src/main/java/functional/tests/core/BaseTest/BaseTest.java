@@ -6,13 +6,16 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
+import java.io.*;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public abstract class BaseTest {
 
@@ -36,6 +39,9 @@ public abstract class BaseTest {
             Server.initAppiumServer();
             Client.initAppiumDriver();
         }
+
+        // Clean old logs
+        BaseDevice.cleanConsoleLog();
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -66,10 +72,13 @@ public abstract class BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown(ITestResult result) {
+    public void tearDown(ITestResult result) throws IOException {
 
         // Get test case name
         String testCase = result.getMethod().getMethodName();
+
+        // Write console log
+        BaseDevice.getConsoleLog(testCase);
 
         // Report results
         previousTestStatus = result.getStatus();

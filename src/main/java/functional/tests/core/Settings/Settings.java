@@ -3,15 +3,16 @@ package functional.tests.core.Settings;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
-import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownOSException;
-import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Settings {
@@ -44,6 +45,7 @@ public class Settings {
     public static String emulatorCreateOptions;
     public static String simulatorType;
     public static String baseLogDir;
+    public static String consoleLogDir;
     public static String screenshotOutDir;
     public static String screenshotResDir;
     public static String appiumLogFile;
@@ -74,6 +76,7 @@ public class Settings {
 
     private static void setupLocations() throws IOException {
         baseLogDir = baseOutputDir + File.separator + "logs";
+        consoleLogDir = baseLogDir + File.separator + "console";
         screenshotOutDir = baseOutputDir + File.separator + "screenshots";
         screenshotResDir = baseResourcesDir + File.separator + "images";
         appiumLogFile = baseLogDir + File.separator + "appium.log";
@@ -84,6 +87,17 @@ public class Settings {
             FileUtils.cleanDirectory(baseScreenshotDirLocation);
         } catch (IOException e) {
             Log.fatal("Failed to cleanup and create screenshot output folder.");
+            throw new IOException(e);
+        }
+
+        try {
+            File baseLogDirLocation = new File(baseLogDir);
+            baseLogDirLocation.mkdirs();
+            File consoleLogDirLocation = new File(consoleLogDir);
+            consoleLogDirLocation.mkdirs();
+            FileUtils.cleanDirectory(consoleLogDirLocation);
+        } catch (IOException e) {
+            Log.fatal("Failed to cleanup and create logs folder.");
             throw new IOException(e);
         }
     }
