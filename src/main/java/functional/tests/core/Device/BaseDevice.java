@@ -78,17 +78,42 @@ public class BaseDevice {
     }
 
     public static void cleanConsoleLog() {
-        Client.driver.manage().logs().get("logcat");
+        if (Settings.platform == PlatformType.Andorid) {
+            Client.driver.manage().logs().get("logcat");
+        } else {
+            Client.driver.manage().logs().get("syslog");
+            Client.driver.manage().logs().get("crashlog");
+        }
     }
 
     public static void getConsoleLog(String fileName) throws IOException {
-        List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
-        String logLocation = Settings.consoleLogDir + File.separator + "console_" + fileName + ".log";
-        FileWriter writer = new FileWriter(logLocation);
-        for (LogEntry log : logEntries) {
-            writer.write(log.toString());
-            writer.write(System.lineSeparator());
+        if (Settings.platform == PlatformType.Andorid) {
+            List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
+            String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
+            FileWriter writer = new FileWriter(logLocation);
+            for (LogEntry log : logEntries) {
+                writer.write(log.toString());
+                writer.write(System.lineSeparator());
+            }
+            writer.close();
+        } else {
+            List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
+            String logLocation = Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log";
+            FileWriter writer = new FileWriter(logLocation);
+            for (LogEntry log : logEntries) {
+                writer.write(log.toString());
+                writer.write(System.lineSeparator());
+            }
+            writer.close();
+
+            logEntries = Client.driver.manage().logs().get("crashlog").getAll();
+            logLocation = Settings.consoleLogDir + File.separator + "crashlog_" + fileName + ".log";
+            writer = new FileWriter(logLocation);
+            for (LogEntry log : logEntries) {
+                writer.write(log.toString());
+                writer.write(System.lineSeparator());
+            }
+            writer.close();
         }
-        writer.close();
     }
 }

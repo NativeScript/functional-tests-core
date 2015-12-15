@@ -9,6 +9,7 @@ import functional.tests.core.Settings.Settings;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
+import io.appium.java_client.service.local.flags.IOSServerFlag;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +95,8 @@ public class Server {
 
         if (Settings.platform == PlatformType.iOS) {
             serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
+            serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
+            serviceBuilder.withArgument(IOSServerFlag.SHOW_SIMULATOR_LOG);
         }
 
         // Set log level (if specified in config)
