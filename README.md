@@ -1,27 +1,49 @@
 Functional Tests - Core Framework
 =======================
 
-Sample Java Project to show use of OpenCV and Akaze algorithm to run image recognition tests using Appium.
-Sample application can be found from https://github.com/bitbar/testdroid-samples/blob/master/apps/builds/Testdroid.apk
+General purpose automation framework for native, hybrid and (soon) mobile web apps.
+Framework is based on [Appium] (http://appium.io/), [Java] (https://www.java.com/en/download/) and [TestNG] (http://testng.org/doc/index.html).
 
+Core principles:
+ - Do not modify app under test
+ - Use open source tools
+ - Run on emulators, simulators and real devices
+ - Cross platform testing with same (or almost same) code
+ - Support all gestures like tap, swipe, pinch, zoom
+ - Provide image comparison options
+ - Provide nice HTML reports with test steps, images and device logs
 
-Info on OpencCV and Akaze
+Features and Issues
 =======================
+All work-items (issues, features, questions) are handles in GitHub [repo] (https://github.com/NativeScript/functional-tests-core/issues) of the Functional Tests Core.
 
-The Akaze algorithm (https://github.com/pablofdezalc/akaze) is used to find the matching keypoints from two images and save them to a json file. 
-The opencv (http://opencv.org/) java bindings to process the json file with keypoints and find the homography of the wanted image in a scene (screenshot).
+Milestones
+=======================
+Main focus by milestones:
 
-The ImageFinder.java class will run "akaze_match", then use the keypoints from json to try to identify a given image inside a scene and return the corners of the image found. 
+Alfa:
+- Manage infrastructure (install Appium, create simulators and emulators)
+- Base Find and Wait API
+- Capture device console log
+- Image comparison
+- Html reporting
+
+Beta:
+- Polish alfa features
+- Initial version of find by images API
+
+Official:
+- Publish to Maven central repository
+- Polished find by images API
+- Windows support (this will depend on tooling like [Winium] (https://github.com/2gis/Winium))
 
 Prerequisites
 =======================
 * The latest stable [Node.js] (https://nodejs.org/)
 * [JDK 8][JDK 8]
 * [Android SDK][Android SDK] 
-	Note: Make sure 
 * [Latest Xcode][Xcode]
 * [Xcode command-line tools][Xcode]
-
 
 Environment Setup
 =======================
@@ -58,6 +80,7 @@ Install Appium with appium-version-manager:
 ```
 avm <version-you-need>
 ```
+Note: Appium version specified in test config will be automatically installed if not present
 
 2. Setup Android Emulators
 
