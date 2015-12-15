@@ -2,6 +2,7 @@ Functional Tests - Core Framework
 =======================
 
 General purpose automation framework for native, hybrid and (soon) mobile web apps.
+
 Framework is based on [Appium] (http://appium.io/), [Java] (https://www.java.com/en/download/) and [TestNG] (http://testng.org/doc/index.html).
 
 Core principles:
