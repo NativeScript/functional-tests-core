@@ -16,7 +16,7 @@ Core principles:
 
 Features and Issues
 =======================
-All work-items (issues, features, questions) are handles in GitHub [repo] (https://github.com/NativeScript/functional-tests-core/issues) of the Functional Tests Core.
+All work-items (issues, features, questions) are handled in GitHub [repo] (https://github.com/NativeScript/functional-tests-core/issues) of the Functional Tests Core.
 
 Milestones
 =======================
@@ -45,6 +45,7 @@ Prerequisites
 * [Android SDK][Android SDK] 
 * [Latest Xcode][Xcode]
 * [Xcode command-line tools][Xcode]
+
 
 Environment Setup
 =======================
@@ -86,6 +87,7 @@ Note: Appium version specified in test config will be automatically installed if
 2. Setup Android Emulators
 
 3. Setup iOS Simulators
+
 
 Installing dependencies
 =======================
