@@ -175,6 +175,67 @@ public class ImageVerification {
     /**
      * Verify current screen
      **/
+    public static void waitForScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws AppiumException, IOException, ImageVerificationException {
+
+        BufferedImage expectedImage = null;
+
+        String expectedImageBasePath = Settings.screenshotResDir + File.separator +
+                appName + File.separator +
+                Settings.deviceName;
+
+        String expectedImagePath = expectedImageBasePath + File.separator + pageName + ".png";
+
+        if (VERIFICATION_TYPE == VerificationType.Skip) {
+            Log.warn("Image comparison skipped!");
+        } else if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
+            Log.warn("Image comparison skipped. Actual images will be also saved at expected image location.");
+            FileSystem.makeDir(expectedImageBasePath);
+            BufferedImage actualImage = ImageUtils.getScreen();
+            ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
+        } else if (VERIFICATION_TYPE == VerificationType.JustCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
+            Log.warn("Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
+            FileSystem.makeDir(Settings.screenshotOutDir + File.separator + "actual");
+            BufferedImage actualImage = ImageUtils.getScreen();
+            ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + pageName + ".png");
+        } else if (VERIFICATION_TYPE == VerificationType.Default) {
+            expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
+            if (expectedImage == null) {
+                Wait.sleep(1000); // Wait some time until animations finish
+                Log.error("Failed to read expected image, image comparison skipped.");
+                Log.info("Actual images will be also saved at expected image location.");
+                FileSystem.makeDir(expectedImageBasePath);
+                BufferedImage actualImage = ImageUtils.getScreen();
+                ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
+            } else {
+                ImageVerificationResult result = null;
+                long startTime = System.currentTimeMillis();
+                while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
+                    BufferedImage actualImage = ImageUtils.getScreen();
+                    result = compareImages(actualImage, expectedImage);
+                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
+                        String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Wait..";
+                        Log.info(errorString);
+                        Wait.sleep(1000);
+                    } else {
+                        break;
+                    }
+                }
+
+                Log.logImageVerificationResult(result, pageName);
+                if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
+                    String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
+                    Log.error(errorString);
+                    Assert.fail(errorString);
+                }
+            }
+        }
+    }
+
+    /**
+     * Verify current screen
+     **/
     public static void verifyScreen(String appName, String pageName, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
         verifyScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance);
     }
@@ -197,8 +258,21 @@ public class ImageVerification {
      * Wait until screen looks OK
      **/
     public static void waitForScreen(String appName, String pageName) throws AppiumException, IOException, ImageVerificationException {
-        // Verify Screen until it looks OK
-        //verifyScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE);
+        waitForScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE, Settings.defaultTimeout);
+    }
+
+    /**
+     * Wait until screen looks OK
+     **/
+    public static void waitForScreen(String appName, String pageName, double percentTolerance, int timeOut) throws AppiumException, IOException, ImageVerificationException {
+        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, timeOut);
+    }
+
+    /**
+     * Wait until screen looks OK
+     **/
+    public static void waitForScreen(String appName, String pageName, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
+        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, Settings.defaultTimeout);
     }
 
     /**
