@@ -8,6 +8,7 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
+import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
@@ -78,11 +79,15 @@ public class BaseDevice {
     }
 
     public static void cleanConsoleLog() {
-        if (Settings.platform == PlatformType.Andorid) {
-            Client.driver.manage().logs().get("logcat");
-        } else {
-            Client.driver.manage().logs().get("syslog");
-            Client.driver.manage().logs().get("crashlog");
+        try {
+            if (Settings.platform == PlatformType.Andorid) {
+                Client.driver.manage().logs().get("logcat");
+            } else {
+                Client.driver.manage().logs().get("syslog");
+                Client.driver.manage().logs().get("crashlog");
+            }
+        } catch (Exception e) {
+            Log.warn("Failed to cleanup logs.");
         }
     }
 
@@ -97,23 +102,35 @@ public class BaseDevice {
             }
             writer.close();
         } else {
-            List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
-            String logLocation = Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log";
-            FileWriter writer = new FileWriter(logLocation);
-            for (LogEntry log : logEntries) {
-                writer.write(log.toString());
-                writer.write(System.lineSeparator());
+            try {
+                List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
+                if (logEntries.size() >= 1) {
+                    String logLocation = Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log";
+                    FileWriter writer = new FileWriter(logLocation);
+                    for (LogEntry log : logEntries) {
+                        writer.write(log.toString());
+                        writer.write(System.lineSeparator());
+                    }
+                    writer.close();
+                }
+            } catch (Exception e) {
+                Log.warn("Failed to get syslog.");
             }
-            writer.close();
 
-            logEntries = Client.driver.manage().logs().get("crashlog").getAll();
-            logLocation = Settings.consoleLogDir + File.separator + "crashlog_" + fileName + ".log";
-            writer = new FileWriter(logLocation);
-            for (LogEntry log : logEntries) {
-                writer.write(log.toString());
-                writer.write(System.lineSeparator());
+            try {
+                List<LogEntry> logEntries = Client.driver.manage().logs().get("crashlog").getAll();
+                if (logEntries.size() >= 1) {
+                    String logLocation = Settings.consoleLogDir + File.separator + "crashlog_" + fileName + ".log";
+                    FileWriter writer = new FileWriter(logLocation);
+                    for (LogEntry log : logEntries) {
+                        writer.write(log.toString());
+                        writer.write(System.lineSeparator());
+                    }
+                    writer.close();
+                }
+            } catch (Exception e) {
+                Log.warn("Failed to get crashlog.");
             }
-            writer.close();
         }
     }
 }

@@ -153,13 +153,21 @@ public class ImageVerification {
             ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + pageName + ".png");
         } else if (VERIFICATION_TYPE == VerificationType.Default) {
             expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
-            ImageVerificationResult result = compareImages(actualImage, expectedImage);
+            if (expectedImage == null) {
+                Wait.sleep(1000); // Wait some time until animations finish
+                Log.error("Failed to read expected image, image comparison skipped.");
+                Log.info("Actual images will be also saved at expected image location.");
+                FileSystem.makeDir(expectedImageBasePath);
+                ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
+            } else {
+                ImageVerificationResult result = compareImages(actualImage, expectedImage);
 
-            Log.logImageVerificationResult(result, pageName);
-            if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
-                Log.error(errorString);
-                Assert.fail(errorString);
+                Log.logImageVerificationResult(result, pageName);
+                if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
+                    String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
+                    Log.error(errorString);
+                    Assert.fail(errorString);
+                }
             }
         }
     }

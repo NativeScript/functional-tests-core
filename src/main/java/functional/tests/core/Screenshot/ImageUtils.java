@@ -27,12 +27,17 @@ public class ImageUtils {
 
     /**
      * Get image from file.
+     * Returns null if image does not exist.
      */
-    protected static BufferedImage getImageFromFile(String filePath)
-            throws IOException {
+    protected static BufferedImage getImageFromFile(String filePath) {
         File file = new File(filePath);
         Log.debug("Read expected image from: " + file.getAbsolutePath());
-        return ImageIO.read(file);
+        try {
+            return ImageIO.read(file);
+        } catch (IOException e) {
+            Log.error("Failed to read image: " + filePath);
+            return null;
+        }
     }
 
     /**
