@@ -6,14 +6,36 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Dimitar on 10/9/2015.
- */
 public class iOSDevice {
 
     private static String simulatorGuid = null;
+
+    private static void uninstallApp(String appId) {
+        String uninstallResult = OSUtils.runProcess(true, "ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
+        if (uninstallResult.contains("Complete")) {
+            Log.info(appId + " successfully uninstalled.");
+        } else {
+            Log.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+        }
+    }
+
+    private static List<String> getInstalledApps() {
+        String rowData = OSUtils.runProcess(true, "ideviceinstaller -u " + Settings.deviceId + " -l");
+        String trimData = rowData.replace("package:", "");
+        String[] rowList = trimData.split("\\r?\\n");
+        List<String> list = new ArrayList<>();
+        for (String item : rowList) {
+            if (item.contains(".") && item.contains("-")) {
+                String rowAppId = item.replace(" ", "");
+                String appId = rowAppId.split("-")[0];
+                list.add(appId);
+            }
+        }
+        return list;
+    }
 
     public static void initDevice() throws DeviceException {
         if (Settings.deviceType == DeviceType.Simulator) {
@@ -35,19 +57,18 @@ public class iOSDevice {
             String[] deviceList = rowDevices.split("\\r?\\n");
 
             boolean found = false;
-            for(String device: deviceList){
+            for (String device : deviceList) {
                 if (device.contains("iP")) {
                     Log.info(device);
                 }
-                if (device.contains(Settings.deviceName)){
+                if (device.contains(Settings.deviceName)) {
                     found = true;
                 }
             }
 
-            if (found){
+            if (found) {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
-            }
-            else{
+            } else {
                 String error = "Simulator " + Settings.deviceName + " does not exist.";
                 Log.error(error);
                 throw new DeviceException(error);
@@ -68,6 +89,14 @@ public class iOSDevice {
     }
 
     public static void uninstallApps(List<String> uninstallAppsList) {
+        List<String> installedApps = getInstalledApps();
 
+        for (String appToUninstall : uninstallAppsList) {
+            for (String appId : installedApps) {
+                if (appId.contains(appToUninstall)) {
+                    uninstallApp(appId);
+                }
+            }
+        }
     }
 }

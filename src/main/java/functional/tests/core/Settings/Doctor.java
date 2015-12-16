@@ -6,6 +6,7 @@ import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.OSUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +62,18 @@ public class Doctor {
             String androidHome = System.getenv("ANDROID_HOME");
             if (androidHome == null) {
                 String error = "Please set ANDROID_HOME environment variable.";
-                Log.info(error);
+                Log.fatal(error);
+                throw new Exception(error);
+            }
+        }
+    }
+
+    // Verify ideviceinstaller is avalable (only for iOS real devices)
+    protected static void verifyIdeviceinstaller() throws Exception{
+        if (Settings.deviceType == DeviceType.iOS) {
+            String output = OSUtils.runProcess(true, "ideviceinstaller");
+            if (!output.contains("Manage apps on iOS devices")){
+                String error = "Please install or repair ideviceinstaller. Error: " + output;
                 throw new Exception(error);
             }
         }

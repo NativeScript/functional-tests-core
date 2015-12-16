@@ -255,7 +255,7 @@ public class Settings {
         Doctor.verifyDeviceType();
         Doctor.verifyTestAppPath();
         Doctor.verifyOSTypeAndMobilePlatform();
-
+        Doctor.verifyIdeviceinstaller();
 
         Log.separator();
         Log.info("Settings  initialized properly:");
