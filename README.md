@@ -1,5 +1,4 @@
 # Functional Tests - Core Framework
-=======================
 
 General purpose automation framework for native, hybrid and (soon) mobile web apps.
 
@@ -15,11 +14,9 @@ Core principles:
  - Provide nice HTML reports with test steps, images and device logs
 
 ## Features and Issues
-=======================
 All work-items (issues, features, questions) are handled in GitHub [repo] (https://github.com/NativeScript/functional-tests-core/issues) of the Functional Tests Core.
 
 ## Milestones
-=======================
 Main focus by milestones:
 
 ### Alfa:
@@ -39,7 +36,6 @@ Main focus by milestones:
 - Windows support (this will depend on tooling like [Winium] (https://github.com/2gis/Winium))
 
 ## Prerequisites
-=======================
 * The latest stable [Node.js] (https://nodejs.org/)
 * [JDK 8][JDK 8]
 * (Android only)[Android SDK][Android SDK] 
@@ -48,7 +44,7 @@ Main focus by milestones:
 * (iOS real devices only)[ideviceinstaller] (https://github.com/libimobiledevice/ideviceinstaller)
 
 ## Environment Setup
-=======================
+
 ### 1. Setup Environment Variables
 If not present, create the following environment variables.
 
@@ -94,7 +90,6 @@ Note: Appium version specified in test config will be automatically installed if
 ```
 
 ## Installing dependencies
-=======================
 
 ### 1. OpenCV
 The OpenCV java libs can be found from project_root/opencv-2.4.9. To install them in maven, run:
@@ -106,7 +101,6 @@ All other dependencies are fetched by Maven
 
 
 ## Build and run tests
-=======================
 
 **Run from command line with Maven**
 
@@ -126,7 +120,7 @@ mvn clean -Dtest=GetUser#get*Returns* test
 Place this in Vm options: -DappConfig=/resources/config/cuteness.emu.api19.properties.txt
 
 ## Test results
-=======================
+
 **HTML Report**
 - Screenshots for each steps are stored at project_root/screenshot locally
 - Screenshots for image matching are stored at project_root/target/reports/deviceName/screenshots locally
@@ -139,13 +133,12 @@ Place this in Vm options: -DappConfig=/resources/config/cuteness.emu.api19.prope
 
 
 ## Test results
-=======================
 
 http://www.appbrain.com/stats/top-android-phones
 https://testobject.com/blog/2014/07/top-10-android-devices-to-test-your-app-on-2.html
 
 ## Tips and Hints
-=======================
+
 **Clean image history**
 git filter-branch --index-filter 'git rm --ignore-unmatch --cached res/images/*'
 git push origin -f
