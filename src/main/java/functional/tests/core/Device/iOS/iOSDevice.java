@@ -14,7 +14,7 @@ public class iOSDevice {
     private static String simulatorGuid = null;
 
     private static void uninstallApp(String appId) {
-        String uninstallResult = OSUtils.runProcess(true, "ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
+        String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
         if (uninstallResult.contains("Complete")) {
             Log.info(appId + " successfully uninstalled.");
         } else {
@@ -23,7 +23,7 @@ public class iOSDevice {
     }
 
     private static List<String> getInstalledApps() {
-        String rowData = OSUtils.runProcess(true, "ideviceinstaller -u " + Settings.deviceId + " -l");
+        String rowData = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -l");
         String trimData = rowData.replace("package:", "");
         String[] rowList = trimData.split("\\r?\\n");
         List<String> list = new ArrayList<>();
@@ -53,7 +53,7 @@ public class iOSDevice {
             }
 
             // Verify simulator exists
-            String rowDevices = OSUtils.runProcess(true, "instruments -s");
+            String rowDevices = OSUtils.runProcess("instruments -s");
             String[] deviceList = rowDevices.split("\\r?\\n");
 
             boolean found = false;
@@ -70,6 +70,27 @@ public class iOSDevice {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
             } else {
                 String error = "Simulator " + Settings.deviceName + " does not exist.";
+                Log.error(error);
+                throw new DeviceException(error);
+            }
+        } else if (Settings.deviceType == DeviceType.iOS) {
+            String devices = OSUtils.runProcess("instruments -s");
+            if (devices.contains(Settings.deviceId)) {
+                Log.info("Device " + Settings.deviceId + " found.");
+
+                // Try to list all apps to verify if device works properly
+                String fileContent = OSUtils.runProcess(Settings.defaultTimeout, "ideviceinstaller -u " + Settings.deviceId + " -l");
+                Log.info("apps: " + fileContent);
+
+                if (fileContent.contains("Total:")) {
+                    Log.info("Device " + Settings.deviceId + " responds.");
+                } else {
+                    String error = "Device " + Settings.deviceId + " does not respond.";
+                    Log.error(error);
+                    throw new DeviceException(error);
+                }
+            } else {
+                String error = "Device " + Settings.deviceId + " not found.";
                 Log.error(error);
                 throw new DeviceException(error);
             }
@@ -98,5 +119,6 @@ public class iOSDevice {
                 }
             }
         }
+        Log.info("Old apps uninstalled.");
     }
 }

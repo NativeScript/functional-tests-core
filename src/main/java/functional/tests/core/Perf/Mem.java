@@ -14,7 +14,7 @@ public class Mem {
             String command = "adb -s " + Settings.deviceId +
                     " shell dumpsys meminfo > " +
                     Settings.baseLogDir + File.separator + fileName;
-            OSUtils.runProcess(true, command);
+            OSUtils.runProcess(command);
             Log.info("Meminfo saved in " + fileName);
         } else if (Settings.platform == PlatformType.iOS) {
             // TODO: Implement it

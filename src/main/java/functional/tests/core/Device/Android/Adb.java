@@ -25,20 +25,20 @@ public class Adb {
 
     private static String runAdbCommand(String command) {
         String adbCommand = adbPath + " " + command;
-        String output = OSUtils.runProcess(true, adbCommand);
+        String output = OSUtils.runProcess(adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
-            output = OSUtils.runProcess(true, adbCommand);
+            output = OSUtils.runProcess(adbCommand);
         }
         return output;
     }
 
     private static String runAdbCommand(String deviceId, String command, boolean waitFor) {
         String adbCommand = adbPath + " -s " + deviceId + " " + command;
-        String output = OSUtils.runProcess(waitFor, adbCommand);
+        String output = OSUtils.runProcess(waitFor, 10 * 60, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
-            output = OSUtils.runProcess(true, adbCommand);
+            output = OSUtils.runProcess(adbCommand);
         }
         return output;
     }
@@ -80,7 +80,7 @@ public class Adb {
 
     protected static void stopApp(String appId) {
         String stopCommand = runAdbCommand(Settings.deviceId, "shell am force-stop " + appId);
-        OSUtils.runProcess(true, stopCommand);
+        OSUtils.runProcess(stopCommand);
     }
 
     protected static void uninstallApp(String appId) {
@@ -98,7 +98,7 @@ public class Adb {
     // If emulator with same name exists, do nothing, else create emulator
     protected static void createEmulator(String avdName, String options) throws DeviceException {
 
-        String avds = OSUtils.runProcess(true, androidPath + " list avds");
+        String avds = OSUtils.runProcess(androidPath + " list avds");
         if (avds.contains(avdName + ".avd")) {
             Log.info(avdName + " already exists.");
         } else {
@@ -113,10 +113,10 @@ public class Adb {
 
             Log.info("Create emulator with command: ");
             Log.info(command);
-            OSUtils.runProcess(true, command);
+            OSUtils.runProcess(command);
 
             // Verify it exists
-            avds = OSUtils.runProcess(true, androidPath + " list avds");
+            avds = OSUtils.runProcess(androidPath + " list avds");
             if (avds.contains(avdName + ".avd")) {
                 Log.info(avdName + " created successfully.");
             } else {
@@ -134,7 +134,7 @@ public class Adb {
         }
         command = command + " > " + emulatorStartLogPath + " &";
         Log.info("Starting emulator with command: " + command);
-        OSUtils.runProcess(false, command);
+        OSUtils.runProcess(false, Integer.MAX_VALUE, command);
     }
 
     protected static void stopEmulator() {

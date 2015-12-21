@@ -38,9 +38,8 @@ public class FileSystem {
         }
     }
 
-    public static String readFile(String templateName) throws IOException {
-        String path = templateName;
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
+    public static String readFile(String filePath) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(filePath));
         return new String(encoded, Charset.defaultCharset());
     }
 

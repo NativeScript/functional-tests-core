@@ -52,11 +52,11 @@ public class Server {
         // On Linux and OSX use appium version manager
         if ((Settings.OS == OSType.Linux) || (Settings.OS == OSType.MacOS)) {
             // Get appium path via appium-version-manager
-            String appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
+            String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
             // If appium is not instaled try to install it
             if (appiumPath.contains("not installed")) {
                 Log.info("Appium " + Settings.appiumVersion + " not found.");
-                String installAppium = OSUtils.runProcess(true, "avm " + Settings.appiumVersion);
+                String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
                 if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
                     String error = "Failed to install appium. Error: " + installAppium;
                     Log.fatal(error);
@@ -64,7 +64,7 @@ public class Server {
                 } else if (installAppium.contains("installed" + Settings.appiumVersion)) {
                     Log.info("Appium " + Settings.appiumVersion + " installed.");
                 }
-                appiumPath = OSUtils.runProcess(true, "avm bin " + Settings.appiumVersion);
+                appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
             }
 
             String[] appiumPathLines = appiumPath.split("\\r?\\n");

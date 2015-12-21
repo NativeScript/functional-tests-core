@@ -71,7 +71,7 @@ public class Doctor {
     // Verify xcrun is avalable (only for iOS)
     protected static void verifyXcrun() throws Exception {
         if (Settings.platform == PlatformType.iOS) {
-            String output = OSUtils.runProcess(true, "xcrun --version");
+            String output = OSUtils.runProcess("xcrun --version");
             if (!output.contains("xcrun version")) {
                 String error = "xcrun is not available. Please install it. Error: " + output;
                 throw new Exception(error);
@@ -82,7 +82,7 @@ public class Doctor {
     // Verify ideviceinstaller is avalable (only for iOS real devices)
     protected static void verifyIdeviceinstaller() throws Exception {
         if (Settings.deviceType == DeviceType.iOS) {
-            String output = OSUtils.runProcess(true, "ideviceinstaller");
+            String output = OSUtils.runProcess("ideviceinstaller");
             if (!output.contains("Manage apps on iOS devices")) {
                 String error = "Please install or repair ideviceinstaller. Error: " + output;
                 throw new Exception(error);

@@ -5,8 +5,11 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class OSUtils {
 
@@ -22,7 +25,7 @@ public class OSUtils {
         return result;
     }
 
-    public static String runProcess(boolean waitFor, String... command) {
+    public static String runProcess(boolean waitFor, int timeOut, String... command) {
         String[] allCommand = null;
 
         String finalCommand = "";
@@ -37,7 +40,6 @@ public class OSUtils {
                 allCommand = concat(OS_LINUX_RUNTIME, command);
             }
             ProcessBuilder pb = new ProcessBuilder(allCommand);
-            pb.redirectErrorStream(true);
             Process p = pb.start();
 
             if (waitFor) {
@@ -54,7 +56,7 @@ public class OSUtils {
                     output.append(line + "\n");
                 }
 
-                p.waitFor();
+                p.waitFor(timeOut, TimeUnit.SECONDS);
 
                 Log.debug("Execute command: " + finalCommand);
                 Log.trace("Result: " + output.toString());
@@ -70,21 +72,29 @@ public class OSUtils {
         }
     }
 
+    public static String runProcess(String... command) {
+        return runProcess(true, 10 * 60, command);
+    }
+
+    public static String runProcess(int timeOut, String... command) {
+        return runProcess(true, timeOut, command);
+    }
+
     public static void stopProcess(String name) {
         try {
             if (Settings.OS == OSType.Windows) {
                 String command = "taskkill /F /IM " + name;
-                OSUtils.runProcess(true, command);
+                OSUtils.runProcess(command);
             } else {
                 String stopCommand = "ps -A | grep '" + name + "'";
 
-                String processes = OSUtils.runProcess(true, stopCommand);
+                String processes = OSUtils.runProcess(stopCommand);
                 String lines[] = processes.split("(\r\n|\n)");
 
                 for (int i = 0; i < lines.length; i++) {
                     String line = lines[i].trim();
                     String procId = line.split("\\s+")[0];
-                    OSUtils.runProcess(true, "kill -9 " + procId);
+                    OSUtils.runProcess("kill -9 " + procId);
                 }
             }
         } catch (Exception e) {

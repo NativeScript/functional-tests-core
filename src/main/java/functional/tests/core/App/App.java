@@ -44,7 +44,7 @@ public class App {
         Log.info("Stop " + appId);
         if (Settings.platform == PlatformType.Andorid) {
             String homeCommand = "adb -s " + Settings.deviceId + " shell am force-stop " + appId;
-            OSUtils.runProcess(true, homeCommand);
+            OSUtils.runProcess(homeCommand);
             Wait.sleep(1000);
         } else {
             throw new NotImplementedException("Stop application not implemented for current platform.");
@@ -58,7 +58,7 @@ public class App {
         Log.info("Start " + appId);
         if (Settings.platform == PlatformType.Andorid) {
             String homeCommand = "adb -s " + Settings.deviceId + " shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
-            OSUtils.runProcess(true, homeCommand);
+            OSUtils.runProcess(homeCommand);
             Wait.sleep(1000);
         } else {
             throw new NotImplementedException("Start application not implemented for current platform.");

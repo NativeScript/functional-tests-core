@@ -6,13 +6,10 @@ import functional.tests.core.OSUtils.OSUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Dimitar on 10/9/2015.
- */
 public class Simctl {
 
     protected static List<String> getSimulatorsIdsByName(String deviceName) {
-        String rowData = OSUtils.runProcess(true, "xcrun simctl list devices");
+        String rowData = OSUtils.runProcess("xcrun simctl list devices");
         String[] rowList = rowData.split("\\r?\\n");
 
         List<String> list = new ArrayList<String>();
@@ -31,14 +28,14 @@ public class Simctl {
         List<String> simulators = getSimulatorsIdsByName(deviceName);
         for (String sim : simulators) {
             Log.info("Delete " + deviceName + " simulator with id: " + sim);
-            OSUtils.runProcess(true, "xcrun simctl delete " + sim);
+            OSUtils.runProcess("xcrun simctl delete " + sim);
         }
     }
 
     public static String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
         Log.info("Create simulator with following command:");
         Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
-        String output = OSUtils.runProcess(true, "xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
+        String output = OSUtils.runProcess("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
         return output;
     }
 }
