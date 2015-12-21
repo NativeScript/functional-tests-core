@@ -133,4 +133,12 @@ public class BaseDevice {
             }
         }
     }
+
+    public static boolean isAppRunning(String deviceId, String appId) {
+        if (Settings.platform == PlatformType.Andorid) {
+            return Adb.isAppRunning(deviceId, appId);
+        } else {
+            throw new NotImplementedException();
+        }
+    }
 }

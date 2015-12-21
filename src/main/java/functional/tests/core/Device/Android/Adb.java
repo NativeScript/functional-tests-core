@@ -287,4 +287,13 @@ public class Adb {
             Log.info(localPath + " transferred to " + remotePath);
         }
     }
+
+    public static boolean isAppRunning(String deviceId, String appId) {
+        String processes = runAdbCommand(deviceId, "shell ps");
+        if (processes.contains(appId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
