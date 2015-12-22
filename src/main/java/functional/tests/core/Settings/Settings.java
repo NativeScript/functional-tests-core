@@ -250,6 +250,7 @@ public class Settings {
         }
 
         // Verify setup is correct
+        Doctor.verifyJava();
         Doctor.verifyAndroidHome();
         Doctor.verifyMobileOS();
         Doctor.verifyDeviceType();

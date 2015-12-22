@@ -13,6 +13,19 @@ import java.io.FileNotFoundException;
 
 public class Doctor {
 
+    // Verify Java version
+    protected static void verifyJava() throws Exception {
+        String version = System.getProperty("java.version");
+        int pos = version.indexOf('.');
+        pos = version.indexOf('.', pos + 1);
+        double ver = Double.parseDouble(version.substring(0, pos));
+        if (ver < 1.8) {
+            String message = "Please use Java 1.8+. Current version is: " + version;
+            Log.fatal(message);
+            throw new FileNotFoundException(message);
+        }
+    }
+
     // Verify app under test exists in testapp folder
     protected static void verifyTestAppPath() throws FileNotFoundException {
         File appDir = new File(Settings.baseTestAppDir);
