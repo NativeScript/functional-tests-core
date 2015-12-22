@@ -96,7 +96,6 @@ public class Server {
         if (Settings.platform == PlatformType.iOS) {
             serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
             serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
-            serviceBuilder.withArgument(IOSServerFlag.SHOW_SIMULATOR_LOG);
         }
 
         // Set log level (if specified in config)
