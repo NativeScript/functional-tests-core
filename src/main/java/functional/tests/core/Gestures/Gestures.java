@@ -90,6 +90,10 @@ public class Gestures {
         }
     }
 
+    public static void swipe(SwipeElementDirection direction, int duration) {
+        swipe(direction, duration, 0);
+    }
+
     /**
      * Scroll down until element is visible via swipe gesture *
      */

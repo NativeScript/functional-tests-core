@@ -6,16 +6,14 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import org.openqa.selenium.logging.LogEntry;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
-import java.io.*;
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 public abstract class BaseTest {
 
@@ -53,7 +51,7 @@ public abstract class BaseTest {
             isFistTest = false;
         } else {
             if (Settings.restartApp) {
-                App.restart(true);
+                App.fullRestart();
             }
         }
 
@@ -67,7 +65,7 @@ public abstract class BaseTest {
                 Client.initAppiumDriver();
             }
             // Restart app
-            App.restart(true);
+            App.fullRestart();
         }
     }
 

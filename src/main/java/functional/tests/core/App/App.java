@@ -14,18 +14,26 @@ public class App {
     /**
      * Restart application
      */
-    public static void restart(boolean hardReset) throws NotImplementedException {
+    public static void restart(String appId, boolean hardReset) throws NotImplementedException {
         Log.info("Restarting current app...");
-        if (hardReset) {
-            Client.driver.resetApp();
+        if (Settings.platform == PlatformType.Andorid) {
+            String activity = ((AndroidDriver) Client.driver).currentActivity();
+            stopApplication(appId);
+            Wait.sleep(2000);
+            startApplication(appId, activity);
+            Wait.sleep(2000);
         } else {
-            String activity = ((AndroidDriver)Client.driver).currentActivity();
-            stopApplication("org.nativescript.nativescriptmarketplacedemo");
-            Wait.sleep(2000);
-            startApplication("org.nativescript.nativescriptmarketplacedemo", activity);
-            Wait.sleep(2000);
+            throw new NotImplementedException("Restart app not implemented for iOS.");
         }
         Log.info("Restarted.");
+    }
+
+    public static void restart(String appId) throws NotImplementedException {
+        restart(appId, false);
+    }
+
+    public static void fullRestart() throws NotImplementedException {
+        Client.driver.resetApp();
     }
 
     /**
