@@ -1,12 +1,26 @@
 package functional.tests.core.Device.iOS;
 
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
+import functional.tests.core.Settings.Settings;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Simctl {
+
+    private static void resetSimulatorSettings() {
+        try {
+            FileSystem.deletePath("~/Library/Preferences/com.apple.iphonesimulator.plist");
+            OSUtils.runProcess("defaults write ~/Library/Preferences/com.apple.iphonesimulator.plist SimulatorWindowLastScale \"1\"");
+            Log.info("Global simulator settings restarted");
+        } catch (IOException e) {
+            Log.error("Failed to restart global simulator settings.");
+        }
+    }
 
     protected static List<String> getSimulatorsIdsByName(String deviceName) {
         String rowData = OSUtils.runProcess("xcrun simctl list devices");
@@ -33,6 +47,12 @@ public class Simctl {
     }
 
     public static String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
+
+        // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
+        if (Settings.platformVersion.contains("9")) {
+            resetSimulatorSettings();
+        }
+
         Log.info("Create simulator with following command:");
         Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
         String output = OSUtils.runProcess("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
