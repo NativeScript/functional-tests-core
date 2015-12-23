@@ -6,6 +6,7 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,16 @@ public class iOSDevice {
             }
         }
         return list;
+    }
+
+    public static void installApp(String appName) {
+        String appPath = Settings.baseTestAppDir + File.separator + appName;
+        String result = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -i " + appPath);
+        if (result.contains("Complete")) {
+            Log.info(appName + " successfully installed.");
+        } else {
+            Log.error("Failed to install " + appName + ". Error: " + result);
+        }
     }
 
     public static void initDevice() throws DeviceException {

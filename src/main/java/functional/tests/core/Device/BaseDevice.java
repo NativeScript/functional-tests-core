@@ -51,6 +51,14 @@ public class BaseDevice {
             AndroidDevice.uninstallApps(uninstallAppsList());
         } else if (Settings.deviceType == DeviceType.iOS) {
             iOSDevice.uninstallApps(uninstallAppsList());
+
+            // iOS7 devices use old appium version
+            // In older appium version installation of test app is not stable
+            // installApp method will deploy with ideviceinstaller
+            if (Settings.platformVersion.contains("7")) {
+                iOSDevice.installApp(Settings.testAppName);
+            }
+
         } else if (Settings.deviceType == DeviceType.Simulator) {
             // Delete existing extracted applications
             FileSystem.deletePath(Settings.baseTestAppDir + File.separator + Settings.testAppName);

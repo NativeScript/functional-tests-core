@@ -9,7 +9,11 @@ import functional.tests.core.Settings.Settings;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.File;
+
 public class App {
+
+    private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
 
     /**
      * Restart application
@@ -42,6 +46,7 @@ public class App {
     public static void runInBackground(int seconds) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         Client.driver.runAppInBackground(seconds);
+        Wait.sleep(1000);
         Log.info("Bring the app to front.");
     }
 
@@ -51,7 +56,8 @@ public class App {
     public static void stopApplication(String appId) throws NotImplementedException {
         Log.info("Stop " + appId);
         if (Settings.platform == PlatformType.Andorid) {
-            String homeCommand = "adb -s " + Settings.deviceId + " shell am force-stop " + appId;
+            String homeCommand = adbPath + " -s " + Settings.deviceId + " shell am force-stop " + appId;
+            Log.info(homeCommand);
             OSUtils.runProcess(homeCommand);
             Wait.sleep(1000);
         } else {
@@ -65,8 +71,9 @@ public class App {
     public static void startApplication(String appId, String activity) throws NotImplementedException {
         Log.info("Start " + appId);
         if (Settings.platform == PlatformType.Andorid) {
-            String homeCommand = "adb -s " + Settings.deviceId + " shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
-            OSUtils.runProcess(homeCommand);
+            String startCommand = adbPath + " -s " + Settings.deviceId + " shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
+            Log.info(startCommand);
+            OSUtils.runProcess(startCommand);
             Wait.sleep(1000);
         } else {
             throw new NotImplementedException("Start application not implemented for current platform.");
