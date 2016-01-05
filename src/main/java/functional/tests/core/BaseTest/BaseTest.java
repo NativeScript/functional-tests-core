@@ -27,6 +27,10 @@ public abstract class BaseTest {
         BaseDevice.stopDevice();
         BaseDevice.initDevice();
         BaseDevice.initTestApp();
+
+        // Clean old logs
+        BaseDevice.cleanConsoleLog();
+
         try {
             Server.initAppiumServer();
             Client.initAppiumDriver();
@@ -38,8 +42,11 @@ public abstract class BaseTest {
             Client.initAppiumDriver();
         }
 
-        // Clean old logs
-        BaseDevice.cleanConsoleLog();
+        // Verify app not crashed
+        BaseDevice.verifyAppRunning(Settings.deviceId, Settings.testAppPackageId);
+
+        // Get logs for initial app startup
+        BaseDevice.getConsoleLog("init");
     }
 
     @BeforeMethod(alwaysRun = true)

@@ -8,15 +8,19 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
+import org.testng.Assert;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -147,6 +151,22 @@ public class BaseDevice {
             return Adb.isAppRunning(deviceId, appId);
         } else {
             throw new NotImplementedException();
+        }
+    }
+
+    public static void verifyAppRunning(String deviceId, String appId) {
+        if (Settings.platform == PlatformType.Andorid) {
+            Wait.sleep(10000);
+            boolean isRuning = isAppRunning(deviceId, appId);
+            if (isRuning) {
+                Log.info("App " + appId + " is up and running.");
+            } else {
+                Log.logScreen("init", "First screen");
+                Log.fatal("App " + appId + " is not running.");
+                Assert.assertTrue(isRuning, "App " + appId + " is not running.");
+            }
+        } else {
+            // TODO: Implement it
         }
     }
 }

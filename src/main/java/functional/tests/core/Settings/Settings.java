@@ -5,14 +5,12 @@ import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.UnknownOSException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 public class Settings {
@@ -38,6 +36,7 @@ public class Settings {
     public static String deviceId;
     public static String deviceName;
     public static String testAppName;
+    public static String testAppPackageId;
     public static String testAppArchive;
     public static String appiumVersion;
     public static String automationName;
@@ -139,6 +138,27 @@ public class Settings {
         } else {
             return DeviceType.Other;
         }
+    }
+
+    private static String getPackageId() {
+        String appId = "";
+        if (Settings.platform == PlatformType.Andorid) {
+            File root = new File(System.getenv("ANDROID_HOME") + File.separator + "build-tools");
+            File aaptFile = OSUtils.find(root, "aapt.exe");
+            String aaptPath = aaptFile.getAbsolutePath();
+            String command = aaptPath + " dump badging " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
+            String result = OSUtils.runProcess(command);
+            String[] list = result.split("\\r?\\n");
+            for (String line : list) {
+                if (line.contains("package:")) {
+                    appId = line.substring(line.indexOf("'") + 1);
+                    appId = appId.substring(0, appId.indexOf("'"));
+                }
+            }
+        } else {
+            // TODO: Implement it
+        }
+        return appId;
     }
 
     public static void initSettings() throws Exception {
@@ -249,6 +269,9 @@ public class Settings {
             deviceBootTimeout = defaultTimeout;
         }
 
+        // Set test app package id
+        testAppPackageId = getPackageId();
+
         // Verify setup is correct
         Doctor.verifyJava();
         Doctor.verifyAndroidHome();
@@ -275,6 +298,7 @@ public class Settings {
         Log.info("Device Boot Time: " + deviceBootTimeout);
         Log.info("Base TestApp Path: " + baseTestAppDir);
         Log.info("TestApp Name: " + testAppName);
+        Log.info("TestApp Package Id: " + testAppPackageId);
         Log.info("TestApp Archive: " + testAppArchive);
         Log.info("Restart App: " + String.valueOf(restartApp));
         Log.info("Appium Version: " + appiumVersion);
