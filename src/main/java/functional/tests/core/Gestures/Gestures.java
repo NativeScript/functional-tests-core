@@ -14,6 +14,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 
+import java.util.Set;
+
 public class Gestures {
 
     public static void tap(MobileElement element, int fingers, int duration, int waitAfterTap) {
@@ -84,9 +86,13 @@ public class Gestures {
                 Wait.sleep(waitAfterSwipe);
             }
         } catch (Exception e) {
-            String error = "Swipe " + direction + " with " + duration + " duration failed.";
-            Log.error(error);
-            Assert.fail(error);
+            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion == "4.2")) {
+                // Known issue: Swipe works on Api17, but error is thrown.
+            } else {
+                String error = "Swipe " + direction + " with " + duration + " duration failed.";
+                Log.error(error);
+                Assert.fail(error);
+            }
         }
     }
 
@@ -106,9 +112,8 @@ public class Gestures {
                 return element;
             } else {
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
-                i++;
             }
-            if (i == retryCount) {
+            if (i == retryCount - 1) {
                 Log.error(elementText + " not found after " + String.valueOf(retryCount) + " swipes.");
             }
         }
@@ -127,9 +132,8 @@ public class Gestures {
                 return element;
             } else {
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
-                i++;
             }
-            if (i == retryCount) {
+            if (i == retryCount - 1) {
                 Log.info("Element not found after " + String.valueOf(retryCount) + " swipes." + locator.toString());
             }
         }
