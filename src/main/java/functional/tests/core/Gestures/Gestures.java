@@ -101,7 +101,7 @@ public class Gestures {
         Log.info("Swipe " + direction.toString() + " to " + elementText);
         for (int i = 0; i < retryCount; i++) {
             MobileElement element = Find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
-            if (element != null) {
+            if ((element != null) && (element.isDisplayed())) {
                 Log.info(elementText + " found.");
                 return element;
             } else {
@@ -122,7 +122,7 @@ public class Gestures {
         Log.info("Swipe " + direction.toString() + " to " + locator.toString());
         for (int i = 0; i < retryCount; i++) {
             MobileElement element = Find.findElementByLocator(locator, 2);
-            if (element != null) {
+            if ((element != null) && (element.isDisplayed())) {
                 Log.info("Element found: " + locator.toString());
                 return element;
             } else {

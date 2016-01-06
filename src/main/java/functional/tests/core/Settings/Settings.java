@@ -140,19 +140,29 @@ public class Settings {
         }
     }
 
-    private static String getPackageId() {
+    private static String getPackageId() throws Exception {
         String appId = "";
         if (Settings.platform == PlatformType.Andorid) {
+            String apptExecutableName = "aapt";
+            if (Settings.OS == OSType.Windows) {
+                apptExecutableName = "aapt.exe";
+            }
             File root = new File(System.getenv("ANDROID_HOME") + File.separator + "build-tools");
-            File aaptFile = OSUtils.find(root, "aapt.exe");
-            String aaptPath = aaptFile.getAbsolutePath();
-            String command = aaptPath + " dump badging " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
-            String result = OSUtils.runProcess(command);
-            String[] list = result.split("\\r?\\n");
-            for (String line : list) {
-                if (line.contains("package:")) {
-                    appId = line.substring(line.indexOf("'") + 1);
-                    appId = appId.substring(0, appId.indexOf("'"));
+            File aaptFile = OSUtils.find(root, apptExecutableName);
+            if (aaptFile == null) {
+                String error = "Failed to find aapt. It is requited for Android tests.";
+                Log.fatal(error);
+                throw new Exception(error);
+            } else {
+                String aaptPath = aaptFile.getAbsolutePath();
+                String command = aaptPath + " dump badging " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
+                String result = OSUtils.runProcess(command);
+                String[] list = result.split("\\r?\\n");
+                for (String line : list) {
+                    if (line.contains("package:")) {
+                        appId = line.substring(line.indexOf("'") + 1);
+                        appId = appId.substring(0, appId.indexOf("'"));
+                    }
                 }
             }
         } else {
