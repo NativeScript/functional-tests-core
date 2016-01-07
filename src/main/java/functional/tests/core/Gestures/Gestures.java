@@ -86,8 +86,8 @@ public class Gestures {
                 Wait.sleep(waitAfterSwipe);
             }
         } catch (Exception e) {
-            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion == "4.2")) {
-                // Known issue: Swipe works on Api17, but error is thrown.
+            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
+                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
             } else {
                 String error = "Swipe " + direction + " with " + duration + " duration failed.";
                 Log.error(error);
