@@ -1,11 +1,12 @@
 package functional.tests.core.Device.iOS;
 
-import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,10 @@ public class Simctl {
 
     private static void resetSimulatorSettings() {
         try {
-            FileSystem.deletePath("~/Library/Preferences/com.apple.iphonesimulator.plist");
-            OSUtils.runProcess("defaults write ~/Library/Preferences/com.apple.iphonesimulator.plist SimulatorWindowLastScale \"1\"");
+            FileSystem.deletePath(System.getProperty("user.home") + "/Library/Preferences/com.apple.iphonesimulator.plist");
+            Wait.sleep(1000);
+            OSUtils.runProcess("defaults write ~/Library/Preferences/com.apple.iphonesimulator SimulatorWindowLastScale \"1\"");
+            Wait.sleep(1000);
             Log.info("Global simulator settings restarted");
         } catch (IOException e) {
             Log.error("Failed to restart global simulator settings.");
