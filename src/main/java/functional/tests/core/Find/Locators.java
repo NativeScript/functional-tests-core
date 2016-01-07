@@ -63,11 +63,43 @@ public class Locators {
         return findByTextLocator("*", value, exactMatch);
     }
 
+    public static By buttonLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.Button");
+        } else {
+            return By.className("UIAButton");
+        }
+    }
+
+    public static By imageLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ImageView");
+        } else {
+            return By.className("UIAImage");
+        }
+    }
+
     public static By switchLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.Switch");
         } else {
             return By.className("UIASwitch");
+        }
+    }
+
+    public static By listViewLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ListView");
+        } else {
+            return By.className("UIATableView");
+        }
+    }
+
+    public static By listViewItemsLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.xpath("//android.widget.ListView/*");
+        } else {
+            return By.xpath("//UIATableView/UIATableCell");
         }
     }
 
@@ -103,35 +135,19 @@ public class Locators {
         }
     }
 
+    public static By editTextLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.EditText");
+        } else {
+            return By.className("UIATextField");
+        }
+    }
+
     public static By searchBoxLocator() {
         if (Settings.platform == PlatformType.Andorid) {
-            return By.xpath("//android.widget.LinearLayout/android.widget.EditText");
+            return By.className("android.widget.EditText");
         } else {
             return By.className("UIASearchBar");
-        }
-    }
-
-    public static By listViewLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.ListView");
-        } else {
-            return By.className("UIATableView");
-        }
-    }
-
-    public static By listViewItemsLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.xpath("//android.widget.ListView/android.view.View");
-        } else {
-            return By.xpath("//UIATableView/UIATableCell");
-        }
-    }
-
-    public static By imageLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.ImageView");
-        } else {
-            return By.className("UIAImage");
         }
     }
 }

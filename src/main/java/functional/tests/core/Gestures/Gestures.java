@@ -14,8 +14,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 
-import java.util.Set;
-
 public class Gestures {
 
     public static void tap(MobileElement element, int fingers, int duration, int waitAfterTap) {
