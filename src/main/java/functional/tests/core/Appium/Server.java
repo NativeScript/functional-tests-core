@@ -55,7 +55,7 @@ public class Server {
             String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
             // If appium is not instaled try to install it
             if (appiumPath.contains("not installed")) {
-                Log.info("Appium " + Settings.appiumVersion + " not found.");
+                Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
                 String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
                 if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
                     String error = "Failed to install appium. Error: " + installAppium;
