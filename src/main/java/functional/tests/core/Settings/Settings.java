@@ -211,15 +211,24 @@ public class Settings {
 
         // Set restartApp
         String restartAppString = properties.getProperty("restartApp");
-        restartApp = stringToBoolean(restartAppString);
+        restartApp = true;
+        if (restartAppString != null) {
+            restartApp = stringToBoolean(restartAppString);
+        }
 
         // Set debug
         String debugString = properties.getProperty("debug");
-        debug = stringToBoolean(debugString);
+        debug = false;
+        if (debugString != null ) {
+            debug = stringToBoolean(debugString);
+        }
 
         // Set takeScreenShotAfterTest
         String takeScreenShotAfterTestString = properties.getProperty("takeScreenShotAfterTest");
-        takeScreenShotAfterTest = stringToBoolean(takeScreenShotAfterTestString);
+        takeScreenShotAfterTest = false;
+        if (takeScreenShotAfterTestString != null) {
+            takeScreenShotAfterTest = stringToBoolean(takeScreenShotAfterTestString);
+        }
 
         // Set image verification type
         String imageVerificationTypeString = properties.getProperty("imageVerificationType");
