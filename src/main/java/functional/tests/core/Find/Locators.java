@@ -150,4 +150,13 @@ public class Locators {
             return By.className("UIASearchBar");
         }
     }
+
+    public static By webViewLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.webkit.WebView");
+        } else {
+            return By.className("UIAScrollView");
+        }
+    }
+
 }
