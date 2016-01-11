@@ -167,6 +167,8 @@ public class ImageVerification {
                     String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
                     Log.error(errorString);
                     Assert.fail(errorString);
+                } else {
+                    Log.info(pageName + " looks OK.");
                 }
             }
         }
@@ -219,6 +221,7 @@ public class ImageVerification {
                         Log.info(errorString);
                         Wait.sleep(1000);
                     } else {
+                        Log.info(pageName + " looks OK.");
                         break;
                     }
                 }
