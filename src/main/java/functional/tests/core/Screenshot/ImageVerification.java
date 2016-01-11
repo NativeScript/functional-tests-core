@@ -107,21 +107,62 @@ public class ImageVerification {
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance) {
+    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
+        BufferedImage actualImage = ImageUtils.getElementImage(element);
+        BufferedImage expectedImage = null;
 
+        String expectedImageBasePath = Settings.screenshotResDir + File.separator +
+                appName + File.separator +
+                Settings.deviceName;
+
+        String expectedImagePath = expectedImageBasePath + File.separator + expectedElementImage + ".png";
+
+        if (VERIFICATION_TYPE == VerificationType.Skip) {
+            Log.warn("Image comparison skipped!");
+        } else if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
+            Log.warn("Image comparison skipped. Actual images will be also saved at expected image location.");
+            FileSystem.makeDir(expectedImageBasePath);
+            ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
+        } else if (VERIFICATION_TYPE == VerificationType.JustCapture) {
+            Wait.sleep(1000); // Wait some time until animations finish
+            Log.warn("Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
+            FileSystem.makeDir(Settings.screenshotOutDir + File.separator + "actual");
+            ImageUtils.saveBufferedImage(actualImage, "actual" + File.separator + expectedElementImage + ".png");
+        } else if (VERIFICATION_TYPE == VerificationType.Default) {
+            expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
+            if (expectedImage == null) {
+                Wait.sleep(1000); // Wait some time until animations finish
+                Log.error("Failed to read expected image, image comparison skipped.");
+                Log.info("Actual images will be also saved at expected image location.");
+                FileSystem.makeDir(expectedImageBasePath);
+                ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
+            } else {
+                ImageVerificationResult result = compareImages(actualImage, expectedImage);
+
+                Log.logImageVerificationResult(result, expectedElementImage);
+                if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
+                    String errorString = expectedElementImage + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
+                    Log.error(errorString);
+                    Assert.fail(errorString);
+                } else {
+                    Log.info(expectedElementImage + " looks OK.");
+                }
+            }
+        }
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, double percentTolerance) {
+    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
         verifyElement(element, appName, expectedElementImage, Integer.MAX_VALUE, percentTolerance);
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, int pixelTolerance) {
+    public static void verifyElement(MobileElement element, String appName, String expectedElementImage, int pixelTolerance) throws AppiumException, IOException, ImageVerificationException {
         verifyElement(element, appName, expectedElementImage, pixelTolerance, Double.MAX_VALUE);
     }
 
@@ -278,22 +319,5 @@ public class ImageVerification {
         waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, Settings.defaultTimeout);
     }
 
-    /**
-     * Save current screen.
-     **/
-    public static void saveScreen(String imageName)
-            throws AppiumException, IOException {
-        BufferedImage img = ImageUtils.getScreen();
-        ImageUtils.saveBufferedImage(img, imageName + ".png");
-    }
 
-    /**
-     * Save current screen.
-     **/
-    public static void saveImageVerificationResult(ImageVerificationResult result, String filePrefix)
-            throws IOException {
-        ImageUtils.saveBufferedImage(result.actualImage, filePrefix + String.format("_%s.png", result.actualSuffix));
-        ImageUtils.saveBufferedImage(result.diffImage, filePrefix + String.format("_%s.png", result.diffSuffix));
-        ImageUtils.saveBufferedImage(result.expectedImage, filePrefix + String.format("_%s.png", result.expectedSuffix));
-    }
 }

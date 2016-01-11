@@ -63,11 +63,27 @@ public class Locators {
         return findByTextLocator("*", value, exactMatch);
     }
 
+    public static By activityIndicatorLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ProgressBar");
+        } else {
+            return By.className("UIAActivityIndicator");
+        }
+    }
+
     public static By buttonLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.Button");
         } else {
             return By.className("UIAButton");
+        }
+    }
+
+    public static By editTextLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.EditText");
+        } else {
+            return By.className("UIATextField");
         }
     }
 
@@ -79,11 +95,11 @@ public class Locators {
         }
     }
 
-    public static By switchLocator() {
+    public static By labelLocator() {
         if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.Switch");
+            return By.className("android.widget.TextView");
         } else {
-            return By.className("UIASwitch");
+            return By.className("UIAStaticText");
         }
     }
 
@@ -103,22 +119,6 @@ public class Locators {
         }
     }
 
-    public static By scrollViewLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.ScrollView");
-        } else {
-            return By.className("UIAScrollView");
-        }
-    }
-
-    public static By activityIndicatorLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.ProgressBar");
-        } else {
-            return By.className("UIAActivityIndicator");
-        }
-    }
-
     public static By progressLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ProgressBar");
@@ -127,19 +127,11 @@ public class Locators {
         }
     }
 
-    public static By sliderLocator() {
+    public static By scrollViewLocator() {
         if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.SeekBar");
+            return By.className("android.widget.ScrollView");
         } else {
-            return By.className("UIASlider");
-        }
-    }
-
-    public static By editTextLocator() {
-        if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.widget.EditText");
-        } else {
-            return By.className("UIATextField");
+            return By.className("UIAScrollView");
         }
     }
 
@@ -151,6 +143,22 @@ public class Locators {
         }
     }
 
+    public static By sliderLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.SeekBar");
+        } else {
+            return By.className("UIASlider");
+        }
+    }
+
+    public static By switchLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.Switch");
+        } else {
+            return By.className("UIASwitch");
+        }
+    }
+
     public static By webViewLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.webkit.WebView");
@@ -158,5 +166,4 @@ public class Locators {
             return By.className("UIAScrollView");
         }
     }
-
 }

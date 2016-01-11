@@ -1,9 +1,12 @@
 package functional.tests.core.Screenshot;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.MobileElement;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -57,5 +60,55 @@ public class ImageUtils {
         File f = new File(Settings.screenshotOutDir + File.separator + fileName);
         Log.debug("Save Picture: " + f.getAbsolutePath());
         ImageIO.write(img, "png", f);
+    }
+
+    /**
+     * Save current screen.
+     **/
+    public static void saveScreen(String imageName)
+            throws AppiumException, IOException {
+        BufferedImage img = ImageUtils.getScreen();
+        ImageUtils.saveBufferedImage(img, imageName + ".png");
+    }
+
+    /**
+     * Save current screen.
+     **/
+    public static void saveImageVerificationResult(ImageVerificationResult result, String filePrefix)
+            throws IOException {
+        ImageUtils.saveBufferedImage(result.actualImage, filePrefix + String.format("_%s.png", result.actualSuffix));
+        ImageUtils.saveBufferedImage(result.diffImage, filePrefix + String.format("_%s.png", result.diffSuffix));
+        ImageUtils.saveBufferedImage(result.expectedImage, filePrefix + String.format("_%s.png", result.expectedSuffix));
+    }
+
+    /**
+     * Get MobileElement screenshot.
+     */
+    protected static BufferedImage getElementImage(MobileElement element) {
+        BufferedImage img = getScreen();
+
+        int screenWidth = Client.driver.manage().window().getSize().width;
+        int screenshotWidth = img.getWidth();
+
+        int zoomFactor = screenshotWidth / screenWidth;
+
+        Point point = element.getLocation();
+
+        int width = element.getSize().getWidth() * zoomFactor;
+        int height = element.getSize().getHeight() * zoomFactor;
+
+        BufferedImage outputImage = img.getSubimage(point.getX() * zoomFactor,
+                point.getY() * zoomFactor, width, height);
+
+        return outputImage;
+    }
+
+    /**
+     * Save MobileElement buffered image.
+     */
+    protected static void saveElementImage(MobileElement element, String fileName)
+            throws IOException {
+        BufferedImage img = getElementImage(element);
+        saveBufferedImage(img, fileName);
     }
 }

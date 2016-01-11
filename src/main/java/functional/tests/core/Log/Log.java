@@ -1,6 +1,7 @@
 package functional.tests.core.Log;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Screenshot.ImageUtils;
 import functional.tests.core.Screenshot.ImageVerification;
 import functional.tests.core.Screenshot.ImageVerificationResult;
 import functional.tests.core.Settings.Settings;
@@ -124,7 +125,7 @@ public class Log {
      */
     public static void logScreen(String fileName, String title) {
         try {
-            ImageVerification.saveScreen(fileName);
+            ImageUtils.saveScreen(fileName);
 
             String logTemplatePath = templatePath + File.separator + "screenshot.template";
             File logTemplateFile = new File(logTemplatePath);
@@ -152,7 +153,7 @@ public class Log {
      */
     public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix) {
         try {
-            ImageVerification.saveImageVerificationResult(result, filePrefix);
+            ImageUtils.saveImageVerificationResult(result, filePrefix);
 
             String imageTitle = String.format("%s looks OK", filePrefix);
             if (result.diffPixels > 100) { // TODO: Read it from global config
