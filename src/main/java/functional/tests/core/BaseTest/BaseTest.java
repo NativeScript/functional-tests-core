@@ -27,9 +27,9 @@ public abstract class BaseTest {
 
         if (!Settings.debug) {
             BaseDevice.stopDevice();
+            BaseDevice.initDevice();
         }
 
-        BaseDevice.initDevice();
         BaseDevice.initTestApp();
 
         // Clean old logs
@@ -109,9 +109,9 @@ public abstract class BaseTest {
     public static void afterClass() throws Exception {
         Client.stopAppiumDriver();
         Server.stopAppiumServer();
-        BaseDevice.stopTestApp();
 
         if (!Settings.debug) {
+            BaseDevice.stopTestApp();
             BaseDevice.stopDevice();
         }
     }

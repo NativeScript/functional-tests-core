@@ -53,9 +53,13 @@ public class Server {
 
         // Set Android Emulator specific Apppium Server arguments
         if (Settings.deviceType == DeviceType.Emulator) {
-            serviceBuilder
-                    .withArgument(AndroidServerFlag.AVD, Settings.deviceName)
-                    .withArgument(AndroidServerFlag.AVD_ARGS, Settings.emulatorOptions);
+
+            // In debug mode emulator is not started with default method
+            if (Settings.debug) {
+                serviceBuilder
+                        .withArgument(AndroidServerFlag.AVD, Settings.deviceName)
+                        .withArgument(AndroidServerFlag.AVD_ARGS, Settings.emulatorOptions);
+            }
         }
 
         // Set iOS specific Apppium Server arguments
