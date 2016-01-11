@@ -115,4 +115,10 @@ public abstract class BaseTest {
             BaseDevice.stopDevice();
         }
     }
+
+    public static String getTestName() {
+        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        // System.out.print(methodName);
+        return methodName;
+    }
 }
