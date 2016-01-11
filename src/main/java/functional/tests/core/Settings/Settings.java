@@ -27,6 +27,7 @@ public class Settings {
     public static DeviceType deviceType;
     public static boolean isRealDevice;
     public static boolean restartApp;
+    public static boolean debug;
     public static boolean takeScreenShotAfterTest;
     public static VerificationType imageVerificationType;
     public static int shortTimeout;
@@ -210,21 +211,15 @@ public class Settings {
 
         // Set restartApp
         String restartAppString = properties.getProperty("restartApp");
-        restartApp = true;
-        if (restartAppString != null) {
-            if (restartAppString.equalsIgnoreCase("false")) {
-                restartApp = false;
-            }
-        }
+        restartApp = stringToBoolean(restartAppString);
+
+        // Set debug
+        String debugString = properties.getProperty("debug");
+        debug = stringToBoolean(debugString);
 
         // Set takeScreenShotAfterTest
         String takeScreenShotAfterTestString = properties.getProperty("takeScreenShotAfterTest");
-        takeScreenShotAfterTest = true;
-        if (takeScreenShotAfterTestString != null) {
-            if (takeScreenShotAfterTestString.equalsIgnoreCase("false")) {
-                takeScreenShotAfterTest = false;
-            }
-        }
+        takeScreenShotAfterTest = stringToBoolean(takeScreenShotAfterTestString);
 
         // Set image verification type
         String imageVerificationTypeString = properties.getProperty("imageVerificationType");
@@ -293,9 +288,9 @@ public class Settings {
         Doctor.verifyIdeviceinstaller();
 
         Log.separator();
-        Log.info("Settings  initialized properly:");
+        Log.info("Settings initialized properly:");
         Log.info("OS Type: " + OS);
-        Log.info("Mobile Platoform: " + platform);
+        Log.info("Mobile Platform: " + platform);
         Log.info("Platform Version: " + platformVersion);
         Log.info("Device Type: " + deviceType);
         Log.info("Device Name: " + deviceName);
@@ -322,6 +317,17 @@ public class Settings {
         Log.info("TestData Base Folder: " + baseTestDataDir);
         Log.info("Appium Log File: " + appiumLogFile);
         Log.info("Appium Log File: " + appiumLogLevel);
+        Log.info("Debug: " + debugString);
         Log.separator();
+    }
+
+    private static Boolean stringToBoolean(String str) {
+        if (str.equalsIgnoreCase("true")) {
+            return true;
+        } else if (str.equalsIgnoreCase("false")) {
+            return false;
+        } else {
+            return null;
+        }
     }
 }
