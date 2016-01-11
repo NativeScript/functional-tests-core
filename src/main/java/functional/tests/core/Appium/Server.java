@@ -1,5 +1,6 @@
 package functional.tests.core.Appium;
 
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
@@ -8,6 +9,7 @@ import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.AndroidServerFlag;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import io.appium.java_client.service.local.flags.IOSServerFlag;
 
@@ -49,6 +51,19 @@ public class Server {
                 .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName)
                 .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout));
 
+        // Set Android Emulator specific Apppium Server arguments
+        if (Settings.deviceType == DeviceType.Emulator) {
+            serviceBuilder
+                    .withArgument(AndroidServerFlag.AVD, Settings.deviceName)
+                    .withArgument(AndroidServerFlag.AVD_ARGS, Settings.emulatorOptions);
+        }
+
+        // Set iOS specific Apppium Server arguments
+        if (Settings.platform == PlatformType.iOS) {
+            serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
+            serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
+        }
+
         // On Linux and OSX use appium version manager
         if ((Settings.OS == OSType.Linux) || (Settings.OS == OSType.MacOS)) {
             // Get appium path via appium-version-manager
@@ -82,20 +97,8 @@ public class Server {
                 throw new AppiumException(error);
             } else {
                 Log.info("Appium Executable: " + appiumPath);
-            }
-
-            if (logFile.exists()) {
                 serviceBuilder.withAppiumJS(appiumExecutable);
-            } else {
-                String error = "Failed to find appium " + Settings.appiumVersion + " at " + appiumPath;
-                Log.fatal(error);
-                throw new AppiumException(error);
             }
-        }
-
-        if (Settings.platform == PlatformType.iOS) {
-            serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
-            serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
         }
 
         // Set log level (if specified in config)

@@ -24,7 +24,11 @@ public abstract class BaseTest {
     public static void beforeClass() throws Exception {
         Log.initLogging();
         Settings.initSettings();
-        BaseDevice.stopDevice();
+
+        if (!Settings.debug) {
+            BaseDevice.stopDevice();
+        }
+
         BaseDevice.initDevice();
         BaseDevice.initTestApp();
 
@@ -106,6 +110,9 @@ public abstract class BaseTest {
         Client.stopAppiumDriver();
         Server.stopAppiumServer();
         BaseDevice.stopTestApp();
-        BaseDevice.stopDevice();
+
+        if (!Settings.debug) {
+            BaseDevice.stopDevice();
+        }
     }
 }
