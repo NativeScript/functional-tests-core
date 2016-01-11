@@ -61,7 +61,7 @@ public class Client {
         // iOS Specific Settings
         if (Settings.platform == PlatformType.iOS) {
             capabilities.setCapability("screenshotWaitTimeout", Settings.defaultTimeout);
-            capabilities.setCapability("autoAcceptAlerts", true);
+            capabilities.setCapability("autoAcceptAlerts", Settings.acceptAlerts);
             capabilities.setCapability("launchTimeout", Settings.deviceBootTimeout * 1000);
             driver = new IOSDriver<>(Server.service.getUrl(), capabilities);
         }

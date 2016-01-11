@@ -29,6 +29,7 @@ public class Settings {
     public static boolean restartApp;
     public static boolean debug;
     public static boolean takeScreenShotAfterTest;
+    public static boolean acceptAlerts;
     public static VerificationType imageVerificationType;
     public static int shortTimeout;
     public static int defaultTimeout;
@@ -53,9 +54,7 @@ public class Settings {
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
     public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
-    public static final int fastTapDuration = 100;
     public static final int defaultTapDuration = 250;
-    public static final int slowTapDuration = 1000;
 
     private static OSType getOSType() {
         OSType detectedOS;
@@ -223,6 +222,13 @@ public class Settings {
             debug = stringToBoolean(debugString);
         }
 
+        // Set acceptAlerts
+        String acceptAlertsString = properties.getProperty("acceptAlerts");
+        acceptAlerts = true;
+        if (debugString != null ) {
+            debug = stringToBoolean(acceptAlertsString);
+        }
+
         // Set takeScreenShotAfterTest
         String takeScreenShotAfterTestString = properties.getProperty("takeScreenShotAfterTest");
         takeScreenShotAfterTest = false;
@@ -313,20 +319,21 @@ public class Settings {
         Log.info("Base TestApp Path: " + baseTestAppDir);
         Log.info("TestApp Name: " + testAppName);
         Log.info("TestApp Package Id: " + testAppPackageId);
-        Log.info("TestApp Archive: " + testAppArchive);
         Log.info("Restart App: " + String.valueOf(restartApp));
         Log.info("Appium Version: " + appiumVersion);
         Log.info("Automation Name: " + automationName);
-        Log.info("Emulator Options: " + emulatorOptions);
-        Log.info("Emulator Create Options: " + emulatorCreateOptions);
-        Log.info("Simulator Type: " + simulatorType);
         Log.info("Log Output Folder: " + baseLogDir);
         Log.info("Screenshot Output Folder: " + screenshotOutDir);
         Log.info("Screenshot Resources Folder: " + screenshotResDir);
         Log.info("TestData Base Folder: " + baseTestDataDir);
         Log.info("Appium Log File: " + appiumLogFile);
-        Log.info("Appium Log File: " + appiumLogLevel);
+        Log.info("Appium Log Level: " + appiumLogLevel);
         Log.info("Debug: " + debugString);
+        Log.info("(Android Only) Emulator Options: " + emulatorOptions);
+        Log.info("(Android Only) Emulator Create Options: " + emulatorCreateOptions);
+        Log.info("(iOS Only) Auto Accept Alerts: " + acceptAlertsString);
+        Log.info("(iOS Simulator Only) Simulator Type: " + simulatorType);
+        Log.info("(iOS Simulator Only) TestApp Archive: " + testAppArchive);
         Log.separator();
     }
 
