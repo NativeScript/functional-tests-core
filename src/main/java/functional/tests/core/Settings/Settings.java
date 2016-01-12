@@ -225,8 +225,8 @@ public class Settings {
         // Set acceptAlerts
         String acceptAlertsString = properties.getProperty("acceptAlerts");
         acceptAlerts = true;
-        if (debugString != null ) {
-            debug = stringToBoolean(acceptAlertsString);
+        if (acceptAlertsString != null ) {
+            acceptAlerts = stringToBoolean(acceptAlertsString);
         }
 
         // Set takeScreenShotAfterTest
