@@ -89,6 +89,7 @@ public class Find {
         try {
             result = findElementByLocator(locator);
         } catch (Exception e) {
+            Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
             result = null;
         }
         Client.setWait(Settings.defaultTimeout);
@@ -100,6 +101,22 @@ public class Find {
      */
     public static List<MobileElement> findElementsByLocator(By locator) {
         return (List<MobileElement>) Client.driver.findElements(locator);
+    }
+
+    /**
+     * Find an elements by locator
+     */
+    public static List<MobileElement> findElementsByLocator(By locator, int timeout) {
+        Client.setWait(timeout);
+        List<MobileElement> result;
+        try {
+            result = findElementsByLocator(locator);
+        } catch (Exception e) {
+            Log.error("Failed to find elements by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
+            result = null;
+        }
+        Client.setWait(Settings.defaultTimeout);
+        return result;
     }
 
     /**
