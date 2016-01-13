@@ -1,6 +1,7 @@
 package functional.tests.core.Device;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.BaseTest.BaseTest;
 import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Device.Android.AndroidDevice;
 import functional.tests.core.Device.iOS.iOSDevice;
@@ -12,7 +13,6 @@ import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
-import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.Assert;
@@ -20,7 +20,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -103,16 +102,21 @@ public class BaseDevice {
         }
     }
 
-    public static void getConsoleLog(String fileName) throws IOException {
+    public static void writeConsoleLogToFile(String fileName) throws IOException {
         if (Settings.platform == PlatformType.Andorid) {
-            List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
-            String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
-            FileWriter writer = new FileWriter(logLocation);
-            for (LogEntry log : logEntries) {
-                writer.write(log.toString());
-                writer.write(System.lineSeparator());
+            try {
+                List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
+                String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
+                FileWriter writer = new FileWriter(logLocation, true);
+                for (LogEntry log : logEntries) {
+                    writer.write(log.toString());
+                    writer.write(System.lineSeparator());
+                }
+                writer.close();
+            } catch (Exception e) {
+                Log.warn("Failed to get logcat.");
+                e.printStackTrace();
             }
-            writer.close();
         } else {
             try {
                 List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
@@ -127,6 +131,7 @@ public class BaseDevice {
                 }
             } catch (Exception e) {
                 Log.warn("Failed to get syslog.");
+                e.printStackTrace();
             }
 
             try {
@@ -142,7 +147,32 @@ public class BaseDevice {
                 }
             } catch (Exception e) {
                 Log.warn("Failed to get crashlog.");
+                e.printStackTrace();
             }
+        }
+    }
+
+    public static void assertLogContains(String fileName, String str) throws IOException {
+        if (Settings.platform == PlatformType.Andorid) {
+            writeConsoleLogToFile(fileName);
+            String logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
+            Assert.assertTrue(logContent.contains(str), "The log does not contain '" + str + "'.");
+            Log.info("The log contains '" + str + "'.");
+        } else {
+            // TODO: Implement it.
+            throw new NotImplementedException();
+        }
+    }
+
+    public static void assertLogNotContains(String fileName, String str) throws IOException {
+        if (Settings.platform == PlatformType.Andorid) {
+            writeConsoleLogToFile(fileName);
+            String logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
+            Assert.assertFalse(logContent.contains(str), "The log contains '" + str + "'.");
+            Log.info("The log does not contains '" + str + "'.");
+        } else {
+            // TODO: Implement it.
+            throw new NotImplementedException();
         }
     }
 

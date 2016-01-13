@@ -50,7 +50,7 @@ public abstract class BaseTest {
         BaseDevice.verifyAppRunning(Settings.deviceId, Settings.testAppPackageId);
 
         // Get logs for initial app startup
-        BaseDevice.getConsoleLog("init");
+        BaseDevice.writeConsoleLogToFile("init");
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -87,7 +87,7 @@ public abstract class BaseTest {
         String testCase = result.getMethod().getMethodName();
 
         // Write console log
-        BaseDevice.getConsoleLog(testCase);
+        BaseDevice.writeConsoleLogToFile(testCase);
 
         // Report results
         previousTestStatus = result.getStatus();
