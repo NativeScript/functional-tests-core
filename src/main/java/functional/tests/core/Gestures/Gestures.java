@@ -135,6 +135,10 @@ public class Gestures {
         action.press(element).waitAction(duration).release().perform();
     }
 
+    public static void swipe(MobileElement element, String direction, int duration) {
+        swipeInElement(element, direction, duration);
+    }
+
     public static void pinch(MobileElement element) {
 
         Log.info("Pinch: "); // + Elements.getElementDetails(element));
