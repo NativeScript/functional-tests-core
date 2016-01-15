@@ -224,7 +224,7 @@ public class Settings {
 
         // Set acceptAlerts
         String acceptAlertsString = properties.getProperty("acceptAlerts");
-        acceptAlerts = true;
+        acceptAlerts = false;
         if (acceptAlertsString != null ) {
             acceptAlerts = stringToBoolean(acceptAlertsString);
         }
