@@ -153,27 +153,27 @@ public class BaseDevice {
     }
 
     public static void assertLogContains(String fileName, String str) throws IOException {
+        writeConsoleLogToFile(fileName);
+        String logContent;
         if (Settings.platform == PlatformType.Andorid) {
-            writeConsoleLogToFile(fileName);
-            String logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
-            Assert.assertTrue(logContent.contains(str), "The log does not contain '" + str + "'.");
-            Log.info("The log contains '" + str + "'.");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
         } else {
-            // TODO: Implement it.
-            throw new NotImplementedException();
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log");
         }
+        Assert.assertTrue(logContent.contains(str), "The log does not contain '" + str + "'.");
+        Log.info("The log contains '" + str + "'.");
     }
 
     public static void assertLogNotContains(String fileName, String str) throws IOException {
+        writeConsoleLogToFile(fileName);
+        String logContent;
         if (Settings.platform == PlatformType.Andorid) {
-            writeConsoleLogToFile(fileName);
-            String logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
-            Assert.assertFalse(logContent.contains(str), "The log contains '" + str + "'.");
-            Log.info("The log does not contains '" + str + "'.");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
         } else {
-            // TODO: Implement it.
-            throw new NotImplementedException();
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log");
         }
+        Assert.assertFalse(logContent.contains(str), "The log contains '" + str + "'.");
+        Log.info("The log does not contains '" + str + "'.");
     }
 
     public static boolean isAppRunning(String deviceId, String appId) {
