@@ -80,7 +80,7 @@ public class iOSDevice {
             if (found) {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
             } else {
-                String error = "Simulator " + Settings.deviceName + " does not exist.";
+                String error = "Simulator " + Settings.deviceName + " does not exist. Hint: verify SDKs available.";
                 Log.error(error);
                 throw new DeviceException(error);
             }
