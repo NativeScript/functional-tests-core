@@ -122,7 +122,7 @@ public class BaseDevice {
                 List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
                 if (logEntries.size() >= 1) {
                     String logLocation = Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log";
-                    FileWriter writer = new FileWriter(logLocation);
+                    FileWriter writer = new FileWriter(logLocation, true);
                     for (LogEntry log : logEntries) {
                         writer.write(log.toString());
                         writer.write(System.lineSeparator());
@@ -138,7 +138,7 @@ public class BaseDevice {
                 List<LogEntry> logEntries = Client.driver.manage().logs().get("crashlog").getAll();
                 if (logEntries.size() >= 1) {
                     String logLocation = Settings.consoleLogDir + File.separator + "crashlog_" + fileName + ".log";
-                    FileWriter writer = new FileWriter(logLocation);
+                    FileWriter writer = new FileWriter(logLocation, true);
                     for (LogEntry log : logEntries) {
                         writer.write(log.toString());
                         writer.write(System.lineSeparator());
