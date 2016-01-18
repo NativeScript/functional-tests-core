@@ -74,6 +74,22 @@ public class Find {
     }
 
     /**
+     * Find an element by class (UI control class)
+     */
+    public static MobileElement findByType(String value, int timeOut) {
+        Client.setWait(timeOut);
+        MobileElement result;
+        try {
+            result = findByType(value);
+        } catch (Exception e) {
+            Log.error("Failed to find element by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        Client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    /**
      * Find an element by locator
      */
     public static MobileElement findElementByLocator(By locator) {
