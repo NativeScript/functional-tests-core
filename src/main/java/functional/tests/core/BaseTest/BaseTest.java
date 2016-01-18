@@ -4,7 +4,9 @@ import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
+import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -20,6 +22,20 @@ public abstract class BaseTest {
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
 
+    private static void checkAppiumLogsForCrash() {
+        try {
+            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
+            String[] lines = appiumLog.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
+                    Log.fatal("App crashes at startup. Please see appium logs.");
+                }
+            }
+        } catch (IOException e) {
+            Log.info("Failed to check appium log files.");
+        }
+    }
+
     @BeforeSuite(alwaysRun = true)
     public static void beforeClass() throws Exception {
         Log.initLogging();
@@ -32,18 +48,24 @@ public abstract class BaseTest {
 
         BaseDevice.initTestApp();
 
-        // Clean old logs
-        BaseDevice.cleanConsoleLog();
-
         try {
             Server.initAppiumServer();
             Client.initAppiumDriver();
         } catch (Exception e) {
+            checkAppiumLogsForCrash();
             Log.info("Retry initializing appium server and client");
-            Client.stopAppiumDriver();
-            Server.stopAppiumServer();
-            Server.initAppiumServer();
-            Client.initAppiumDriver();
+            Settings.appiumLogLevel = "debug";
+            try {
+                Client.stopAppiumDriver();
+                Server.stopAppiumServer();
+                Server.initAppiumServer();
+                Client.initAppiumDriver();
+            } catch (Exception re) {
+                checkAppiumLogsForCrash();
+                String error = "Failed to init Appium session. Please see Appium logs.";
+                Log.fatal(error);
+                throw new AppiumException(error);
+            }
         }
 
         // Verify app not crashed
