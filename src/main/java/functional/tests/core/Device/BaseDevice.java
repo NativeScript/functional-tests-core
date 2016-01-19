@@ -152,25 +152,27 @@ public class BaseDevice {
         }
     }
 
-    public static void assertLogContains(String fileName, String str) throws IOException {
-        writeConsoleLogToFile(fileName);
+    public static void assertLogContains(String str) throws IOException {
+        String testName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        writeConsoleLogToFile(testName);
         String logContent;
         if (Settings.platform == PlatformType.Andorid) {
-            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + testName + ".log");
         } else {
-            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + testName + ".log");
         }
         Assert.assertTrue(logContent.contains(str), "The log does not contain '" + str + "'.");
         Log.info("The log contains '" + str + "'.");
     }
 
-    public static void assertLogNotContains(String fileName, String str) throws IOException {
-        writeConsoleLogToFile(fileName);
+    public static void assertLogNotContains(String str) throws IOException {
+        String testName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        writeConsoleLogToFile(testName);
         String logContent;
         if (Settings.platform == PlatformType.Andorid) {
-            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "logcat_" + testName + ".log");
         } else {
-            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log");
+            logContent = FileSystem.readFile(Settings.consoleLogDir + File.separator + "syslog_" + testName + ".log");
         }
         Assert.assertFalse(logContent.contains(str), "The log contains '" + str + "'.");
         Log.info("The log does not contains '" + str + "'.");
