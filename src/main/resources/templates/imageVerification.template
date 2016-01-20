@@ -6,8 +6,22 @@ IMAGE_TITLE
 		<td>Expected:</td>
 	</tr>
 	<tr>
-	    <td><a target="_blank" href="ACTUAL_IMAGE_URL"><img width="60" height="80" src="ACTUAL_IMAGE_URL"></src></a></td>
-		<td><a target="_blank" href="DIFF_IMAGE_URL"><img width="60" height="80" src="DIFF_IMAGE_URL"></src></a></td>
-		<td><a target="_blank" href="EXPECTED_IMAGE_URL"><img width="60" height="80" src="EXPECTED_IMAGE_URL"></src></a></td>
+	    <td><a target="_blank" href="ACTUAL_IMAGE_URL"><img name="actualImage" width="60" height="80" src="ACTUAL_IMAGE_URL" /></a></td>
+		<td><a target="_blank" href="DIFF_IMAGE_URL"><img width="60" height="80" src="DIFF_IMAGE_URL" /></a></td>
+		<td><a target="_blank" href="EXPECTED_IMAGE_URL"><img width="60" height="80" src="EXPECTED_IMAGE_URL" /></a></td>
+	</tr>
+	<tr>
+		<td><a href="javascript: void 0" ONCLICK="saveImage(document.actualImage); return false">save</a></td>
+		<td></td>
+		<td></td>
 	</tr>
 </table>
+
+<script>
+function saveImage (imgOrURL) {
+  if (typeof imgOrURL == 'object')
+  	imgOrURL = imgOrURL.src;
+  window.win = open (imgOrURL);
+  setTimeout('win.document.execCommand("SaveAs")', 500);
+}
+</script>
