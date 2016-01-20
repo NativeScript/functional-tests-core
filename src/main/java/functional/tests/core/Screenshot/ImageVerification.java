@@ -55,7 +55,9 @@ public class ImageVerification {
             Log.error("Screenshot and expected image are with different size.");
             Log.error("Actual image: " + width1 + "x" + height1);
             Log.error("Expected image: " + width2 + "x" + height2);
-            throw new ImageVerificationException("Screenshot and expected image are with different size.");
+
+            diffPixels = width1 * height1;
+            //throw new ImageVerificationException("Screenshot and expected image are with different size.");
         } else {
 
             // Define red color
