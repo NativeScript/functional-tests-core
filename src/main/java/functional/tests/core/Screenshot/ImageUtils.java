@@ -88,14 +88,22 @@ public class ImageUtils {
         BufferedImage img = getScreen();
 
         int screenWidth = Client.driver.manage().window().getSize().width;
-        int screenshotWidth = img.getWidth();
+        int screenHeight = Client.driver.manage().window().getSize().height;
 
+        int screenshotWidth = img.getWidth();
         int zoomFactor = screenshotWidth / screenWidth;
 
         Point point = element.getLocation();
 
         int width = element.getSize().getWidth() * zoomFactor;
         int height = element.getSize().getHeight() * zoomFactor;
+
+        if (width > screenWidth) {
+            height = screenHeight - (point.getX() * zoomFactor);
+        }
+        if (height > screenHeight) {
+            height = screenHeight - (point.getY() * zoomFactor);
+        }
 
         BufferedImage outputImage = img.getSubimage(point.getX() * zoomFactor,
                 point.getY() * zoomFactor, width, height);
