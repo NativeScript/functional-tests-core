@@ -55,6 +55,7 @@ public abstract class BaseTest {
             checkAppiumLogsForCrash();
             Log.info("Retry initializing appium server and client");
             Settings.appiumLogLevel = "debug";
+            Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
             try {
                 Client.stopAppiumDriver();
                 Server.stopAppiumServer();
