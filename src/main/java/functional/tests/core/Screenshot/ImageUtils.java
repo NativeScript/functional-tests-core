@@ -98,11 +98,11 @@ public class ImageUtils {
         int width = element.getSize().getWidth() * zoomFactor;
         int height = element.getSize().getHeight() * zoomFactor;
 
-        if (width > screenWidth) {
-            height = screenHeight - (point.getX() * zoomFactor);
+        if (width > screenWidth * zoomFactor) {
+            width = (screenWidth - point.getX()) * zoomFactor;
         }
-        if (height > screenHeight) {
-            height = screenHeight - (point.getY() * zoomFactor);
+        if (height > screenHeight * zoomFactor) {
+            height = (screenHeight - point.getY()) * zoomFactor;
         }
 
         BufferedImage outputImage = img.getSubimage(point.getX() * zoomFactor,
