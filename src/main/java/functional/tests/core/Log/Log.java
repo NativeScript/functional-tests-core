@@ -176,7 +176,8 @@ public class Log {
                     .replace("IMAGE_TITLE", imageTitle)
                     .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.actualSuffix + ".png")
                     .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.diffSuffix + ".png")
-                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png");
+                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png")
+                    .replace("IMAGE_NAME", filePrefix);
 
             image(logMessage);
         } catch (Exception e) {
