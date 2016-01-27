@@ -260,7 +260,7 @@ public class ImageVerification {
                     BufferedImage actualImage = ImageUtils.getScreen();
                     result = compareImages(actualImage, expectedImage);
                     if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                        String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Wait..";
+                        String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
                         Wait.sleep(1000);
                     } else {

@@ -21,7 +21,7 @@ public class Adb {
     private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
     private static final String androidPath = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "android";
     private static final String emulatorPath = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "emulator";
-    private static final String emulatorStartLogPath = Settings.baseLogDir + File.separator + "emulator.logs";
+    private static final String emulatorStartLogPath = Settings.baseLogDir + File.separator + "emulator.log";
 
     private static String runAdbCommand(String command) {
         String adbCommand = adbPath + " " + command;
