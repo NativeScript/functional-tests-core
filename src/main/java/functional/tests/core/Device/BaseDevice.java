@@ -36,6 +36,8 @@ public class BaseDevice {
                 AndroidDevice.initDevice();
             } catch (TimeoutException timeout) {
                 Log.error("TimeoutException. Retry init device...");
+                Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
+                Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
                 AndroidDevice.stopDevice();
                 AndroidDevice.initDevice();
             }
