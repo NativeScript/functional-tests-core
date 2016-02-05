@@ -1,4 +1,4 @@
-IMAGE_NAME
+IMAGE_TITLE
 <table>
 	<tr>Actual
 		<td>Actual:</td>
@@ -6,9 +6,9 @@ IMAGE_NAME
 		<td>Expected:</td>
 	</tr>
 	<tr>
-	    <td><a target="_blank" href="ACTUAL_IMAGE_URL"><img width="60" height="80" src="ACTUAL_IMAGE_URL" /></a></td>
-		<td><a target="_blank" href="DIFF_IMAGE_URL"><img width="60" height="80" src="DIFF_IMAGE_URL" /></a></td>
-		<td><a target="_blank" href="EXPECTED_IMAGE_URL"><img width="60" height="80" src="EXPECTED_IMAGE_URL" /></a></td>
+	    <td><a target="_blank" href="ACTUAL_IMAGE_URL"><img width="THUMB_WIDTH" height="THUMB_HEIGHT" src="ACTUAL_IMAGE_URL" /></a></td>
+		<td><a target="_blank" href="DIFF_IMAGE_URL"><img width="THUMB_WIDTH" height="THUMB_HEIGHT" src="DIFF_IMAGE_URL" /></a></td>
+		<td><a target="_blank" href="EXPECTED_IMAGE_URL"><img width="THUMB_WIDTH" height="THUMB_HEIGHT" src="EXPECTED_IMAGE_URL" /></a></td>
 	</tr>
 	<tr>
 		<td><a href="ACTUAL_IMAGE_URL" download="IMAGE_NAME">save</a></td>

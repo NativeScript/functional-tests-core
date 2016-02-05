@@ -2,7 +2,6 @@ package functional.tests.core.Log;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Screenshot.ImageUtils;
-import functional.tests.core.Screenshot.ImageVerification;
 import functional.tests.core.Screenshot.ImageVerificationResult;
 import functional.tests.core.Settings.Settings;
 import org.apache.log4j.Logger;
@@ -21,6 +20,8 @@ import static functional.tests.core.OSUtils.FileSystem.readFile;
 
 public class Log {
 
+    private static int thumbHeight = 80;
+    private static int thumbWidth = 60;
     private static Logger Log = Logger.getLogger(Log.class.getName());
     private static String logLevel = "INFO";
     private static String templatePath = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "templates";
@@ -123,7 +124,7 @@ public class Log {
     /**
      * Log current screen *
      */
-    public static void logScreen(String fileName, String title) {
+    public static void logScreen(String fileName, String title, int thumbHeight, int thumbWidth) {
         try {
             ImageUtils.saveScreen(fileName);
 
@@ -139,7 +140,9 @@ public class Log {
 
             logMessage = logMessage
                     .replace("IMAGE_TITLE", title)
-                    .replace("IMAGE_URL", "../screenshots/" + fileName + ".png");
+                    .replace("IMAGE_URL", "../screenshots/" + fileName + ".png")
+                    .replace("THUMB_WIDTH", String.valueOf(thumbWidth))
+                    .replace("THUMB_HEIGHT", String.valueOf(thumbHeight));
 
             debug(logMessage);
             image(logMessage);
@@ -149,9 +152,16 @@ public class Log {
     }
 
     /**
+     * Log current screen *
+     */
+    public static void logScreen(String fileName, String title) {
+        logScreen(fileName, title, thumbHeight, thumbWidth);
+    }
+
+    /**
      * Log image verification result *
      */
-    public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix) {
+    public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix, int thumbHeight, int thumbWidth) {
         try {
             ImageUtils.saveImageVerificationResult(result, filePrefix);
 
@@ -176,11 +186,20 @@ public class Log {
                     .replace("IMAGE_NAME", filePrefix)
                     .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.actualSuffix + ".png")
                     .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.diffSuffix + ".png")
-                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png");
+                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png")
+                    .replace("THUMB_WIDTH", String.valueOf(thumbWidth))
+                    .replace("THUMB_HEIGHT", String.valueOf(thumbHeight));
 
             image(logMessage);
         } catch (Exception e) {
             error("Failed to log current screen.");
         }
+    }
+
+    /**
+     * Log image verification result *
+     */
+    public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix) {
+        logImageVerificationResult(result, filePrefix, thumbHeight, thumbWidth);
     }
 }

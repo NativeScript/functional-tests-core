@@ -99,17 +99,26 @@ public class Find {
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator, int timeout) {
+    public static MobileElement findElementByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
         Client.setWait(timeout);
         MobileElement result;
         try {
             result = findElementByLocator(locator);
         } catch (Exception e) {
-            Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
+            if (logErrorOnNotFound) {
+                Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
+            }
             result = null;
         }
         Client.setWait(Settings.defaultTimeout);
         return result;
+    }
+
+    /**
+     * Find an element by locator
+     */
+    public static MobileElement findElementByLocator(By locator, int timeout) {
+        return findElementByLocator(locator, timeout, true);
     }
 
     /**

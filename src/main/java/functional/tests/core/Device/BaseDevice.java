@@ -1,7 +1,6 @@
 package functional.tests.core.Device;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.BaseTest.BaseTest;
 import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Device.Android.AndroidDevice;
 import functional.tests.core.Device.iOS.iOSDevice;
@@ -33,7 +32,13 @@ public class BaseDevice {
 
     public static void initDevice() throws UnknownPlatformException, TimeoutException, InterruptedException, DeviceException {
         if (Settings.platform == PlatformType.Andorid) {
-            AndroidDevice.initDevice();
+            try {
+                AndroidDevice.initDevice();
+            } catch (TimeoutException timeout) {
+                Log.error("TimeoutException. Retry init device...");
+                AndroidDevice.stopDevice();
+                AndroidDevice.initDevice();
+            }
         } else if (Settings.platform == PlatformType.iOS) {
             iOSDevice.initDevice();
         }

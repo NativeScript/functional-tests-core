@@ -10,7 +10,10 @@ import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Settings {
@@ -218,14 +221,14 @@ public class Settings {
         // Set debug
         String debugString = properties.getProperty("debug");
         debug = false;
-        if (debugString != null ) {
+        if (debugString != null) {
             debug = stringToBoolean(debugString);
         }
 
         // Set acceptAlerts
         String acceptAlertsString = properties.getProperty("acceptAlerts");
         acceptAlerts = false;
-        if (acceptAlertsString != null ) {
+        if (acceptAlertsString != null) {
             acceptAlerts = stringToBoolean(acceptAlertsString);
         }
 
@@ -265,9 +268,7 @@ public class Settings {
 
         // If defaultTimeout is not specified set it to 30 sec.
         String defaultTimeoutString = properties.getProperty("defaultTimeout");
-        if (defaultTimeoutString != null)
-
-        {
+        if (defaultTimeoutString != null) {
             defaultTimeout = Integer.valueOf(defaultTimeoutString);
         } else
 
