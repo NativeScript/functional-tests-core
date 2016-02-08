@@ -296,4 +296,15 @@ public class Adb {
             return false;
         }
     }
+
+    public static void getScreenshot(String fileName) {
+        try {
+            String takeScreenCommand = runAdbCommand(Settings.deviceId, "shell screencap -p /sdcard/" + fileName);
+            String copyFileCommand = runAdbCommand(Settings.deviceId, "pull /sdcard/" + fileName);
+            OSUtils.runProcess(takeScreenCommand);
+            OSUtils.runProcess(copyFileCommand);
+        } catch (Exception e) {
+            Log.error("Failed to take screenshot with adb.");
+        }
+    }
 }

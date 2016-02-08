@@ -3,7 +3,9 @@ package functional.tests.core.BaseTest;
 import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
+import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Device.BaseDevice;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
@@ -63,6 +65,9 @@ public abstract class BaseTest {
                 Client.initAppiumDriver();
             } catch (Exception re) {
                 checkAppiumLogsForCrash();
+                if (Settings.platform == PlatformType.Andorid) {
+                    Adb.getScreenshot("emulator.png");
+                }
                 String error = "Failed to init Appium session. Please see Appium logs.";
                 Log.fatal(error);
                 throw new AppiumException(error);
