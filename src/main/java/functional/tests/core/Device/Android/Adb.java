@@ -96,12 +96,15 @@ public class Adb {
     }
 
     // If emulator with same name exists, do nothing, else create emulator
-    protected static void createEmulator(String avdName, String options) throws DeviceException {
+    public static void createEmulator(String avdName, String options, Boolean force) throws DeviceException {
 
         String avds = OSUtils.runProcess(androidPath + " list avds");
+        Boolean emulatorExists = false;
         if (avds.contains(avdName + ".avd")) {
             Log.info(avdName + " already exists.");
-        } else {
+            emulatorExists = true;
+        }
+        if (force || (!emulatorExists)) {
             // Create emulator
             String command;
             if (Settings.OS == OSType.Windows) {
@@ -125,6 +128,11 @@ public class Adb {
                 throw new DeviceException(error);
             }
         }
+    }
+
+    // If emulator with same name exists, do nothing, else create emulator
+    public static void createEmulator(String avdName, String options) throws DeviceException {
+        createEmulator(avdName, options, false);
     }
 
     protected static void startEmulator(String avdName, int port) {

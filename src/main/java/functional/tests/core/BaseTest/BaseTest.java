@@ -65,9 +65,6 @@ public abstract class BaseTest {
                 Client.initAppiumDriver();
             } catch (Exception re) {
                 checkAppiumLogsForCrash();
-                if (Settings.platform == PlatformType.Andorid) {
-                    Adb.getScreenshot("emulator.png");
-                }
                 String error = "Failed to init Appium session. Please see Appium logs.";
                 Log.fatal(error);
                 throw new AppiumException(error);

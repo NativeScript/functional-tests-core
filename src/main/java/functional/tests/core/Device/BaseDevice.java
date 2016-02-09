@@ -35,11 +35,19 @@ public class BaseDevice {
             try {
                 AndroidDevice.initDevice();
             } catch (TimeoutException timeout) {
-                Log.error("TimeoutException. Retry init device...");
-                Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
-                Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
-                AndroidDevice.stopDevice();
-                AndroidDevice.initDevice();
+                try {
+                    Log.error("TimeoutException. Retry init device...");
+                    Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
+                    Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
+                    AndroidDevice.stopDevice();
+                    if (!Settings.isRealDevice) {
+                        Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
+                    }
+                    AndroidDevice.initDevice();
+                } catch (TimeoutException secondTimeout) {
+                    Adb.getScreenshot("timeout.png");
+                    throw secondTimeout;
+                }
             }
         } else if (Settings.platform == PlatformType.iOS) {
             iOSDevice.initDevice();
