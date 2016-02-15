@@ -35,7 +35,7 @@ public class ImageVerification {
     /**
      * Compares two BufferedImage and return ImageVerificationResult
      */
-    private static ImageVerificationResult compareImages(BufferedImage actualImage, BufferedImage expectedImage)
+    private static ImageVerificationResult compareImages(BufferedImage actualImage, BufferedImage expectedImage, Boolean ignoreHeader)
             throws ImageVerificationException {
 
         int diffPixels = 0;
@@ -64,9 +64,9 @@ public class ImageVerification {
             Color red = new Color(255, 0, 0);
             int redRgb = red.getRGB();
 
-            // If IGNORE_HEADER is True pixels at top are ignored in comparison
+            // If ignoreHeader is True pixels at top are ignored in comparison
             int startY = 0;
-            if (IGNORE_HEADER) {
+            if (ignoreHeader) {
                 // TODO: Reasearch if we can better define what is header
                 if (Settings.platform == PlatformType.Andorid) {
                     startY = (int) (height1 * 0.07);
@@ -140,7 +140,8 @@ public class ImageVerification {
                 FileSystem.makeDir(expectedImageBasePath);
                 ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
             } else {
-                ImageVerificationResult result = compareImages(actualImage, expectedImage);
+                // There is no need to ignore header when verifying an element.
+                ImageVerificationResult result = compareImages(actualImage, expectedImage, !IGNORE_HEADER);
 
                 Log.logImageVerificationResult(result, expectedElementImage);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
@@ -203,7 +204,7 @@ public class ImageVerification {
                 FileSystem.makeDir(expectedImageBasePath);
                 ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
             } else {
-                ImageVerificationResult result = compareImages(actualImage, expectedImage);
+                ImageVerificationResult result = compareImages(actualImage, expectedImage, IGNORE_HEADER);
 
                 Log.logImageVerificationResult(result, pageName);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
@@ -258,7 +259,7 @@ public class ImageVerification {
                 long startTime = System.currentTimeMillis();
                 while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
                     BufferedImage actualImage = ImageUtils.getScreen();
-                    result = compareImages(actualImage, expectedImage);
+                    result = compareImages(actualImage, expectedImage, IGNORE_HEADER);
                     if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                         String errorString = pageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
