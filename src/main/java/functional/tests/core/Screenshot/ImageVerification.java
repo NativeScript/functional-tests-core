@@ -141,7 +141,7 @@ public class ImageVerification {
                 ImageUtils.saveBufferedImage(actualImage, new File(expectedImagePath));
             } else {
                 // There is no need to ignore header when verifying an element.
-                ImageVerificationResult result = compareImages(actualImage, expectedImage, !IGNORE_HEADER);
+                ImageVerificationResult result = compareImages(actualImage, expectedImage, false);
 
                 Log.logImageVerificationResult(result, expectedElementImage);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
