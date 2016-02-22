@@ -12,6 +12,7 @@ import java.util.List;
 
 public class iOSDevice {
 
+    public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
     public static String simulatorGuid = null;
 
     private static void uninstallApp(String appId) {

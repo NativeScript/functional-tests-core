@@ -12,6 +12,7 @@ import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.Assert;
@@ -163,6 +164,18 @@ public class BaseDevice {
             } catch (Exception e) {
                 Log.warn("Failed to get crashlog.");
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private static void copySimulatorSystemLog() {
+        if (Settings.deviceType == DeviceType.Simulator) {
+            if (iOSDevice.simulatorGuid != null) {
+                String command = "cp -f ~/Library/Logs/CoreSimulator/" + iOSDevice.simulatorGuid + "/system.log " + iOSDevice.simulatorLogPath;
+                Log.info(command);
+                OSUtils.runProcess(command);
+            } else {
+                Log.error("simulatorGuid is null. Debug mode might be enabled.");
             }
         }
     }
