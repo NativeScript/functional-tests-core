@@ -1,6 +1,7 @@
 package functional.tests.core.Appium;
 
 import functional.tests.core.Device.Android.Adb;
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
@@ -37,7 +38,7 @@ public class Client {
         capabilities.setCapability(MobileCapabilityType.LAUNCH_TIMEOUT, true);
 
         // iOS Simulator does not have deviceId
-        if (Settings.deviceId != null) {
+        if (Settings.deviceType == DeviceType.iOS) {
             capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
         }
 

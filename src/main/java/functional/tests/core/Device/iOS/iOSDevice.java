@@ -13,7 +13,7 @@ import java.util.List;
 public class iOSDevice {
 
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
-    public static String simulatorGuid = null;
+    private static String simulatorGuid = null;
 
     private static void uninstallApp(String appId) {
         String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
@@ -60,8 +60,16 @@ public class iOSDevice {
                 Log.fatal("Failed to create simulator. Error: " + result);
                 throw new DeviceException("Failed to create simulator. Error: " + result);
             } else {
-                simulatorGuid = result.trim();
-                Log.info("Simulator created: " + result);
+                String guid = result;
+                String[] rowList = result.split("\\r?\\n");
+                for (String rowLine : rowList) {
+                    if (rowLine.contains("-")) {
+                        guid = rowLine.trim();
+                    }
+                }
+                simulatorGuid = guid;
+                Settings.deviceId = simulatorGuid;
+                Log.info("Simulator created: " + simulatorGuid);
             }
 
             // Verify simulator exists

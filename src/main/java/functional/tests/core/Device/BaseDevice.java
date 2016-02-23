@@ -186,8 +186,8 @@ public class BaseDevice {
 
     private static void copySimulatorSystemLog() {
         if (Settings.deviceType == DeviceType.Simulator) {
-            if (iOSDevice.simulatorGuid != null) {
-                String command = "cp -f ~/Library/Logs/CoreSimulator/" + iOSDevice.simulatorGuid + "/system.log " + iOSDevice.simulatorLogPath;
+            if (Settings.deviceId != null) {
+                String command = "cp -f ~/Library/Logs/CoreSimulator/" + Settings.deviceId + "/system.log " + iOSDevice.simulatorLogPath;
                 Log.info(command);
                 OSUtils.runProcess(command);
             } else {
