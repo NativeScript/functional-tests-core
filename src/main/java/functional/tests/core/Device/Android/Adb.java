@@ -296,6 +296,43 @@ public class Adb {
         }
     }
 
+    public static void pullFile(String deviceId, String remotePath, String destinationFolder) throws Exception {
+
+        // Verify remotePath
+        String remoteBasePath = remotePath.substring(0, remotePath.lastIndexOf("/"));
+        String sdcardFiles = runAdbCommand(Settings.deviceId, "shell ls -la " + remoteBasePath);
+        if (sdcardFiles.contains("No such file or directory")) {
+            String error = remoteBasePath + " does not exist.";
+            Log.error(error);
+            throw new Exception(error);
+        }
+
+        // Verify localPath
+        String localPath = Settings.baseLogDir;
+        if (destinationFolder != null) {
+            destinationFolder = destinationFolder.replace("/", File.separator);
+            destinationFolder = destinationFolder.replace("\\", File.separator);
+            localPath = Settings.baseLogDir + File.separator + destinationFolder;
+        }
+
+        // Pull files
+        String output = runAdbCommand(deviceId, "pull " + remotePath + " " + localPath);
+        Log.info(output);
+        String o = output.toLowerCase();
+        if ((o.contains("error")) || (o.contains("failed")) || (o.contains("does not exist"))) {
+            String error = "Failed to transfer " + remotePath + " to " + localPath;
+            Log.error(error);
+            Log.error("Error: " + output);
+            throw new Exception(error);
+        } else {
+            Log.info(remotePath + " transferred to " + localPath);
+        }
+    }
+
+    public static void pullFile(String deviceId, String remotePath) throws Exception {
+        pullFile(deviceId, remotePath, null);
+    }
+
     public static boolean isAppRunning(String deviceId, String appId) {
         String processes = runAdbCommand(deviceId, "shell ps");
         if (processes.contains(appId)) {

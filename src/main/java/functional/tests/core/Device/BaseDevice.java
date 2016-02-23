@@ -105,6 +105,22 @@ public class BaseDevice {
         }
     }
 
+    public static void pullFile(String deviceId, String remotePath, String destinationFolder) throws Exception {
+        if (Settings.platform == PlatformType.Andorid) {
+            Adb.pullFile(deviceId, remotePath, destinationFolder);
+        } else {
+            throw new NotImplementedException();
+        }
+    }
+
+    public static void pullFile(String deviceId, String remotePath) throws Exception {
+        if (Settings.platform == PlatformType.Andorid) {
+            Adb.pullFile(deviceId, remotePath);
+        } else {
+            throw new NotImplementedException();
+        }
+    }
+
     public static void cleanConsoleLog() {
         try {
             if (Settings.platform == PlatformType.Andorid) {
