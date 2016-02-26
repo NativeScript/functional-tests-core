@@ -1,4 +1,4 @@
-package plugins.firebase.Tests;
+package functional.tests.core.Gestures;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.Element;
