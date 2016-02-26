@@ -1,4 +1,4 @@
-package functional.tests.core.Gestures;
+package plugins.firebase.Tests;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.Element;
@@ -18,6 +18,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
+
 import java.util.HashMap;
 
 public class Gestures {
@@ -58,28 +59,30 @@ public class Gestures {
         int finalX = centerX;
         int finalY = centerY;
 
+        int offset = (int) (height * 0.25D);
+
         if (direction == SwipeElementDirection.DOWN) {
             initialX = centerX;
-            initialY = centerY + centerY / 2 + centerY / 4 - centerY / 8;
+            initialY = centerY + offset;
             finalX = centerX;
-            finalY = centerY - centerY / 2 - centerY / 4 + centerY / 8;
+            finalY = centerY - offset;
         }
         if (direction == SwipeElementDirection.UP) {
             initialX = centerX;
-            initialY = centerY - centerY / 2 - centerY / 4;
+            initialY = centerY - offset;
             finalX = centerX;
-            finalY = centerY + centerY / 2 + centerY / 4;
+            finalY = centerY + offset;
         }
         if (direction == SwipeElementDirection.LEFT) {
-            initialX = centerX + centerX / 2 + centerX / 4;
+            initialX = centerX + offset;
             initialY = centerY;
-            finalX = centerX - centerX / 2 - centerX / 4;
+            finalX = centerX - offset;
             finalY = centerY;
         }
         if (direction == SwipeElementDirection.RIGHT) {
-            initialX = centerX - centerX / 2 - centerX / 4;
+            initialX = centerX - offset;
             initialY = centerY;
-            finalX = centerX + centerX / 2 + centerX / 4;
+            finalX = centerX + offset;
             finalY = centerY;
         }
 
