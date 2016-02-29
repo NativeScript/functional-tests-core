@@ -352,4 +352,8 @@ public class Adb {
             Log.error("Failed to take screenshot with adb.");
         }
     }
+
+    public static void openDeveloperOptions(String deviceId) {
+        runAdbCommand(deviceId, "shell am start -n com.android.settings/.DevelopmentSettings");
+    }
 }
