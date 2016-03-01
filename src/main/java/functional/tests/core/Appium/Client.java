@@ -98,4 +98,8 @@ public class Client {
         // Hope this hack will make the framework more stable
         Wait.sleep(250);
     }
+
+    public static void startActivity(String appPackage, String appActivity) {
+        ((AndroidDriver) Client.driver).startActivity(appPackage, appActivity);
+    }
 }
