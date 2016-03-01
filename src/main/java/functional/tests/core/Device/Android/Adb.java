@@ -356,4 +356,8 @@ public class Adb {
     public static void openDeveloperOptions(String deviceId) {
         runAdbCommand(deviceId, "shell am start -n com.android.settings/.DevelopmentSettings");
     }
+
+    public static void openTestApp(String deviceId) {
+        runAdbCommand(deviceId, "shell am start -n org.nativescript.TestApp/com.tns.NativeScript");
+    }
 }
