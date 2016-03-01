@@ -361,7 +361,7 @@ public class Adb {
     }
 
     public static void startTestApp(String deviceId) {
-        String command = "shell am start -n org.nativescript.TestApp/com.tns.NativeScriptActivity";
+        String command = "shell am start -n " +  Settings.packageId + "/com.tns.NativeScriptActivity";
         runAdbCommand(deviceId, command);
         Log.info("Start TestApp by the following command:");
         Log.info(command);

@@ -70,7 +70,7 @@ public abstract class BaseTest {
         }
 
         // Verify app not crashed
-        BaseDevice.verifyAppRunning(Settings.deviceId, Settings.testAppPackageId);
+        BaseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
 
         // Get logs for initial app startup
         BaseDevice.writeConsoleLogToFile("init");

@@ -41,7 +41,7 @@ public class Settings {
     public static String deviceId;
     public static String deviceName;
     public static String testAppName;
-    public static String testAppPackageId;
+    public static String packageId;
     public static String testAppArchive;
     public static String appiumVersion;
     public static String automationName;
@@ -291,7 +291,7 @@ public class Settings {
         }
 
         // Set test app package id
-        testAppPackageId = getPackageId();
+        packageId = getPackageId();
 
         // Verify setup is correct
         Doctor.verifyJava();
@@ -319,7 +319,7 @@ public class Settings {
         Log.info("Device Boot Time: " + deviceBootTimeout);
         Log.info("Base TestApp Path: " + baseTestAppDir);
         Log.info("TestApp Name: " + testAppName);
-        Log.info("TestApp Package Id: " + testAppPackageId);
+        Log.info("TestApp Package Id: " + packageId);
         Log.info("Restart App: " + String.valueOf(restartApp));
         Log.info("Appium Version: " + appiumVersion);
         Log.info("Automation Name: " + automationName);
