@@ -353,11 +353,17 @@ public class Adb {
         }
     }
 
-    public static void openDeveloperOptions(String deviceId) {
-        runAdbCommand(deviceId, "shell am start -n com.android.settings/.DevelopmentSettings");
+    public static void startDeveloperOptions(String deviceId) {
+        String command = "shell am start -n com.android.settings/.DevelopmentSettings";
+        runAdbCommand(deviceId, command);
+        Log.info("Start Development Settings by the following command:");
+        Log.info(command);
     }
 
-    public static void openTestApp(String deviceId) {
-        runAdbCommand(deviceId, "shell am start -n org.nativescript.TestApp/com.tns.NativeScript");
+    public static void startTestApp(String deviceId) {
+        String command = "shell am start -n org.nativescript.TestApp/com.tns.NativeScriptActivity";
+        runAdbCommand(deviceId, command);
+        Log.info("Start TestApp by the following command:");
+        Log.info(command);
     }
 }
