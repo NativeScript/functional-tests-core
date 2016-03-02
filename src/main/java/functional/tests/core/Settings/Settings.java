@@ -9,6 +9,7 @@ import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -168,8 +169,18 @@ public class Settings {
                     }
                 }
             }
+        } else if (Settings.deviceType == DeviceType.Simulator) {
+            String command = "/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "
+                    + Settings.baseTestAppDir + File.separator + Settings.testAppName + File.separator + "Info.plist";
+            String result = OSUtils.runProcess(command);
+            String[] list = result.split("\\r?\\n");
+            for (String line : list) {
+                if (line.contains(".")) {
+                    appId = line.trim();
+                }
+            }
         } else {
-            // TODO: Implement it
+            throw new NotImplementedException();
         }
         return appId;
     }

@@ -4,6 +4,8 @@ import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
+import functional.tests.core.Device.iOS.Simctl;
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
@@ -85,7 +87,12 @@ public abstract class BaseTest {
             isFistTest = false;
         } else {
             if (Settings.restartApp) {
-                App.fullRestart();
+                if (Settings.deviceType == DeviceType.Simulator) {
+                    Simctl.reinstallApp();
+                    Client.initAppiumDriver();
+                } else {
+                    App.fullRestart();
+                }
             }
         }
 

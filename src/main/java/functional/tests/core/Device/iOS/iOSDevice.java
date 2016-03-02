@@ -119,8 +119,8 @@ public class iOSDevice {
 
     public static void stopDevice() {
         if (Settings.deviceType == DeviceType.Simulator) {
-            OSUtils.stopProcess("iOS Simulator");
-            OSUtils.stopProcess("Simulator");
+            OSUtils.runProcess("killall \"iOS Simulator\"");
+            OSUtils.runProcess("killall Simulator");
             Log.info("iOS Simulator killed.");
         }
     }

@@ -6,6 +6,7 @@ import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,5 +60,16 @@ public class Simctl {
         Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
         String output = OSUtils.runProcess("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
         return output;
+    }
+
+    public static void reinstallApp() {
+        String uninstallCommand = "xcrun simctl uninstall booted " + Settings.packageId;
+        String installCommand = "xcrun simctl install booted " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
+        String launchCommand = "xcrun simctl launch booted " + Settings.packageId;
+        Log.info("Re install " + Settings.packageId);
+        OSUtils.runProcess(uninstallCommand);
+        OSUtils.runProcess(installCommand);
+        OSUtils.runProcess(launchCommand);
+        Log.info(Settings.packageId + " re installed and launched.");
     }
 }

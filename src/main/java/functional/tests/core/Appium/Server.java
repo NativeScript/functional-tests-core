@@ -49,7 +49,8 @@ public class Server {
                 .withLogFile(logFile)
                 .usingAnyFreePort()
                 .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName)
-                .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout));
+                .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout))
+                .withArgument(GeneralServerFlag.NO_RESET);
 
         // Set Android Emulator specific Apppium Server arguments
         if (Settings.deviceType == DeviceType.Emulator) {
