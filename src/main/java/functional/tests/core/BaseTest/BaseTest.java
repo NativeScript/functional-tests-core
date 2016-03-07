@@ -89,6 +89,7 @@ public abstract class BaseTest {
             if (Settings.restartApp) {
                 if (Settings.deviceType == DeviceType.Simulator) {
                     Simctl.reinstallApp();
+                    Client.stopAppiumDriver();
                     Client.initAppiumDriver();
                 } else {
                     App.fullRestart();
