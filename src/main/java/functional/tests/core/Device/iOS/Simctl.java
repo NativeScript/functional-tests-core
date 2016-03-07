@@ -65,17 +65,15 @@ public class Simctl {
     public static void reinstallApp() {
         String uninstallCommand = "xcrun simctl uninstall booted " + Settings.packageId;
         String installCommand = "xcrun simctl install booted " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
-        //String launchCommand = "xcrun simctl launch booted " + Settings.packageId;
         Log.info("Re install " + Settings.packageId);
         Log.info("Uninstall command: " + uninstallCommand);
         String uninstallLog = OSUtils.runProcess(uninstallCommand);
-        Log.info(uninstallLog);
+        Log.info("Result: " + uninstallLog);
         Wait.sleep(500);
         Log.info("Install command: " + installCommand);
         String installLog = OSUtils.runProcess(installCommand);
-        Log.info(installLog);
+        Log.info("Result: " + installLog);
         Wait.sleep(500);
-        //OSUtils.runProcess(launchCommand);
         Log.info(Settings.packageId + " re installed and launched.");
     }
 }

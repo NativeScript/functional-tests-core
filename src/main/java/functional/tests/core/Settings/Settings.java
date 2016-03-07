@@ -170,18 +170,26 @@ public class Settings {
                 }
             }
         } else if (Settings.deviceType == DeviceType.Simulator) {
-            String command = "/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "
-                    + Settings.baseTestAppDir + File.separator + Settings.testAppName + File.separator + "Info.plist";
-            String result = OSUtils.runProcess(command);
-            String[] list = result.split("\\r?\\n");
-            for (String line : list) {
-                if (line.contains(".")) {
-                    appId = line.trim();
+            String plistPath = Settings.baseTestAppDir + File.separator + Settings.testAppName + File.separator + "Info.plist";
+            File f = new File(plistPath);
+            if (f.exists()) {
+                String command = "/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' " + plistPath;
+                Log.info("Get plist info: " + command);
+                String result = OSUtils.runProcess(command);
+                Log.info("Result: " + result);
+                String[] list = result.split("\\r?\\n");
+                for (String line : list) {
+                    if (line.contains(".")) {
+                        appId = line.trim();
+                    }
                 }
+            } else {
+                throw new Exception("File " + plistPath + " does not exist.");
             }
         } else {
             throw new NotImplementedException();
         }
+        Log.info("PackageID: " + appId);
         return appId;
     }
 
