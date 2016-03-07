@@ -148,7 +148,6 @@ public abstract class BaseTest {
 
     public static String getTestName() {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        // System.out.print(methodName);
         return methodName;
     }
 }

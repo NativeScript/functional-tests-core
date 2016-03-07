@@ -5,6 +5,8 @@ import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.UnknownOSException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.Archive;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
@@ -307,6 +309,18 @@ public class Settings {
 
         {
             deviceBootTimeout = defaultTimeout;
+        }
+
+
+        // Extract test app (only for iOS Simulators)
+        if (Settings.deviceType == DeviceType.Simulator) {
+            // Delete existing extracted applications
+            FileSystem.deletePath(Settings.baseTestAppDir + File.separator + Settings.testAppName);
+
+            // Extact test app archive
+            File tarFile = new File(Settings.baseTestAppDir + File.separator + Settings.testAppArchive);
+            File dest = new File(Settings.baseTestAppDir);
+            Archive.extractArchive(tarFile, dest);
         }
 
         // Set test app package id

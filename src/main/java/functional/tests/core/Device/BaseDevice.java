@@ -64,7 +64,6 @@ public class BaseDevice {
     }
 
     public static void initTestApp() throws IOException {
-
         // Uninstall apps from real devices
         if (Settings.deviceType == DeviceType.Android) {
             AndroidDevice.uninstallApps(uninstallAppsList());
@@ -77,15 +76,6 @@ public class BaseDevice {
             if (Settings.platformVersion.contains("7")) {
                 iOSDevice.installApp(Settings.testAppName);
             }
-
-        } else if (Settings.deviceType == DeviceType.Simulator) {
-            // Delete existing extracted applications
-            FileSystem.deletePath(Settings.baseTestAppDir + File.separator + Settings.testAppName);
-
-            // Extact test app archive
-            File tarFile = new File(Settings.baseTestAppDir + File.separator + Settings.testAppArchive);
-            File dest = new File(Settings.baseTestAppDir);
-            Archive.extractArchive(tarFile, dest);
         }
     }
 
