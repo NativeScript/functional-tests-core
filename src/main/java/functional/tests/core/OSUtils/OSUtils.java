@@ -4,6 +4,9 @@ import functional.tests.core.Enums.OSType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -31,6 +34,19 @@ public class OSUtils {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public static void getScreenshot(String fileName) {
+        try {
+            BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+            String path = Settings.screenshotOutDir + File.separator + fileName;
+            File f = new File(path);
+            Log.debug("Save Picture: " + f.getAbsolutePath());
+            ImageIO.write(image, "png", f);
+            Log.error("Save screenshot of host OS: " + path);
+        } catch (Exception e) {
+            Log.error("Faield to take host OS screenshot.");
+        }
     }
 
     public static String runProcess(boolean waitFor, int timeOut, String... command) {
@@ -111,37 +127,27 @@ public class OSUtils {
     }
 
     /**
-     *
      * This is a convenience method that calls find(File, String, boolean) with
      * the last parameter set to "false" (does not match directories).
      *
      * @see #find(File, String, boolean)
-     *
      */
     public static File find(File contextRoot, String fileName) {
         return find(contextRoot, fileName, false);
     }
 
     /**
-     *
      * Searches through the directory tree under the given context directory and
      * finds the first file that matches the file name. If the third parameter is
      * true, the method will also try to match directories, not just "regular"
      * files.
      *
-     * @param contextRoot
-     *          The directory to start the search from.
-     *
-     * @param fileName
-     *          The name of the file (or directory) to search for.
-     *
-     * @param matchDirectories
-     *          True if the method should try and match the name against directory
-     *          names, not just file names.
-     *
+     * @param contextRoot      The directory to start the search from.
+     * @param fileName         The name of the file (or directory) to search for.
+     * @param matchDirectories True if the method should try and match the name against directory
+     *                         names, not just file names.
      * @return The java.io.File representing the <em>first</em> file or
-     *         directory with the given name, or null if it was not found.
-     *
+     * directory with the given name, or null if it was not found.
      */
     public static File find(File contextRoot, String fileName, boolean matchDirectories) {
         if (contextRoot == null)
@@ -151,7 +157,7 @@ public class OSUtils {
             throw new NullPointerException("NullFileName");
 
         if (!contextRoot.isDirectory()) {
-            Object[] filler = { contextRoot.getAbsolutePath() };
+            Object[] filler = {contextRoot.getAbsolutePath()};
             String message = "NotDirectory";
             throw new IllegalArgumentException(message);
         }

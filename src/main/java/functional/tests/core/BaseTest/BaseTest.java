@@ -9,6 +9,7 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -133,6 +134,9 @@ public abstract class BaseTest {
             Log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             Log.saveXmlTree(testCase + "_VisualTree.xml");
             Log.error("=> Test " + testCase + " failed!");
+            if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
+                OSUtils.getScreenshot("HostOS_" + testCase);
+            }
         }
     }
 
