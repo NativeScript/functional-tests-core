@@ -112,6 +112,12 @@ public abstract class BaseTest {
         }
     }
 
+    private static void takeScreenOfHost(String fileName) {
+        if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
+            OSUtils.getScreenshot("HostOS_" + fileName);
+        }
+    }
+
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) throws IOException {
 
@@ -130,13 +136,12 @@ public abstract class BaseTest {
             Log.info("=> Test " + testCase + " passed!");
         } else if (previousTestStatus == ITestResult.SKIP) {
             Log.error("=> Test " + testCase + " skipped!");
+            takeScreenOfHost(testCase);
         } else if (previousTestStatus == ITestResult.FAILURE) {
             Log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             Log.saveXmlTree(testCase + "_VisualTree.xml");
             Log.error("=> Test " + testCase + " failed!");
-            if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
-                OSUtils.getScreenshot("HostOS_" + testCase);
-            }
+            takeScreenOfHost(testCase);
         }
     }
 
