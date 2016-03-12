@@ -48,14 +48,20 @@ public class Element {
             Wait.sleep(Settings.defaultTapDuration);
         } else {
             editTextElement.click();
-            editTextElement.clear();
-            Log.info("Clean old value of edit field.");
+            try {
+                // If keyboard is above text field clear throws exception.
+                editTextElement.clear();
+                Log.info("Clean old value of edit field.");
+            } catch (Exception e) {
+                Log.error("Failed to clean old value.");
+            }
             Wait.sleep(Settings.defaultTapDuration);
             editTextElement.sendKeys(value);
             Wait.sleep(Settings.defaultTapDuration);
         }
         Log.info("Set value of text field: " + value);
     }
+
     /**
      * Get text of MobileElement
      */
