@@ -366,4 +366,11 @@ public class Adb {
         Log.info("Start TestApp by the following command:");
         Log.info(command);
     }
+
+    public static void restoreTestApp(String deviceId) {
+        String command = "shell monkey -p " +  Settings.packageId + " -c android.intent.category.LAUNCHER 1";
+        runAdbCommand(deviceId, command);
+        Log.info("Restore TestApp by the following command:");
+        Log.info(command);
+    }
 }
