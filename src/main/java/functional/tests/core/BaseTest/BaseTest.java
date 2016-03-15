@@ -68,7 +68,9 @@ public abstract class BaseTest {
                 checkAppiumLogsForCrash();
                 String error = "Failed to init Appium session. Please see Appium logs.";
                 Log.fatal(error);
-                throw new AppiumException(error);
+                Log.info(re.toString());
+                Log.info(re.getStackTrace().toString());
+                throw re;
             }
         }
 
