@@ -336,9 +336,6 @@ public class Settings {
             Archive.extractArchive(tarFile, dest);
         }
 
-        // Set test app package id
-        packageId = getPackageId();
-
         // Verify setup is correct
         Doctor.verifyJava();
         Doctor.verifyAndroidHome();
@@ -348,6 +345,9 @@ public class Settings {
         Doctor.verifyOSTypeAndMobilePlatform();
         Doctor.verifyXcrun();
         Doctor.verifyIdeviceinstaller();
+
+        // Set test app package id
+        packageId = getPackageId();
 
         Log.separator();
         Log.info("Settings initialized properly:");
