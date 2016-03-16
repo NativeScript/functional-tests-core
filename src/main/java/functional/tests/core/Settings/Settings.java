@@ -11,7 +11,6 @@ import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -186,8 +185,25 @@ public class Settings {
             } else {
                 throw new Exception("File " + plistPath + " does not exist.");
             }
-        } else {
-            throw new NotImplementedException();
+        } else if (Settings.deviceType == DeviceType.iOS) {
+            String ipaPath = Settings.baseTestAppDir + File.separator + Settings.testAppName;
+            OSUtils.runProcess("unzip -o " + ipaPath + " -d " + Settings.baseTestAppDir);
+            String appName = OSUtils.runProcess("ls " + Settings.baseTestAppDir + File.separator + "Payload").trim().replace("\n", "").replace("\r", "");
+            String plistPath = Settings.baseTestAppDir + File.separator + "Payload" + File.separator + appName + File.separator + "Info.plist";
+            File f = new File(plistPath);
+            if (f.exists()) {
+                String command = "/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' " + plistPath;
+                String result = OSUtils.runProcess(command);
+                String[] list = result.split("\\r?\\n");
+                for (String line : list) {
+                    if (line.contains(".")) {
+                        appId = line.trim();
+                    }
+                }
+                FileSystem.deletePath(Settings.baseTestAppDir + File.separator + "Payload");
+            } else {
+                throw new Exception("File " + plistPath + " does not exist.");
+            }
         }
         return appId;
     }
