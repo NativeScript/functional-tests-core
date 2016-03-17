@@ -338,8 +338,6 @@ public class Adb {
         if (processes.contains(appId)) {
             return true;
         } else {
-            Log.info(appId + " is not running. Current processes:");
-            Log.info(processes);
             return false;
         }
     }
