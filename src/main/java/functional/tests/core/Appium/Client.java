@@ -37,8 +37,8 @@ public class Client {
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, Settings.deviceBootTimeout);
         capabilities.setCapability(MobileCapabilityType.LAUNCH_TIMEOUT, true);
 
-        // iOS Simulator does not have deviceId
-        if (Settings.deviceType == DeviceType.iOS) {
+        // Set UDID for real devices
+        if ((Settings.deviceType == DeviceType.iOS) || (Settings.deviceType == DeviceType.Android)) {
             capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
         }
 
