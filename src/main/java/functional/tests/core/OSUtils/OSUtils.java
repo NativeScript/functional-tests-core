@@ -39,7 +39,7 @@ public class OSUtils {
     public static void getScreenshot(String fileName) {
         try {
             BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-            String path = Settings.screenshotOutDir + File.separator + fileName;
+            String path = Settings.screenshotOutDir + File.separator + fileName + ".png";
             File f = new File(path);
             Log.debug("Save Picture: " + f.getAbsolutePath());
             ImageIO.write(image, "png", f);

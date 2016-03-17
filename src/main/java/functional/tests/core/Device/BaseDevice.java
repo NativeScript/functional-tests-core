@@ -13,11 +13,13 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
+import functional.tests.core.Screenshot.ImageUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.Assert;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -221,15 +223,24 @@ public class BaseDevice {
     }
 
     public static void verifyAppRunning(String deviceId, String appId) {
+        int initTimeOut = 5; // wait before start checking if app is running
+        int timeOut = 10; // timeout in seconds
         if (Settings.platform == PlatformType.Andorid) {
-            Wait.sleep(10000);
-            boolean isRuning = isAppRunning(deviceId, appId);
-            if (isRuning) {
-                Log.info("App " + appId + " is up and running.");
-            } else {
-                Log.logScreen("init", "First screen");
+            Wait.sleep(initTimeOut * 1000);
+            long startTime = System.currentTimeMillis();
+            boolean isRuning = false;
+            while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
+                isRuning = isAppRunning(deviceId, appId);
+                if (isRuning) {
+                    Log.info("App " + appId + " is up and running.");
+                    break;
+                } else {
+                    Log.info("App " + appId + " is not running. Wait for it...");
+                    Wait.sleep(250);
+                }
+            }
+            if (!isRuning){
                 Log.fatal("App " + appId + " is not running.");
-                Assert.assertTrue(isRuning, "App " + appId + " is not running.");
             }
         } else {
             // TODO: Implement it

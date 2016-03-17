@@ -338,6 +338,8 @@ public class Adb {
         if (processes.contains(appId)) {
             return true;
         } else {
+            Log.info(appId + " is not running. Current processes:");
+            Log.info(processes);
             return false;
         }
     }
@@ -361,14 +363,14 @@ public class Adb {
     }
 
     public static void startTestApp(String deviceId) {
-        String command = "shell am start -n " +  Settings.packageId + "/com.tns.NativeScriptActivity";
+        String command = "shell am start -n " + Settings.packageId + "/com.tns.NativeScriptActivity";
         runAdbCommand(deviceId, command);
         Log.info("Start TestApp by the following command:");
         Log.info(command);
     }
 
     public static void restoreTestApp(String deviceId) {
-        String command = "shell monkey -p " +  Settings.packageId + " -c android.intent.category.LAUNCHER 1";
+        String command = "shell monkey -p " + Settings.packageId + " -c android.intent.category.LAUNCHER 1";
         runAdbCommand(deviceId, command);
         Log.info("Restore TestApp by the following command:");
         Log.info(command);
