@@ -102,7 +102,7 @@ public class iOSDevice {
                 String fileContent = OSUtils.runProcess(Settings.defaultTimeout, "ideviceinstaller -u " + Settings.deviceId + " -l");
                 Log.info("apps: " + fileContent);
 
-                if (fileContent.contains("Total:")) {
+                if (fileContent.contains("Total:") || fileContent.contains("CFBundleIdentifier")) {
                     Log.info("Device " + Settings.deviceId + " responds.");
                 } else {
                     String error = "Device " + Settings.deviceId + " does not respond.";
