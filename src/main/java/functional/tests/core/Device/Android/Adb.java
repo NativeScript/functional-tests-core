@@ -2,12 +2,14 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -353,24 +355,36 @@ public class Adb {
         }
     }
 
+    public static void goHome(String deviceId) {
+        String command = "shell am start -a android.intent.action.MAIN -c android.intent.category.HOME";
+        runAdbCommand(deviceId, command);
+        Log.info("Navigate go home following command:");
+        Log.info(command);
+    }
+
+    /**
+     * Stop application *
+     */
+    public static void stopApplication(String appId) throws NotImplementedException {
+        Log.info("Stop " + appId);
+        String command = "shell am force-stop " + appId;
+        runAdbCommand(Settings.deviceId, command);
+    }
+
+    /**
+     * Start application *
+     */
+    public static void startApplication(String appId, String activity) throws NotImplementedException {
+        Log.info("Start " + appId + " with command:");
+        String command = "shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
+        Log.info(command);
+        runAdbCommand(Settings.deviceId, command);
+    }
+
     public static void startDeveloperOptions(String deviceId) {
         String command = "shell am start -n com.android.settings/.DevelopmentSettings";
         runAdbCommand(deviceId, command);
         Log.info("Start Development Settings by the following command:");
-        Log.info(command);
-    }
-
-    public static void startTestApp(String deviceId) {
-        String command = "shell am start -n " + Settings.packageId + "/com.tns.NativeScriptActivity";
-        runAdbCommand(deviceId, command);
-        Log.info("Start TestApp by the following command:");
-        Log.info(command);
-    }
-
-    public static void restoreTestApp(String deviceId) {
-        String command = "shell monkey -p " + Settings.packageId + " -c android.intent.category.LAUNCHER 1";
-        runAdbCommand(deviceId, command);
-        Log.info("Restore TestApp by the following command:");
         Log.info(command);
     }
 }

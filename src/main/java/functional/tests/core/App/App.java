@@ -1,20 +1,23 @@
 package functional.tests.core.App;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Device.Android.Adb;
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
+import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Wait;
+import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
-import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidKeyCode;
 import org.apache.commons.lang3.NotImplementedException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.*;
 
 import java.io.File;
+import java.util.List;
 
 public class App {
 
@@ -23,22 +26,18 @@ public class App {
     /**
      * Restart application
      */
-    public static void restart(String appId, boolean hardReset) throws NotImplementedException {
+    public static void restart(String appId) throws NotImplementedException {
         Log.info("Restarting current app...");
         if (Settings.platform == PlatformType.Andorid) {
             String activity = ((AndroidDriver) Client.driver).currentActivity();
-            stopApplication(appId);
+            Adb.stopApplication(appId);
             Wait.sleep(2000);
-            startApplication(appId, activity);
+            Adb.startApplication(appId, activity);
             Wait.sleep(2000);
         } else {
             throw new NotImplementedException("Restart app not implemented for iOS.");
         }
         Log.info("Restarted.");
-    }
-
-    public static void restart(String appId) throws NotImplementedException {
-        restart(appId, false);
     }
 
     public static void fullRestart() throws NotImplementedException {
@@ -51,7 +50,110 @@ public class App {
     public static void runInBackground(int seconds) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         if (Settings.platform == PlatformType.Andorid) {
-            Client.driver.runAppInBackground(seconds);
+            Log.info("Navigate to HOME.");
+            String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
+            ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
+
+            // Wait specified timeout
+            Wait.sleep(seconds * 1000);
+
+            // Dismiss welcome dialog on Android 6 emulators
+            if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
+                MobileElement dismissButton = Find
+                        .findElementByLocator(By.id("com.android.launcher3:id/cling_dismiss_longpress_info"), Settings.shortTimeout);
+                if (dismissButton != null) {
+                    dismissButton.click();
+                    Log.info("Tap Got IT to dismiss.");
+                } else {
+                    Log.info("No dialog to dismiss. Do nothing...");
+                }
+            }
+
+
+            // Locate bottom icons bar
+            By bottomToolBarLocator = By.id("com.android.launcher:id/layout");
+            if (Settings.platformVersion.contains("6.")) {
+                bottomToolBarLocator = By.id("com.android.launcher3:id/layout");
+            } else if (Settings.platformVersion.contains("4.2")) {
+                bottomToolBarLocator = By.xpath("//android.widget.TextView[@text='People']/..");
+            } else if (Settings.deviceName.toLowerCase().contains("galaxy")) {
+                bottomToolBarLocator = By.xpath("//android.widget.TextView[@text='Apps']/..");
+            } else if (Settings.deviceName.toLowerCase().contains("nexus")) {
+                bottomToolBarLocator = By.id("com.google.android.googlequicksearchbox:id/layout");
+            }
+
+            // Tap {Apps} button.
+            List<WebElement> allAppsButtons = ((AndroidDriver) Client.driver)
+                    .findElement(bottomToolBarLocator)
+                    .findElements(By.className("android.widget.TextView"));
+
+            MobileElement allAppsButton = null;
+
+            for (WebElement element : allAppsButtons) {
+                try {
+                    // getText fails for {Apps} because of special symbols
+                    String buttonName = element.getText();
+                    Log.info(buttonName);
+                    if ((buttonName.equalsIgnoreCase("")) || (buttonName.equalsIgnoreCase("apps"))) {
+                        allAppsButton = (MobileElement) element;
+                        break;
+                    }
+                } catch (Exception e) {
+                    allAppsButton = (MobileElement) element;
+                    break;
+                }
+            }
+
+            allAppsButton.click();
+            Wait.sleep(1000);
+            Log.info("Tap {Apps} button.");
+
+            // Dismiss help dialog shown on some emulators
+            if ((Settings.deviceType == DeviceType.Emulator)) {
+                By okButtonLocator = By.id("com.android.launcher:id/cling_dismiss");
+                if (Settings.platformVersion.contains("6.")) {
+                    // it looks we do not need to do something
+                } else if (Settings.platformVersion.contains("5")) {
+                    // it looks we do not need to do something
+                } else if (Settings.platformVersion.contains("4")) {
+                    okButtonLocator = By.xpath("//android.widget.Button[@text='OK']");
+                }
+                MobileElement dismissButton = Find.findElementByLocator(okButtonLocator, Settings.shortTimeout);
+                if (dismissButton != null) {
+                    dismissButton.click();
+                    Log.info("Tap OK to dismiss.");
+                } else {
+                    Log.info("No dialog to dismiss. Do nothing...");
+                }
+            }
+
+            // Swipe to find it
+            SwipeElementDirection firstDirection = SwipeElementDirection.LEFT;
+            SwipeElementDirection secondDirection = SwipeElementDirection.RIGHT;
+
+            if ((Settings.deviceName.toLowerCase().contains("nexus")) || (Settings.platformVersion.contains("6."))) {
+                firstDirection = SwipeElementDirection.DOWN;
+                secondDirection = SwipeElementDirection.UP;
+            }
+
+            MobileElement testAppButon = Gestures
+                    .swipeToElement(firstDirection, appName, Settings.defaultTapDuration, 5);
+
+            // Tap application icon
+            if (testAppButon != null) {
+                Log.info("Tap " + appName + " icon.");
+                testAppButon.click();
+            } else {
+                Log.error("App with name " + appName + " not found.");
+                testAppButon = Gestures
+                        .swipeToElement(secondDirection, appName, Settings.defaultTapDuration, 5);
+                if (testAppButon != null) {
+                    Log.info("Tap " + appName + " icon.");
+                    testAppButon.click();
+                } else {
+                    Log.error("App with name " + appName + " not found.");
+                }
+            }
         } else {
             try {
                 JavascriptExecutor jse = (JavascriptExecutor) Client.driver;
@@ -71,36 +173,6 @@ public class App {
         }
         Wait.sleep(1000);
         Log.info("Bring the app to front.");
-    }
-
-    /**
-     * Stop application *
-     */
-    public static void stopApplication(String appId) throws NotImplementedException {
-        Log.info("Stop " + appId);
-        if (Settings.platform == PlatformType.Andorid) {
-            String homeCommand = adbPath + " -s " + Settings.deviceId + " shell am force-stop " + appId;
-            Log.info(homeCommand);
-            OSUtils.runProcess(homeCommand);
-            Wait.sleep(1000);
-        } else {
-            throw new NotImplementedException("Stop application not implemented for current platform.");
-        }
-    }
-
-    /**
-     * Start application *
-     */
-    public static void startApplication(String appId, String activity) throws NotImplementedException {
-        Log.info("Start " + appId);
-        if (Settings.platform == PlatformType.Andorid) {
-            String startCommand = adbPath + " -s " + Settings.deviceId + " shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
-            Log.info(startCommand);
-            OSUtils.runProcess(startCommand);
-            Wait.sleep(1000);
-        } else {
-            throw new NotImplementedException("Start application not implemented for current platform.");
-        }
     }
 
     /**

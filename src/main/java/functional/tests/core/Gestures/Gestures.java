@@ -293,13 +293,13 @@ public class Gestures {
      * Scroll down until element is visible via swipe gesture *
      */
     public static MobileElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
-        Log.info("Swipe " + direction.toString() + " to " + elementText);
         for (int i = 0; i < retryCount; i++) {
             MobileElement element = Find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
             if ((element != null) && (element.isDisplayed())) {
                 Log.info(elementText + " found.");
                 return element;
             } else {
+                Log.info("Swipe " + direction.toString() + " to " + elementText);
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
             }
             if (i == retryCount - 1) {
@@ -320,6 +320,7 @@ public class Gestures {
                 Log.info("Element found: " + locator.toString());
                 return element;
             } else {
+                Log.info("Swipe " + direction.toString() + " to " + locator.toString());
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
             }
             if (i == retryCount - 1) {
