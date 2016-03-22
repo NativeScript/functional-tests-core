@@ -2,7 +2,6 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
@@ -226,7 +225,10 @@ public class Adb {
                 String[] list = rowData.split("\\r?\\n");
 
                 for (String line : list) {
-                    if (line.contains("Recent #0") && line.contains("com.android.launcher")) {
+
+                    if (line.contains("Recent #0") &&
+                            ((line.contains("com.android.launcher"))
+                                    || (line.contains("com.google.android.googlequicksearchbox")))) {
                         found = true;
                         break;
                     }
