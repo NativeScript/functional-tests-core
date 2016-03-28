@@ -50,9 +50,16 @@ public class App {
     public static void runInBackground(int seconds) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         if (Settings.platform == PlatformType.Andorid) {
-            Log.info("Navigate to HOME.");
             String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
+
+            Log.info("Navigate to HOME.");
             ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
+            if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
+                // Default Android 6 emulator report crash in home activity (not releated with NativeScript)
+                // first time when hit Home button. Hack it with second hit of Home button.
+                Wait.sleep(5000);
+                ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
+            }
 
             // Wait specified timeout
             Wait.sleep(seconds * 1000);
@@ -76,9 +83,15 @@ public class App {
                 bottomToolBarLocator = By.id("com.android.launcher3:id/layout");
             } else if (Settings.platformVersion.contains("4.2")) {
                 bottomToolBarLocator = By.xpath("//android.widget.TextView[@text='People']/..");
-            } else if (Settings.deviceName.toLowerCase().contains("galaxy")) {
+            }
+
+            // Handle Samsung devices
+            if (Settings.deviceName.toLowerCase().contains("galaxy")) {
                 bottomToolBarLocator = By.xpath("//android.widget.TextView[@text='Apps']/..");
-            } else if (Settings.deviceName.toLowerCase().contains("nexus")) {
+            }
+
+            // Handle Nexus devices
+            if (Settings.deviceName.toLowerCase().contains("nexus")) {
                 bottomToolBarLocator = By.id("com.google.android.googlequicksearchbox:id/layout");
             }
 
