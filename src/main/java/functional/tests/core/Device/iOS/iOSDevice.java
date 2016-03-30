@@ -51,25 +51,30 @@ public class iOSDevice {
 
     public static void initDevice() throws DeviceException {
         if (Settings.deviceType == DeviceType.Simulator) {
-            // Delete simulator specified by settings
-            Simctl.deleteSimulator(Settings.deviceName);
 
-            // Create simulator specified by settings
-            String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
-            if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
-                Log.fatal("Failed to create simulator. Error: " + result);
-                throw new DeviceException("Failed to create simulator. Error: " + result);
+            if (Settings.debug) {
+                Log.info("[Debug mode] Skip simulator reset.");
             } else {
-                String guid = result;
-                String[] rowList = result.split("\\r?\\n");
-                for (String rowLine : rowList) {
-                    if (rowLine.contains("-")) {
-                        guid = rowLine.trim();
+                // Delete simulator specified by settings
+                Simctl.deleteSimulator(Settings.deviceName);
+
+                // Create simulator specified by settings
+                String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
+                if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
+                    Log.fatal("Failed to create simulator. Error: " + result);
+                    throw new DeviceException("Failed to create simulator. Error: " + result);
+                } else {
+                    String guid = result;
+                    String[] rowList = result.split("\\r?\\n");
+                    for (String rowLine : rowList) {
+                        if (rowLine.contains("-")) {
+                            guid = rowLine.trim();
+                        }
                     }
+                    simulatorGuid = guid;
+                    Settings.deviceId = simulatorGuid;
+                    Log.info("Simulator created: " + simulatorGuid);
                 }
-                simulatorGuid = guid;
-                Settings.deviceId = simulatorGuid;
-                Log.info("Simulator created: " + simulatorGuid);
             }
 
             // Verify simulator exists

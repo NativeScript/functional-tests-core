@@ -51,9 +51,13 @@ public class Simctl {
 
     public static String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
 
-        // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
-        if (Settings.platformVersion.contains("9")) {
-            resetSimulatorSettings();
+        if (Settings.debug) {
+            Log.info("[Debug mode] Do not reset sim settings.");
+        } else {
+            // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
+            if (Settings.platformVersion.contains("9")) {
+                resetSimulatorSettings();
+            }
         }
 
         Log.info("Create simulator with following command:");
