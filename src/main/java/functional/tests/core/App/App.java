@@ -47,11 +47,9 @@ public class App {
     /**
      * Run app in background for X seconds *
      */
-    public static void runInBackground(int seconds) {
+    public static void runInBackground(int seconds, String appName) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         if (Settings.platform == PlatformType.Andorid) {
-            String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
-
             Log.info("Navigate to HOME.");
             ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
             if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
@@ -186,6 +184,14 @@ public class App {
         }
         Wait.sleep(1000);
         Log.info("Bring the app to front.");
+    }
+
+    /**
+     * Run app in background for X seconds *
+     */
+    public static void runInBackground(int seconds) {
+        String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
+        runInBackground(seconds, appName);
     }
 
     /**
