@@ -132,12 +132,21 @@ public class Find {
      * Find an elements by locator
      */
     public static List<MobileElement> findElementsByLocator(By locator, int timeout) {
+        return findElementsByLocator(locator, timeout, true);
+    }
+
+    /**
+     * Find an elements by locator
+     */
+    public static List<MobileElement> findElementsByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
         Client.setWait(timeout);
         List<MobileElement> result;
         try {
             result = findElementsByLocator(locator);
         } catch (Exception e) {
-            Log.error("Failed to find elements by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
+            if (logErrorOnNotFound) {
+                Log.error("Failed to find elements by locator: " + locator + " in " + String.valueOf(timeout) + " seconds.");
+            }
             result = null;
         }
         Client.setWait(Settings.defaultTimeout);
