@@ -163,34 +163,34 @@ public class Log {
      */
     public static void logImageVerificationResult(ImageVerificationResult result, String filePrefix, int thumbHeight, int thumbWidth) {
         try {
-            ImageUtils.saveImageVerificationResult(result, filePrefix);
-
-            String imageTitle = String.format("%s looks OK", filePrefix);
             if (result.diffPixels > 100) { // TODO: Read it from global config
+                ImageUtils.saveImageVerificationResult(result, filePrefix);
                 String diffPercentString = new DecimalFormat("##.##").format(result.diffPercent);
-                imageTitle = filePrefix + " does not look OK. Diff: " + diffPercentString + " %";
+                String imageTitle = filePrefix + " does not look OK. Diff: " + diffPercentString + " %";
                 Log.info(imageTitle);
-            }
 
-            String logTemplatePath = templatePath + File.separator + "imageVerification.template";
-            File logTemplateFile = new File(logTemplatePath);
-            String logMessage;
+                String logTemplatePath = templatePath + File.separator + "imageVerification.template";
+                File logTemplateFile = new File(logTemplatePath);
+                String logMessage;
 
-            if (!logTemplateFile.exists()) {
-                logMessage = readResource("/templates/imageVerification.template");
+                if (!logTemplateFile.exists()) {
+                    logMessage = readResource("/templates/imageVerification.template");
+                } else {
+                    logMessage = readFile(logTemplatePath);
+                }
+
+                logMessage = logMessage
+                        .replace("IMAGE_NAME", filePrefix)
+                        .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.actualSuffix + ".png")
+                        .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.diffSuffix + ".png")
+                        .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png")
+                        .replace("THUMB_WIDTH", String.valueOf(thumbWidth))
+                        .replace("THUMB_HEIGHT", String.valueOf(thumbHeight));
+
+                image(logMessage);
             } else {
-                logMessage = readFile(logTemplatePath);
+                Log.info(filePrefix + " look OK!");
             }
-
-            logMessage = logMessage
-                    .replace("IMAGE_NAME", filePrefix)
-                    .replace("ACTUAL_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.actualSuffix + ".png")
-                    .replace("DIFF_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.diffSuffix + ".png")
-                    .replace("EXPECTED_IMAGE_URL", "../screenshots/" + filePrefix + "_" + result.expectedSuffix + ".png")
-                    .replace("THUMB_WIDTH", String.valueOf(thumbWidth))
-                    .replace("THUMB_HEIGHT", String.valueOf(thumbHeight));
-
-            image(logMessage);
         } catch (Exception e) {
             error("Failed to log current screen.");
         }
