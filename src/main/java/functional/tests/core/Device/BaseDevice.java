@@ -6,6 +6,7 @@ import functional.tests.core.Device.Android.AndroidDevice;
 import functional.tests.core.Device.iOS.iOSDevice;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
+import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Find.Wait;
@@ -222,7 +223,7 @@ public class BaseDevice {
         }
     }
 
-    public static void verifyAppRunning(String deviceId, String appId) {
+    public static void verifyAppRunning(String deviceId, String appId) throws AppiumException {
         int initTimeOut = 5; // wait before start checking if app is running
         int timeOut = 10; // timeout in seconds
         if (Settings.platform == PlatformType.Andorid) {
@@ -239,8 +240,9 @@ public class BaseDevice {
                     Wait.sleep(250);
                 }
             }
-            if (!isRuning){
+            if (!isRuning) {
                 Log.fatal("App " + appId + " is not running.");
+                throw new AppiumException("App " + appId + " is not running.");
             }
         } else {
             // TODO: Implement it
