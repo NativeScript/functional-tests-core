@@ -103,8 +103,86 @@ public class Gestures {
         }
     }
 
+    private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+
+        int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
+
+        // In iOS swipe with duration < 0.5 seconds is not possible
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration < 500) {
+                duration = 500;
+            }
+        }
+
+        Dimension dimensions = Client.driver.manage().window().getSize();
+        int width = dimensions.width;
+        int height = dimensions.height;
+        int centerY = height / 2;
+        int centerX = width / 2;
+
+        int left = 3;
+        int top = 7;
+        int right = width - 3;
+        int bottom = height - 7;
+
+        int offset = (int) (height * 0.5D);
+
+        if (direction == SwipeElementDirection.DOWN) {
+            initialX = centerX;
+            initialY = top;
+            finalX = centerX;
+            finalY = top + offset;
+        }
+        if (direction == SwipeElementDirection.UP) {
+            initialX = centerX;
+            initialY = bottom;
+            finalX = centerX;
+            finalY = bottom - offset;
+        }
+        if (direction == SwipeElementDirection.LEFT) {
+            initialX = right;
+            initialY = centerY;
+            finalX = right - offset;
+            finalY = centerY;
+        }
+        if (direction == SwipeElementDirection.RIGHT) {
+            initialX = left;
+            initialY = centerY;
+            finalX = left + offset;
+            finalY = centerY;
+        }
+
+        try {
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Log.info("Swipe " + direction + " with " + duration + " duration.");
+            if (waitAfterSwipe > 0) {
+                Wait.sleep(waitAfterSwipe);
+            }
+        } catch (Exception e) {
+            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
+                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
+            } else {
+                String error = "Swipe " + direction + " with " + duration + " duration failed.";
+                Log.error(error);
+                Assert.fail(error);
+            }
+        }
+    }
+
     public static void swipe(SwipeElementDirection direction, int duration) {
         swipe(direction, duration, 0);
+    }
+
+    public static void swipe(MobileElement element, String direction, int duration) {
+        swipeInElement(element, direction, duration);
+    }
+
+    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
+        swipeFromCorner(direction, duration, 0);
+    }
+
+    public static void swipeFromCorner(MobileElement element, String direction, int duration) {
+        swipeInElementFromCorner(element, direction, duration);
     }
 
     public static void doubleTap(MobileElement element) {
@@ -136,15 +214,6 @@ public class Gestures {
         Log.info("LongPress: "); // + Elements.getElementDetails(element));
         TouchAction action = new TouchAction(Client.driver);
         action.press(element).waitAction(duration).release().perform();
-    }
-
-    public static void swipe(MobileElement element, String direction, int duration) {
-        swipeInElement(element, direction, duration);
-    }
-
-    public static void swipeFromCorner(MobileElement element, String direction, int duration) {
-        Log.info("Swipe from element corner:");
-        swipeInElementFromCorner(element, direction, duration);
     }
 
     public static void pinch(MobileElement element) {
