@@ -312,14 +312,14 @@ public class ImageVerification {
      * Wait until screen looks OK
      **/
     public static void waitForScreen(String appName, String pageName, double percentTolerance, int timeOut) throws AppiumException, IOException, ImageVerificationException {
-        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, timeOut);
+        waitForScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, percentTolerance, timeOut);
     }
 
     /**
      * Wait until screen looks OK
      **/
     public static void waitForScreen(String appName, String pageName, double percentTolerance) throws AppiumException, IOException, ImageVerificationException {
-        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, Settings.defaultTimeout);
+        waitForScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, percentTolerance, Settings.defaultTimeout);
     }
 
 
