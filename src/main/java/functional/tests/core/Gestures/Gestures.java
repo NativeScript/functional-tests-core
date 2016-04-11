@@ -142,6 +142,11 @@ public class Gestures {
         swipeInElement(element, direction, duration);
     }
 
+    public static void swipeFromCorner(MobileElement element, String direction, int duration) {
+        Log.info("Swipe from element corner:");
+        swipeInElementFromCorner(element, direction, duration);
+    }
+
     public static void pinch(MobileElement element) {
 
         Log.info("Pinch: "); // + Elements.getElementDetails(element));
@@ -286,6 +291,53 @@ public class Gestures {
                     + " duration in element with center point "
                     + String.valueOf(centerX) + ":" + String.valueOf(centerY)
                     + "failed.");
+        }
+    }
+
+    private static void swipeInElementFromCorner(MobileElement element, String direction, int duration) {
+
+        int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
+
+        int left = element.getLocation().x;
+        int top = element.getLocation().y;
+        int right = element.getLocation().x + (element.getSize().width);
+        int bottom = element.getLocation().y + (element.getSize().height);
+
+        int offsetLeft = left + (element.getSize().width);
+        int offsetTop = top + (element.getSize().height);
+        int offsetRight = right - (element.getSize().width);
+        int offsetBottom = bottom - (element.getSize().height);
+
+        if (direction.equals("down")) {
+            initialX = left;
+            initialY = top;
+            finalX = left;
+            finalY = offsetTop;
+        }
+        if (direction.equals("up")) {
+            initialX = right;
+            initialY = bottom;
+            finalX = right;
+            finalY = offsetBottom;
+        }
+        if (direction.equals("left")) {
+            initialX = right;
+            initialY = bottom;
+            finalX = offsetRight;
+            finalY = bottom;
+        }
+        if (direction.equals("right")) {
+            initialX = left;
+            initialY = top;
+            finalX = offsetLeft;
+            finalY = top;
+        }
+
+        try {
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Log.info("Swipe " + direction + " with " + duration);
+        } catch (Exception e) {
+            Log.error("Swipe " + direction + " with " + duration + " failed.");
         }
     }
 
