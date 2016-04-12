@@ -151,10 +151,12 @@ public class Adb {
             OSUtils.stopProcess("emulator64-x86.exe");
             OSUtils.stopProcess("emulator-x86.exe");
             OSUtils.stopProcess("emulator-arm.exe");
+            OSUtils.stopProcess("qemu-system-i386.exe");
         } else {
             OSUtils.stopProcess("emulator64-x86");
             OSUtils.stopProcess("emulator-x86");
             OSUtils.stopProcess("emulator-arm");
+            OSUtils.stopProcess("qemu-system-i386");
         }
         Log.info("Emulator killed.");
     }
