@@ -46,6 +46,7 @@ public class Client {
         if (Settings.platform == PlatformType.Andorid) {
             try {
                 capabilities.setCapability("noSign", "true");
+                capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
                 driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);
@@ -69,7 +70,6 @@ public class Client {
 
         // Set default timeout
         driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
-
         Log.info("Appium client started.");
     }
 
