@@ -11,16 +11,13 @@ import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
-import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
-import functional.tests.core.Screenshot.ImageUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
 import org.testng.Assert;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -226,6 +223,10 @@ public class BaseDevice {
     public static void verifyAppRunning(String deviceId, String appId) throws AppiumException {
         int initTimeOut = 5; // wait before start checking if app is running
         int timeOut = 10; // timeout in seconds
+        if (Settings.deviceName.toLowerCase().contains("arm")) {
+            initTimeOut = initTimeOut * 5;
+            timeOut = timeOut * 5;
+        }
         if (Settings.platform == PlatformType.Andorid) {
             Wait.sleep(initTimeOut * 1000);
             long startTime = System.currentTimeMillis();
