@@ -156,7 +156,6 @@ public class Adb {
             OSUtils.stopProcess("emulator64-crash-service.exe");
             OSUtils.stopProcess("emulator-crash-service.exe");
             OSUtils.stopProcess("emulator-check.exe");
-            OSUtils.stopProcess("emulator.exe");
         } else {
             OSUtils.stopProcess("emulator64-x86");
             OSUtils.stopProcess("emulator-x86");
@@ -166,7 +165,6 @@ public class Adb {
             OSUtils.stopProcess("emulator64-crash-service");
             OSUtils.stopProcess("emulator-crash-service");
             OSUtils.stopProcess("emulator-check");
-            OSUtils.stopProcess("emulator");
         }
         Log.info("Emulator killed.");
     }
