@@ -73,11 +73,11 @@ public class Server {
             serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
         }
 
-        // On Linux and OSX use appium version manager
-        if ((Settings.OS == OSType.Linux) || (Settings.OS == OSType.MacOS)) {
+        // On OSX use appium version manager
+        if (Settings.OS == OSType.MacOS) {
             // Get appium path via appium-version-manager
             String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
-            // If appium is not instaled try to install it
+            // If appium is not installed try to install it
             if (appiumPath.contains("not installed")) {
                 Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
                 String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
