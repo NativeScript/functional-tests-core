@@ -56,12 +56,12 @@ public class Adb {
 
     protected static void startAdb() {
         Log.info("Start adb");
-        runAdbCommand("start-server");
+        OSUtils.runProcess(adbPath + " start-server");
     }
 
     protected static void stopAdb() {
         Log.info("Stop adb");
-        runAdbCommand("kill-server");
+        OSUtils.runProcess(adbPath + " kill-server");
     }
 
     protected static void killAdbProcess() {
