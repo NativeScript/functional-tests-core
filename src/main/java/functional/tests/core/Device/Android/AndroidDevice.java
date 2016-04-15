@@ -6,6 +6,8 @@ import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -34,8 +36,44 @@ public class AndroidDevice {
         }
     }
 
+    private static boolean available(int port) {
+        Log.debug("--------------Testing port " + port);
+        Socket s = null;
+        try {
+            s = new Socket("localhost", port);
+
+            // If the code makes it this far without an exception it means
+            // something is using the port and has responded.
+            Log.debug("--------------Port " + port + " is not available");
+            return false;
+        } catch (IOException e) {
+            Log.debug("--------------Port " + port + " is available");
+            return true;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    throw new RuntimeException("You should handle this error.", e);
+                }
+            }
+        }
+    }
+
     public static void stopDevice() {
-        if (DeviceType.Emulator == Settings.deviceType) Adb.stopEmulator();
+        if (Settings.deviceType == DeviceType.Emulator) {
+            Adb.stopEmulator();
+            // This is to fix the case when you have Androdi Studio 2 and previous CI stop build is force stopped
+            int port = Integer.parseInt(Settings.deviceId.substring(Settings.deviceId.lastIndexOf("-") + 1));
+            if (!available(port)) {
+                Log.info("Port " + port + " in use.");
+                Adb.startAdb();
+                Adb.startAdb();
+            }
+            if (available(port)) {
+                Log.fatal("Port " + port + " still in use. Most likely emulator will not start.");
+            }
+        }
     }
 
     public static void stopApps(List<String> uninstallAppsList) {
