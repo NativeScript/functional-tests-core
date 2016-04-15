@@ -150,9 +150,9 @@ public abstract class BaseTest {
     @AfterSuite(alwaysRun = true)
     public static void afterClass() throws Exception {
         Client.stopAppiumDriver();
-        Server.stopAppiumServer();
 
         if (!Settings.debug) {
+            Server.stopAppiumServer();
             BaseDevice.stopTestApp();
             BaseDevice.stopDevice();
         }
