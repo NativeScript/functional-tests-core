@@ -67,7 +67,7 @@ public class AndroidDevice {
             int port = Integer.parseInt(Settings.deviceId.substring(Settings.deviceId.lastIndexOf("-") + 1));
             if (!available(port)) {
                 Log.info("Port " + port + " in use.");
-                Adb.startAdb();
+                Adb.stopAdb();
                 Adb.startAdb();
             }
             if (available(port)) {
