@@ -165,6 +165,14 @@ public class Adb {
             OSUtils.stopProcess("emulator64-crash-service");
             OSUtils.stopProcess("emulator-crash-service");
             OSUtils.stopProcess("emulator-check");
+
+            // Linux Ubuntu
+            // For some reason the 'qemu-system-i386' process appears as 'qemu-system-i38'.
+            // An alternative way to stop the emulator would be through the adb. For example:
+            // adb -s emulator-5554 emu kill
+            if (Settings.OS == OSType.Linux) {
+                OSUtils.stopProcess("qemu-system-i38"); // qemu-system-i386
+            }
         }
         Log.info("Emulator killed.");
     }
