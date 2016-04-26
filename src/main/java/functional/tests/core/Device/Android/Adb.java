@@ -8,7 +8,6 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -385,7 +384,7 @@ public class Adb {
     /**
      * Stop application *
      */
-    public static void stopApplication(String appId) throws NotImplementedException {
+    public static void stopApplication(String appId) {
         Log.info("Stop " + appId);
         String command = "shell am force-stop " + appId;
         runAdbCommand(Settings.deviceId, command);
@@ -394,9 +393,19 @@ public class Adb {
     /**
      * Start application *
      */
-    public static void startApplication(String appId, String activity) throws NotImplementedException {
+    public static void startApplication(String appId, String activity) {
         Log.info("Start " + appId + " with command:");
         String command = "shell am start -a android.intent.action.MAIN -n " + appId + "/" + activity;
+        Log.info(command);
+        runAdbCommand(Settings.deviceId, command);
+    }
+
+    /**
+     * Start application *
+     */
+    public static void startApplication(String appId) {
+        Log.info("Start " + appId + " with command:");
+        String command = "shell monkey -p " + appId + " 1";
         Log.info(command);
         runAdbCommand(Settings.deviceId, command);
     }

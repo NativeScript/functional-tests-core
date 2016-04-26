@@ -29,10 +29,9 @@ public class App {
     public static void restart(String appId) throws NotImplementedException {
         Log.info("Restarting current app...");
         if (Settings.platform == PlatformType.Andorid) {
-            String activity = ((AndroidDriver) Client.driver).currentActivity();
             Adb.stopApplication(appId);
             Wait.sleep(2000);
-            Adb.startApplication(appId, activity);
+            Adb.startApplication(appId);
             Wait.sleep(2000);
         } else {
             throw new NotImplementedException("Restart app not implemented for iOS.");
@@ -73,7 +72,6 @@ public class App {
                     Log.info("No dialog to dismiss. Do nothing...");
                 }
             }
-
 
             // Locate bottom icons bar
             By bottomToolBarLocator = By.id("com.android.launcher:id/layout");
@@ -119,6 +117,17 @@ public class App {
             Wait.sleep(1000);
             Log.info("Tap {Apps} button.");
 
+            // Sometimes there is error dialog and allAppsButton should be clicked again
+            MobileElement bottomToolBar = Find.findElementByLocator(bottomToolBarLocator, Settings.shortTimeout);
+            if (bottomToolBar != null) {
+                List<MobileElement> allButtons = bottomToolBar.findElements(By.className("android.widget.TextView"));
+                if (allButtons.size() > 3) {
+                    allAppsButton.click();
+                    Wait.sleep(1000);
+                    Log.info("Tap {Apps} button again.");
+                }
+            }
+
             // Dismiss help dialog shown on some emulators
             if ((Settings.deviceType == DeviceType.Emulator)) {
                 By okButtonLocator = By.id("com.android.launcher:id/cling_dismiss");
@@ -132,6 +141,7 @@ public class App {
                 MobileElement dismissButton = Find.findElementByLocator(okButtonLocator, Settings.shortTimeout);
                 if (dismissButton != null) {
                     dismissButton.click();
+                    Wait.sleep(1000);
                     Log.info("Tap OK to dismiss.");
                 } else {
                     Log.info("No dialog to dismiss. Do nothing...");
