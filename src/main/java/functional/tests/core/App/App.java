@@ -158,19 +158,23 @@ public class App {
             }
 
             MobileElement testAppButon = Gestures
-                    .swipeToElement(firstDirection, appName, Settings.defaultTapDuration, 5);
+                    .swipeToElement(firstDirection, appName, Settings.defaultTapDuration * 2, 5);
 
             // Tap application icon
             if (testAppButon != null) {
                 Log.info("Tap " + appName + " icon.");
+                Wait.sleep(1000);
                 testAppButon.click();
+                Wait.sleep(1000);
             } else {
                 Log.error("App with name " + appName + " not found.");
                 testAppButon = Gestures
-                        .swipeToElement(secondDirection, appName, Settings.defaultTapDuration, 5);
+                        .swipeToElement(secondDirection, appName, Settings.defaultTapDuration * 2, 5);
                 if (testAppButon != null) {
                     Log.info("Tap " + appName + " icon.");
+                    Wait.sleep(1000);
                     testAppButon.click();
+                    Wait.sleep(1000);
                 } else {
                     Log.error("App with name " + appName + " not found.");
                 }
