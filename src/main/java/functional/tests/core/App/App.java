@@ -118,13 +118,16 @@ public class App {
             Log.info("Tap {Apps} button.");
 
             // Sometimes there is error dialog and allAppsButton should be clicked again
-            MobileElement bottomToolBar = Find.findElementByLocator(bottomToolBarLocator, Settings.shortTimeout);
-            if (bottomToolBar != null) {
-                List<MobileElement> allButtons = bottomToolBar.findElements(By.className("android.widget.TextView"));
-                if (allButtons.size() > 3) {
-                    allAppsButton.click();
-                    Wait.sleep(1000);
-                    Log.info("Tap {Apps} button again.");
+            // Note: This breaks API17, so for Api17 - do nothing
+            if (!Settings.platformVersion.contains("4.2")) {
+                MobileElement bottomToolBar = Find.findElementByLocator(bottomToolBarLocator, Settings.shortTimeout);
+                if (bottomToolBar != null) {
+                    List<MobileElement> allButtons = bottomToolBar.findElements(By.className("android.widget.TextView"));
+                    if (allButtons.size() > 3) {
+                        allAppsButton.click();
+                        Wait.sleep(1000);
+                        Log.info("Tap {Apps} button again.");
+                    }
                 }
             }
 
