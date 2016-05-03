@@ -229,6 +229,11 @@ public class Adb {
         }
     }
 
+    protected static void setScreenOffTimeOut(String deviceId, int timeOut) {
+        Log.info("Set SCREEN_OFF_TIMEOUT to " + String.valueOf(timeOut));
+        runAdbCommand(deviceId, "shell settings put system screen_off_timeout " + timeOut);
+    }
+
     protected static void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
         for (int i = 0; i < 999; i++) {
@@ -253,6 +258,7 @@ public class Adb {
 
                 if (found) {
                     Log.info("Emulator is up and running.");
+                    setScreenOffTimeOut(deviceId, 180000);
                     break;
                 } else {
                     Log.info("Booting...");

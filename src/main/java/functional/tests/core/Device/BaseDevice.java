@@ -238,12 +238,20 @@ public class BaseDevice {
                     break;
                 } else {
                     Log.info("App " + appId + " is not running. Wait for it...");
-                    Wait.sleep(250);
+                    Wait.sleep(1000);
                 }
             }
             if (!isRuning) {
-                Log.fatal("App " + appId + " is not running.");
-                throw new AppiumException("App " + appId + " is not running.");
+                // Try to restart it
+                Log.info("Restart app...");
+                Client.driver.resetApp();
+                Wait.sleep(initTimeOut);
+                if (isAppRunning(deviceId, appId)) {
+                    Log.info("App " + appId + " is up and running.");
+                } else {
+                    Log.fatal("App " + appId + " is not running.");
+                    throw new AppiumException("App " + appId + " is not running.");
+                }
             }
         } else {
             // TODO: Implement it
