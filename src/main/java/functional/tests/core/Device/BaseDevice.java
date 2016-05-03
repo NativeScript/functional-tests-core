@@ -245,7 +245,7 @@ public class BaseDevice {
                 // Try to restart it
                 Log.info("Restart app...");
                 Client.driver.resetApp();
-                Wait.sleep(initTimeOut);
+                Wait.sleep(initTimeOut * 2);
                 if (isAppRunning(deviceId, appId)) {
                     Log.info("App " + appId + " is up and running.");
                 } else {
