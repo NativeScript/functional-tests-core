@@ -424,7 +424,7 @@ public class Gestures {
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
             }
             if (i == retryCount - 1) {
-                Log.error(elementText + " not found after " + String.valueOf(retryCount) + " swipes.");
+                Log.error(elementText + " not found after " + String.valueOf(i + 1) + " swipes.");
             }
         }
         return null;
@@ -445,7 +445,7 @@ public class Gestures {
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
             }
             if (i == retryCount - 1) {
-                Log.info("Element not found after " + String.valueOf(retryCount) + " swipes." + locator.toString());
+                Log.info("Element not found after " + String.valueOf(i + 1) + " swipes." + locator.toString());
             }
         }
         return null;
