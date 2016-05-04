@@ -6,7 +6,6 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.BaseDevice;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
-import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
@@ -60,11 +59,27 @@ public abstract class BaseTest {
             Settings.appiumLogLevel = "debug";
             Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
             try {
+                String log = Server.service.getStdOut();
+                if (log != null) {
+                    Log.separator();
+                    Log.info(log);
+                    Log.separator();
+                } else {
+                    Log.error("Server log not available!");
+                }
                 Client.stopAppiumDriver();
                 Server.stopAppiumServer();
                 Server.initAppiumServer();
                 Client.initAppiumDriver();
             } catch (Exception re) {
+                String log = Server.service.getStdOut();
+                if (log != null) {
+                    Log.separator();
+                    Log.info(log);
+                    Log.separator();
+                } else {
+                    Log.error("Server log not available!");
+                }
                 checkAppiumLogsForCrash();
                 String error = "Failed to init Appium session. Please see Appium logs.";
                 Log.fatal(error);
