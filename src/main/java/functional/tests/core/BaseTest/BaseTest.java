@@ -59,26 +59,34 @@ public abstract class BaseTest {
             Settings.appiumLogLevel = "debug";
             Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
             try {
-                String log = Server.service.getStdOut();
-                if (log != null) {
-                    Log.separator();
-                    Log.info(log);
-                    Log.separator();
-                } else {
-                    Log.error("Server log not available!");
+                try {
+                    String log = Server.service.getStdOut();
+                    if (log != null) {
+                        Log.separator();
+                        Log.info(log);
+                        Log.separator();
+                    } else {
+                        Log.error("Server log not available!");
+                    }
+                } catch (Exception ex) {
+                    Log.error("Failed to get appium logs.");
                 }
                 Client.stopAppiumDriver();
                 Server.stopAppiumServer();
                 Server.initAppiumServer();
                 Client.initAppiumDriver();
             } catch (Exception re) {
-                String log = Server.service.getStdOut();
-                if (log != null) {
-                    Log.separator();
-                    Log.info(log);
-                    Log.separator();
-                } else {
-                    Log.error("Server log not available!");
+                try {
+                    String log = Server.service.getStdOut();
+                    if (log != null) {
+                        Log.separator();
+                        Log.info(log);
+                        Log.separator();
+                    } else {
+                        Log.error("Server log not available!");
+                    }
+                } catch (Exception ex) {
+                    Log.error("Failed to get appium logs.");
                 }
                 checkAppiumLogsForCrash();
                 String error = "Failed to init Appium session. Please see Appium logs.";
