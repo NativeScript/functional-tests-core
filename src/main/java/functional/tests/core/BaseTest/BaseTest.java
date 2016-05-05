@@ -109,6 +109,19 @@ public abstract class BaseTest {
         Log.separator();
         Log.info("Start test: " + method.getName());
 
+        if (previousTestStatus == ITestResult.FAILURE) {
+            // Start server if it is dead
+            if (Server.service == null || !Server.service.isRunning()) {
+                Server.initAppiumServer();
+            }
+            // Start client if it is dead
+            if (Client.driver == null) {
+                Client.initAppiumDriver();
+            }
+            // Restart app
+            App.fullRestart();
+        }
+
         if (isFistTest) {
             isFistTest = false;
         } else {
@@ -121,19 +134,6 @@ public abstract class BaseTest {
                     App.fullRestart();
                 }
             }
-        }
-
-        if (previousTestStatus == ITestResult.FAILURE) {
-            // Start server if it is dead
-            if (Server.service == null || !Server.service.isRunning()) {
-                Server.initAppiumServer();
-            }
-            // Start client if it is dead
-            if (Client.driver == null) {
-                Client.initAppiumDriver();
-            }
-            // Restart app
-            App.fullRestart();
         }
     }
 
