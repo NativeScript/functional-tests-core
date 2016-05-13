@@ -11,6 +11,7 @@ import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +44,7 @@ public class Settings {
     public static String deviceId;
     public static String deviceName;
     public static String testAppName;
+    public static String testAppFriendlyName;
     public static String packageId;
     public static String testAppArchive;
     public static String appiumVersion;
@@ -208,6 +210,39 @@ public class Settings {
         return appId;
     }
 
+    private static String getTestAppFriendlyName() throws Exception {
+        String appId = "";
+        if (Settings.platform == PlatformType.Andorid) {
+            String apptExecutableName = "aapt";
+            if (Settings.OS == OSType.Windows) {
+                apptExecutableName = "aapt.exe";
+            }
+            File root = new File(System.getenv("ANDROID_HOME") + File.separator + "build-tools");
+            File aaptFile = OSUtils.find(root, apptExecutableName);
+            if (aaptFile == null) {
+                String error = "Failed to find aapt. It is requited for Android tests.";
+                Log.fatal(error);
+                throw new Exception(error);
+            } else {
+                String aaptPath = aaptFile.getAbsolutePath();
+                String command = aaptPath + " dump badging " + Settings.baseTestAppDir + File.separator + Settings.testAppName;
+                String result = OSUtils.runProcess(command);
+                String[] list = result.split("\\r?\\n");
+                for (String line : list) {
+                    if (line.contains("application-label:")) {
+                        appId = line.substring(line.indexOf("'") + 1);
+                        appId = appId.substring(0, appId.indexOf("'"));
+                    }
+                }
+            }
+        } else if (Settings.deviceType == DeviceType.Simulator) {
+            // TODO: Implement it;
+        } else if (Settings.deviceType == DeviceType.iOS) {
+            // TODO: Implement it;
+        }
+        return appId;
+    }
+
     public static void initSettings() throws Exception {
 
         // Set locations and cleanup output folders
@@ -349,6 +384,9 @@ public class Settings {
         // Set test app package id
         packageId = getPackageId();
 
+        // Set test app package id
+        testAppFriendlyName = getTestAppFriendlyName();
+
         Log.separator();
         Log.info("Settings initialized properly:");
         Log.info("OS Type: " + OS);
@@ -365,6 +403,7 @@ public class Settings {
         Log.info("Device Boot Time: " + deviceBootTimeout);
         Log.info("Base TestApp Path: " + baseTestAppDir);
         Log.info("TestApp Name: " + testAppName);
+        Log.info("TestApp Friendly Name: " + testAppFriendlyName);
         Log.info("TestApp Package Id: " + packageId);
         Log.info("Restart App: " + String.valueOf(restartApp));
         Log.info("Appium Version: " + appiumVersion);

@@ -1,7 +1,9 @@
 package functional.tests.core.OSUtils;
 
 import functional.tests.core.Log.Log;
+import functional.tests.core.Settings.Settings;
 import org.apache.commons.io.FileUtils;
+import org.testng.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,5 +48,17 @@ public class FileSystem {
     public static boolean exist(String path) throws IOException {
         File file = new File(path);
         return file.exists();
+    }
+
+    public static long getFileSize(String fileName) {
+        File file;
+        long size = 0;
+        file = new File(Settings.baseTestAppDir + File.separator + fileName);
+        if (file.exists()) {
+            size = file.length() / 1024; // In KBs
+        } else {
+            Assert.fail("File '" + file + "' does not exist!");
+        }
+        return size;
     }
 }

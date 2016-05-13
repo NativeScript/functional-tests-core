@@ -248,6 +248,13 @@ public class BaseDevice {
                 Wait.sleep(initTimeOut * 2);
                 if (isAppRunning(deviceId, appId)) {
                     Log.info("App " + appId + " is up and running.");
+                    try {
+                        String timeString = Adb.getStartupTime(Settings.packageId);
+                        double time = Double.valueOf(timeString);
+                        Log.info("First start of app is: " + time);
+                    } catch (Exception e) {
+                        Log.error("Failed to get time for first start of the app.");
+                    }
                 } else {
                     Log.fatal("App " + appId + " is not running.");
                     throw new AppiumException("App " + appId + " is not running.");
