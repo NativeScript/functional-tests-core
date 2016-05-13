@@ -220,6 +220,16 @@ public class BaseDevice {
         }
     }
 
+    private static void logInitialLoad() {
+        try {
+            String timeString = Adb.getStartupTime(Settings.packageId);
+            double time = Double.valueOf(timeString);
+            Log.info("First start of app is: " + time);
+        } catch (Exception e) {
+            Log.error("Failed to get time for first start of the app.");
+        }
+    }
+
     public static void verifyAppRunning(String deviceId, String appId) throws AppiumException {
         int initTimeOut = 5; // wait before start checking if app is running
         int timeOut = 10; // timeout in seconds
@@ -235,6 +245,7 @@ public class BaseDevice {
                 isRuning = isAppRunning(deviceId, appId);
                 if (isRuning) {
                     Log.info("App " + appId + " is up and running.");
+                    logInitialLoad();
                     break;
                 } else {
                     Log.info("App " + appId + " is not running. Wait for it...");
@@ -248,13 +259,7 @@ public class BaseDevice {
                 Wait.sleep(initTimeOut * 2);
                 if (isAppRunning(deviceId, appId)) {
                     Log.info("App " + appId + " is up and running.");
-                    try {
-                        String timeString = Adb.getStartupTime(Settings.packageId);
-                        double time = Double.valueOf(timeString);
-                        Log.info("First start of app is: " + time);
-                    } catch (Exception e) {
-                        Log.error("Failed to get time for first start of the app.");
-                    }
+                    logInitialLoad();
                 } else {
                     Log.fatal("App " + appId + " is not running.");
                     throw new AppiumException("App " + appId + " is not running.");

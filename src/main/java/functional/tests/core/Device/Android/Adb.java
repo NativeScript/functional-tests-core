@@ -424,7 +424,10 @@ public class Adb {
         for (LogEntry logEntry : logEntries) {
             String line = logEntry.toString();
             if (line.contains("Displayed " + Settings.packageId)) {
-                time = line.substring(0, line.lastIndexOf("("));
+                time = line;
+                if (line.contains("(")) {
+                    time = line.substring(0, line.lastIndexOf("("));
+                }
                 time = time.substring(time.lastIndexOf("+") + 1);
                 time = time.replace(" ", "");
                 break;
