@@ -47,6 +47,7 @@ public class Client {
             try {
                 capabilities.setCapability("noSign", "true");
                 capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
+                capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
                 driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);
