@@ -157,13 +157,13 @@ public class ImageVerification {
         }
 
         if (VERIFICATION_TYPE == VerificationType.JustCapture) {
-            String folderName = Settings.screenshotOutDir + File.separator + "actual";
+            String folderName = Settings.screenshotResDir + File.separator + "actual";
             String actualImageName = folderName + File.separator + expectedElementImage + ".png";
             saveImage(actualImageName, actualImage, folderName, "Image comparison skipped. Actual images will be saved at $SCREENSHOT_LOCATION/actual");
             return true;
         }
 
-        String expectedImageBasePath = Settings.screenshotOutDir + File.separator + appName + File.separator + Settings.deviceName;
+        String expectedImageBasePath = Settings.screenshotResDir + File.separator + appName + File.separator + Settings.deviceName;
         String expectedImagePath = expectedImageBasePath + File.separator + expectedElementImage + ".png";
 
         if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {

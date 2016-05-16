@@ -189,7 +189,7 @@ public class Log {
 
                 image(logMessage);
             } else {
-                Log.info(filePrefix + " look OK!");
+                Log.info("Image verification result will not be saved, images are exactly the same.");
             }
         } catch (Exception e) {
             error("Failed to log current screen.");

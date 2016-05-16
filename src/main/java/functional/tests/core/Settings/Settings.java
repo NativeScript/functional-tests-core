@@ -1,6 +1,5 @@
 package functional.tests.core.Settings;
 
-import com.sun.jna.platform.win32.WinNT;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 
 public class Settings {
@@ -84,23 +82,12 @@ public class Settings {
     }
 
     public static String getStorage() {
-        Map<String, String> envs = System.getenv();
-        for (String envName : envs.keySet()) {
-            System.out.format("%s=%s%n",
-                    envName,
-                    envs.get(envName));
-        }
-
         String env = System.getenv(storageEvnironmentVariable);
-        Log.warn("STORAGE PATH: ");
-
         if (env == null) {
             System.out.format("LOCAL STORAGE %s", baseResourcesDir);
-
             return baseResourcesDir;
         } else {
             System.out.format("%s=%s%n", storageEvnironmentVariable, env);
-
             return env;
         }
     }
@@ -110,7 +97,6 @@ public class Settings {
         consoleLogDir = baseLogDir + File.separator + "console";
         screenshotOutDir = baseOutputDir + File.separator + "screenshots";
         screenshotResDir = getStorage() + File.separator + "images";
-
         appiumLogFile = baseLogDir + File.separator + "appium.log";
 
         try {
