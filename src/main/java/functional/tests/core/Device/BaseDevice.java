@@ -220,24 +220,38 @@ public class BaseDevice {
         }
     }
 
-    private static void logInitialLoad() {
-        try {
-            String timeString = Adb.getStartupTime(Settings.packageId);
-            double time = Double.valueOf(timeString);
-            Log.info("First start of app is: " + time);
-        } catch (Exception e) {
-            Log.error("Failed to get time for first start of the app.");
+    public static String getStartupTime(String appId) throws IOException {
+        String logInitPath;
+        logInitPath = Settings.consoleLogDir + File.separator + "logcat_init.log";
+        if (FileSystem.exist(logInitPath)) {
+            String[] logEntries = FileSystem.readFile(logInitPath).split("\\r?\\n");
+            String time = null;
+            for (String line : logEntries) {
+                if (line.contains("Displayed " + Settings.packageId)) {
+                    time = line;
+                    if (line.contains("(")) {
+                        time = line.substring(0, line.lastIndexOf("("));
+                    }
+                    time = time.substring(time.lastIndexOf("+") + 1);
+                    time = time.replace(" ", "");
+                    break;
+                }
+            }
+            time = time.replace("ms", "");
+            time = time.replace("s", ".");
+            Log.info(appId + " started in " + time + " seconds.");
+            return time;
+        } else {
+            return null;
         }
     }
 
-    public static void verifyAppRunning(String deviceId, String appId) throws AppiumException {
-        int initTimeOut = 5; // wait before start checking if app is running
-        int timeOut = 10; // timeout in seconds
-        if (Settings.deviceName.toLowerCase().contains("arm")) {
-            initTimeOut = initTimeOut * 5;
-            timeOut = timeOut * 5;
-        }
+    public static boolean waitAppRunning(String deviceId, String appId, int timeOut) {
         if (Settings.platform == PlatformType.Andorid) {
+            int initTimeOut = 5;
+            if (Settings.deviceName.toLowerCase().contains("arm")) {
+                initTimeOut = initTimeOut * 5;
+            }
             Wait.sleep(initTimeOut * 1000);
             long startTime = System.currentTimeMillis();
             boolean isRuning = false;
@@ -245,24 +259,42 @@ public class BaseDevice {
                 isRuning = isAppRunning(deviceId, appId);
                 if (isRuning) {
                     Log.info("App " + appId + " is up and running.");
-                    logInitialLoad();
                     break;
                 } else {
                     Log.info("App " + appId + " is not running. Wait for it...");
                     Wait.sleep(1000);
                 }
             }
-            if (!isRuning) {
-                // Try to restart it
-                Log.info("Restart app...");
+            return isRuning;
+        } else {
+            throw new NotImplementedException();
+        }
+    }
+
+    public static void verifyAppRunning(String deviceId, String appId) throws AppiumException, IOException {
+        int startUpTimeOut = 10;
+        if (Settings.deviceName.toLowerCase().contains("arm")) {
+            startUpTimeOut = startUpTimeOut * 5;
+        }
+        if (Settings.platform == PlatformType.Andorid) {
+            boolean isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
+            if (!isRunning) {
+                // Restart all and try again
                 Client.driver.resetApp();
-                Wait.sleep(initTimeOut * 2);
-                if (isAppRunning(deviceId, appId)) {
+                Wait.sleep(startUpTimeOut);
+                isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
+                if (isRunning) {
                     Log.info("App " + appId + " is up and running.");
-                    logInitialLoad();
                 } else {
                     Log.fatal("App " + appId + " is not running.");
                     throw new AppiumException("App " + appId + " is not running.");
+                }
+            } else {
+                String startTime = getStartupTime(Settings.packageId);
+                if (startTime != null) {
+                    Log.info(Settings.testAppFriendlyName + " loaded in " + startTime + " seconds.");
+                } else {
+                    Log.error("Failed to measure loading time of " + Settings.testAppFriendlyName);
                 }
             }
         } else {

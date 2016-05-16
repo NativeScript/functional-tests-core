@@ -12,7 +12,6 @@ import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Screenshot.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +48,7 @@ public class Settings {
     public static String testAppName;
     public static String testAppFriendlyName;
     public static String packageId;
+    public static String defaultActivity = "com.tns.NativeScriptActivity"; // This is hardcoded in runtime now
     public static String testAppArchive;
     public static String appiumVersion;
     public static String automationName;
@@ -441,6 +441,7 @@ public class Settings {
         Log.info("Appium Log File: " + appiumLogFile);
         Log.info("Appium Log Level: " + appiumLogLevel);
         Log.info("Debug: " + debugString);
+        Log.info("(Android Only) Default Activity: " + defaultActivity);
         Log.info("(Android Only) Emulator Options: " + emulatorOptions);
         Log.info("(Android Only) Emulator Create Options: " + emulatorCreateOptions);
         Log.info("(iOS Only) Auto Accept Alerts: " + acceptAlertsString);

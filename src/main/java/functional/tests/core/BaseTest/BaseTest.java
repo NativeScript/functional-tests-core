@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 
 public abstract class BaseTest {
 
+    private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
 
@@ -98,7 +99,14 @@ public abstract class BaseTest {
         }
 
         // Verify app not crashed
-        BaseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
+        try {
+            BaseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
+        } catch (Exception e) {
+            failAtStartUp = true;
+            Log.logScreen("Emulator", Settings.packageId + " failed at startup.");
+            takeScreenOfHost("HostOS");
+            throw e;
+        }
 
         // Get logs for initial app startup
         BaseDevice.writeConsoleLogToFile("init");
@@ -110,16 +118,25 @@ public abstract class BaseTest {
         Log.info("Start test: " + method.getName());
 
         if (previousTestStatus == ITestResult.FAILURE) {
-            // Start server if it is dead
-            if (Server.service == null || !Server.service.isRunning()) {
+            try {
+                App.fullRestart();
+            } catch (Exception e1) {
+                Log.info("Failed to restart test app. Rests Apppium client/server.");
+                Server.stopAppiumServer();
+                BaseDevice.stopTestApp();
+                BaseDevice.stopDevice();
                 Server.initAppiumServer();
-            }
-            // Start client if it is dead
-            if (Client.driver == null) {
                 Client.initAppiumDriver();
+                isFistTest = true;
+                // Verify app not crashed
+                try {
+                    BaseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
+                } catch (Exception e2) {
+                    Log.logScreen("Emulator", Settings.packageId + " failed at startup.");
+                    takeScreenOfHost("HostOS");
+                    throw e2;
+                }
             }
-            // Restart app
-            App.fullRestart();
         }
 
         if (isFistTest) {
@@ -161,7 +178,6 @@ public abstract class BaseTest {
             Log.info("=> Test " + testCase + " passed!");
         } else if (previousTestStatus == ITestResult.SKIP) {
             Log.error("=> Test " + testCase + " skipped!");
-            takeScreenOfHost(testCase);
         } else if (previousTestStatus == ITestResult.FAILURE) {
             Log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             Log.saveXmlTree(testCase + "_VisualTree.xml");

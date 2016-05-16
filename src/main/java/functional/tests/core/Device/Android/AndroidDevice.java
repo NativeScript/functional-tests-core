@@ -28,7 +28,7 @@ public class AndroidDevice {
             Adb.waitUntilEmulatorBoot(Settings.deviceId, Settings.deviceBootTimeout);
             // Unlock if locked
             if (Adb.isLocked(Settings.deviceId)) {
-                Log.info("Device is locked.");
+                Log.info("Device is locked. Unlock it...");
                 Adb.unlock(Settings.deviceId);
                 Wait.sleep(3000);
                 Log.info("Device locked: " + String.valueOf(Adb.isLocked(Settings.deviceId)));
@@ -70,7 +70,7 @@ public class AndroidDevice {
                 Adb.stopAdb();
                 Adb.startAdb();
             }
-            if (available(port)) {
+            if (!available(port)) {
                 Log.fatal("Port " + port + " still in use. Most likely emulator will not start.");
             }
         }

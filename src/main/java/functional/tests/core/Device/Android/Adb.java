@@ -1,6 +1,5 @@
 package functional.tests.core.Device.Android;
 
-import functional.tests.core.Appium.Client;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Exceptions.DeviceException;
@@ -9,7 +8,6 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
-import org.openqa.selenium.logging.LogEntry;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +43,7 @@ public class Adb {
         return output;
     }
 
-    private static String runAdbCommand(String deviceId, String command) {
+    public static String runAdbCommand(String deviceId, String command) {
         return runAdbCommand(deviceId, command, true);
     }
 
@@ -73,7 +71,7 @@ public class Adb {
         }
     }
 
-    protected static List<String> getInstalledApps() {
+    public static List<String> getInstalledApps() {
         String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages");
         String trimData = rowData.replace("package:", "");
         String[] list = trimData.split("\\r?\\n");
@@ -85,9 +83,37 @@ public class Adb {
         OSUtils.runProcess(stopCommand);
     }
 
-    protected static void uninstallApp(String appId) {
-        stopApp(appId);
+    public static boolean isAppInstalled(String appId) {
+        List<String> installedApps = Adb.getInstalledApps();
+        boolean appFound = false;
+        for (String app : installedApps) {
+            if (app.contains(appId)) {
+                Log.info("App " + appId + " found.");
+                appFound = true;
+            }
+        }
+        return appFound;
+    }
 
+    public static void installApp(String appFileName, String appId, boolean skipIfAvailable) {
+        boolean appFound = isAppInstalled(appId);
+        if (skipIfAvailable) {
+            if (appFound) {
+                // Do nothing
+            } else {
+                Log.info("Install " + Settings.baseTestAppDir + File.separator + appFileName);
+                Adb.runAdbCommand(Settings.deviceId, "install " + Settings.baseTestAppDir + File.separator + appFileName);
+            }
+        } else {
+            Log.info("Uninstall old version of the app.");
+            Adb.uninstallApp(appId);
+            Log.info("Install " + Settings.baseTestAppDir + File.separator + appFileName);
+            Adb.runAdbCommand(Settings.deviceId, "install " + Settings.baseTestAppDir + File.separator + appFileName);
+        }
+    }
+
+    public static void uninstallApp(String appId) {
+        stopApp(appId);
         String uninstallResult = runAdbCommand(Settings.deviceId, "shell pm uninstall -k " + appId);
 
         if (uninstallResult.contains("Success")) {
@@ -416,27 +442,6 @@ public class Adb {
         String command = "shell monkey -p " + appId + " 1";
         Log.info(command);
         runAdbCommand(Settings.deviceId, command);
-    }
-
-    public static String getStartupTime(String appId) {
-        List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
-        String time = "99s999ms";
-        for (LogEntry logEntry : logEntries) {
-            String line = logEntry.toString();
-            if (line.contains("Displayed " + Settings.packageId)) {
-                time = line;
-                if (line.contains("(")) {
-                    time = line.substring(0, line.lastIndexOf("("));
-                }
-                time = time.substring(time.lastIndexOf("+") + 1);
-                time = time.replace(" ", "");
-                break;
-            }
-        }
-        time = time.replace("ms", "");
-        time = time.replace("s", ".");
-        Log.info(appId + " started in " + time + " seconds.");
-        return time;
     }
 
     public static void startDeveloperOptions(String deviceId) {
