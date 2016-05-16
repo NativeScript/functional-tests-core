@@ -1,5 +1,6 @@
 package functional.tests.core.Settings;
 
+import com.sun.jna.platform.win32.WinNT;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
@@ -17,15 +18,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 public class Settings {
-
+    private static final String storageEvnironmentVariable = "STORAGE";
     private static final String userDir = System.getProperty("user.dir");
     private static final String appConfigPath = System.getProperty("appConfig");
     private static final String baseResourcesDir = userDir + File.separator + "resources";
     private static final String baseOutputDir = userDir + File.separator + "target" + File.separator + "surefire-reports";
-
+    private static final String storageMachine = "mcsofnsbuild03";
+    private static final String sharedFolder = "tns-images";
     private static Properties properties;
 
     public static OSType OS;
@@ -80,11 +83,34 @@ public class Settings {
         return detectedOS;
     }
 
+    public static String getStorage() {
+        Map<String, String> envs = System.getenv();
+        for (String envName : envs.keySet()) {
+            System.out.format("%s=%s%n",
+                    envName,
+                    envs.get(envName));
+        }
+
+        String env = System.getenv(storageEvnironmentVariable);
+        Log.warn("STORAGE PATH: ");
+
+        if (env == null) {
+            System.out.format("LOCAL STORAGE %s", baseResourcesDir);
+
+            return baseResourcesDir;
+        } else {
+            System.out.format("%s=%s%n", storageEvnironmentVariable, env);
+
+            return env;
+        }
+    }
+
     private static void setupLocations() throws IOException {
         baseLogDir = baseOutputDir + File.separator + "logs";
         consoleLogDir = baseLogDir + File.separator + "console";
         screenshotOutDir = baseOutputDir + File.separator + "screenshots";
-        screenshotResDir = baseResourcesDir + File.separator + "images";
+        screenshotResDir = getStorage() + File.separator + "images";
+
         appiumLogFile = baseLogDir + File.separator + "appium.log";
 
         try {
