@@ -182,7 +182,7 @@ public class ImageVerification {
                 ImageVerificationResult result = compareImages(actualImage.call(), expectedImage, readHeader);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                     areImagesEqual = false;
-                    while (timeOut > 0) {
+                    if (timeOut > 0) {
                         String errorString = expectedElementImage + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
                         timeOut = calculateWaitTime.calculateTime(timeOut, time);
