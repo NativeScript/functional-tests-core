@@ -25,15 +25,16 @@ public class ImageVerification {
 
 
     public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int repeatTimes, int pixelTolerance, double percentTolerance) throws Exception {
+        long timeOut = convertSecondsToMilliseconds(repeatTimes);
         return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, repeatTimes, 1000, false, new ICustomFunction() {
+        }, timeOut, 1000, false, new ICustomFunction() {
             @Override
             public long calculateTime(long timeOut, long startTime) {
-                return calculateRepeatimes(convertSecondsToMiliseconds(timeOut), startTime);
+                return calculateRepeatimes(timeOut, startTime);
             }
         });
     }
@@ -56,15 +57,16 @@ public class ImageVerification {
      * Verify mobile element
      **/
     public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+        long timeLimit = convertSecondsToMilliseconds(timeOut);
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, appName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, 1000, false, new ICustomFunction() {
+        }, appName, expectedElementImage, pixelTolerance, percentTolerance, timeLimit, 1000, false, new ICustomFunction() {
             @Override
-            public long calculateTime(long timeOut, long startTime) {
-                return calculateRepeatimes(convertSecondsToMiliseconds(timeOut), startTime);
+            public long calculateTime(long timeLimit, long startTime) {
+                return calculateRepeatimes(timeLimit, startTime);
             }
         });
     }
@@ -124,20 +126,21 @@ public class ImageVerification {
     }
 
     public static void waitForScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+        long timeLimit = convertSecondsToMilliseconds(timeOut);
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeOut, System.currentTimeMillis(), IGNORE_HEADER, new ICustomFunction() {
+        }, appName, pageName, pixelTolerance, percentTolerance, timeLimit, System.currentTimeMillis(), IGNORE_HEADER, new ICustomFunction() {
             @Override
-            public long calculateTime(long timeOut, long startTime) {
-                return calculateWhileTimeOut(convertSecondsToMiliseconds(timeOut), startTime);
+            public long calculateTime(long timeLimit, long startTime) {
+                return calculateWhileTimeOut(timeLimit, startTime);
             }
         });
     }
 
-    private static long convertSecondsToMiliseconds(long seconds) {
+    private static long convertSecondsToMilliseconds(long seconds) {
         return seconds * 1000;
     }
 
@@ -182,7 +185,6 @@ public class ImageVerification {
                     while (timeOut > 0) {
                         String errorString = expectedElementImage + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
-                        Wait.sleep(1000);
                         timeOut = calculateWaitTime.calculateTime(timeOut, time);
                         verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, actualImage, timeOut, time, readHeader, calculateWaitTime);
                     }
@@ -200,13 +202,17 @@ public class ImageVerification {
     }
 
     private static long calculateWhileTimeOut(long timeOut, long startTime) {
+        Wait.sleep(1000);
+
         timeOut = (System.currentTimeMillis() - startTime) - timeOut;
 
         return timeOut;
     }
 
-    private static long calculateRepeatimes(long timeOut, long startTime) {
-        timeOut = startTime - timeOut;
+    private static long calculateRepeatimes(long timeOut, long elapsedTime) {
+        Wait.sleep((int) elapsedTime);
+
+        timeOut = timeOut - elapsedTime;
 
         return timeOut;
     }
