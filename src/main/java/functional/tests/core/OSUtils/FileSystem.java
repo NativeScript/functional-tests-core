@@ -50,6 +50,16 @@ public class FileSystem {
         return file.exists();
     }
 
+    public static void ensureFolderExists(String directory) {
+        File file = new File(directory);
+        if (!file.exists()) {
+            boolean result = file.mkdirs();
+            if (!result) {
+                Log.error("Failed to create folder: " + directory);
+            }
+        }
+    }
+
     public static long getFileSize(String fileName) {
         File file;
         long size = 0;

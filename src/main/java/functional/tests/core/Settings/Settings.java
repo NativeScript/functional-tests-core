@@ -84,10 +84,10 @@ public class Settings {
     public static String getStorage() {
         String env = System.getenv(storageEvnironmentVariable);
         if (env == null) {
-            System.out.format("LOCAL STORAGE %s", baseResourcesDir);
+            Log.info(String.format("LOCAL STORAGE %s", baseResourcesDir));
             return baseResourcesDir;
         } else {
-            System.out.format("%s=%s%n", storageEvnironmentVariable, env);
+            Log.info(String.format("%s=%s%n", storageEvnironmentVariable, env));
             return env;
         }
     }

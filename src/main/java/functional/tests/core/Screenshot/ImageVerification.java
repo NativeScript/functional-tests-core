@@ -1,16 +1,15 @@
 package functional.tests.core.Screenshot;
 
-import com.sun.imageio.plugins.common.ImageUtil;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.ImageVerificationException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.testng.Assert;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -220,7 +219,7 @@ public class ImageVerification {
         File image = new File(imageName);
         Wait.sleep(1000); // Wait some time until animations finish
         Log.warn(message);
-        ensureFolderExists(excpectedImageFolderName);
+        FileSystem.ensureFolderExists(excpectedImageFolderName);
         ImageUtils.saveBufferedImage(actualImage.call(), image);
     }
 
@@ -304,12 +303,6 @@ public class ImageVerification {
         g.drawImage(source, 0, 0, null);
         g.dispose();
         return b;
-    }
-
-    private static void ensureFolderExists(String directory) {
-        if (!(new File(directory).exists())) {
-            new File(directory).mkdirs();
-        }
     }
 
     public interface ICustomFunction {
