@@ -57,8 +57,16 @@ If not present, create the following environment variables.
 	```
 	ANDROID_HOME=Path to Android installation directory
 	```
-
+    
 	For example: ANDROID_HOME=C:\Android\android-sdk
+	
+	```
+	STORAGE=path to expected images storage. If not set the images will be saved to resources\images
+	```
+	
+	For example for Windows OS: STORAGE=\\telerik.com\distributions\OfficialReleases\NativeScript\images
+	
+	For example for iOS use symbolic link: STORAGE=\tns-images
 	
 	
 ### 2. Install Appium (http://appium.io/)
