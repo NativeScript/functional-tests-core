@@ -85,4 +85,21 @@ public class BasePage {
         MobileElement element = Find.findElementByLocator(locator, Settings.defaultTimeout);
         Assert.assertNotNull(element, "Can not find: " + locator.toString());
     }
+
+    /**
+     * Verify page is loaded
+     */
+    public static void loaded(MobileElement element) {
+        String className = getClassName();
+        if (element != null) {
+            Log.info(String.format("%s page loaded.", className));
+        } else {
+            Assert.fail(String.format("%s NOT loaded.", className));
+        }
+    }
+
+    private static String getClassName() {
+        String className = Thread.currentThread().getStackTrace()[3].getClassName();
+        return className;
+    }
 }
