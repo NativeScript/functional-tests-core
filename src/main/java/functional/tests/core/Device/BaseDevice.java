@@ -40,13 +40,14 @@ public class BaseDevice {
                     Log.error("TimeoutException. Retry init device...");
                     Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
                     Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
+                    OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot");
                     AndroidDevice.stopDevice();
                     if (!Settings.isRealDevice) {
                         Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
                     }
                     AndroidDevice.initDevice();
                 } catch (TimeoutException secondTimeout) {
-                    Adb.getScreenshot("timeout.png");
+                    OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot_After_Retry");
                     throw secondTimeout;
                 }
             }
@@ -221,29 +222,20 @@ public class BaseDevice {
     }
 
     public static String getStartupTime(String appId) throws IOException {
-        String logInitPath;
-        logInitPath = Settings.consoleLogDir + File.separator + "logcat_init.log";
-        if (FileSystem.exist(logInitPath)) {
-            String[] logEntries = FileSystem.readFile(logInitPath).split("\\r?\\n");
-            String time = null;
-            for (String line : logEntries) {
-                if (line.contains("Displayed " + Settings.packageId)) {
-                    time = line;
-                    if (line.contains("(")) {
-                        time = line.substring(0, line.lastIndexOf("("));
-                    }
-                    time = time.substring(time.lastIndexOf("+") + 1);
-                    time = time.replace(" ", "");
-                    break;
-                }
+        String[] logEntries = Adb.getAdbLog(Settings.deviceId).split("\\r?\\n");
+        String time = null;
+        for (String line : logEntries) {
+            if (line.contains("Displayed " + Settings.packageId)) {
+                time = line;
+                time = time.substring(time.lastIndexOf(Settings.packageId) + 1);
+                time = time.substring(time.lastIndexOf("+") + 1);
+                time = time.replace(" ", "");
+                time = time.replace("ms", "");
+                time = time.replace("s", ".");
+                break;
             }
-            time = time.replace("ms", "");
-            time = time.replace("s", ".");
-            Log.info(appId + " started in " + time + " seconds.");
-            return time;
-        } else {
-            return null;
         }
+        return time;
     }
 
     public static boolean waitAppRunning(String deviceId, String appId, int timeOut) {

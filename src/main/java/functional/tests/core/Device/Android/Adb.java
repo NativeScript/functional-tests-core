@@ -71,6 +71,10 @@ public class Adb {
         }
     }
 
+    public static String getAdbLog(String deviceId) {
+        return runAdbCommand(Settings.deviceId, "logcat -d");
+    }
+
     public static List<String> getInstalledApps() {
         String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages");
         String trimData = rowData.replace("package:", "");
