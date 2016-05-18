@@ -177,12 +177,12 @@ public class ImageVerification {
         return seconds * 1000;
     }
 
-    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, long timeOut, long time, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
-        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, time, readHeader, calculateWaitTime);
+    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, long timeOut, long sleepTime, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
+        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, sleepTime, readHeader, calculateWaitTime);
         Assert.assertEquals(result, true, String.format("Image comparison failed. %s is not as expected!", imageName));
     }
 
-    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, long timeOut, long time, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
+    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, long timeOut, long sleepTime, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
         boolean areImagesEqual = true;
         BufferedImage expectedImage;
 
@@ -209,6 +209,7 @@ public class ImageVerification {
             expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
 
             if (expectedImage == null) {
+                Wait.sleep((int) sleepTime);
                 Log.error("Failed to read expected image, image comparison skipped.");
                 saveImage(expectedImagePath, actualImage, expectedImageBasePath, "Actual images will be also saved at expected image location.");
             } else {
@@ -221,8 +222,8 @@ public class ImageVerification {
                         }
                         String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
-                        timeOut = calculateWaitTime.calculateTime(timeOut, time);
-                        verifyImages(appName, imageName, pixelTolerance, percentTolerance, actualImage, timeOut, time, readHeader, calculateWaitTime);
+                        timeOut = calculateWaitTime.calculateTime(timeOut, sleepTime);
+                        verifyImages(appName, imageName, pixelTolerance, percentTolerance, actualImage, timeOut, sleepTime, readHeader, calculateWaitTime);
                     }
 
                     String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
@@ -257,11 +258,11 @@ public class ImageVerification {
         return timeOut - waitTime;
     }
 
-    private static void saveImage(String imageName, Callable<BufferedImage> actualImage, String excpectedImageFolderName, String message) throws Exception {
+    private static void saveImage(String imageName, Callable<BufferedImage> actualImage, String expectedImageFolderName, String message) throws Exception {
         File image = new File(imageName);
         Wait.sleep(1000); // Wait some time until animations finish
         Log.warn(message);
-        FileSystem.ensureFolderExists(excpectedImageFolderName);
+        FileSystem.ensureFolderExists(expectedImageFolderName);
         ImageUtils.saveBufferedImage(actualImage.call(), image);
     }
 
