@@ -45,6 +45,10 @@ public class FileSystem {
         return new String(encoded, Charset.defaultCharset());
     }
 
+    public static void writeFile(String filePath, String text) throws IOException {
+        FileUtils.writeStringToFile(new File(filePath), text);
+    }
+
     public static boolean exist(String path) throws IOException {
         File file = new File(path);
         return file.exists();

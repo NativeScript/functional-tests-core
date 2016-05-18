@@ -1,6 +1,7 @@
 package functional.tests.core.Log;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Screenshot.ImageUtils;
 import functional.tests.core.Screenshot.ImageVerificationResult;
 import functional.tests.core.Settings.Settings;
@@ -118,6 +119,18 @@ public class Log {
             out.close();
         } catch (Exception e) {
             error("Failed to get and save current visual tree.");
+        }
+    }
+
+    /**
+     * Log string *
+     */
+    public static void logString(String fileName, String text) {
+        try {
+            String filePath = Settings.baseLogDir + File.separator + fileName;
+            FileSystem.writeFile(filePath, text);
+        } catch (Exception e) {
+            Log.error("Failed to log data in " + fileName);
         }
     }
 
