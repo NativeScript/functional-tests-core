@@ -56,6 +56,7 @@ public abstract class BaseTest {
             Client.initAppiumDriver();
         } catch (Exception e) {
             checkAppiumLogsForCrash();
+            takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session");
             Log.info("Retry initializing appium server and client");
             Settings.appiumLogLevel = "debug";
             Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
@@ -78,6 +79,7 @@ public abstract class BaseTest {
                 Client.initAppiumDriver();
             } catch (Exception re) {
                 try {
+                    takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session_After_Retry");
                     String log = Server.service.getStdOut();
                     if (log != null) {
                         Log.separator();
