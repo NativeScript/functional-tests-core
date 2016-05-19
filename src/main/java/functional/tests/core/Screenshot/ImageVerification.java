@@ -32,7 +32,7 @@ public class ImageVerification {
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, timeOut, 1000, false, new ICustomFunction() {
+        }, timeOut, 1000, !IGNORE_HEADER, new ICustomFunction() {
             @Override
             public long calculateTime(long timeOut, long startTime) {
                 return calculateRepeatimes(timeOut, startTime);
@@ -128,7 +128,7 @@ public class ImageVerification {
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeLimit, waitInMilliseconds, false, new ICustomFunction() {
+        }, appName, pageName, pixelTolerance, percentTolerance, timeLimit, waitInMilliseconds, IGNORE_HEADER, new ICustomFunction() {
             @Override
             public long calculateTime(long timeLimit, long waitInMilliseconds) {
                 return calculateRepeatimes(timeLimit, waitInMilliseconds);
@@ -177,12 +177,12 @@ public class ImageVerification {
         return seconds * 1000;
     }
 
-    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, long timeOut, long sleepTime, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
-        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, sleepTime, readHeader, calculateWaitTime);
+    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, long timeOut, long sleepTime, boolean ignoreHeader, ICustomFunction calculateWaitTime) throws Exception {
+        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, sleepTime, ignoreHeader, calculateWaitTime);
         Assert.assertEquals(result, true, String.format("Image comparison failed. %s is not as expected!", imageName));
     }
 
-    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, long timeOut, long sleepTime, boolean readHeader, ICustomFunction calculateWaitTime) throws Exception {
+    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, long timeOut, long sleepTime, boolean ignoreHeader, ICustomFunction calculateWaitTime) throws Exception {
         boolean areImagesEqual = true;
         BufferedImage expectedImage;
 
@@ -213,7 +213,7 @@ public class ImageVerification {
                 Log.error("Failed to read expected image, image comparison skipped.");
                 saveImage(expectedImagePath, actualImage, expectedImageBasePath, "Actual images will be also saved at expected image location.");
             } else {
-                ImageVerificationResult result = compareImages(actualImage.call(), expectedImage, readHeader);
+                ImageVerificationResult result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                     areImagesEqual = false;
                     if (timeOut > 0) {
@@ -223,7 +223,7 @@ public class ImageVerification {
                         String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
                         timeOut = calculateWaitTime.calculateTime(timeOut, sleepTime);
-                        verifyImages(appName, imageName, pixelTolerance, percentTolerance, actualImage, timeOut, sleepTime, readHeader, calculateWaitTime);
+                        verifyImages(appName, imageName, pixelTolerance, percentTolerance, actualImage, timeOut, sleepTime, ignoreHeader, calculateWaitTime);
                     }
 
                     String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
