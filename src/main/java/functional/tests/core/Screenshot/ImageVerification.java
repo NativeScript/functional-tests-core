@@ -35,7 +35,7 @@ public class ImageVerification {
         }, timeOut, DEFAULT_WAIT_TIME,0, !IGNORE_HEADER, new ICustomFunction() {
             @Override
             public long calculateTime(long timeOut, long sleepTime,long startTime ) {
-                return calculateRepeatimes(timeOut, startTime);
+                return calculateRepeatimes(timeOut, sleepTime);
             }
         });
     }
