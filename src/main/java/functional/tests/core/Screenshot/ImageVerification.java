@@ -21,42 +21,9 @@ public class ImageVerification {
     private static final int SIMILAR_PIXEL_TOLERANCE = 50;
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
-    private static final long DEFAULT_WAIT_TIME = 1000;
+    private static final int DEFAULT_WAIT_TIME = 1000;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
 
-
-    public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int repeatTimes, int pixelTolerance, double percentTolerance) throws Exception {
-        long timeOut = convertSecondsToMilliseconds(repeatTimes);
-        return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
-            @Override
-            public BufferedImage call() throws Exception {
-                return ImageUtils.getElementImage(element);
-            }
-        }, timeOut, DEFAULT_WAIT_TIME, 0, !IGNORE_HEADER, new ICustomFunction() {
-            @Override
-            public long calculateTime(long timeOut, long sleepTime, long startTime) {
-                return calculateRepeatimes(timeOut, sleepTime);
-            }
-        });
-    }
-
-    /**
-     * Verify current screen
-     **/
-    public static boolean compareScreens(String appName, String pageName, int pixelTolerance, double percentTolerance, int repeatTimes, long sleepTime) throws Exception {
-        long timeOut = convertSecondsToMilliseconds(repeatTimes);
-        return verifyImages(appName, pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
-            @Override
-            public BufferedImage call() throws Exception {
-                return ImageUtils.getScreen();
-            }
-        }, timeOut, sleepTime, 0, IGNORE_HEADER, new ICustomFunction() {
-            @Override
-            public long calculateTime(long timeOut, long sleepTime, long startTime) {
-                return calculateRepeatimes(timeOut, sleepTime);
-            }
-        });
-    }
 
     /**
      * Verify mobile element
@@ -76,18 +43,12 @@ public class ImageVerification {
      * Verify mobile element
      **/
     public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
-        long timeLimit = convertSecondsToMilliseconds(timeOut);
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, appName, expectedElementImage, pixelTolerance, percentTolerance, timeLimit, DEFAULT_WAIT_TIME, 0, false, new ICustomFunction() {
-            @Override
-            public long calculateTime(long timeLimit, long sleepTime, long startTime) {
-                return calculateRepeatimes(timeLimit, sleepTime);
-            }
-        });
+        }, appName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
     }
 
     /**
@@ -115,25 +76,19 @@ public class ImageVerification {
      * Verify current screen
      **/
     public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance) throws Exception {
-        verifyScreen(appName, pageName, pixelTolerance, percentTolerance, 0, 0);
+        verifyScreen(appName, pageName, pixelTolerance, percentTolerance, Settings.defaultTimeout, 1000);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int repeatTimes, int waitInMilliseconds) throws Exception {
-        long timeLimit = convertSecondsToMilliseconds(repeatTimes);
+    public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime) throws Exception {
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeLimit, waitInMilliseconds, 0, IGNORE_HEADER, new ICustomFunction() {
-            @Override
-            public long calculateTime(long timeLimit, long waitInMilliseconds, long startTime) {
-                return calculateRepeatimes(timeLimit, waitInMilliseconds);
-            }
-        });
+        }, appName, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
     }
 
 
@@ -159,31 +114,21 @@ public class ImageVerification {
     }
 
     public static void waitForScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
-        long timeLimit = convertSecondsToMilliseconds(timeOut);
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeLimit, DEFAULT_WAIT_TIME, System.currentTimeMillis(), IGNORE_HEADER, new ICustomFunction() {
-            @Override
-            public long calculateTime(long timeLimit, long sleepTime, long startTime) {
-                return calculateWhileTimeOut(timeLimit, sleepTime, startTime);
-            }
-        });
+        }, appName, pageName, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, IGNORE_HEADER);
     }
 
-    private static long convertSecondsToMilliseconds(long seconds) {
-        return seconds * 1000;
-    }
-
-    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, long timeOut, long sleepTime, long startTime, boolean ignoreHeader, ICustomFunction calculateWaitTime) throws Exception {
-        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, sleepTime, startTime, ignoreHeader, calculateWaitTime);
+    private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime, boolean ignoreHeader) throws Exception {
+        boolean result = verifyImages(appName, imageName, pixelTolerance, percentTolerance, element, timeOut, sleepTime, ignoreHeader);
         Assert.assertTrue(result, String.format("Image comparison failed. %s is not as expected!", imageName));
     }
 
-    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, long timeOut, long sleepTime, long startTime, boolean ignoreHeader, ICustomFunction calculateWaitTime) throws Exception {
-        boolean areImagesEqual = true;
+    private static boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance, Callable<BufferedImage> actualImage, int timeOut, int sleepTime, boolean ignoreHeader) throws Exception {
+        boolean areImagesEqual = false;
         BufferedImage expectedImage;
 
         if (VERIFICATION_TYPE == VerificationType.Skip) {
@@ -207,56 +152,32 @@ public class ImageVerification {
 
         if (VERIFICATION_TYPE == VerificationType.Default) {
             expectedImage = ImageUtils.getImageFromFile(expectedImagePath);
-
             if (expectedImage == null) {
-                Wait.sleep((int) sleepTime);
+                Wait.sleep(sleepTime);
                 Log.error("Failed to read expected image, image comparison skipped.");
                 saveImage(expectedImagePath, actualImage, expectedImageBasePath, "Actual images will be also saved at expected image location.");
-
-                areImagesEqual = false;
             } else {
-                ImageVerificationResult result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
-                if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                    areImagesEqual = false;
-                    if (timeOut > 0) {
-                        if (calculateWaitTime == null) {
-                            Log.fatal("Should implement calculateWaitTime method.");
-                        }
+                long startTime = System.currentTimeMillis();
+                ImageVerificationResult result = null;
+                while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
+                    result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
+                    Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
+                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                         String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
                         Log.info(errorString);
-                        timeOut = calculateWaitTime.calculateTime(timeOut, sleepTime, startTime);
-                        Log.warn("TIMEOUT ImageVerification:  " + timeOut + " sleepTime " + sleepTime + " startTime " + startTime);
-                        verifyImages(appName, imageName, pixelTolerance, percentTolerance, actualImage, timeOut, sleepTime, startTime, ignoreHeader, calculateWaitTime);
+                    } else {
+                        Log.info(imageName + " looks OK.");
+                        areImagesEqual = true;
+                        break;
                     }
-
-                    String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent);
-                    Log.fatal(errorString);
-                } else {
-                    Log.info(imageName + " looks OK.");
-                    areImagesEqual = true;
                 }
-
-                Log.logImageVerificationResult(result, imageName);
+                if (!areImagesEqual){
+                    Log.logImageVerificationResult(result, imageName);
+                }
             }
         }
 
         return areImagesEqual;
-    }
-
-    private static long calculateWhileTimeOut(long timeOut, long sleepTime, long startTime) {
-        Wait.sleep((int) sleepTime);
-
-        timeOut = timeOut - (System.currentTimeMillis() - startTime);
-        Log.warn("TIMEOUT:  " + timeOut + " currentTime " + System.currentTimeMillis() + " startTime " + startTime);
-
-        return timeOut;
-    }
-
-    private static long calculateRepeatimes(long timeOut, long sleepTime) {
-
-        timeOut = timeOut - sleepTime;
-
-        return timeOut;
     }
 
     private static void saveImage(String imageName, Callable<BufferedImage> actualImage, String expectedImageFolderName, String message) throws Exception {
@@ -348,9 +269,4 @@ public class ImageVerification {
         g.dispose();
         return b;
     }
-
-    public interface ICustomFunction {
-        public long calculateTime(long timeOut, long startTime, long sleepTime);
-    }
-
 }
