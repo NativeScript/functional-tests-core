@@ -25,6 +25,30 @@ public class ImageVerification {
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
 
 
+    public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int timeOut, int pixelTolerance, double percentTolerance) throws Exception {
+
+        return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+            @Override
+            public BufferedImage call() throws Exception {
+                return ImageUtils.getElementImage(element);
+            }
+        }, timeOut, DEFAULT_WAIT_TIME, !IGNORE_HEADER);
+    }
+
+    /**
+     * Verify current screen
+     **/
+    public static boolean compareScreens(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+        return verifyImages(appName, pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+            @Override
+            public BufferedImage call() throws Exception {
+                return ImageUtils.getScreen();
+            }
+        }, timeOut, DEFAULT_WAIT_TIME,  IGNORE_HEADER);
+    }
+
+
+
     /**
      * Verify mobile element
      **/
