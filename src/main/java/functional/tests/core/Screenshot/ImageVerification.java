@@ -22,6 +22,7 @@ public class ImageVerification {
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
     private static final int DEFAULT_WAIT_TIME = 1000;
+    private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
 
 
@@ -53,14 +54,14 @@ public class ImageVerification {
      * Verify mobile element
      **/
     public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, double percentTolerance) throws Exception {
-        verifyElement(element, appName, expectedElementImage, Integer.MAX_VALUE, percentTolerance, 0);
+        verifyElement(element, appName, expectedElementImage, Integer.MAX_VALUE, percentTolerance, MIN_TIMEOUT);
     }
 
     /**
      * Verify mobile element
      **/
     public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, int pixelTolerance) throws Exception {
-        verifyElement(element, appName, expectedElementImage, pixelTolerance, Double.MAX_VALUE, 0);
+        verifyElement(element, appName, expectedElementImage, pixelTolerance, Double.MAX_VALUE, MIN_TIMEOUT);
     }
 
     /**
