@@ -40,7 +40,7 @@ public abstract class BaseTest {
     }
 
     @BeforeSuite(alwaysRun = true)
-    public static void beforeClass() throws Exception {
+    public static void beforeSuite() throws Exception {
         Log.initLogging();
         Settings.initSettings();
 
@@ -115,7 +115,7 @@ public abstract class BaseTest {
     }
 
     @BeforeMethod(alwaysRun = true)
-    public void setUp(Method method) throws Exception {
+    public void beforeMethod(Method method) throws Exception {
         Log.separator();
         Log.info("Start test: " + method.getName());
 
@@ -163,7 +163,7 @@ public abstract class BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown(ITestResult result) throws IOException {
+    public void afterMethod(ITestResult result) throws IOException {
 
         // Get test case name
         String testCase = result.getMethod().getMethodName();
@@ -189,7 +189,7 @@ public abstract class BaseTest {
     }
 
     @AfterSuite(alwaysRun = true)
-    public static void afterClass() throws Exception {
+    public static void afterSuite() throws Exception  {
         Client.stopAppiumDriver();
 
         if (!Settings.debug) {
