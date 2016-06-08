@@ -24,9 +24,14 @@ public abstract class BaseTest {
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
+    private BaseDevice baseDevice = new BaseDevice();
     private static BaseDevice _baseDevice = new BaseDevice();
 
-    public static BaseDevice baseDevice(){
+    public BaseTest() {
+        this.baseDevice = _baseDevice;
+    }
+
+    public static BaseDevice baseDevice() {
         return _baseDevice;
     }
 
@@ -174,7 +179,7 @@ public abstract class BaseTest {
         String testCase = result.getMethod().getMethodName();
 
         // Write console log
-        _baseDevice.writeConsoleLogToFile(testCase);
+        this.baseDevice.writeConsoleLogToFile(testCase);
 
         // Report results
         previousTestStatus = result.getStatus();
@@ -194,12 +199,12 @@ public abstract class BaseTest {
     }
 
     @AfterSuite(alwaysRun = true)
-    public static void afterSuite() throws Exception {
+    public void afterSuite() throws Exception {
         Client.stopAppiumDriver();
 
         if (!Settings.debug) {
             Server.stopAppiumServer();
-            _baseDevice.stopTestApp();
+            this.baseDevice.stopTestApp();
             _baseDevice.stopDevice();
         }
     }
