@@ -24,31 +24,27 @@ public class ImageVerification {
     private static final int DEFAULT_WAIT_TIME = 1000;
     private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
-
-
-    public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int timeOut, int pixelTolerance, double percentTolerance) throws Exception {
-
+    
+    public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, timeOut, DEFAULT_WAIT_TIME, !IGNORE_HEADER);
+        }, timeOut, waitTime, !IGNORE_HEADER);
     }
 
     /**
      * Verify current screen
      **/
-    public static boolean compareScreens(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+    public static boolean compareScreens(String appName, String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return verifyImages(appName, pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, timeOut, DEFAULT_WAIT_TIME,  IGNORE_HEADER);
+        }, timeOut, waitTime, IGNORE_HEADER);
     }
-
-
 
     /**
      * Verify mobile element
@@ -196,7 +192,7 @@ public class ImageVerification {
                         break;
                     }
                 }
-                if (!areImagesEqual){
+                if (!areImagesEqual) {
                     Log.logImageVerificationResult(result, imageName);
                 }
             }
