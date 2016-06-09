@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public interface IDevice {
+
+    IDeviceControler getDeviceController();
+
     void installApp(String appName);
 
     void initDevice() throws DeviceException, TimeoutException;

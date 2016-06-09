@@ -2,6 +2,7 @@ package functional.tests.core.App;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.Android.Adb;
+import functional.tests.core.Device.BaseDevice;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
@@ -9,6 +10,7 @@ import functional.tests.core.Find.Wait;
 import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.android.AndroidDriver;
@@ -22,11 +24,21 @@ import java.util.List;
 public class App {
 
     private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
+    private BaseDevice baseDevice;
+    private AppiumDriver<?> driver;
+
+    public App(BaseDevice baseDevice, AppiumDriver<?> driver) {
+        this.baseDevice = baseDevice;
+        this.driver = driver;
+    }
+
 
     /**
      * Restart application
      */
-    public static void restart(String appId) throws NotImplementedException {
+    public void restart(String appId) throws NotImplementedException {
+        this.baseDevice.getDevice().getDeviceController().stopApplication(appId);
+
         Log.info("Restarting current app...");
         if (Settings.platform == PlatformType.Andorid) {
             Adb.stopApplication(appId);
@@ -39,23 +51,23 @@ public class App {
         Log.info("Restarted.");
     }
 
-    public static void fullRestart() throws NotImplementedException {
-        Client.driver.resetApp();
+    public void fullRestart() throws NotImplementedException {
+        this.driver.resetApp();
     }
 
     /**
      * Run app in background for X seconds *
      */
-    public static void runInBackground(int seconds, String appName) {
+    public void runInBackground(int seconds, String appName) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         if (Settings.platform == PlatformType.Andorid) {
             Log.info("Navigate to HOME.");
-            ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
+            ((AndroidDriver) this.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
             if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
                 // Default Android 6 emulator report crash in home activity (not releated with NativeScript)
                 // first time when hit Home button. Hack it with second hit of Home button.
                 Wait.sleep(5000);
-                ((AndroidDriver) Client.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
+                ((AndroidDriver) this.driver).pressKeyCode(AndroidKeyCode.KEYCODE_HOME);
             }
 
             // Wait specified timeout
@@ -63,8 +75,7 @@ public class App {
 
             // Dismiss welcome dialog on Android 6 emulators
             if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
-                MobileElement dismissButton = Find
-                        .findElementByLocator(By.id("com.android.launcher3:id/cling_dismiss_longpress_info"), Settings.shortTimeout);
+                MobileElement dismissButton = this.cl.findElementByLocator(By.id("com.android.launcher3:id/cling_dismiss_longpress_info"), Settings.shortTimeout);
                 if (dismissButton != null) {
                     dismissButton.click();
                     Log.info("Tap Got IT to dismiss.");
@@ -92,7 +103,7 @@ public class App {
             }
 
             // Tap {Apps} button.
-            List<WebElement> allAppsButtons = ((AndroidDriver) Client.driver)
+            List<WebElement> allAppsButtons = ((AndroidDriver) this.driver)
                     .findElement(bottomToolBarLocator)
                     .findElements(By.className("android.widget.TextView"));
 
@@ -184,16 +195,16 @@ public class App {
             }
         } else {
             try {
-                JavascriptExecutor jse = (JavascriptExecutor) Client.driver;
+                JavascriptExecutor jse = (JavascriptExecutor) this.driver;
                 jse.executeScript("var x = target.deactivateAppForDuration(" + String.valueOf(seconds) + "); var MAX_RETRY=5, retry_count = 0; while (!x && retry_count < MAX_RETRY) { x = target.deactivateAppForDuration(2); retry_count += 1}; x");
             } catch (WebDriverException e) {
                 if (e.getMessage().contains("An error occurred while executing user supplied JavaScript")) {
                     // This hack workarounds run in background issue on iOS9
                     By appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
-                    MobileElement element = (MobileElement) Client.driver.findElement(appLocator);
+                    MobileElement element = (MobileElement) this.driver.findElement(appLocator);
                     int offset = 5; // 5px offset within the top-left corner of element
                     Point elementTopLeft = element.getLocation();
-                    Client.driver.tap(1, elementTopLeft.x + offset, elementTopLeft.y + offset, 500);
+                    this.driver.tap(1, elementTopLeft.x + offset, elementTopLeft.y + offset, 500);
                 } else {
                     throw new RuntimeException(e);
                 }
@@ -206,7 +217,7 @@ public class App {
     /**
      * Run app in background for X seconds *
      */
-    public static void runInBackground(int seconds) {
+    public void runInBackground(int seconds) {
         String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
         runInBackground(seconds, appName);
     }

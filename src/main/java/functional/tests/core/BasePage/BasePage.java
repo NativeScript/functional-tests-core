@@ -7,6 +7,7 @@ import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.HideKeyboardStrategy;
@@ -18,21 +19,27 @@ import org.testng.Assert;
  */
 public class BasePage {
 
+    private AppiumDriver<?> driver;
+
+    public BasePage(AppiumDriver<?> driver) {
+        this.driver = driver;
+    }
+
     /**
      * Press the back button *
      */
-    public static void navigateBack() {
-        Client.driver.navigate().back();
+    public void navigateBack() {
+        this.driver.navigate().back();
         Log.info("Navigate back.");
     }
 
     /**
      * Hide keyboard *
      */
-    public static void hideKeyboard() {
+    public void hideKeyboard() {
         if (Settings.platform == PlatformType.Andorid) {
             try {
-                Client.driver.hideKeyboard();
+                this.driver.hideKeyboard();
                 Log.info("Hide heyboard.");
             } catch (Exception e) {
                 Log.info("Soft keyboard not present.");
@@ -42,13 +49,13 @@ public class BasePage {
             By returnButtonLocator = By.name("Return");
             MobileElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
             if (doneButton != null) {
-                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
+                ((IOSDriver) this.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
                 Log.info("Hide keyboard with Done key.");
             } else if (Find.findElementByLocator(returnButtonLocator, 1) != null) {
-                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Return");
+                ((IOSDriver) this.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Return");
                 Log.info("Hide keyboard with Return key.");
             } else {
-                ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.TAP_OUTSIDE);
+                ((IOSDriver) this.driver).hideKeyboard(HideKeyboardStrategy.TAP_OUTSIDE);
                 Log.info("Hide keyboard with tap outside.");
             }
         }

@@ -7,10 +7,7 @@ import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.MultiTouchAction;
-import io.appium.java_client.SwipeElementDirection;
-import io.appium.java_client.TouchAction;
+import io.appium.java_client.*;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
@@ -27,14 +24,13 @@ import java.util.HashMap;
  */
 public class UIElement {
     private MobileElement element;
+    private Client client;
 
-    public UIElement(MobileElement element) {
+    public UIElement(MobileElement element, Client client) {
         this.element = element;
+        this.client = client;
     }
 
-    /**
-     * Get text of MobileElement
-     */
     public String getText() {
         String elementText = null;
         try {
@@ -53,12 +49,12 @@ public class UIElement {
             int currentLegth = this.element.getText().length();
             int x = this.element.getLocation().getX() + this.element.getSize().width - 5;
             int y = this.element.getLocation().getY() + (this.element.getSize().height / 3);
-            Client.driver.tap(1, x, y, Settings.defaultTapDuration);
+            this.client.driver.tap(1, x, y, Settings.defaultTapDuration);
             Wait.sleep(Settings.defaultTapDuration);
 
             // Clean old value
             for (int l = 0; l < currentLegth; l++) {
-                ((AndroidDriver) Client.driver).pressKeyCode(67);
+                ((AndroidDriver) this.client.driver).pressKeyCode(67);
                 Wait.sleep(100);
             }
             Log.info("Clean old value of edit field.");
@@ -154,7 +150,7 @@ public class UIElement {
         this.tap(1, Settings.defaultTapDuration, Settings.defaultTapDuration);
     }
 
-    public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+    public void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         // In iOS swipe with duration < 0.5 seconds is not possible
         if (Settings.platform == PlatformType.iOS) {
@@ -163,7 +159,7 @@ public class UIElement {
             }
         }
 
-        Dimension dimensions = Client.driver.manage().window().getSize();
+        Dimension dimensions = this.client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
         int centerY = height / 2;
@@ -202,7 +198,7 @@ public class UIElement {
         }
 
         try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration + " duration.");
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);
@@ -218,7 +214,7 @@ public class UIElement {
         }
     }
 
-    private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+    private void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 
@@ -229,7 +225,7 @@ public class UIElement {
             }
         }
 
-        Dimension dimensions = Client.driver.manage().window().getSize();
+        Dimension dimensions = this.client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
         int centerY = height / 2;
@@ -268,7 +264,7 @@ public class UIElement {
         }
 
         try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration + " duration.");
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);
@@ -284,7 +280,7 @@ public class UIElement {
         }
     }
 
-    public static void swipe(SwipeElementDirection direction, int duration) {
+    public void swipe(SwipeElementDirection direction, int duration) {
         swipe(direction, duration, 0);
     }
 
@@ -292,7 +288,7 @@ public class UIElement {
         swipeInElement(direction, duration);
     }
 
-    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
+    public void swipeFromCorner(SwipeElementDirection direction, int duration) {
         swipeFromCorner(direction, duration, 0);
     }
 
@@ -308,7 +304,7 @@ public class UIElement {
                     + (double) (this.element.getSize().width / 2);
             Double y = (double) this.element.getLocation().y
                     + (double) (this.element.getSize().height / 2);
-            JavascriptExecutor js = (JavascriptExecutor) Client.driver;
+            JavascriptExecutor js = (JavascriptExecutor) this.client.driver;
             HashMap<String, Double> tapObject = new HashMap<String, Double>();
             tapObject.put("x", x);
             tapObject.put("y", y);
@@ -320,13 +316,13 @@ public class UIElement {
         }
         if (Settings.platform == PlatformType.iOS) {
             RemoteWebElement e = (RemoteWebElement) this.element;
-            ((RemoteWebDriver) Client.driver).executeScript("au.getElement('" + e.getId() + "').tapWithOptions({tapCount:2});");
+            ((RemoteWebDriver) this.client.driver).executeScript("au.getElement('" + e.getId() + "').tapWithOptions({tapCount:2});");
         }
     }
 
     public void longPress(int duration) {
         Log.info("LongPress: "); // + Elements.getElementDetails(element));
-        TouchAction action = new TouchAction(Client.driver);
+        TouchAction action = new TouchAction(this.client.driver);
         action.press(this.element).waitAction(duration).release().perform();
     }
 
@@ -335,8 +331,8 @@ public class UIElement {
         Log.info("Pinch: "); // + Elements.getElementDetails(element));
 
         if (Settings.platform == PlatformType.Andorid) {
-            TouchAction action1 = new TouchAction(Client.driver);
-            TouchAction action2 = new TouchAction(Client.driver);
+            TouchAction action1 = new TouchAction(this.client.driver);
+            TouchAction action2 = new TouchAction(this.client.driver);
 
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
@@ -346,14 +342,14 @@ public class UIElement {
             action2.press(this.element, elementWidth - 10, elementHeight - 10)
                     .moveTo(this.element, elementWidth - 50, elementHeight - 50);
 
-            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
         if (Settings.platform == PlatformType.iOS) {
-            TouchAction action1 = new TouchAction(Client.driver);
-            TouchAction action2 = new TouchAction(Client.driver);
+            TouchAction action1 = new TouchAction(this.client.driver);
+            TouchAction action2 = new TouchAction(this.client.driver);
 
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
@@ -364,7 +360,7 @@ public class UIElement {
                     .moveTo(this.element, elementWidth - 50, elementHeight - 50)
                     .release();
 
-            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
@@ -375,8 +371,8 @@ public class UIElement {
         Log.info("Rotate: "); // + Elements.getElementDetails(element));
 
         if (Settings.platform == PlatformType.Andorid) {
-            TouchAction action1 = new TouchAction(Client.driver);
-            TouchAction action2 = new TouchAction(Client.driver);
+            TouchAction action1 = new TouchAction(this.client.driver);
+            TouchAction action2 = new TouchAction(this.client.driver);
 
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
@@ -386,14 +382,14 @@ public class UIElement {
             action2.press(this.element, elementWidth - 10, elementHeight - 10)
                     .moveTo(this.element, elementWidth - 10, elementHeight - 50);
 
-            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
         if (Settings.platform == PlatformType.iOS) {
-            TouchAction action1 = new TouchAction(Client.driver);
-            TouchAction action2 = new TouchAction(Client.driver);
+            TouchAction action1 = new TouchAction(this.client.driver);
+            TouchAction action2 = new TouchAction(this.client.driver);
 
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
@@ -404,7 +400,7 @@ public class UIElement {
                     .moveTo(this.element, elementWidth - 10, elementHeight - 50)
                     .release();
 
-            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
@@ -462,7 +458,7 @@ public class UIElement {
         }
 
         try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration
                     + " duration in element with center point "
                     + String.valueOf(centerX) + ":" + String.valueOf(centerY));
@@ -514,7 +510,7 @@ public class UIElement {
         }
 
         try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration);
         } catch (Exception e) {
             Log.error("Swipe " + direction + " with " + duration + " failed.");

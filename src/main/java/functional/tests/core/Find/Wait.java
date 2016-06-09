@@ -12,16 +12,23 @@ import java.util.Date;
 import java.util.List;
 
 public class Wait {
+    private Client client;
+    private Find find;
 
-    public static boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
-        Client.setWait(timeOut);
+    public Wait(Client client, Find find) {
+        this.client = client;
+        this.find = find;
+    }
+
+    public boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
+        this.client.setWait(timeOut);
         MobileElement result;
         try {
-            result = Find.findElementByLocator(locator);
+            result = this.find.findElementByLocator(locator);
         } catch (Exception e) {
             result = null;
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         if (result != null) {
             return true;
         } else {
@@ -32,16 +39,16 @@ public class Wait {
         }
     }
 
-    public static boolean waitForVisible(By locator, boolean failOnNotVisible) {
+    public boolean waitForVisible(By locator, boolean failOnNotVisible) {
         return waitForVisible(locator, Settings.defaultTimeout, failOnNotVisible);
     }
 
-    public static boolean waitForVisible(By locator) {
+    public boolean waitForVisible(By locator) {
         return waitForVisible(locator, Settings.defaultTimeout, false);
     }
 
-    public static boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) {
-        Client.setWait(1);
+    public boolean waitForNotVisible(By locator, int timeOut, boolean failOnVisble) {
+        this.client.setWait(1);
         long startTime = new Date().getTime();
         boolean found = true;
         for (int i = 0; i < 1000; i++) {
@@ -49,7 +56,7 @@ public class Wait {
             if ((currentTime - startTime) < timeOut * 1000) {
                 List<MobileElement> elements = null;
                 try {
-                    elements = Find.findElementsByLocator(locator);
+                    elements = this.find.findElementsByLocator(locator);
                 } catch (Exception e) {
                 }
 
@@ -61,7 +68,7 @@ public class Wait {
                 }
             }
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         if (found) {
             String error = "Element still visible: " + locator.toString();
             Log.error(error);
@@ -74,11 +81,11 @@ public class Wait {
         return found;
     }
 
-    public static boolean waitForNotVisible(By locator, boolean failOnVisible) {
+    public boolean waitForNotVisible(By locator, boolean failOnVisible) {
         return waitForNotVisible(locator, Settings.shortTimeout, failOnVisible);
     }
 
-    public static boolean waitForNotVisible(By locator) throws AppiumException {
+    public boolean waitForNotVisible(By locator) throws AppiumException {
         return waitForNotVisible(locator, Settings.shortTimeout, true);
     }
 

@@ -10,33 +10,38 @@ import org.openqa.selenium.By;
 import java.util.List;
 
 public class Find {
+    private Client client;
+
+    public Find(Client client) {
+        this.client = client;
+    }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String controlType, String value, boolean exactMatch) {
+    public MobileElement findByText(String controlType, String value, boolean exactMatch) {
         return findElementByLocator(Locators.findByTextLocator(controlType, value, exactMatch));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value, boolean exactMatch) {
+    public MobileElement findByText(String value, boolean exactMatch) {
         return findElementByLocator(Locators.findByTextLocator("*", value, exactMatch));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value) {
+    public MobileElement findByText(String value) {
         return (MobileElement) findElementByLocator(Locators.findByTextLocator("*", value, true));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value, int timeOut) {
-        Client.setWait(timeOut);
+    public MobileElement findByText(String value, int timeOut) {
+        this.client.setWait(timeOut);
         MobileElement result;
         try {
             result = findByText(value);
@@ -44,7 +49,7 @@ public class Find {
             Log.error("Failed to find element by: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         return result;
     }
 
@@ -52,7 +57,7 @@ public class Find {
      * Find an element that has some attribute with specified value
      * Search is based on specified MobileElement
      */
-    public static MobileElement findByText(MobileElement element, String value) {
+    public MobileElement findByText(MobileElement element, String value) {
         String parentXpath = Element.getXpath(element);
         parentXpath = parentXpath.substring(2);
 
@@ -61,7 +66,7 @@ public class Find {
 
         String finalXpath = "//" + parentXpath + "//" + childXpath;
         Log.debug("Looking for element with following xpath:" + finalXpath);
-        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(finalXpath));
+        MobileElement e = (MobileElement) this.client.driver.findElement(By.xpath(finalXpath));
         Log.debug("Found " + Element.getDescription(e));
         return e;
     }
@@ -69,15 +74,15 @@ public class Find {
     /**
      * Find an element by class (UI control class)
      */
-    public static MobileElement findByType(String value) {
-        return (MobileElement) Client.driver.findElement(By.className(value));
+    public MobileElement findByType(String value) {
+        return (MobileElement) this.client.driver.findElement(By.className(value));
     }
 
     /**
      * Find an element by class (UI control class)
      */
-    public static MobileElement findByType(String value, int timeOut) {
-        Client.setWait(timeOut);
+    public MobileElement findByType(String value, int timeOut) {
+        this.client.setWait(timeOut);
         MobileElement result;
         try {
             result = findByType(value);
@@ -85,22 +90,22 @@ public class Find {
             Log.error("Failed to find element by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         return result;
     }
 
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator) {
-        return (MobileElement) Client.driver.findElement(locator);
+    public MobileElement findElementByLocator(By locator) {
+        return (MobileElement) this.client.driver.findElement(locator);
     }
 
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
-        Client.setWait(timeout);
+    public MobileElement findElementByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
+        this.client.setWait(timeout);
         MobileElement result;
         try {
             result = findElementByLocator(locator);
@@ -110,36 +115,36 @@ public class Find {
             }
             result = null;
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         return result;
     }
 
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator, int timeout) {
+    public MobileElement findElementByLocator(By locator, int timeout) {
         return findElementByLocator(locator, timeout, true);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator) {
-        return (List<MobileElement>) Client.driver.findElements(locator);
+    public List<MobileElement> findElementsByLocator(By locator) {
+        return (List<MobileElement>) this.client.driver.findElements(locator);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator, int timeout) {
+    public List<MobileElement> findElementsByLocator(By locator, int timeout) {
         return findElementsByLocator(locator, timeout, true);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
-        Client.setWait(timeout);
+    public List<MobileElement> findElementsByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
+        this.client.setWait(timeout);
         List<MobileElement> result;
         try {
             result = findElementsByLocator(locator);
@@ -149,17 +154,17 @@ public class Find {
             }
             result = null;
         }
-        Client.setWait(Settings.defaultTimeout);
+        this.client.setWait(Settings.defaultTimeout);
         return result;
     }
 
     /**
      * Find parent of an element
      */
-    public static MobileElement getParent(MobileElement element) {
+    public MobileElement getParent(MobileElement element) {
         String xpathString = Element.getXpath(element) + "/..";
         Log.debug("Looking for parent with following xpath:" + xpathString);
-        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(xpathString));
+        MobileElement e = (MobileElement) this.client.driver.findElement(By.xpath(xpathString));
         Log.debug("Found " + Element.getDescription(e));
         return e;
     }

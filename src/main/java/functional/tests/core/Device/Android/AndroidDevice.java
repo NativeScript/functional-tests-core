@@ -2,6 +2,7 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
+import functional.tests.core.Device.IDeviceControler;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
@@ -11,6 +12,7 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.logging.LogEntry;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -22,6 +24,18 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class AndroidDevice implements IDevice {
+    private IDeviceControler _deviceController;
+    private AppiumDriver<?> driver;
+
+    public AndroidDevice(AppiumDriver<?> driver) {
+        //this._deviceController = new Adb();
+        this.driver = driver;
+    }
+
+    @Override
+    public IDeviceControler getDeviceController() {
+        return this._deviceController;
+    }
 
     @Override
     public void installApp(String appName) {
@@ -130,7 +144,7 @@ public class AndroidDevice implements IDevice {
     @Override
     public void writeConsoleLogToFile(String fileName) throws IOException {
         try {
-            List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
+            List<LogEntry> logEntries = this.driver.manage().logs().get("logcat").getAll();
             String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
             FileWriter writer = new FileWriter(logLocation, true);
             for (LogEntry log : logEntries) {
@@ -151,7 +165,7 @@ public class AndroidDevice implements IDevice {
         boolean isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
         if (!isRunning) {
             // Restart all and try again
-            Client.driver.resetApp();
+            this.driver.resetApp();
             Wait.sleep(startUpTimeOut);
             isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
             if (isRunning) {
@@ -188,7 +202,7 @@ public class AndroidDevice implements IDevice {
     @Override
     public void cleanConsoleLog() {
         try {
-            Client.driver.manage().logs().get("logcat");
+            this.driver.manage().logs().get("logcat");
         } catch (Exception e) {
             Log.warn("Failed to cleanup logs.");
         }

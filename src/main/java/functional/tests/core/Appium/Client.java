@@ -17,9 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 public class Client {
 
-    public static AppiumDriver<?> driver;
+    public AppiumDriver<?> driver;
 
-    public static void initAppiumDriver() {
+    public Client() {
+    }
+
+    public void initAppiumDriver() {
 
         Log.info("Start Appium client...");
 
@@ -48,7 +51,7 @@ public class Client {
                 capabilities.setCapability("noSign", "true");
                 capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
                 capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
-                driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
+                this.driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);
                 }
@@ -56,7 +59,7 @@ public class Client {
                 // Some times Appium fails to unlock device
                 if (e.toString().contains("Screen did not unlock")) {
                     Adb.unlock(Settings.deviceId);
-                    driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
+                    this.driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 }
             }
         }
@@ -66,21 +69,21 @@ public class Client {
             capabilities.setCapability("screenshotWaitTimeout", Settings.defaultTimeout);
             capabilities.setCapability("autoAcceptAlerts", Settings.acceptAlerts);
             capabilities.setCapability("launchTimeout", Settings.deviceBootTimeout * 1000);
-            driver = new IOSDriver<>(Server.service.getUrl(), capabilities);
+            this.driver = new IOSDriver<>(Server.service.getUrl(), capabilities);
         }
 
         // Set default timeout
-        driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
         Log.info("Appium client started.");
     }
 
-    public static void stopAppiumDriver() {
+    public void stopAppiumDriver() {
 
         Log.info("Stop Appium client...");
 
-        if (driver != null) {
+        if (this.driver != null) {
             try {
-                driver.quit();
+                this.driver.quit();
                 Log.info("Appium client stopped.");
             } catch (Exception e) {
                 Log.fatal("Failed to stop Appium client.");
@@ -93,14 +96,14 @@ public class Client {
     /**
      * Set implicit wait in seconds *
      */
-    public static void setWait(int seconds) {
-        driver.manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
+    public void setWait(int seconds) {
+        this.driver.manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
         // When call very fast setWait and find sometimes server first receive find command and then setWait command.
         // Hope this hack will make the framework more stable
         Wait.sleep(250);
     }
 
-    public static void startActivity(String appPackage, String appActivity) {
-        ((AndroidDriver) Client.driver).startActivity(appPackage, appActivity);
+    public void startActivity(String appPackage, String appActivity) {
+        ((AndroidDriver) this.driver).startActivity(appPackage, appActivity);
     }
 }

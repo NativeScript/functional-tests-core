@@ -27,39 +27,39 @@ public class Element {
      * Set text of MobileElement
      */
     public static void setText(MobileElement editTextElement, String value) {
-        if (Settings.platform == PlatformType.Andorid) {
-            // Tap at the and of the text box (this is very important)
-            int currentLegth = editTextElement.getText().length();
-            int x = editTextElement.getLocation().getX() + editTextElement.getSize().width - 5;
-            int y = editTextElement.getLocation().getY() + (editTextElement.getSize().height / 3);
-            Client.driver.tap(1, x, y, Settings.defaultTapDuration);
-            Wait.sleep(Settings.defaultTapDuration);
-
-            // Clean old value
-            for (int l = 0; l < currentLegth; l++) {
-                ((AndroidDriver) Client.driver).pressKeyCode(67);
-                Wait.sleep(100);
-            }
-            Log.info("Clean old value of edit field.");
-            Wait.sleep(Settings.defaultTapDuration);
-
-            // Set new value
-            editTextElement.sendKeys(value);
-            Wait.sleep(Settings.defaultTapDuration);
-        } else {
-            editTextElement.click();
-            try {
-                // If keyboard is above text field clear throws exception.
-                editTextElement.clear();
-                Log.info("Clean old value of edit field.");
-            } catch (Exception e) {
-                Log.error("Failed to clean old value.");
-            }
-            Wait.sleep(Settings.defaultTapDuration);
-            editTextElement.sendKeys(value);
-            Wait.sleep(Settings.defaultTapDuration);
-        }
-        Log.info("Set value of text field: " + value);
+//        if (Settings.platform == PlatformType.Andorid) {
+//            // Tap at the and of the text box (this is very important)
+//            int currentLegth = editTextElement.getText().length();
+//            int x = editTextElement.getLocation().getX() + editTextElement.getSize().width - 5;
+//            int y = editTextElement.getLocation().getY() + (editTextElement.getSize().height / 3);
+//            Client.driver.tap(1, x, y, Settings.defaultTapDuration);
+//            Wait.sleep(Settings.defaultTapDuration);
+//
+//            // Clean old value
+//            for (int l = 0; l < currentLegth; l++) {
+//                ((AndroidDriver) Client.driver).pressKeyCode(67);
+//                Wait.sleep(100);
+//            }
+//            Log.info("Clean old value of edit field.");
+//            Wait.sleep(Settings.defaultTapDuration);
+//
+//            // Set new value
+//            editTextElement.sendKeys(value);
+//            Wait.sleep(Settings.defaultTapDuration);
+//        } else {
+//            editTextElement.click();
+//            try {
+//                // If keyboard is above text field clear throws exception.
+//                editTextElement.clear();
+//                Log.info("Clean old value of edit field.");
+//            } catch (Exception e) {
+//                Log.error("Failed to clean old value.");
+//            }
+//            Wait.sleep(Settings.defaultTapDuration);
+//            editTextElement.sendKeys(value);
+//            Wait.sleep(Settings.defaultTapDuration);
+//        }
+//        Log.info("Set value of text field: " + value);
     }
 
     /**

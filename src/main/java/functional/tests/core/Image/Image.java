@@ -7,13 +7,19 @@ import io.appium.java_client.TouchAction;
 import org.opencv.core.Point;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.testng.Assert;
+import sun.misc.Cleaner;
 
 public class Image {
 
+    private final Client client;
     public String rotation = "notSet";
     public static final int SHORT_SLEEP = 1;
     public static final int LONG_SLEEP = 10;
     public static int counter = 0;
+
+    public Image(Client client){
+        this.client = client;
+    }
 
     public Point[] findImage(String image, String scene, String setRotation) {
         return findImage(image, scene, setRotation, 0.6);
@@ -44,7 +50,7 @@ public class Image {
             } else {
 
                 Point center = imgRect[4];
-                org.openqa.selenium.Dimension size = Client.driver.manage().window().getSize();
+                org.openqa.selenium.Dimension size = this.client.driver.manage().window().getSize();
 
                 if ((center.x >= size.width) || (center.x < 0) || (center.y >= size.height) || (center.y < 0)) {
                     Log.info("Screen size is (width, height): " + size.getWidth() + ", " + size.getHeight());
@@ -69,19 +75,19 @@ public class Image {
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate((int) imgRect[4].x, (int) imgRect[4].y, 1);
         } else {
-            Client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
+            this.client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
         }
         sleep(SHORT_SLEEP);
     }
 
     public void tapMiddle() throws Exception {
-        org.openqa.selenium.Dimension size = Client.driver.manage().window().getSize();
+        org.openqa.selenium.Dimension size = this.client.driver.manage().window().getSize();
         Point middle = new Point(size.getWidth() / 2, size.getHeight() / 2);
 
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate((int) middle.x, (int) middle.y, 1);
         } else {
-            Client.driver.tap(1, (int) middle.x, (int) middle.y, 1);
+            this.client.driver.tap(1, (int) middle.x, (int) middle.y, 1);
         }
         sleep(SHORT_SLEEP);
     }
@@ -90,13 +96,13 @@ public class Image {
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate(x, y, 1);
         } else {
-            Client.driver.tap(1, x, y, 1);
+            this.client.driver.tap(1, x, y, 1);
         }
         sleep(SHORT_SLEEP);
     }
 
     public void selendroidTapAtCoordinate(int x, int y, int secs) throws Exception {
-        TouchActions actions = new TouchActions(Client.driver);
+        TouchActions actions = new TouchActions(this.client.driver);
         actions.down(x, y).perform();
         sleep(secs);
         actions.up(x, y).perform();
@@ -105,7 +111,7 @@ public class Image {
     public void selendroidTapAtImageOnScreen(String image, int secs) throws Exception {
         Point[] imgRect = findImageOnScreen(image);
         //imgRect[4] will have the center of the rectangle containing the image
-        TouchActions actions = new TouchActions(Client.driver);
+        TouchActions actions = new TouchActions(this.client.driver);
         actions.down((int) imgRect[4].x, (int) imgRect[4].y).perform();
         sleep(secs);
         actions.up((int) imgRect[4].x, (int) imgRect[4].y).perform();
@@ -118,7 +124,7 @@ public class Image {
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate((int) imgRect[4].x, (int) imgRect[4].y, 1);
         } else {
-            Client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
+            this.client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
         }
         sleep(SHORT_SLEEP);
     }
@@ -131,7 +137,7 @@ public class Image {
             selendroidTapAtCoordinate((int) imgRect[4].x, (int) imgRect[4].y, 1);
 
         } else {
-            Client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
+            this.client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
         }
     }
 
@@ -148,7 +154,7 @@ public class Image {
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate((int) newX, (int) newY, 1);
         } else {
-            Client.driver.tap(1, (int) newX, (int) newY, 1);
+            this.client.driver.tap(1, (int) newX, (int) newY, 1);
         }
     }
 
@@ -169,7 +175,7 @@ public class Image {
         if (Settings.automationName.equals("selendroid")) {
             selendroidTapAtCoordinate((int) newX, (int) newY, 1);
         } else {
-            Client.driver.tap(1, (int) newX, (int) newY, 1);
+            this.client.driver.tap(1, (int) newX, (int) newY, 1);
         }
     }
 
@@ -188,9 +194,9 @@ public class Image {
             sleep(SHORT_SLEEP);
             selendroidTapAtCoordinate((int) newX, (int) newY, 1);
         } else {
-            Client.driver.tap(1, (int) newX, (int) newY, 1);
+            this.client.driver.tap(1, (int) newX, (int) newY, 1);
             sleep(SHORT_SLEEP);
-            Client.driver.tap(1, (int) newX, (int) newY, 1);
+            this.client.driver.tap(1, (int) newX, (int) newY, 1);
         }
     }
 
@@ -203,7 +209,7 @@ public class Image {
             if (Settings.automationName.equals("selendroid")) {
                 selendroidTapAtCoordinate((int) imgRect[4].x, (int) imgRect[4].y, 1);
             } else {
-                Client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
+                this.client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
             }
             sleep(SHORT_SLEEP);
             return true;
@@ -219,7 +225,7 @@ public class Image {
             if (Settings.automationName.equals("selendroid")) {
                 selendroidTapAtCoordinate((int) imgRect[4].x, (int) imgRect[4].y, 1);
             } else {
-                Client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
+                this.client.driver.tap(1, (int) imgRect[4].x, (int) imgRect[4].y, 1);
             }
             sleep(SHORT_SLEEP);
             return true;
@@ -243,7 +249,7 @@ public class Image {
             if (Settings.automationName.equals("selendroid")) {
                 selendroidTapAtCoordinate((int) newX, (int) newY, 1);
             } else {
-                Client.driver.tap(1, (int) newX, (int) newY, 1);
+                this.client.driver.tap(1, (int) newX, (int) newY, 1);
             }
             return true;
         }
@@ -336,10 +342,10 @@ public class Image {
         //Point[] imgRect = findImageOnScreen(image, 10);
         sleep(SHORT_SLEEP);
         Point[] imgRect = findImageOnScreen(image, 10, 0.3);
-        org.openqa.selenium.Dimension size = Client.driver.manage().window().getSize();
+        org.openqa.selenium.Dimension size = this.client.driver.manage().window().getSize();
 
         if (Settings.automationName.equals("selendroid")) {
-            TouchActions action = new TouchActions(Client.driver);
+            TouchActions action = new TouchActions(this.client.driver);
             action.down((int) imgRect[4].x, (int) imgRect[4].y).perform();
 
             double left_x = size.getWidth() * 0.20;
@@ -374,7 +380,7 @@ public class Image {
             }
             action.up(0, 0).perform();
         } else {
-            TouchAction action = new TouchAction(Client.driver);
+            TouchAction action = new TouchAction(this.client.driver);
             action.press((int) imgRect[4].x, (int) imgRect[4].y).perform();
 
             double left_x = size.getWidth() * 0.20;
@@ -415,18 +421,18 @@ public class Image {
         //drags image on screen using x and y offset from middle of the screen
         //0.5 offset => middle point
         Point[] imgRect = findImageOnScreen(image, 10);
-        org.openqa.selenium.Dimension size = Client.driver.manage().window().getSize();
+        org.openqa.selenium.Dimension size = this.client.driver.manage().window().getSize();
         Point point = new Point(size.getWidth() * x_offset, size.getHeight() * y_offset);
         Log.info("Dragging image to coordinates: " + point.toString());
 
         if (Settings.automationName.equals("selendroid")) {
-            TouchActions action = new TouchActions(Client.driver);
+            TouchActions action = new TouchActions(this.client.driver);
             action.down((int) imgRect[4].x, (int) imgRect[4].y).perform();
             sleep(SHORT_SLEEP);
             action.move((int) point.x, (int) point.y).perform();
             action.up((int) point.x, (int) point.y).perform();
         } else {
-            TouchAction action = new TouchAction(Client.driver);
+            TouchAction action = new TouchAction(this.client.driver);
             action.press((int) imgRect[4].x, (int) imgRect[4].y).perform();
             sleep(SHORT_SLEEP);
             action.moveTo((int) point.x, (int) point.y).perform();
@@ -441,6 +447,6 @@ public class Image {
     public void takeScreenshot(String screenshotName) throws Exception {
         counter = counter + 1;
         //String fullFileName = System.getProperty("user.dir") + "/" + getScreenshotsFolder() + getScreenshotsCounter() + "_" + screenshotName + ".png";
-        //Client.driver.takeScreenshot(fullFileName);
+        //this.client.driver.takeScreenshot(fullFileName);
     }
 }
