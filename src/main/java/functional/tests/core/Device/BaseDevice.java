@@ -126,6 +126,7 @@ public class BaseDevice {
     }
 
     public static void writeConsoleLogToFile(String fileName) throws IOException {
+        Log.info("Console logs will be saved in " + fileName);
         if (Settings.platform == PlatformType.Andorid) {
             try {
                 List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
