@@ -10,8 +10,6 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.WebElement;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -27,16 +25,13 @@ public abstract class BaseTest {
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
     private BaseDevice baseDevice;
-    private App app;
-    private Client client;
-    private AppiumDriver<?> driver;
     //private static BaseDevice _baseDevice;
 
     public BaseTest() {
 
     }
 
-    public BaseDevice baseDevice() {
+    public BaseDevice baseDevice(){
         return this.baseDevice;
     }
 
@@ -58,8 +53,7 @@ public abstract class BaseTest {
     public void beforeSuite() throws Exception {
         Log.initLogging();
         Settings.initSettings();
-        this.baseDevice = new BaseDevice(this.client.driver);
-        this.app = new App(this.baseDevice, this.client.driver);
+        this.baseDevice = new BaseDevice();
 
         if (!Settings.debug) {
             this.baseDevice.stopDevice();
@@ -70,7 +64,7 @@ public abstract class BaseTest {
 
         try {
             Server.initAppiumServer();
-            this.client.initAppiumDriver();
+            Client.initAppiumDriver();
         } catch (Exception e) {
             checkAppiumLogsForCrash();
             takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session");
@@ -90,10 +84,10 @@ public abstract class BaseTest {
                 } catch (Exception ex) {
                     Log.error("Failed to get appium logs.");
                 }
-                this.client.stopAppiumDriver();
+                Client.stopAppiumDriver();
                 Server.stopAppiumServer();
                 Server.initAppiumServer();
-                this.client.initAppiumDriver();
+                Client.initAppiumDriver();
             } catch (Exception re) {
                 try {
                     takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session_After_Retry");
@@ -138,14 +132,14 @@ public abstract class BaseTest {
 
         if (previousTestStatus == ITestResult.FAILURE) {
             try {
-                this.app.fullRestart();
+                App.fullRestart();
             } catch (Exception e1) {
                 Log.info("Failed to restart test app. Rests Apppium client/server.");
                 Server.stopAppiumServer();
                 this.baseDevice.stopTestApp();
                 this.baseDevice.stopDevice();
                 Server.initAppiumServer();
-                this.client.initAppiumDriver();
+                Client.initAppiumDriver();
                 isFistTest = true;
                 // Verify app not crashed
                 try {
@@ -163,11 +157,11 @@ public abstract class BaseTest {
         } else {
             if (Settings.restartApp) {
                 if (Settings.deviceType == DeviceType.Simulator) {
-                    this.baseDevice.getDevice().getDeviceController().reinstallApp();
-                    this.client.stopAppiumDriver();
-                    this.client.initAppiumDriver();
+                    Simctl.reinstallApp();
+                    Client.stopAppiumDriver();
+                    Client.initAppiumDriver();
                 } else {
-                    this.app.fullRestart();
+                    App.fullRestart();
                 }
             }
         }
@@ -207,7 +201,7 @@ public abstract class BaseTest {
 
     @AfterSuite(alwaysRun = true)
     public void afterSuite() throws Exception {
-        this.client.stopAppiumDriver();
+        Client.stopAppiumDriver();
 
         if (!Settings.debug) {
             Server.stopAppiumServer();

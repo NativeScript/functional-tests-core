@@ -1,16 +1,20 @@
 package functional.tests.core.Device.iOS;
 
+import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
 import functional.tests.core.Device.IDeviceControler;
 import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
+import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.logging.LogEntry;
+import org.testng.Assert;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,11 +25,9 @@ public class iOSDevice implements IDevice {
     private IDeviceControler _deviceController;
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
     private static String simulatorGuid = null;
-    private AppiumDriver<?> driver;
 
-    public iOSDevice(AppiumDriver driver) {
+    public iOSDevice(){
         //this._deviceController = new Simctl();
-        this.driver = driver;
     }
 
     @Override
@@ -164,7 +166,7 @@ public class iOSDevice implements IDevice {
     @Override
     public void writeConsoleLogToFile(String fileName) throws IOException {
         try {
-            List<LogEntry> logEntries = this.driver.manage().logs().get("syslog").getAll();
+            List<LogEntry> logEntries = Client.driver.manage().logs().get("syslog").getAll();
             if (logEntries.size() >= 1) {
                 String logLocation = Settings.consoleLogDir + File.separator + "syslog_" + fileName + ".log";
                 FileWriter writer = new FileWriter(logLocation, true);
@@ -180,7 +182,7 @@ public class iOSDevice implements IDevice {
         }
 
         try {
-            List<LogEntry> logEntries = this.driver.manage().logs().get("crashlog").getAll();
+            List<LogEntry> logEntries = Client.driver.manage().logs().get("crashlog").getAll();
             if (logEntries.size() >= 1) {
                 String logLocation = Settings.consoleLogDir + File.separator + "crashlog_" + fileName + ".log";
                 FileWriter writer = new FileWriter(logLocation, true);
@@ -220,8 +222,8 @@ public class iOSDevice implements IDevice {
     public void cleanConsoleLog() {
         try {
 
-            this.driver.manage().logs().get("syslog");
-            this.driver.manage().logs().get("crashlog");
+            Client.driver.manage().logs().get("syslog");
+            Client.driver.manage().logs().get("crashlog");
         } catch (Exception e) {
             Log.warn("Failed to cleanup logs.");
         }

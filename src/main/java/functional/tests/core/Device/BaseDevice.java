@@ -7,7 +7,6 @@ import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.AppiumDriver;
 import org.testng.Assert;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -23,8 +22,8 @@ public class BaseDevice {
         return Arrays.asList("org.nativescript", "com.telerik");
     }
 
-    public BaseDevice(AppiumDriver<?> driver) {
-        this._device = DeviceManager.getDevice(driver);
+    public BaseDevice() {
+        this._device = DeviceManager.getDevice();
     }
 
     public IDevice getDevice() {

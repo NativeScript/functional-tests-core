@@ -12,7 +12,6 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.logging.LogEntry;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -24,17 +23,10 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class AndroidDevice implements IDevice {
-    private IDeviceControler _deviceController;
-    private AppiumDriver<?> driver;
-
-    public AndroidDevice(AppiumDriver<?> driver) {
-        //this._deviceController = new Adb();
-        this.driver = driver;
-    }
 
     @Override
     public IDeviceControler getDeviceController() {
-        return this._deviceController;
+        return null;
     }
 
     @Override
@@ -144,7 +136,7 @@ public class AndroidDevice implements IDevice {
     @Override
     public void writeConsoleLogToFile(String fileName) throws IOException {
         try {
-            List<LogEntry> logEntries = this.driver.manage().logs().get("logcat").getAll();
+            List<LogEntry> logEntries = Client.driver.manage().logs().get("logcat").getAll();
             String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
             FileWriter writer = new FileWriter(logLocation, true);
             for (LogEntry log : logEntries) {
@@ -165,7 +157,7 @@ public class AndroidDevice implements IDevice {
         boolean isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
         if (!isRunning) {
             // Restart all and try again
-            this.driver.resetApp();
+            Client.driver.resetApp();
             Wait.sleep(startUpTimeOut);
             isRunning = waitAppRunning(deviceId, appId, startUpTimeOut);
             if (isRunning) {
@@ -202,7 +194,7 @@ public class AndroidDevice implements IDevice {
     @Override
     public void cleanConsoleLog() {
         try {
-            this.driver.manage().logs().get("logcat");
+            Client.driver.manage().logs().get("logcat");
         } catch (Exception e) {
             Log.warn("Failed to cleanup logs.");
         }

@@ -23,33 +23,23 @@ import java.util.HashMap;
 
 public class Gestures {
 
-    private final Client client;
-    private final Wait wait;
-    private final Find find;
-
-    public Gestures(Client client, Find find, Wait wait) {
-        this.client = client;
-        this.wait = wait;
-        this.find = find;
-    }
-
-    public void tap(MobileElement element, int fingers, int duration, int waitAfterTap) {
+    public static void tap(MobileElement element, int fingers, int duration, int waitAfterTap) {
         element.tap(fingers, duration);
         if (waitAfterTap > 0) {
-            this.wait.sleep(waitAfterTap);
+            Wait.sleep(waitAfterTap);
         }
         Log.info("Tap " + Element.getDescription(element));
     }
 
-    public void tap(MobileElement element, int fingers) {
+    public static void tap(MobileElement element, int fingers) {
         tap(element, fingers, Settings.defaultTapDuration, Settings.defaultTapDuration);
     }
 
-    public void tap(MobileElement element) {
+    public static void tap(MobileElement element) {
         tap(element, 1, Settings.defaultTapDuration, Settings.defaultTapDuration);
     }
 
-    public void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+    public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         // In iOS swipe with duration < 0.5 seconds is not possible
         if (Settings.platform == PlatformType.iOS) {
@@ -58,7 +48,7 @@ public class Gestures {
             }
         }
 
-        Dimension dimensions = this.client.driver.manage().window().getSize();
+        Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
         int centerY = height / 2;
@@ -97,10 +87,10 @@ public class Gestures {
         }
 
         try {
-            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration + " duration.");
             if (waitAfterSwipe > 0) {
-                this.wait.sleep(waitAfterSwipe);
+                Wait.sleep(waitAfterSwipe);
             }
         } catch (Exception e) {
             if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
@@ -113,7 +103,7 @@ public class Gestures {
         }
     }
 
-    private void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+    private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 
@@ -124,7 +114,7 @@ public class Gestures {
             }
         }
 
-        Dimension dimensions = this.client.driver.manage().window().getSize();
+        Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
         int centerY = height / 2;
@@ -163,10 +153,10 @@ public class Gestures {
         }
 
         try {
-            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration + " duration.");
             if (waitAfterSwipe > 0) {
-                this.wait.sleep(waitAfterSwipe);
+                Wait.sleep(waitAfterSwipe);
             }
         } catch (Exception e) {
             if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
@@ -179,23 +169,23 @@ public class Gestures {
         }
     }
 
-    public void swipe(SwipeElementDirection direction, int duration) {
+    public static void swipe(SwipeElementDirection direction, int duration) {
         swipe(direction, duration, 0);
     }
 
-    public void swipe(MobileElement element, String direction, int duration) {
+    public static void swipe(MobileElement element, String direction, int duration) {
         swipeInElement(element, direction, duration);
     }
 
-    public void swipeFromCorner(SwipeElementDirection direction, int duration) {
+    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
         swipeFromCorner(direction, duration, 0);
     }
 
-    public void swipeFromCorner(MobileElement element, String direction, int duration) {
+    public static void swipeFromCorner(MobileElement element, String direction, int duration) {
         swipeInElementFromCorner(element, direction, duration);
     }
 
-    public void doubleTap(MobileElement element) {
+    public static void doubleTap(MobileElement element) {
 
         Log.info("Double Tap: "); // + Elements.getElementDetails(element));
         if (Settings.platform == PlatformType.Andorid) {
@@ -204,7 +194,7 @@ public class Gestures {
                     + (double) (element.getSize().width / 2);
             Double y = (double) element.getLocation().y
                     + (double) (element.getSize().height / 2);
-            JavascriptExecutor js = (JavascriptExecutor) this.client.driver;
+            JavascriptExecutor js = (JavascriptExecutor) Client.driver;
             HashMap<String, Double> tapObject = new HashMap<String, Double>();
             tapObject.put("x", x);
             tapObject.put("y", y);
@@ -216,23 +206,23 @@ public class Gestures {
         }
         if (Settings.platform == PlatformType.iOS) {
             RemoteWebElement e = (RemoteWebElement) element;
-            ((RemoteWebDriver) this.client.driver).executeScript("au.getElement('" + e.getId() + "').tapWithOptions({tapCount:2});");
+            ((RemoteWebDriver) Client.driver).executeScript("au.getElement('" + e.getId() + "').tapWithOptions({tapCount:2});");
         }
     }
 
-    public void longPress(MobileElement element, int duration) {
+    public static void longPress(MobileElement element, int duration) {
         Log.info("LongPress: "); // + Elements.getElementDetails(element));
-        TouchAction action = new TouchAction(this.client.driver);
+        TouchAction action = new TouchAction(Client.driver);
         action.press(element).waitAction(duration).release().perform();
     }
 
-    public void pinch(MobileElement element) {
+    public static void pinch(MobileElement element) {
 
         Log.info("Pinch: "); // + Elements.getElementDetails(element));
 
         if (Settings.platform == PlatformType.Andorid) {
-            TouchAction action1 = new TouchAction(this.client.driver);
-            TouchAction action2 = new TouchAction(this.client.driver);
+            TouchAction action1 = new TouchAction(Client.driver);
+            TouchAction action2 = new TouchAction(Client.driver);
 
             int elementWidth = element.getSize().width;
             int elementHeight = element.getSize().height;
@@ -242,14 +232,14 @@ public class Gestures {
             action2.press(element, elementWidth - 10, elementHeight - 10)
                     .moveTo(element, elementWidth - 50, elementHeight - 50);
 
-            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
         if (Settings.platform == PlatformType.iOS) {
-            TouchAction action1 = new TouchAction(this.client.driver);
-            TouchAction action2 = new TouchAction(this.client.driver);
+            TouchAction action1 = new TouchAction(Client.driver);
+            TouchAction action2 = new TouchAction(Client.driver);
 
             int elementWidth = element.getSize().width;
             int elementHeight = element.getSize().height;
@@ -260,20 +250,20 @@ public class Gestures {
                     .moveTo(element, elementWidth - 50, elementHeight - 50)
                     .release();
 
-            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
     }
 
-    public void rotate(MobileElement element) {
+    public static void rotate(MobileElement element) {
 
         Log.info("Rotate: "); // + Elements.getElementDetails(element));
 
         if (Settings.platform == PlatformType.Andorid) {
-            TouchAction action1 = new TouchAction(this.client.driver);
-            TouchAction action2 = new TouchAction(this.client.driver);
+            TouchAction action1 = new TouchAction(Client.driver);
+            TouchAction action2 = new TouchAction(Client.driver);
 
             int elementWidth = element.getSize().width;
             int elementHeight = element.getSize().height;
@@ -283,14 +273,14 @@ public class Gestures {
             action2.press(element, elementWidth - 10, elementHeight - 10)
                     .moveTo(element, elementWidth - 10, elementHeight - 50);
 
-            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
         if (Settings.platform == PlatformType.iOS) {
-            TouchAction action1 = new TouchAction(this.client.driver);
-            TouchAction action2 = new TouchAction(this.client.driver);
+            TouchAction action1 = new TouchAction(Client.driver);
+            TouchAction action2 = new TouchAction(Client.driver);
 
             int elementWidth = element.getSize().width;
             int elementHeight = element.getSize().height;
@@ -301,20 +291,20 @@ public class Gestures {
                     .moveTo(element, elementWidth - 10, elementHeight - 50)
                     .release();
 
-            MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
+            MultiTouchAction multiAction = new MultiTouchAction(Client.driver);
             multiAction.add(action1);
             multiAction.add(action2);
             multiAction.perform();
         }
     }
 
-    public void pan(MobileElement element, String direction, int duration) {
+    public static void pan(MobileElement element, String direction, int duration) {
         Log.info("Pan: "); // + Elements.getElementDetails(element));
         swipeInElement(element, direction, duration);
     }
 
-    private void swipeInElement(MobileElement element, String direction,
-                                int duration) {
+    private static void swipeInElement(MobileElement element, String direction,
+                                       int duration) {
 
         int centerX = element.getLocation().x + (element.getSize().width / 2);
         int centerY = element.getLocation().y + (element.getSize().height / 2);
@@ -361,7 +351,7 @@ public class Gestures {
         }
 
         try {
-            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration
                     + " duration in element with center point "
                     + String.valueOf(centerX) + ":" + String.valueOf(centerY));
@@ -373,7 +363,7 @@ public class Gestures {
         }
     }
 
-    private void swipeInElementFromCorner(MobileElement element, String direction, int duration) {
+    private static void swipeInElementFromCorner(MobileElement element, String direction, int duration) {
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 
@@ -413,7 +403,7 @@ public class Gestures {
         }
 
         try {
-            this.client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
             Log.info("Swipe " + direction + " with " + duration);
         } catch (Exception e) {
             Log.error("Swipe " + direction + " with " + duration + " failed.");
@@ -423,9 +413,9 @@ public class Gestures {
     /**
      * Scroll down until element is visible via swipe gesture *
      */
-    public MobileElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
+    public static MobileElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
         for (int i = 0; i < retryCount; i++) {
-            MobileElement element = this.find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
+            MobileElement element = Find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
             if ((element != null) && (element.isDisplayed())) {
                 Log.info(elementText + " found.");
                 return element;
@@ -443,10 +433,10 @@ public class Gestures {
     /**
      * Scroll until element is visible via swipe gesture *
      */
-    public MobileElement swipeToElement(SwipeElementDirection direction, By locator, int duration, int retryCount) {
+    public static MobileElement swipeToElement(SwipeElementDirection direction, By locator, int duration, int retryCount) {
         Log.info("Swipe " + direction.toString() + " to " + locator.toString());
         for (int i = 0; i < retryCount; i++) {
-            MobileElement element = this.find.findElementByLocator(locator, 2);
+            MobileElement element = Find.findElementByLocator(locator, 2);
             if ((element != null) && (element.isDisplayed())) {
                 Log.info("Element found: " + locator.toString());
                 return element;

@@ -14,18 +14,13 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageUtils {
-    private Client client;
-
-    public ImageUtils(Client client) {
-        this.client = client;
-    }
 
     /**
      * Get current screen.
      */
-    protected BufferedImage getScreen() {
+    protected static BufferedImage getScreen() {
         try {
-            File screen = this.client.driver.getScreenshotAs(OutputType.FILE);
+            File screen = Client.driver.getScreenshotAs(OutputType.FILE);
             return ImageIO.read(screen);
         } catch (Exception e) {
             Log.error("Failed to take screenshot! May be appium driver is dead.");
@@ -70,9 +65,9 @@ public class ImageUtils {
     /**
      * Save current screen.
      **/
-    public void saveScreen(String imageName)
+    public static void saveScreen(String imageName)
             throws AppiumException, IOException {
-        BufferedImage img = this.getScreen();
+        BufferedImage img = ImageUtils.getScreen();
         ImageUtils.saveBufferedImage(img, imageName + ".png");
     }
 
@@ -89,11 +84,11 @@ public class ImageUtils {
     /**
      * Get MobileElement screenshot.
      */
-    protected BufferedImage getElementImage(MobileElement element) {
+    protected static BufferedImage getElementImage(MobileElement element) {
         BufferedImage img = getScreen();
 
-        int screenWidth = this.client.driver.manage().window().getSize().width;
-        int screenHeight = this.client.driver.manage().window().getSize().height;
+        int screenWidth = Client.driver.manage().window().getSize().width;
+        int screenHeight = Client.driver.manage().window().getSize().height;
 
         int screenshotWidth = img.getWidth();
         int zoomFactor = screenshotWidth / screenWidth;
@@ -119,7 +114,7 @@ public class ImageUtils {
     /**
      * Save MobileElement buffered image.
      */
-    protected void saveElementImage(MobileElement element, String fileName)
+    protected static void saveElementImage(MobileElement element, String fileName)
             throws IOException {
         BufferedImage img = getElementImage(element);
         saveBufferedImage(img, fileName);
