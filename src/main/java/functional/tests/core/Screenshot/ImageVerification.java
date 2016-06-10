@@ -186,8 +186,10 @@ public class ImageVerification {
                 while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
                     result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
                     //Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
-                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
+                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent >  percentTolerance)) {
+                        String toleranceInfo = String.format("Percent tolerance: %.2f %% and pixel tolerance: %s", result.diffPercent, "" + result.diffPixels);
+                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f %% and pixelDiff: %s", result.diffPercent,"" + result.diffPixels) + ". Waiting...";
+                        Log.info(toleranceInfo);
                         Log.info(errorString);
                     } else {
                         Log.info(imageName + " looks OK.");
