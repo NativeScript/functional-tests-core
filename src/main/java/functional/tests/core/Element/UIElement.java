@@ -53,15 +53,15 @@ public class UIElement {
         return this.element.getSize();
     }
 
-    public boolean isSelected(){
+    public boolean isSelected() {
         return this.element.isSelected();
     }
 
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return this.element.isEnabled();
     }
 
-    public UIElement findElement(By by){
+    public UIElement findElement(By by) {
         return new UIElement(this.element.findElement(by));
     }
 
@@ -153,7 +153,11 @@ public class UIElement {
         if (waitAfterTap > 0) {
             Wait.sleep(waitAfterTap);
         }
-        Log.info("Tap " + this.getDescription());
+        try {
+            Log.info("Tap " + this.getDescription());
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
     }
 
     public void tap() {
