@@ -4,6 +4,7 @@ import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class Find {
      * Find an element that has some attribute with specified value.
      */
     public static UIElement findByText(String value) {
-        return  findElementByLocator(Locators.findByTextLocator("*", value, true));
+        return findElementByLocator(Locators.findByTextLocator("*", value, true));
     }
 
     /**
@@ -69,7 +70,7 @@ public class Find {
      * Find an element by class (UI control class)
      */
     public static UIElement findByType(String value) {
-        return (UIElement) Client.driver.findElement(By.className(value));
+        return new UIElement((MobileElement) Client.driver.findElement(By.className(value)));
     }
 
     /**
@@ -92,7 +93,7 @@ public class Find {
      * Find an element by locator
      */
     public static UIElement findElementByLocator(By locator) {
-        return (UIElement) Client.driver.findElement(locator);
+        return new UIElement((MobileElement) Client.driver.findElement(locator));
     }
 
     /**
