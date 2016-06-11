@@ -24,7 +24,7 @@ public class ImageVerification {
     private static final int DEFAULT_WAIT_TIME = 1000;
     private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
-    
+
     public static boolean compareElements(final UIElement element, String appName, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
@@ -177,14 +177,19 @@ public class ImageVerification {
                 Wait.sleep(sleepTime);
                 Log.error("Failed to read expected image, image comparison skipped.");
                 saveImage(expectedImagePath, actualImage, expectedImageBasePath, "Actual images will be also saved at expected image location.");
+                String tempImageStorage = Settings.screenshotResDir + "-temp" + File.separator + appName + File.separator;
+                String tempImageName = tempImageStorage + File.separator + Settings.deviceName + "_" + imageName + ".png";
+                saveImage(tempImageName, actualImage, tempImageStorage, String.format("Actual images will be also saved in %s folder.", Settings.screenshotResDir + "-temp"));
             } else {
                 long startTime = System.currentTimeMillis();
                 ImageVerificationResult result = null;
                 while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
                     result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
-                    Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
-                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
-                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f", result.diffPercent) + ". Waiting...";
+                    //Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
+                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent >  percentTolerance)) {
+                        String toleranceInfo = String.format("Percent tolerance: %.2f %% and pixel tolerance: %s", result.diffPercent, "" + result.diffPixels);
+                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f %% and pixelDiff: %s", result.diffPercent,"" + result.diffPixels) + ". Waiting...";
+                        Log.info(toleranceInfo);
                         Log.info(errorString);
                     } else {
                         Log.info(imageName + " looks OK.");
