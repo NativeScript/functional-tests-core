@@ -16,15 +16,15 @@ import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-/**
- * Created by tseno on 08-Jun-16.
- */
 public class UIElement {
     private MobileElement element;
 
@@ -32,9 +32,10 @@ public class UIElement {
         this.element = element;
     }
 
-    /**
-     * Get text of MobileElement
-     */
+    public String getAttribute(String value) {
+        return this.element.getAttribute(value);
+    }
+
     public String getText() {
         String elementText = null;
         try {
@@ -44,9 +45,26 @@ public class UIElement {
         return elementText;
     }
 
-    /**
-     * Set text of MobileElement
-     */
+    public UIElement findElementById(String id) {
+        return new UIElement(this.element.findElementById(id));
+    }
+
+    public Dimension getSize() {
+        return this.element.getSize();
+    }
+
+    public boolean isSelected(){
+        return this.element.isSelected();
+    }
+
+    public boolean isEnabled(){
+        return this.element.isEnabled();
+    }
+
+    public UIElement findElement(By by){
+        return new UIElement(this.element.findElement(by));
+    }
+
     public void setText(String value) {
         if (Settings.platform == PlatformType.Andorid) {
             // Tap at the and of the text box (this is very important)
@@ -65,7 +83,7 @@ public class UIElement {
             Wait.sleep(Settings.defaultTapDuration);
 
             // Set new value
-            this.element.sendKeys(value);
+            this.sendKeys(value);
             Wait.sleep(Settings.defaultTapDuration);
         } else {
             this.element.click();
@@ -77,15 +95,16 @@ public class UIElement {
                 Log.error("Failed to clean old value.");
             }
             Wait.sleep(Settings.defaultTapDuration);
-            this.element.sendKeys(value);
+            this.sendKeys(value);
             Wait.sleep(Settings.defaultTapDuration);
         }
         Log.info("Set value of text field: " + value);
     }
 
-    /**
-     * Get text of MobileElement
-     */
+    public void sendKeys(String value) {
+        this.element.sendKeys(value);
+    }
+
     public String getTagName() {
         String tagName = null;
         try {
@@ -95,16 +114,10 @@ public class UIElement {
         return tagName;
     }
 
-    /**
-     * Get coordinates of MobileElement
-     */
     public String getCoordinates() {
         return String.valueOf(this.element.getCenter().x) + ":" + String.valueOf(this.element.getCenter().y);
     }
 
-    /**
-     * Get String description of MobileElement
-     */
     public String getDescription() {
         String elementText = this.getText();
         if (elementText != null) {
@@ -114,14 +127,11 @@ public class UIElement {
             if (elementTag != null) {
                 return elementTag + " at " + getCoordinates();
             } else {
-                return "Element at " + getCoordinates();
+                return "OldElement at " + getCoordinates();
             }
         }
     }
 
-    /**
-     * Get xpath of element
-     */
     public String getXpath() {
 
         String foundBy = "";
@@ -129,7 +139,7 @@ public class UIElement {
         try {
             foundBy = FieldUtils.readField(this.element, "foundBy", true).toString();
         } catch (IllegalAccessException e) {
-            Log.error("Failed to get find filed 'foundBy' of element: " + Element.getDescription(this.element));
+            Log.error("Failed to get find filed 'foundBy' of element: " + this.getDescription());
         }
 
         String[] split = foundBy.split("xpath: ");
@@ -143,7 +153,15 @@ public class UIElement {
         if (waitAfterTap > 0) {
             Wait.sleep(waitAfterTap);
         }
-        Log.info("Tap " + Element.getDescription(this.element));
+        Log.info("Tap " + this.getDescription());
+    }
+
+    public void tap() {
+        this.tap(1, Settings.defaultTapDuration, Settings.defaultTapDuration);
+    }
+
+    public void tap(int fingers, int duration) {
+        this.tap(fingers, duration, Settings.defaultTapDuration);
     }
 
     public void tap(int fingers) {
@@ -152,6 +170,23 @@ public class UIElement {
 
     public void tap(MobileElement element) {
         this.tap(1, Settings.defaultTapDuration, Settings.defaultTapDuration);
+    }
+
+    public static void swipe(SwipeElementDirection direction, int duration) {
+        swipe(direction, duration, 0);
+    }
+
+    public void swipe(String direction, int duration) {
+        swipeInElement(direction, duration);
+    }
+
+
+    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
+        swipeFromCorner(direction, duration, 0);
+    }
+
+    public void swipeFromCorner(String direction, int duration) {
+        swipeInElementFromCorner(direction, duration);
     }
 
     public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
@@ -282,22 +317,6 @@ public class UIElement {
                 Assert.fail(error);
             }
         }
-    }
-
-    public static void swipe(SwipeElementDirection direction, int duration) {
-        swipe(direction, duration, 0);
-    }
-
-    public void swipe(String direction, int duration) {
-        swipeInElement(direction, duration);
-    }
-
-    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
-        swipeFromCorner(direction, duration, 0);
-    }
-
-    public void swipeFromCorner(String direction, int duration) {
-        swipeInElementFromCorner(direction, duration);
     }
 
     public void doubleTap() {
@@ -521,44 +540,67 @@ public class UIElement {
         }
     }
 
-    /**
-     * Scroll down until element is visible via swipe gesture *
-     */
-    public MobileElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
-        for (int i = 0; i < retryCount; i++) {
-            MobileElement element = Find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
-            if ((element != null) && (element.isDisplayed())) {
-                Log.info(elementText + " found.");
-                return element;
-            } else {
-                Log.info("Swipe " + direction.toString() + " to " + elementText);
-                swipe(direction, duration, Settings.defaultTapDuration * 2);
-            }
-            if (i == retryCount - 1) {
-                Log.error(elementText + " not found after " + String.valueOf(i + 1) + " swipes.");
-            }
-        }
-        return null;
+    public UIElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
+        return this.swipeToElement(direction, Locators.findByTextLocator(elementText, true), duration, retryCount);
+
+//        for (int i = 0; i < retryCount; i++) {
+//            UIElement element = Find.findElementByLocator(Locators.findByTextLocator(elementText, true), 2);
+//            if ((element != null) && (element.isDisplayed())) {
+//                Log.info(elementText + " found.");
+//                return element;
+//            } else {
+//                Log.info("Swipe " + direction.toString() + " to " + elementText);
+//                swipe(direction, duration, Settings.defaultTapDuration * 2);
+//            }
+//            if (i == retryCount - 1) {
+//                Log.error(elementText + " not found after " + String.valueOf(i + 1) + " swipes.");
+//            }
+//        }
+//        return null;
     }
 
-    /**
-     * Scroll until element is visible via swipe gesture *
-     */
-    public MobileElement swipeToElement(SwipeElementDirection direction, By locator, int duration, int retryCount) {
+    public UIElement swipeToElement(SwipeElementDirection direction, By locator, int duration, int retryCount) {
         Log.info("Swipe " + direction.toString() + " to " + locator.toString());
         for (int i = 0; i < retryCount; i++) {
-            MobileElement element = Find.findElementByLocator(locator, 2);
+            UIElement element = Find.findElementByLocator(locator, 2);
             if ((element != null) && (element.isDisplayed())) {
-                Log.info("Element found: " + locator.toString());
+                Log.info("OldElement found: " + locator.toString());
                 return element;
             } else {
                 Log.info("Swipe " + direction.toString() + " to " + locator.toString());
                 swipe(direction, duration, Settings.defaultTapDuration * 2);
             }
             if (i == retryCount - 1) {
-                Log.info("Element not found after " + String.valueOf(i + 1) + " swipes." + locator.toString());
+                Log.info("OldElement not found after " + String.valueOf(i + 1) + " swipes." + locator.toString());
             }
         }
         return null;
+    }
+
+    public boolean isDisplayed() {
+        return this.element.isDisplayed();
+    }
+
+    public Point getCenter() {
+        return this.element.getCenter();
+    }
+
+    public Point getLocation() {
+        return this.element.getLocation();
+    }
+
+    public void click() {
+        this.element.click();
+    }
+
+    public ArrayList<UIElement> findElements(By by) {
+        List<MobileElement> elements = this.element.findElements(by);
+        ArrayList<UIElement> UIElements = new ArrayList<>();
+
+        for (MobileElement elment : elements) {
+            UIElements.add(new UIElement(element));
+        }
+
+        return UIElements;
     }
 }

@@ -1,10 +1,12 @@
 package functional.tests.core.Screenshot;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 
@@ -84,7 +86,7 @@ public class ImageUtils {
     /**
      * Get MobileElement screenshot.
      */
-    protected static BufferedImage getElementImage(MobileElement element) {
+    protected static BufferedImage getElementImage(UIElement element) {
         BufferedImage img = getScreen();
 
         int screenWidth = Client.driver.manage().window().getSize().width;
@@ -114,7 +116,7 @@ public class ImageUtils {
     /**
      * Save MobileElement buffered image.
      */
-    protected static void saveElementImage(MobileElement element, String fileName)
+    protected static void saveElementImage(UIElement element, String fileName)
             throws IOException {
         BufferedImage img = getElementImage(element);
         saveBufferedImage(img, fileName);

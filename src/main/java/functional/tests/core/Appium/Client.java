@@ -42,7 +42,7 @@ public class Client {
             capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
         }
 
-        // BaseDevice Specific Settings
+        // Device Specific Settings
         if (Settings.platform == PlatformType.Andorid) {
             try {
                 capabilities.setCapability("noSign", "true");

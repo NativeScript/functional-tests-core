@@ -1,12 +1,12 @@
 package functional.tests.core.Screenshot;
 
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.ImageVerificationException;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
 import org.testng.Assert;
 
 import java.awt.*;
@@ -25,7 +25,7 @@ public class ImageVerification {
     private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
     
-    public static boolean compareElements(final MobileElement element, String appName, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+    public static boolean compareElements(final UIElement element, String appName, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
@@ -49,21 +49,21 @@ public class ImageVerification {
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, double percentTolerance) throws Exception {
+    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, double percentTolerance) throws Exception {
         verifyElement(element, appName, expectedElementImage, Integer.MAX_VALUE, percentTolerance, MIN_TIMEOUT);
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, int pixelTolerance) throws Exception {
+    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, int pixelTolerance) throws Exception {
         verifyElement(element, appName, expectedElementImage, pixelTolerance, Double.MAX_VALUE, MIN_TIMEOUT);
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final MobileElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {

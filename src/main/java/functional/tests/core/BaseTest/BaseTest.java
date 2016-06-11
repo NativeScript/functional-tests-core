@@ -3,7 +3,7 @@ package functional.tests.core.BaseTest;
 import functional.tests.core.App.App;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Appium.Server;
-import functional.tests.core.Device.BaseDevice;
+import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Log.Log;
@@ -24,15 +24,15 @@ public abstract class BaseTest {
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
-    private BaseDevice baseDevice;
-    //private static BaseDevice _baseDevice;
+    private Device device;
+    //private static Device _baseDevice;
 
     public BaseTest() {
 
     }
 
-    public BaseDevice baseDevice(){
-        return this.baseDevice;
+    public Device baseDevice(){
+        return this.device;
     }
 
     private static void checkAppiumLogsForCrash() {
@@ -53,14 +53,14 @@ public abstract class BaseTest {
     public void beforeSuite() throws Exception {
         Log.initLogging();
         Settings.initSettings();
-        this.baseDevice = new BaseDevice();
+        this.device = new Device();
 
         if (!Settings.debug) {
-            this.baseDevice.stopDevice();
-            this.baseDevice.initDevice();
+            this.device.stopDevice();
+            this.device.initDevice();
         }
 
-        this.baseDevice.initTestApp();
+        this.device.initTestApp();
 
         try {
             Server.initAppiumServer();
@@ -113,7 +113,7 @@ public abstract class BaseTest {
 
         // Verify app not crashed
         try {
-            this.baseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
+            this.device.verifyAppRunning(Settings.deviceId, Settings.packageId);
         } catch (Exception e) {
             failAtStartUp = true;
             Log.logScreen("Emulator", Settings.packageId + " failed at startup.");
@@ -122,7 +122,7 @@ public abstract class BaseTest {
         }
 
         // Get logs for initial app startup
-        this.baseDevice.writeConsoleLogToFile("init");
+        this.device.writeConsoleLogToFile("init");
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -136,14 +136,14 @@ public abstract class BaseTest {
             } catch (Exception e1) {
                 Log.info("Failed to restart test app. Rests Apppium client/server.");
                 Server.stopAppiumServer();
-                this.baseDevice.stopTestApp();
-                this.baseDevice.stopDevice();
+                this.device.stopTestApp();
+                this.device.stopDevice();
                 Server.initAppiumServer();
                 Client.initAppiumDriver();
                 isFistTest = true;
                 // Verify app not crashed
                 try {
-                    this.baseDevice.verifyAppRunning(Settings.deviceId, Settings.packageId);
+                    this.device.verifyAppRunning(Settings.deviceId, Settings.packageId);
                 } catch (Exception e2) {
                     Log.logScreen("Emulator", Settings.packageId + " failed at startup.");
                     takeScreenOfHost("HostOS");
@@ -180,7 +180,7 @@ public abstract class BaseTest {
         String testCase = result.getMethod().getMethodName();
 
         // Write console log
-        this.baseDevice.writeConsoleLogToFile(testCase);
+        this.device.writeConsoleLogToFile(testCase);
 
         // Report results
         previousTestStatus = result.getStatus();
@@ -205,8 +205,8 @@ public abstract class BaseTest {
 
         if (!Settings.debug) {
             Server.stopAppiumServer();
-            this.baseDevice.stopTestApp();
-            this.baseDevice.stopDevice();
+            this.device.stopTestApp();
+            this.device.stopDevice();
         }
     }
 
