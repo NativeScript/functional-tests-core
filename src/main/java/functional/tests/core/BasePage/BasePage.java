@@ -13,9 +13,6 @@ import io.appium.java_client.remote.HideKeyboardStrategy;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
-/**
- * Created by topuzov on 11/27/2015.
- */
 public class BasePage {
 
     /**
