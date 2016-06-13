@@ -49,7 +49,7 @@ public class FileSystem {
         FileUtils.writeStringToFile(new File(filePath), text);
     }
 
-    public static boolean exist(String path) throws IOException {
+    public static boolean exist(String path) {
         File file = new File(path);
         return file.exists();
     }

@@ -26,7 +26,7 @@ public class iOSDevice implements IDevice {
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
     private static String simulatorGuid = null;
 
-    public iOSDevice(){
+    public iOSDevice() {
         //this._deviceController = new Simctl();
     }
 
@@ -50,51 +50,41 @@ public class iOSDevice implements IDevice {
     public void initDevice() throws DeviceException {
         if (Settings.deviceType == DeviceType.Simulator) {
 
-            if (Settings.debug) {
-                Log.info("[Debug mode] Skip simulator reset.");
-            } else {
-                // Delete simulator specified by settings
-                Simctl.deleteSimulator(Settings.deviceName);
+            List<String> simulatorGuilds = Simctl.getSimulatorsIdsByName(Settings.deviceName);
 
-                // Create simulator specified by settings
-                String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
-                if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
-                    Log.fatal("Failed to create simulator. Error: " + result);
-                    throw new DeviceException("Failed to create simulator. Error: " + result);
-                } else {
-                    String guid = result;
-                    String[] rowList = result.split("\\r?\\n");
-                    for (String rowLine : rowList) {
-                        if (rowLine.contains("-")) {
-                            guid = rowLine.trim();
-                        }
-                    }
-                    simulatorGuid = guid;
-                    Settings.deviceId = simulatorGuid;
-                    Log.info("Simulator created: " + simulatorGuid);
-                }
-            }
-
-            // Verify simulator exists
-            String rowDevices = OSUtils.runProcess("instruments -s");
-            String[] deviceList = rowDevices.split("\\r?\\n");
-
-            boolean found = false;
-            for (String device : deviceList) {
-                if (device.contains("iP")) {
-                    Log.info(device);
-                }
-                if (device.contains(Settings.deviceName)) {
-                    found = true;
-                }
-            }
-
-            if (found) {
+            if (simulatorGuilds.size() == 1) {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
+                Settings.deviceId = simulatorGuilds.get(0);
             } else {
-                String error = "Simulator " + Settings.deviceName + " does not exist. Hint: verify SDKs available.";
-                Log.error(error);
-                throw new DeviceException(error);
+                if (simulatorGuilds.size() > 1) {
+                    Log.error("Multiple simulators with name " + Settings.deviceName + " found. Delete...");
+                    Simctl.deleteSimulator(Settings.deviceName);
+                } else {
+                    // Create simulator specified by settings
+                    String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
+                    if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
+                        Log.fatal("Failed to create simulator. Error: " + result);
+                        throw new DeviceException("Failed to create simulator. Error: " + result);
+                    } else {
+                        String guid = result;
+                        String[] rowList = result.split("\\r?\\n");
+                        for (String rowLine : rowList) {
+                            if (rowLine.contains("-")) {
+                                guid = rowLine.trim();
+                            }
+                        }
+                        simulatorGuid = guid;
+                        Settings.deviceId = simulatorGuid;
+                        Log.info("Simulator created: " + simulatorGuid);
+                    }
+
+                    // Verify created
+                    if (Simctl.getSimulatorsIdsByName(Settings.deviceName).size() < 1) {
+                        String error = "Simulator " + Settings.deviceName + " does not exist. Hint: verify SDKs available.";
+                        Log.error(error);
+                        throw new DeviceException(error);
+                    }
+                }
             }
         } else if (Settings.deviceType == DeviceType.iOS) {
             String devices = OSUtils.runProcess("instruments -s");
@@ -136,21 +126,27 @@ public class iOSDevice implements IDevice {
 
     @Override
     public void uninstallApps(List<String> uninstallAppsList) {
-        List<String> installedApps = getInstalledApps();
+        if (Settings.isRealDevice) {
+            List<String> installedApps = getInstalledApps();
 
-        for (String appToUninstall : uninstallAppsList) {
-            for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)) {
-                    uninstallApp(appId);
+            for (String appToUninstall : uninstallAppsList) {
+                for (String appId : installedApps) {
+                    if (appId.contains(appToUninstall)) {
+                        uninstallApp(appId);
+                    }
                 }
             }
-        }
 
-        // iOS7 devices use old appium version
-        // In older appium version installation of test app is not stable
-        // installApp method will deploy with ideviceinstaller
-        if (Settings.platformVersion.contains("7")) {
-            this.installApp(Settings.testAppName);
+            // iOS7 devices use old appium version
+            // In older appium version installation of test app is not stable
+            // installApp method will deploy with ideviceinstaller
+            if (Settings.platformVersion.contains("7")) {
+                this.installApp(Settings.testAppName);
+            }
+        } else {
+            String command = "xcrun simctl erase " + Settings.deviceId;
+            Log.info(command);
+            OSUtils.runProcess(command);
         }
 
         Log.info("Old apps uninstalled.");
