@@ -211,4 +211,9 @@ public abstract class BaseTest {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         return methodName;
     }
+
+    public static String getAppName() {
+        String appName = Settings.testAppName;
+        return appName;
+    }
 }

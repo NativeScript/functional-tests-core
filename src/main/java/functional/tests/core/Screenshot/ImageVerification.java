@@ -1,5 +1,6 @@
 package functional.tests.core.Screenshot;
 
+import functional.tests.core.BaseTest.BaseTest;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.ImageVerificationException;
@@ -25,8 +26,8 @@ public class ImageVerification {
     private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
 
-    public static boolean compareElements(final UIElement element, String appName, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return verifyImages(appName, expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+    public static boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+        return verifyImages(BaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
@@ -37,8 +38,8 @@ public class ImageVerification {
     /**
      * Verify current screen
      **/
-    public static boolean compareScreens(String appName, String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return verifyImages(appName, pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+    public static boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+        return verifyImages(BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
@@ -49,98 +50,98 @@ public class ImageVerification {
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, double percentTolerance) throws Exception {
-        verifyElement(element, appName, expectedElementImage, Integer.MAX_VALUE, percentTolerance, MIN_TIMEOUT);
+    public static void verifyElement(final UIElement element, String expectedElementImage, double percentTolerance) throws Exception {
+        verifyElement(element, expectedElementImage, Integer.MAX_VALUE, percentTolerance, MIN_TIMEOUT);
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, int pixelTolerance) throws Exception {
-        verifyElement(element, appName, expectedElementImage, pixelTolerance, Double.MAX_VALUE, MIN_TIMEOUT);
+    public static void verifyElement(final UIElement element, String expectedElementImage, int pixelTolerance) throws Exception {
+        verifyElement(element, expectedElementImage, pixelTolerance, Double.MAX_VALUE, MIN_TIMEOUT);
     }
 
     /**
      * Verify mobile element
      **/
-    public static void verifyElement(final UIElement element, String appName, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+    public static void verifyElement(final UIElement element, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, appName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
+        }, BaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName) throws Exception {
-        verifyScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE);
+    public static void verifyScreen(String pageName) throws Exception {
+        verifyScreen(pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName, double percentTolerance) throws Exception {
-        verifyScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance);
+    public static void verifyScreen(String pageName, double percentTolerance) throws Exception {
+        verifyScreen(pageName, Integer.MAX_VALUE, percentTolerance);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName, int pixelTolerance) throws Exception {
-        verifyScreen(appName, pageName, pixelTolerance, Double.MAX_VALUE);
+    public static void verifyScreen(String pageName, int pixelTolerance) throws Exception {
+        verifyScreen(pageName, pixelTolerance, Double.MAX_VALUE);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance) throws Exception {
-        verifyScreen(appName, pageName, pixelTolerance, percentTolerance, Settings.defaultTimeout, 1000);
+    public static void verifyScreen(String pageName, int pixelTolerance, double percentTolerance) throws Exception {
+        verifyScreen(pageName, pixelTolerance, percentTolerance, Settings.defaultTimeout, 1000);
     }
 
     /**
      * Verify current screen
      **/
-    public static void verifyScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime) throws Exception {
+    public static void verifyScreen(String pageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime) throws Exception {
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
+        }, BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
     }
 
 
     /**
      * Wait until screen looks OK
      **/
-    public static void waitForScreen(String appName, String pageName) throws Exception {
-        waitForScreen(appName, pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE, Settings.defaultTimeout);
+    public static void waitForScreen(String pageName) throws Exception {
+        waitForScreen(pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE, Settings.defaultTimeout);
     }
 
     /**
      * Wait until screen looks OK
      **/
-    public static void waitForScreen(String appName, String pageName, double percentTolerance) throws Exception {
-        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, Settings.defaultTimeout);
+    public static void waitForScreen(String pageName, double percentTolerance) throws Exception {
+        waitForScreen(pageName, Integer.MAX_VALUE, percentTolerance, Settings.defaultTimeout);
     }
 
     /**
      * Wait until screen looks OK
      **/
-    public static void waitForScreen(String appName, String pageName, double percentTolerance, int timeOut) throws Exception {
-        waitForScreen(appName, pageName, Integer.MAX_VALUE, percentTolerance, timeOut);
+    public static void waitForScreen(String pageName, double percentTolerance, int timeOut) throws Exception {
+        waitForScreen(pageName, Integer.MAX_VALUE, percentTolerance, timeOut);
     }
 
-    public static void waitForScreen(String appName, String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
+    public static void waitForScreen(String pageName, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
         assertImages(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, appName, pageName, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, IGNORE_HEADER);
+        }, BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, IGNORE_HEADER);
     }
 
     private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime, boolean ignoreHeader) throws Exception {
@@ -186,9 +187,9 @@ public class ImageVerification {
                 while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
                     result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
                     //Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
-                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent >  percentTolerance)) {
+                    if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                         String toleranceInfo = String.format("Percent tolerance: %.2f %% and pixel tolerance: %s", result.diffPercent, "" + result.diffPixels);
-                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f %% and pixelDiff: %s", result.diffPercent,"" + result.diffPixels) + ". Waiting...";
+                        String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f %% and pixelDiff: %s", result.diffPercent, "" + result.diffPixels) + ". Waiting...";
                         Log.info(toleranceInfo);
                         Log.info(errorString);
                     } else {

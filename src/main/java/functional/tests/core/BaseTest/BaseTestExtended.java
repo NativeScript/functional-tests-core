@@ -15,8 +15,6 @@ public abstract class BaseTestExtended extends BaseTest {
     private int imageCounter = 1;
     private Map<String, Boolean> imagesResults;
 
-    public abstract String getAppName();
-
     @BeforeMethod(alwaysRun = true)
     public void initBeforeTest() {
         this.imagesResults = new HashMap<String, Boolean>();
@@ -33,7 +31,7 @@ public abstract class BaseTestExtended extends BaseTest {
 
     public void compareElements(UIElement element, int timeOut, int waitTime) throws Exception {
         String testName = this.imageCounter <= 1 ? this.getTestName() : this.getTestName() + "_" + this.imageCounter;
-        boolean result = ImageVerification.compareElements(element, getAppName(), testName, timeOut, 1000, 0, 0);
+        boolean result = ImageVerification.compareElements(element, testName, timeOut, 1000, 0, 0);
         this.imagesResults.put(testName, result);
         this.imageCounter++;
     }
@@ -86,7 +84,7 @@ public abstract class BaseTestExtended extends BaseTest {
 
     private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = createImageName();
-        boolean result = ImageVerification.compareScreens(getAppName(), testName, timeOut, waitTime, pixelTolerance, percentTolerance);
+        boolean result = ImageVerification.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance);
         this.imagesResults.put(testName, result);
         this.imageCounter++;
 
@@ -95,7 +93,7 @@ public abstract class BaseTestExtended extends BaseTest {
 
     private void compareElements(UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = createImageName();
-        boolean result = ImageVerification.compareElements(element, getAppName(), testName, timeOut, waitTime, pixelTolerance, percentTolerance);
+        boolean result = ImageVerification.compareElements(element, testName, timeOut, waitTime, pixelTolerance, percentTolerance);
         this.imagesResults.put(testName, result);
         this.imageCounter++;
     }
