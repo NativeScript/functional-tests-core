@@ -25,11 +25,8 @@ public abstract class BaseTest {
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
     private Device device;
-    //private static Device _baseDevice;
 
-    public BaseTest() {
-
-    }
+    public BaseTest() { }
 
     public Device baseDevice(){
         return this.device;
@@ -210,7 +207,7 @@ public abstract class BaseTest {
         }
     }
 
-    public static String getTestName() {
+    public String getTestName() {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         return methodName;
     }

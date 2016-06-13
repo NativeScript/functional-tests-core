@@ -439,6 +439,11 @@ public class UIElement {
         this.swipeInElement(direction, duration);
     }
 
+    public void dragAndDrop(int xOffset, int yOffset, int duration) {
+        Point point = this.element.getLocation();
+        Client.driver.swipe(point.getX(), point.getY(), point.getX() - xOffset, point.getY() - yOffset, duration);
+    }
+
     private void swipeInElement(String direction, int duration) {
         int centerX = this.element.getLocation().x + (this.element.getSize().width / 2);
         int centerY = this.element.getLocation().y + (this.element.getSize().height / 2);

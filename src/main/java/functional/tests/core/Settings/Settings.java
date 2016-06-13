@@ -401,7 +401,8 @@ public class Settings {
         testAppFriendlyName = getTestAppFriendlyName();
 
         // Set testAppImageFolder
-        testAppImageFolder = Settings.testAppName.toLowerCase().replace("-release", "").substring(0, Settings.testAppName.indexOf("."));
+        String testAppName = Settings.testAppName.toLowerCase().replace("-release", "");
+        testAppImageFolder = testAppName.substring(0, testAppName.indexOf("."));
 
         Log.separator();
         Log.info("Settings initialized properly:");
