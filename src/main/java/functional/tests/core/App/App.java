@@ -2,6 +2,7 @@ package functional.tests.core.App;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.Android.Adb;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
@@ -17,11 +18,13 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.openqa.selenium.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class App {
 
     private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
+
 
     /**
      * Restart application
@@ -63,8 +66,7 @@ public class App {
 
             // Dismiss welcome dialog on Android 6 emulators
             if ((Settings.deviceType == DeviceType.Emulator) && (Settings.platformVersion.contains("6."))) {
-                MobileElement dismissButton = Find
-                        .findElementByLocator(By.id("com.android.launcher3:id/cling_dismiss_longpress_info"), Settings.shortTimeout);
+                UIElement dismissButton = Find.findElementByLocator(By.id("com.android.launcher3:id/cling_dismiss_longpress_info"), Settings.shortTimeout);
                 if (dismissButton != null) {
                     dismissButton.click();
                     Log.info("Tap Got IT to dismiss.");
@@ -120,9 +122,9 @@ public class App {
             // Sometimes there is error dialog and allAppsButton should be clicked again
             // Note: This breaks API17, so for Api17 - do nothing
             if (!Settings.platformVersion.contains("4.2")) {
-                MobileElement bottomToolBar = Find.findElementByLocator(bottomToolBarLocator, Settings.shortTimeout);
+                UIElement bottomToolBar = Find.findElementByLocator(bottomToolBarLocator, Settings.shortTimeout);
                 if (bottomToolBar != null) {
-                    List<MobileElement> allButtons = bottomToolBar.findElements(By.className("android.widget.TextView"));
+                    ArrayList<UIElement> allButtons = bottomToolBar.findElements(By.className("android.widget.TextView"));
                     if (allButtons.size() > 3) {
                         allAppsButton.click();
                         Wait.sleep(1000);
@@ -141,7 +143,7 @@ public class App {
                 } else if (Settings.platformVersion.contains("4")) {
                     okButtonLocator = By.xpath("//android.widget.Button[@text='OK']");
                 }
-                MobileElement dismissButton = Find.findElementByLocator(okButtonLocator, Settings.shortTimeout);
+                UIElement dismissButton = Find.findElementByLocator(okButtonLocator, Settings.shortTimeout);
                 if (dismissButton != null) {
                     dismissButton.click();
                     Wait.sleep(1000);
@@ -160,8 +162,7 @@ public class App {
                 secondDirection = SwipeElementDirection.UP;
             }
 
-            MobileElement testAppButon = Gestures
-                    .swipeToElement(firstDirection, appName, Settings.defaultTapDuration * 2, 5);
+            UIElement testAppButon = Gestures.swipeToElement(firstDirection, appName, Settings.defaultTapDuration * 2, 5);
 
             // Tap application icon
             if (testAppButon != null) {
@@ -171,8 +172,7 @@ public class App {
                 Wait.sleep(1000);
             } else {
                 Log.error("App with name " + appName + " not found.");
-                testAppButon = Gestures
-                        .swipeToElement(secondDirection, appName, Settings.defaultTapDuration * 2, 5);
+                testAppButon = Gestures.swipeToElement(secondDirection, appName, Settings.defaultTapDuration * 2, 5);
                 if (testAppButon != null) {
                     Log.info("Tap " + appName + " icon.");
                     Wait.sleep(1000);

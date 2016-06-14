@@ -1,13 +1,13 @@
 package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.HideKeyboardStrategy;
 import org.openqa.selenium.By;
@@ -37,7 +37,7 @@ public class BasePage {
         } else {
             By doneButtonLocator = By.name("Done");
             By returnButtonLocator = By.name("Return");
-            MobileElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
+            UIElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
             if (doneButton != null) {
                 ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
                 Log.info("Hide keyboard with Done key.");
@@ -71,7 +71,7 @@ public class BasePage {
      * Verify text visible *
      */
     public static void verifyElementVisible(By locator, int timeout) {
-        MobileElement element = Find.findElementByLocator(locator, timeout);
+        UIElement element = Find.findElementByLocator(locator, timeout);
         Assert.assertNotNull(element, "Can not find: " + locator.toString());
     }
 
@@ -79,14 +79,14 @@ public class BasePage {
      * Verify text visible *
      */
     public static void verifyElementVisible(By locator) {
-        MobileElement element = Find.findElementByLocator(locator, Settings.defaultTimeout);
+        UIElement element = Find.findElementByLocator(locator, Settings.defaultTimeout);
         Assert.assertNotNull(element, "Can not find: " + locator.toString());
     }
 
     /**
      * Verify page is loaded
      */
-    public static void loaded(MobileElement element) {
+    public static void loaded(UIElement element) {
         String className = getClassName();
         if (element != null) {
             Log.info(String.format("%s page loaded.", className));

@@ -1,10 +1,10 @@
 package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
@@ -15,7 +15,7 @@ public class Wait {
 
     public static boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
         Client.setWait(timeOut);
-        MobileElement result;
+        UIElement result;
         try {
             result = Find.findElementByLocator(locator);
         } catch (Exception e) {
@@ -47,14 +47,14 @@ public class Wait {
         for (int i = 0; i < 1000; i++) {
             long currentTime = new Date().getTime();
             if ((currentTime - startTime) < timeOut * 1000) {
-                List<MobileElement> elements = null;
+                List<UIElement> elements = null;
                 try {
                     elements = Find.findElementsByLocator(locator);
                 } catch (Exception e) {
                 }
 
                 if ((elements != null) && (elements.size() != 0)) {
-                    Log.debug("Element exists: " + locator.toString());
+                    Log.debug("OldElement exists: " + locator.toString());
                 } else {
                     found = false;
                     break;
@@ -63,13 +63,13 @@ public class Wait {
         }
         Client.setWait(Settings.defaultTimeout);
         if (found) {
-            String error = "Element still visible: " + locator.toString();
+            String error = "OldElement still visible: " + locator.toString();
             Log.error(error);
             if (failOnVisble) {
                 Assert.fail(error);
             }
         } else {
-            Log.debug("Element not found: " + locator.toString());
+            Log.debug("OldElement not found: " + locator.toString());
         }
         return found;
     }

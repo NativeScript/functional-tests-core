@@ -8,6 +8,8 @@ import functional.tests.core.Settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,22 @@ public class Simctl {
         return list;
     }
 
+    public static boolean checkIfSimulatorExists(String deviceName) {
+        String rowDevices = OSUtils.runProcess("instruments -s");
+        String[] deviceList = rowDevices.split("\\r?\\n");
+
+        boolean found = false;
+        for (String device : deviceList) {
+            if (device.contains("iP")) {
+                Log.info(device);
+            }
+            if (device.contains(Settings.deviceName)) {
+                found = true;
+            }
+        }
+        return found;
+    }
+
     public static void deleteSimulator(String deviceName) {
         List<String> simulators = getSimulatorsIdsByName(deviceName);
         for (String sim : simulators) {
@@ -50,13 +68,19 @@ public class Simctl {
     }
 
     public static String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
-
         if (Settings.debug) {
             Log.info("[Debug mode] Do not reset sim settings.");
         } else {
             // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
             if (Settings.platformVersion.contains("9")) {
-                resetSimulatorSettings();
+                // Restart simulator settings only in case images are available
+                String path = Settings.screenshotResDir + File.separator + Settings.testAppImageFolder;
+                if (FileSystem.exist(path)) {
+                    Log.info("This test run will compare images. Reset simulator zoom.");
+                    resetSimulatorSettings();
+                } else {
+                    Log.info("This test run will not compare images. Use existing simulator settings.");
+                }
             }
         }
 

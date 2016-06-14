@@ -57,6 +57,7 @@ public class Settings {
     public static String consoleLogDir;
     public static String screenshotOutDir;
     public static String screenshotResDir;
+    public static String testAppImageFolder;
     public static String appiumLogFile;
     public static String appiumLogLevel;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
@@ -399,6 +400,10 @@ public class Settings {
         // Set test app package id
         testAppFriendlyName = getTestAppFriendlyName();
 
+        // Set testAppImageFolder
+        String testAppName = Settings.testAppName.toLowerCase().replace("-release", "");
+        testAppImageFolder = testAppName.substring(0, testAppName.indexOf("."));
+
         Log.separator();
         Log.info("Settings initialized properly:");
         Log.info("OS Type: " + OS);
@@ -423,6 +428,7 @@ public class Settings {
         Log.info("Log Output Folder: " + baseLogDir);
         Log.info("Screenshot Output Folder: " + screenshotOutDir);
         Log.info("Screenshot Resources Folder: " + screenshotResDir);
+        Log.info("TestApp Images Folder: " + testAppImageFolder);
         Log.info("TestData Base Folder: " + baseTestDataDir);
         Log.info("Appium Log File: " + appiumLogFile);
         Log.info("Appium Log Level: " + appiumLogLevel);

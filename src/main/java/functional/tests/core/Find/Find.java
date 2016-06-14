@@ -1,7 +1,7 @@
 package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.Element.Element;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
@@ -14,30 +14,30 @@ public class Find {
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String controlType, String value, boolean exactMatch) {
+    public static UIElement findByText(String controlType, String value, boolean exactMatch) {
         return findElementByLocator(Locators.findByTextLocator(controlType, value, exactMatch));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value, boolean exactMatch) {
+    public static UIElement findByText(String value, boolean exactMatch) {
         return findElementByLocator(Locators.findByTextLocator("*", value, exactMatch));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value) {
-        return (MobileElement) findElementByLocator(Locators.findByTextLocator("*", value, true));
+    public static UIElement findByText(String value) {
+        return findElementByLocator(Locators.findByTextLocator("*", value, true));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
-    public static MobileElement findByText(String value, int timeOut) {
+    public static UIElement findByText(String value, int timeOut) {
         Client.setWait(timeOut);
-        MobileElement result;
+        UIElement result;
         try {
             result = findByText(value);
         } catch (Exception e) {
@@ -50,10 +50,10 @@ public class Find {
 
     /**
      * Find an element that has some attribute with specified value
-     * Search is based on specified MobileElement
+     * Search is based on specified UIElement
      */
-    public static MobileElement findByText(MobileElement element, String value) {
-        String parentXpath = Element.getXpath(element);
+    public static UIElement findByText(UIElement element, String value) {
+        String parentXpath = element.getXpath();
         parentXpath = parentXpath.substring(2);
 
         By locator = Locators.findByTextLocator(value, true);
@@ -61,24 +61,24 @@ public class Find {
 
         String finalXpath = "//" + parentXpath + "//" + childXpath;
         Log.debug("Looking for element with following xpath:" + finalXpath);
-        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(finalXpath));
-        Log.debug("Found " + Element.getDescription(e));
+        UIElement e = (UIElement) Client.driver.findElement(By.xpath(finalXpath));
+        Log.debug("Found " + element.getDescription());
         return e;
     }
 
     /**
      * Find an element by class (UI control class)
      */
-    public static MobileElement findByType(String value) {
-        return (MobileElement) Client.driver.findElement(By.className(value));
+    public static UIElement findByType(String value) {
+        return new UIElement((MobileElement) Client.driver.findElement(By.className(value)));
     }
 
     /**
      * Find an element by class (UI control class)
      */
-    public static MobileElement findByType(String value, int timeOut) {
+    public static UIElement findByType(String value, int timeOut) {
         Client.setWait(timeOut);
-        MobileElement result;
+        UIElement result;
         try {
             result = findByType(value);
         } catch (Exception e) {
@@ -92,16 +92,16 @@ public class Find {
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator) {
-        return (MobileElement) Client.driver.findElement(locator);
+    public static UIElement findElementByLocator(By locator) {
+        return new UIElement((MobileElement) Client.driver.findElement(locator));
     }
 
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
+    public static UIElement findElementByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
         Client.setWait(timeout);
-        MobileElement result;
+        UIElement result;
         try {
             result = findElementByLocator(locator);
         } catch (Exception e) {
@@ -117,30 +117,30 @@ public class Find {
     /**
      * Find an element by locator
      */
-    public static MobileElement findElementByLocator(By locator, int timeout) {
+    public static UIElement findElementByLocator(By locator, int timeout) {
         return findElementByLocator(locator, timeout, true);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator) {
-        return (List<MobileElement>) Client.driver.findElements(locator);
+    public static List<UIElement> findElementsByLocator(By locator) {
+        return (List<UIElement>) Client.driver.findElements(locator);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator, int timeout) {
+    public static List<UIElement> findElementsByLocator(By locator, int timeout) {
         return findElementsByLocator(locator, timeout, true);
     }
 
     /**
      * Find an elements by locator
      */
-    public static List<MobileElement> findElementsByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
+    public static List<UIElement> findElementsByLocator(By locator, int timeout, boolean logErrorOnNotFound) {
         Client.setWait(timeout);
-        List<MobileElement> result;
+        List<UIElement> result;
         try {
             result = findElementsByLocator(locator);
         } catch (Exception e) {
@@ -156,11 +156,11 @@ public class Find {
     /**
      * Find parent of an element
      */
-    public static MobileElement getParent(MobileElement element) {
-        String xpathString = Element.getXpath(element) + "/..";
+    public static UIElement getParent(UIElement element) {
+        String xpathString = element.getXpath() + "/..";
         Log.debug("Looking for parent with following xpath:" + xpathString);
-        MobileElement e = (MobileElement) Client.driver.findElement(By.xpath(xpathString));
-        Log.debug("Found " + Element.getDescription(e));
+        UIElement e = (UIElement) Client.driver.findElement(By.xpath(xpathString));
+        Log.debug("Found " + element.getDescription());
         return e;
     }
 }
