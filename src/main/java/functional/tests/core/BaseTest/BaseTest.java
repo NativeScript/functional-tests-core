@@ -26,7 +26,8 @@ public abstract class BaseTest {
     private static int previousTestStatus = ITestResult.SUCCESS;
     private Device device;
 
-    public BaseTest() { }
+    public BaseTest() {
+    }
 
     public Device baseDevice(){
         return this.device;
@@ -124,6 +125,10 @@ public abstract class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void beforeMethod(Method method) throws Exception {
+        if (this.device == null){
+            this.device = new Device();
+        }
+
         Log.separator();
         Log.info("Start test: " + method.getName());
 
