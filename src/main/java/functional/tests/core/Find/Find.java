@@ -7,6 +7,7 @@ import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Find {
@@ -61,7 +62,7 @@ public class Find {
 
         String finalXpath = "//" + parentXpath + "//" + childXpath;
         Log.debug("Looking for element with following xpath:" + finalXpath);
-        UIElement e = (UIElement) Client.driver.findElement(By.xpath(finalXpath));
+        UIElement e =new UIElement((MobileElement)Client.driver.findElement(By.xpath(finalXpath)));
         Log.debug("Found " + element.getDescription());
         return e;
     }
@@ -125,7 +126,7 @@ public class Find {
      * Find an elements by locator
      */
     public static List<UIElement> findElementsByLocator(By locator) {
-        return (List<UIElement>) Client.driver.findElements(locator);
+        return convertListOfMobileElementToUIElement((List<MobileElement>) Client.driver.findElements(locator));
     }
 
     /**
@@ -159,8 +160,19 @@ public class Find {
     public static UIElement getParent(UIElement element) {
         String xpathString = element.getXpath() + "/..";
         Log.debug("Looking for parent with following xpath:" + xpathString);
-        UIElement e = (UIElement) Client.driver.findElement(By.xpath(xpathString));
+        UIElement e = new UIElement((MobileElement)Client.driver.findElement(By.xpath(xpathString)));
         Log.debug("Found " + element.getDescription());
         return e;
+    }
+
+    private static List<UIElement> convertListOfMobileElementToUIElement(List<MobileElement> list){
+
+        ArrayList<UIElement> elements = new ArrayList<>();
+
+        for (MobileElement element: list){
+            elements.add(new UIElement(element));
+        }
+
+        return elements;
     }
 }
