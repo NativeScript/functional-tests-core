@@ -178,9 +178,10 @@ public abstract class BaseTest {
 
         if(this.device == null){
             Log.error("The device is null");
+        } else{
+            this.device.writeConsoleLogToFile(testCase);
         }
         // Write console log
-        this.device.writeConsoleLogToFile(testCase);
 
         // Report results
         previousTestStatus = result.getStatus();

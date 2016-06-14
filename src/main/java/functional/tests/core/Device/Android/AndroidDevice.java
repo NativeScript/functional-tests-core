@@ -150,7 +150,6 @@ public class AndroidDevice implements IDevice {
         }
     }
 
-
     @Override
     public void verifyAppRunning(String deviceId, String appId) throws AppiumException, IOException {
         int startUpTimeOut = 10;
