@@ -176,6 +176,9 @@ public abstract class BaseTest {
         // Get test case name
         String testCase = result.getMethod().getMethodName();
 
+        if(this.device == null){
+            Log.error("The device is null");
+        }
         // Write console log
         this.device.writeConsoleLogToFile(testCase);
 
