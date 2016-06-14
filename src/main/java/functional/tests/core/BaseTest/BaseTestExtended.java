@@ -13,6 +13,8 @@ import java.util.Map;
 
 public abstract class BaseTestExtended extends BaseTest {
     private int imageCounter = 1;
+    private int defaultWaitTime = 1000;
+    private double minPercentTolerant = 0.001;
     private Map<String, Boolean> imagesResults;
 
     @BeforeMethod(alwaysRun = true)
@@ -22,30 +24,27 @@ public abstract class BaseTestExtended extends BaseTest {
     }
 
     public void compareElements(UIElement element, int timeOut) throws Exception {
-        this.compareElements(element, timeOut, 1000);
+        this.compareElements(element, timeOut, defaultWaitTime, Integer.MAX_VALUE, minPercentTolerant);
     }
 
     public void compareElements(UIElement element, int timeOut, double percentTolerance) throws Exception {
-        this.compareElements(element, timeOut, 1000, 0, percentTolerance);
+        this.compareElements(element, timeOut, defaultWaitTime, Integer.MAX_VALUE, percentTolerance);
     }
 
     public void compareElements(UIElement element, int timeOut, int waitTime) throws Exception {
-        String testName = this.imageCounter <= 1 ? this.getTestName() : this.getTestName() + "_" + this.imageCounter;
-        boolean result = ImageVerification.compareElements(element, testName, timeOut, 1000, 0, 0);
-        this.imagesResults.put(testName, result);
-        this.imageCounter++;
+        this.compareElements(element, timeOut, waitTime,Integer.MAX_VALUE, minPercentTolerant);
     }
 
     public void compareScreens(int timeOut) throws Exception {
-        this.compareScreens(timeOut, 1000, 0, 0);
+        this.compareScreens(timeOut, defaultWaitTime, 0, 0);
     }
 
     public boolean compareScreens(int timeOut, double percentTolerance) throws Exception {
-        return compareScreens(timeOut, 1000, Integer.MAX_VALUE, percentTolerance);
+        return compareScreens(timeOut, defaultWaitTime, Integer.MAX_VALUE, percentTolerance);
     }
 
     public boolean compareScreens(int timeOut, int wait, double percentTolerance) throws Exception {
-        return compareScreens(timeOut, 1000, Integer.MAX_VALUE, percentTolerance);
+        return compareScreens(timeOut, wait, Integer.MAX_VALUE, percentTolerance);
     }
 
     public void clearImagesResults() {
