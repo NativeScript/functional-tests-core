@@ -213,7 +213,7 @@ public abstract class BaseTest {
     }
 
     public static String getAppName() {
-        String appName = Settings.testAppName;
+        String appName = Settings.testAppImageFolder;
         return appName;
     }
 }
