@@ -2,13 +2,17 @@ package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.interactions.Action;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class Find {
 
@@ -62,7 +66,7 @@ public class Find {
 
         String finalXpath = "//" + parentXpath + "//" + childXpath;
         Log.debug("Looking for element with following xpath:" + finalXpath);
-        UIElement e =new UIElement((MobileElement)Client.driver.findElement(By.xpath(finalXpath)));
+        UIElement e = new UIElement((MobileElement) Client.driver.findElement(By.xpath(finalXpath)));
         Log.debug("Found " + element.getDescription());
         return e;
     }
@@ -160,16 +164,27 @@ public class Find {
     public static UIElement getParent(UIElement element) {
         String xpathString = element.getXpath() + "/..";
         Log.debug("Looking for parent with following xpath:" + xpathString);
-        UIElement e = new UIElement((MobileElement)Client.driver.findElement(By.xpath(xpathString)));
+        UIElement e = new UIElement((MobileElement) Client.driver.findElement(By.xpath(xpathString)));
         Log.debug("Found " + element.getDescription());
         return e;
     }
 
-    private static List<UIElement> convertListOfMobileElementToUIElement(List<MobileElement> list){
+    public static UIElement by(String value, int waitForElementExists) {
+        if (Settings.platform == PlatformType.Andorid) {
+            return findByText(value, waitForElementExists);///Locators.findByTextLocator("*", value, true)
+        }
+        if (Settings.platform == PlatformType.iOS) {
+            return findElementByLocator(By.id(value), waitForElementExists);
+        } else {
+            return null;
+        }
+    }
+
+    private static List<UIElement> convertListOfMobileElementToUIElement(List<MobileElement> list) {
 
         ArrayList<UIElement> elements = new ArrayList<>();
 
-        for (MobileElement element: list){
+        for (MobileElement element : list) {
             elements.add(new UIElement(element));
         }
 
