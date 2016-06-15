@@ -24,13 +24,14 @@ public abstract class BaseTest {
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static int previousTestStatus = ITestResult.SUCCESS;
+    private static Device staticDevice;
     private Device device;
 
     public BaseTest() {
     }
 
-    public Device baseDevice(){
-        return this.device;
+    public static Device baseDevice(){
+        return staticDevice;
     }
 
     private static void checkAppiumLogsForCrash() {
@@ -52,6 +53,7 @@ public abstract class BaseTest {
         Log.initLogging();
         Settings.initSettings();
         this.device = new Device();
+        staticDevice = this.device;
 
         if (!Settings.debug) {
             this.device.stopDevice();
