@@ -59,6 +59,10 @@ public abstract class BaseTestExtended extends BaseTest {
     }
 
     public String getTestName() {
+        return getTestNameToWriteFile();
+    }
+
+    public static String getTestNameToWriteFile() {
         StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
 
         for (int i = 0; i < stackTraces.length; i++) {

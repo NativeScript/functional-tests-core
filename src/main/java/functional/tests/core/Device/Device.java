@@ -1,5 +1,6 @@
 package functional.tests.core.Device;
 
+import functional.tests.core.BaseTest.BaseTestExtended;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
@@ -14,12 +15,12 @@ import java.util.concurrent.TimeoutException;
 public class Device {
     private IDevice _device;
 
-    private static List<String> uninstallAppsList() {
-        return Arrays.asList("org.nativescript", "com.telerik");
-    }
-
     public Device() {
         this._device = DeviceManager.getDevice();
+    }
+
+    private static List<String> uninstallAppsList() {
+        return Arrays.asList("org.nativescript", "com.telerik");
     }
 
     public IDevice getDevice() {
@@ -89,7 +90,7 @@ public class Device {
     }
 
     private String getLogContent() throws IOException {
-        String testName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        String testName = BaseTestExtended.getTestNameToWriteFile();
         this.writeConsoleLogToFile(testName);
         String logContent = this._device.getContent(testName);
 
