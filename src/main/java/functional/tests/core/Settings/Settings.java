@@ -402,6 +402,9 @@ public class Settings {
 
         // Set testAppImageFolder
         String testAppName = Settings.testAppName.toLowerCase().replace("-release", "");
+        if (deviceType == DeviceType.Simulator) {
+            testAppName = Settings.testAppArchive.toLowerCase().replace("-release", "");
+        }
         testAppImageFolder = testAppName.substring(0, testAppName.indexOf("."));
 
         Log.separator();
