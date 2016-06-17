@@ -248,10 +248,8 @@ public class Settings {
                     }
                 }
             }
-        } else if (Settings.deviceType == DeviceType.Simulator) {
-            // TODO: Implement it;
-        } else if (Settings.deviceType == DeviceType.iOS) {
-            // TODO: Implement it;
+        } else {
+            appId = Settings.testAppName;
         }
         return appId;
     }

@@ -207,7 +207,7 @@ public class App {
      * Run app in background for X seconds *
      */
     public static void runInBackground(int seconds) {
-        String appName = Settings.packageId.substring(Settings.packageId.lastIndexOf(".") + 1);
+        String appName = Settings.testAppFriendlyName;
         runInBackground(seconds, appName);
     }
 
