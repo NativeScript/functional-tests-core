@@ -25,6 +25,7 @@ public class ImageVerification {
     private static final int DEFAULT_WAIT_TIME = 1000;
     private static final int MIN_TIMEOUT = 1;
     private static final VerificationType VERIFICATION_TYPE = Settings.imageVerificationType;
+    private static final VerificationType VERIFICATION_TYPE_SHOULD_LOG_IMAGES_RESULTS = Settings.imageVerificationType;
 
     public static boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return verifyImages(BaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
@@ -186,7 +187,9 @@ public class ImageVerification {
                 ImageVerificationResult result = null;
                 while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
                     result = compareImages(actualImage.call(), expectedImage, ignoreHeader);
-                    //Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime));
+                    if (Settings.logImageVerificationResults) {
+                        Log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime + "_" + imageName));
+                    }
                     if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                         String toleranceInfo = String.format("Percent tolerance: %.2f %% and pixel tolerance: %s", result.diffPercent, "" + result.diffPixels);
                         String errorString = imageName + " does not look OK. Diff: " + String.format("%.2f %% and pixelDiff: %s", result.diffPercent, "" + result.diffPixels) + ". Waiting...";

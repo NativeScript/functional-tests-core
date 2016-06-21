@@ -37,6 +37,7 @@ public class Settings {
     public static boolean takeScreenShotAfterTest;
     public static boolean acceptAlerts;
     public static VerificationType imageVerificationType;
+    public static boolean logImageVerificationResults;
     public static int shortTimeout;
     public static int defaultTimeout;
     public static int deviceBootTimeout;
@@ -248,8 +249,10 @@ public class Settings {
                     }
                 }
             }
-        } else {
-            appId = Settings.testAppName;
+        } else if (Settings.deviceType == DeviceType.Simulator) {
+            // TODO: Implement it;
+        } else if (Settings.deviceType == DeviceType.iOS) {
+            // TODO: Implement it;
         }
         return appId;
     }
@@ -290,6 +293,8 @@ public class Settings {
         simulatorType = properties.getProperty("simulatorType");
         appiumVersion = properties.getProperty("appiumVersion");
         appiumLogLevel = properties.getProperty("appiumLogLevel");
+        logImageVerificationResults = properties.getProperty("logImageVerificationResults") != null ?
+                new Boolean(properties.getProperty("logImageVerificationResults")) : false;
 
         // Set restartApp
         String restartAppString = properties.getProperty("restartApp");
@@ -440,6 +445,7 @@ public class Settings {
         Log.info("(iOS Only) Auto Accept Alerts: " + acceptAlertsString);
         Log.info("(iOS Simulator Only) Simulator Type: " + simulatorType);
         Log.info("(iOS Simulator Only) TestApp Archive: " + testAppArchive);
+        Log.info("Should log image verification results: " + logImageVerificationResults);
         Log.separator();
     }
 
