@@ -1,12 +1,12 @@
-package functional.tests.core.Screenshot;
+package functional.tests.core.ImageProcessing;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Exceptions.AppiumException;
+import functional.tests.core.ImageProcessing.ImageComparer.ImageVerificationResult;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
-import io.appium.java_client.MobileElement;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 
@@ -20,7 +20,7 @@ public class ImageUtils {
     /**
      * Get current screen.
      */
-    protected static BufferedImage getScreen() {
+    public static BufferedImage getScreen() {
         try {
             File screen = Client.driver.getScreenshotAs(OutputType.FILE);
             return ImageIO.read(screen);
@@ -34,7 +34,7 @@ public class ImageUtils {
      * Get image from file.
      * Returns null if image does not exist.
      */
-    protected static BufferedImage getImageFromFile(String filePath) {
+    public static BufferedImage getImageFromFile(String filePath) {
         File file = new File(filePath);
         Log.debug("Read expected image from: " + file.getAbsolutePath());
         try {
@@ -48,7 +48,7 @@ public class ImageUtils {
     /**
      * Save buffered image.
      */
-    protected static void saveBufferedImage(BufferedImage img, File file)
+    public static void saveBufferedImage(BufferedImage img, File file)
             throws IOException {
         Log.debug("Save Picture: " + file.getAbsolutePath());
         ImageIO.write(img, "png", file);
@@ -57,7 +57,7 @@ public class ImageUtils {
     /**
      * Save buffered image.
      */
-    protected static void saveBufferedImage(BufferedImage img, String fileName)
+    public static void saveBufferedImage(BufferedImage img, String fileName)
             throws IOException {
         File f = new File(Settings.screenshotOutDir + File.separator + fileName);
         Log.debug("Save Picture: " + f.getAbsolutePath());
@@ -86,7 +86,7 @@ public class ImageUtils {
     /**
      * Get MobileElement screenshot.
      */
-    protected static BufferedImage getElementImage(UIElement element) {
+    public static BufferedImage getElementImage(UIElement element) {
         BufferedImage img = getScreen();
 
         int screenWidth = Client.driver.manage().window().getSize().width;
@@ -116,9 +116,30 @@ public class ImageUtils {
     /**
      * Save MobileElement buffered image.
      */
-    protected static void saveElementImage(UIElement element, String fileName)
+    public static void saveElementImage(UIElement element, String fileName)
             throws IOException {
         BufferedImage img = getElementImage(element);
         saveBufferedImage(img, fileName);
+    }
+
+    public static String getImageBaseFolder(String appName, String... folders) {
+        String expectedImageBaseFolderPath = Settings.screenshotResDir + File.separator + appName + File.separator + Settings.deviceName;
+        if (folders != null && folders.length > 0) {
+            for (String folder :
+                    folders) {
+                expectedImageBaseFolderPath += File.separator + folder;
+            }
+        }
+        Log.info("Expected image base folder path: " + expectedImageBaseFolderPath);
+        FileSystem.ensureFolderExists(expectedImageBaseFolderPath);
+
+        return expectedImageBaseFolderPath;
+    }
+
+    public static String getImageFullName(String imageBaseFolderPath, String imageName) {
+        String expectedImageFullName = imageBaseFolderPath + File.separator + imageName + ".png";
+        Log.info("Expected image full name: " + expectedImageFullName);
+
+        return expectedImageFullName;
     }
 }

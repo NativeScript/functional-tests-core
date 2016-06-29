@@ -1,9 +1,7 @@
 package functional.tests.core.BaseTest;
 
-import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.Screenshot.ImageVerification;
-import org.openqa.selenium.Point;
+import functional.tests.core.ImageProcessing.ImageComparer.ImageVerification;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

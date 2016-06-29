@@ -1,10 +1,11 @@
-package functional.tests.core.Screenshot;
+package functional.tests.core.ImageProcessing.ImageComparer;
 
 import functional.tests.core.BaseTest.BaseTest;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.ImageVerificationException;
 import functional.tests.core.Find.Wait;
+import functional.tests.core.ImageProcessing.ImageUtils;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
@@ -166,8 +167,8 @@ public class ImageVerification {
             return true;
         }
 
-        String expectedImageBasePath = Settings.screenshotResDir + File.separator + appName + File.separator + Settings.deviceName;
-        String expectedImagePath = expectedImageBasePath + File.separator + imageName + ".png";
+        String expectedImageBasePath = ImageUtils.getImageBaseFolder(appName);
+        String expectedImagePath = ImageUtils.getImageFullName(expectedImageBasePath, imageName);
 
         if (VERIFICATION_TYPE == VerificationType.FirstTimeCapture) {
             saveImage(expectedImagePath, actualImage, expectedImageBasePath, "Image comparison skipped. Actual images will be also saved at expected image location.");

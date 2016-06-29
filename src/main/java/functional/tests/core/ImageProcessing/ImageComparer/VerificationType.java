@@ -1,4 +1,4 @@
-package functional.tests.core.Screenshot;
+package functional.tests.core.ImageProcessing.ImageComparer;
 
 /**
  * Types of image verification

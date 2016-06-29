@@ -1,4 +1,4 @@
-package functional.tests.core.Image;
+package functional.tests.core.ImageProcessing.ImageMapping;
 
 import functional.tests.core.Log.Log;
 import org.apache.commons.io.IOUtils;

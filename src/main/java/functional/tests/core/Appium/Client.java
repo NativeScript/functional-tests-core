@@ -19,6 +19,14 @@ public class Client {
 
     public static AppiumDriver<?> driver;
 
+    public Client(){
+
+    }
+
+    public AppiumDriver<?> getDriver(){
+        return driver;
+    }
+
     public static void initAppiumDriver() {
 
         Log.info("Start Appium client...");
@@ -71,6 +79,7 @@ public class Client {
 
         // Set default timeout
         driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
+
         Log.info("Appium client started.");
     }
 

@@ -8,7 +8,7 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.Archive;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
-import functional.tests.core.Screenshot.VerificationType;
+import functional.tests.core.ImageProcessing.ImageComparer.VerificationType;
 import io.appium.java_client.remote.AutomationName;
 import org.apache.commons.io.FileUtils;
 
