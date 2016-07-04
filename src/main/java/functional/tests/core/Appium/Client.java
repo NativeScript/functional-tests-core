@@ -35,7 +35,7 @@ public class Client {
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Settings.deviceName);
         capabilities.setCapability(MobileCapabilityType.APP, Settings.baseTestAppDir + File.separator + Settings.testAppName);
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, Settings.deviceBootTimeout);
-        capabilities.setCapability(MobileCapabilityType.LAUNCH_TIMEOUT, true);
+//        capabilities.setCapability(MobileCapabilityType.LAUNCH_TIMEOUT, true);
 
         // Set UDID for real devices
         if ((Settings.deviceType == DeviceType.iOS) || (Settings.deviceType == DeviceType.Android)) {
@@ -46,8 +46,8 @@ public class Client {
         if (Settings.platform == PlatformType.Andorid) {
             try {
                 capabilities.setCapability("noSign", "true");
-                capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
-                capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
+//                capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
+//                capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
                 driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);

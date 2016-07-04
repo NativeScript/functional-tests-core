@@ -47,30 +47,30 @@ public class Server {
         // Appium Version Manager is not available on Windows, so tests will use the global installation
         AppiumServiceBuilder serviceBuilder = new AppiumServiceBuilder()
                 .withLogFile(logFile)
-                .usingAnyFreePort()
-                .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName)
-                .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout));
+                .usingAnyFreePort();
+//                .withArgument(GeneralServerFlag.AUTOMATION_NAME, Settings.automationName)
+//                .withArgument(GeneralServerFlag.COMMAND_TIMEOUT, String.valueOf(Settings.deviceBootTimeout));
 
         // This is required to safe simulator restart
-        if (Settings.deviceType == DeviceType.Simulator) {
-            serviceBuilder.withArgument(GeneralServerFlag.NO_RESET);
-        }
+//        if (Settings.deviceType == DeviceType.Simulator) {
+//            serviceBuilder.withArgument(GeneralServerFlag.NO_RESET);
+//        }
 
         // Set Android Emulator specific Apppium Server arguments
-        if (Settings.deviceType == DeviceType.Emulator) {
-
-            // In debug mode emulator is not started with default method
-            if (Settings.debug) {
-                serviceBuilder
-                        .withArgument(AndroidServerFlag.AVD, Settings.deviceName)
-                        .withArgument(AndroidServerFlag.AVD_ARGS, Settings.emulatorOptions);
-            }
-        }
+//        if (Settings.deviceType == DeviceType.Emulator) {
+//
+//            // In debug mode emulator is not started with default method
+//            if (Settings.debug) {
+//                serviceBuilder
+//                        .withArgument(AndroidServerFlag.AVD, Settings.deviceName)
+//                        .withArgument(AndroidServerFlag.AVD_ARGS, Settings.emulatorOptions);
+//            }
+//        }
 
         // Set iOS specific Apppium Server arguments
         if (Settings.platform == PlatformType.iOS) {
             serviceBuilder.withStartUpTimeOut(Settings.deviceBootTimeout, TimeUnit.SECONDS);
-            serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
+//            serviceBuilder.withArgument(IOSServerFlag.SHOW_IOS_LOG);
         }
 
         // On OSX use appium version manager
