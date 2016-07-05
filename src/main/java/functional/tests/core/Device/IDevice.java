@@ -1,11 +1,7 @@
 package functional.tests.core.Device;
 
-import functional.tests.core.Device.Android.Adb;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
-import functional.tests.core.Settings.Settings;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.List;

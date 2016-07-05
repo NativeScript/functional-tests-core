@@ -7,17 +7,16 @@ import io.appium.java_client.TouchAction;
 import org.opencv.core.Point;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.testng.Assert;
-import sun.misc.Cleaner;
 
 public class Image {
 
-    private final Client client;
-    public String rotation = "notSet";
     public static final int SHORT_SLEEP = 1;
     public static final int LONG_SLEEP = 10;
     public static int counter = 0;
+    private final Client client;
+    public String rotation = "notSet";
 
-    public Image(Client client){
+    public Image(Client client) {
         this.client = client;
     }
 
