@@ -3,7 +3,7 @@ package functional.tests.core.ImageProcessing;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Exceptions.AppiumException;
-import functional.tests.core.ImageProcessing.ImageComparer.ImageVerificationResult;
+import functional.tests.core.ImageProcessing.ImageVerification.ImageVerificationResult;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;

@@ -3,7 +3,7 @@ package functional.tests.core.Log;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.ImageProcessing.ImageUtils;
-import functional.tests.core.ImageProcessing.ImageComparer.ImageVerificationResult;
+import functional.tests.core.ImageProcessing.ImageVerification.ImageVerificationResult;
 import functional.tests.core.Settings.Settings;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;

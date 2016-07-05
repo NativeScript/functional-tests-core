@@ -1,4 +1,4 @@
-package functional.tests.core.ImageProcessing.ImageComparer;
+package functional.tests.core.ImageProcessing.ImageVerification;
 
 import java.awt.image.BufferedImage;
 

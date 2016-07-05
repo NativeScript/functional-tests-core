@@ -1,6 +1,6 @@
-package functional.tests.core.ImageProcessing.ImageComparer;
+package functional.tests.core.ImageProcessing.ImageVerification;
 
-import functional.tests.core.BaseTest.BaseTest;
+import functional.tests.core.BaseTest.UIBaseTest;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.ImageVerificationException;
@@ -29,7 +29,7 @@ public class ImageVerification {
     private static final VerificationType VERIFICATION_TYPE_SHOULD_LOG_IMAGES_RESULTS = Settings.imageVerificationType;
 
     public static boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return verifyImages(BaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+        return verifyImages(UIBaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
@@ -41,7 +41,7 @@ public class ImageVerification {
      * Verify current screen
      **/
     public static boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return verifyImages(BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
+        return verifyImages(UIBaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
@@ -72,7 +72,7 @@ public class ImageVerification {
             public BufferedImage call() throws Exception {
                 return ImageUtils.getElementImage(element);
             }
-        }, BaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
+        }, UIBaseTest.getAppName(), expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ImageVerification {
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
+        }, UIBaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
     }
 
 
@@ -143,7 +143,7 @@ public class ImageVerification {
             public BufferedImage call() throws Exception {
                 return ImageUtils.getScreen();
             }
-        }, BaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, IGNORE_HEADER);
+        }, UIBaseTest.getAppName(), pageName, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, IGNORE_HEADER);
     }
 
     private static void assertImages(Callable<BufferedImage> element, String appName, String imageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime, boolean ignoreHeader) throws Exception {

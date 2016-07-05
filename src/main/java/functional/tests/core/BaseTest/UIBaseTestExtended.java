@@ -1,7 +1,7 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.ImageProcessing.ImageComparer.ImageVerification;
+import functional.tests.core.ImageProcessing.ImageVerification.ImageVerification;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BaseTestExtended extends BaseTest {
+public abstract class UIBaseTestExtended extends UIBaseTest {
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
     private double minPercentTolerant = 0.001;

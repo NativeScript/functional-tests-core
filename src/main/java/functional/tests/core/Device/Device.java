@@ -1,6 +1,6 @@
 package functional.tests.core.Device;
 
-import functional.tests.core.BaseTest.BaseTestExtended;
+import functional.tests.core.BaseTest.UIBaseTestExtended;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
@@ -90,7 +90,7 @@ public class Device {
     }
 
     private String getLogContent() throws IOException {
-        String testName = BaseTestExtended.getTestNameToWriteFile();
+        String testName = UIBaseTestExtended.getTestNameToWriteFile();
         this.writeConsoleLogToFile(testName);
         String logContent = this._device.getContent(testName);
 
