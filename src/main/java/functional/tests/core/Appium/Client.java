@@ -22,8 +22,8 @@ public class Client {
 
         // Verify service
         if (Server.service == null || !Server.service.isRunning()) {
-            Log.fatal("Appium server failed to start!");
-            throw new RuntimeException("Appium server failed to start!");
+            Log.fatal("Appium service is null or not running!");
+            throw new RuntimeException("Appium service is null or not running!");
         }
 
         // Load capabilities
@@ -52,8 +52,13 @@ public class Client {
         }
 
         // Set default timeout
-        driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
-        Log.info("Appium client started.");
+        if (driver != null) {
+            driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
+            Log.info("Appium client started.");
+        } else {
+            Log.fatal("Driver is null! Appium client failed to start!");
+            throw new RuntimeException("Appium client failed to start!");
+        }
     }
 
     public static void stopAppiumDriver() {
