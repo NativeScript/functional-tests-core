@@ -2,7 +2,7 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
-import functional.tests.core.Device.IDeviceControler;
+import functional.tests.core.Device.IDeviceController;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeoutException;
 public class AndroidDevice implements IDevice {
 
     @Override
-    public IDeviceControler getDeviceController() {
+    public IDeviceController getDeviceController() {
         return null;
     }
 

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 public interface IDevice {
 
-    IDeviceControler getDeviceController();
+    IDeviceController getDeviceController();
 
     void installApp(String appName);
 

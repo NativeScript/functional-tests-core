@@ -3,10 +3,7 @@ package functional.tests.core.Device;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-/**
- * Created by tseno on 10-Jun-16.
- */
-public interface IDeviceControler {
+public interface IDeviceController {
 
     // private static String runAdbCommand(String command) {
     String runAdbCommand(String command);

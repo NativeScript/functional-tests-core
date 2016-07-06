@@ -24,8 +24,6 @@ public class Capabilities {
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Settings.platformVersion);
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Settings.deviceName);
         capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, Settings.deviceBootTimeout);
-        capabilities.setCapability(MobileCapabilityType.APP, Settings.baseTestAppDir + File.separator + Settings.testAppName);
-
         capabilities.setCapability(MobileCapabilityType.FULL_RESET, false);
         //capabilities.setCapability(MobileCapabilityType.ORIENTATION, Settings.orientation);
 
@@ -33,10 +31,18 @@ public class Capabilities {
             capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
         }
 
+        // On Emulator Api17/8 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
+        // We count on AndroidMobileCapabilityType.APP_PACKAGE && AndroidMobileCapabilityType.APP_ACTIVITY to launch the app when installed.
+        if (Settings.deviceType == DeviceType.Emulator && (Settings.platformVersion.equalsIgnoreCase("4.2") || Settings.platformVersion.equalsIgnoreCase("4.3"))) {
+            // Do not set MobileCapabilityType.APP capability.
+        } else {
+            capabilities.setCapability(MobileCapabilityType.APP, Settings.baseTestAppDir + File.separator + Settings.testAppName);
+        }
+
         // Android
         if (Settings.platform == PlatformType.Andorid) {
-            // capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, Settings.defaultActivity);
-            // capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, Settings.packageId);
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, Settings.packageId);
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, Settings.defaultActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
             // capabilities.setCapability(AndroidMobileCapabilityType.INTENT_ACTION, "android.intent.action.MAIN");

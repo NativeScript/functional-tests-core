@@ -7,13 +7,14 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 
 public class DeviceManager {
+
     public static IDevice getDevice() {
         if (Settings.platform == PlatformType.iOS) {
             return new iOSDevice();
         } else if (Settings.platform == PlatformType.Andorid) {
             return new AndroidDevice();
         } else {
-            Log.error(String.format("The device for %s platform is not implemented", Settings.platform));
+            Log.error(String.format("The device for %s platform is not implemented.", Settings.platform));
             throw new UnsupportedOperationException();
         }
     }

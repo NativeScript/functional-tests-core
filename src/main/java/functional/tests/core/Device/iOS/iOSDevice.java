@@ -2,18 +2,15 @@ package functional.tests.core.Device.iOS;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
-import functional.tests.core.Device.IDeviceControler;
+import functional.tests.core.Device.IDeviceController;
 import functional.tests.core.Enums.DeviceType;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
-import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.logging.LogEntry;
-import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class iOSDevice implements IDevice {
-    private IDeviceControler _deviceController;
+    private IDeviceController _deviceController;
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
     private static String simulatorGuid = null;
 
@@ -31,7 +28,7 @@ public class iOSDevice implements IDevice {
     }
 
     @Override
-    public IDeviceControler getDeviceController() {
+    public IDeviceController getDeviceController() {
         return this._deviceController;
     }
 
