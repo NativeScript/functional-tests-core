@@ -2,7 +2,6 @@ package functional.tests.core.Device.iOS;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
-import functional.tests.core.Device.IDeviceController;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
@@ -19,21 +18,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class iOSDevice implements IDevice {
-    private IDeviceController _deviceController;
+
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
     private static String simulatorGuid = null;
 
-    public iOSDevice() {
-        //this._deviceController = new Simctl();
+    private static void copySimulatorSystemLog() {
+        if (Settings.deviceType == DeviceType.Simulator) {
+            if (Settings.deviceId != null) {
+                String command = "cp -f ~/Library/Logs/CoreSimulator/" + Settings.deviceId + "/system.log " + iOSDevice.simulatorLogPath;
+                Log.info(command);
+                OSUtils.runProcess(command);
+            } else {
+                Log.error("simulatorGuid is null. Debug mode might be enabled.");
+            }
+        }
+    }
+
+    private static void uninstallApp(String appId) {
+        String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
+        if (uninstallResult.contains("Complete")) {
+            Log.info(appId + " successfully uninstalled.");
+        } else {
+            Log.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+        }
+    }
+
+    private static List<String> getInstalledApps() {
+        String rowData = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -l");
+        String trimData = rowData.replace("package:", "");
+        String[] rowList = trimData.split("\\r?\\n");
+        List<String> list = new ArrayList<>();
+        for (String item : rowList) {
+            if (item.contains(".") && item.contains("-")) {
+                String rowAppId = item.replace(" ", "");
+                String appId = rowAppId.split("-")[0];
+                list.add(appId);
+            }
+        }
+        return list;
     }
 
     @Override
-    public IDeviceController getDeviceController() {
-        return this._deviceController;
-    }
-
-    @Override
-    public void installApp(String appName) {
+    public void installApp(String appName, String nullPackageId) {
         String appPath = Settings.baseTestAppDir + File.separator + appName;
         String result = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -i " + appPath);
         if (result.contains("Complete")) {
@@ -138,7 +164,7 @@ public class iOSDevice implements IDevice {
             // In older appium version installation of test app is not stable
             // installApp method will deploy with ideviceinstaller
             if (Settings.platformVersion.contains("7")) {
-                this.installApp(Settings.testAppName);
+                this.installApp(Settings.testAppName, null);
             }
         } else {
             String command = "xcrun simctl erase " + Settings.deviceId;
@@ -231,41 +257,5 @@ public class iOSDevice implements IDevice {
     @Override
     public String getStartupTime(String appId) throws IOException {
         return "";
-    }
-
-    private static void copySimulatorSystemLog() {
-        if (Settings.deviceType == DeviceType.Simulator) {
-            if (Settings.deviceId != null) {
-                String command = "cp -f ~/Library/Logs/CoreSimulator/" + Settings.deviceId + "/system.log " + iOSDevice.simulatorLogPath;
-                Log.info(command);
-                OSUtils.runProcess(command);
-            } else {
-                Log.error("simulatorGuid is null. Debug mode might be enabled.");
-            }
-        }
-    }
-
-    private static void uninstallApp(String appId) {
-        String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -U " + appId);
-        if (uninstallResult.contains("Complete")) {
-            Log.info(appId + " successfully uninstalled.");
-        } else {
-            Log.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
-        }
-    }
-
-    private static List<String> getInstalledApps() {
-        String rowData = OSUtils.runProcess("ideviceinstaller -u " + Settings.deviceId + " -l");
-        String trimData = rowData.replace("package:", "");
-        String[] rowList = trimData.split("\\r?\\n");
-        List<String> list = new ArrayList<>();
-        for (String item : rowList) {
-            if (item.contains(".") && item.contains("-")) {
-                String rowAppId = item.replace(" ", "");
-                String appId = rowAppId.split("-")[0];
-                list.add(appId);
-            }
-        }
-        return list;
     }
 }

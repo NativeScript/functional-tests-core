@@ -35,7 +35,7 @@ public class Adb {
 
     private static String runAdbCommand(String deviceId, String command, boolean waitFor) {
         String adbCommand = adbPath + " -s " + deviceId + " " + command;
-        String output = OSUtils.runProcess(waitFor, 10 * 60, adbCommand);
+        String output = OSUtils.runProcess(waitFor, Settings.defaultTimeout * 5, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
             output = OSUtils.runProcess(adbCommand);
@@ -113,9 +113,9 @@ public class Adb {
         Log.info(output);
 
         appInstalled = isAppInstalled(packageId);
-        if (appInstalled) {
-            Log.error(apkPath + " failed to install!");
-            throw new IOException(apkPath + " failed to install!");
+        if (!appInstalled) {
+            Log.error("Failed to install" + apkPath + "!");
+            throw new IOException("Failed to install" + apkPath + "!");
         }
     }
 

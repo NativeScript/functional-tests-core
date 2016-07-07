@@ -9,6 +9,7 @@ import functional.tests.core.Settings.Settings;
 public class DeviceManager {
 
     public static IDevice getDevice() {
+
         if (Settings.platform == PlatformType.iOS) {
             return new iOSDevice();
         } else if (Settings.platform == PlatformType.Andorid) {

@@ -9,9 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 public interface IDevice {
 
-    IDeviceController getDeviceController();
-
-    void installApp(String appName);
+    void installApp(String appName, String packageId) throws IOException;
 
     void initDevice() throws DeviceException, TimeoutException;
 

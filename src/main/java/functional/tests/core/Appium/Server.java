@@ -13,6 +13,7 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
@@ -37,41 +38,39 @@ public class Server {
                 .withLogFile(logFile)
                 .usingAnyFreePort();
 
-        // TODO: Uncoment and extract before merge it!
-        // On OSX use AVM
+        // On OSX use appium version manager
         if (Settings.OS == OSType.MacOS) {
             // Get appium path via appium-version-manager
-//            String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
-//            // If appium is not installed try to install it
-//            if (appiumPath.contains("not installed")) {
-//                Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
-//                String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
-//                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
-//                    String error = "Failed to install appium. Error: " + installAppium;
-//                    Log.fatal(error);
-//                    throw new AppiumException(error);
-//                } else if (installAppium.contains("installed" + Settings.appiumVersion)) {
-//                    Log.info("Appium " + Settings.appiumVersion + " installed.");
-//                }
-//                appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
-//            }
-//
-//            String[] appiumPathLines = appiumPath.split("\\r?\\n");
-//            Arrays.asList(appiumPathLines);
-//            for (String line : appiumPathLines) {
-//                if (line.contains("avm")) {
-//                    appiumPath = line;
-//                }
-//            }
+            String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
+            // If appium is not installed try to install it
+            if (appiumPath.contains("not installed")) {
+                Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
+                String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
+                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
+                    String error = "Failed to install appium. Error: " + installAppium;
+                    Log.fatal(error);
+                    throw new AppiumException(error);
+                } else if (installAppium.contains("installed" + Settings.appiumVersion)) {
+                    Log.info("Appium " + Settings.appiumVersion + " installed.");
+                }
+                appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
+            }
 
-            String appium = "/usr/local/bin/appium";
-            File appiumExecutable = new File(appium);
+            String[] appiumPathLines = appiumPath.split("\\r?\\n");
+            Arrays.asList(appiumPathLines);
+            for (String line : appiumPathLines) {
+                if (line.contains("avm")) {
+                    appiumPath = line;
+                }
+            }
+
+            File appiumExecutable = new File(appiumPath);
             if (!appiumExecutable.exists()) {
-                String error = "Appium does not exist at: " + appium;
+                String error = "Appium does not exist at: " + appiumPath;
                 Log.fatal(error);
                 throw new AppiumException(error);
             } else {
-                Log.info("Appium Executable: " + appium);
+                Log.info("Appium Executable: " + appiumPath);
                 serviceBuilder.withAppiumJS(appiumExecutable);
             }
         }

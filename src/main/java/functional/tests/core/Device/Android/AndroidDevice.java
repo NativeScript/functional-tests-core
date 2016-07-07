@@ -2,7 +2,6 @@ package functional.tests.core.Device.Android;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Device.IDevice;
-import functional.tests.core.Device.IDeviceController;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
@@ -24,14 +23,33 @@ import java.util.concurrent.TimeoutException;
 
 public class AndroidDevice implements IDevice {
 
-    @Override
-    public IDeviceController getDeviceController() {
-        return null;
+    private static boolean available(int port) {
+        Log.debug("--------------Testing port " + port);
+        Socket s = null;
+        try {
+            s = new Socket("localhost", port);
+
+            // If the code makes it this far without an exception it means
+            // something is using the port and has responded.
+            Log.debug("--------------Port " + port + " is not available");
+            return false;
+        } catch (IOException e) {
+            Log.debug("--------------Port " + port + " is available");
+            return true;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    throw new RuntimeException("You should handle this error.", e);
+                }
+            }
+        }
     }
 
     @Override
-    public void installApp(String appName) {
-        Log.warn("AndroidDevice.installApp method is not implemented");
+    public void installApp(String testAppName, String packageId) throws IOException {
+        Adb.installApp(testAppName, packageId);
     }
 
     @Override
@@ -244,30 +262,6 @@ public class AndroidDevice implements IDevice {
             return Adb.isAppRunning(deviceId, appId);
         } else {
             throw new NotImplementedException();
-        }
-    }
-
-    private static boolean available(int port) {
-        Log.debug("--------------Testing port " + port);
-        Socket s = null;
-        try {
-            s = new Socket("localhost", port);
-
-            // If the code makes it this far without an exception it means
-            // something is using the port and has responded.
-            Log.debug("--------------Port " + port + " is not available");
-            return false;
-        } catch (IOException e) {
-            Log.debug("--------------Port " + port + " is available");
-            return true;
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new RuntimeException("You should handle this error.", e);
-                }
-            }
         }
     }
 }
