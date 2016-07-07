@@ -1,6 +1,8 @@
-package functional.tests.core.ImageProcessing.SikuliImageProcessing;
+package functional.tests.core.Element;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Log.Log;
+import io.appium.java_client.AppiumDriver;
 
 import java.awt.*;
 
@@ -25,7 +27,14 @@ public class UIRectangle {
     }
 
     public void longPress() {
+        Log.info("UIRectangle longPress on x: " + this.rectangle.x + " y: " + this.rectangle.y);
         io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
-        action.longPress((int) this.rectangle.getX(), (int) this.rectangle.getY()).perform();
+        action.longPress(this.rectangle.x, this.rectangle.y, 2000).perform();
+    }
+
+    public void tap() {
+        Log.info("UIRectangle tap on x: " + this.rectangle.x + " y: " + this.rectangle.y);
+        io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
+        action.tap(this.rectangle.x, this.rectangle.y).perform();
     }
 }

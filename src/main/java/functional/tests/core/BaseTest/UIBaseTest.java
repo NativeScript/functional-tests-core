@@ -19,32 +19,24 @@ import org.testng.annotations.BeforeSuite;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-public abstract class UIBaseTest extends BaseTest{
+public abstract class UIBaseTest extends BaseTest {
 
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static Device staticDevice;
     private Device device;
+    private Client client;
 
     public UIBaseTest() {
+        this.client = new Client();
     }
 
-    public static Device baseDevice(){
+    public static Device baseDevice() {
         return staticDevice;
     }
 
-    private static void checkAppiumLogsForCrash() {
-        try {
-            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
-            String[] lines = appiumLog.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
-                    Log.fatal("App crashes at startup. Please see appium logs.");
-                }
-            }
-        } catch (IOException e) {
-            Log.info("Failed to check appium log files.");
-        }
+    protected Client getClient() {
+        return this.client;
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -124,7 +116,7 @@ public abstract class UIBaseTest extends BaseTest{
 
     @BeforeMethod(alwaysRun = true)
     public void beforeMethod(Method method) throws Exception {
-        if (this.device == null){
+        if (this.device == null) {
             this.device = new Device();
         }
 
@@ -171,9 +163,9 @@ public abstract class UIBaseTest extends BaseTest{
         // Get test case name
         String testCase = result.getMethod().getMethodName();
 
-        if(this.device == null){
+        if (this.device == null) {
             Log.error("The device is null");
-        } else{
+        } else {
             this.device.writeConsoleLogToFile(testCase);
         }
     }
@@ -186,6 +178,20 @@ public abstract class UIBaseTest extends BaseTest{
             Server.stopAppiumServer();
             this.device.stopTestApp();
             this.device.stopDevice();
+        }
+    }
+
+    private static void checkAppiumLogsForCrash() {
+        try {
+            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
+            String[] lines = appiumLog.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
+                    Log.fatal("App crashes at startup. Please see appium logs.");
+                }
+            }
+        } catch (IOException e) {
+            Log.info("Failed to check appium log files.");
         }
     }
 }
