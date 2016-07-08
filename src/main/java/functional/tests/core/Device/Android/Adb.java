@@ -35,7 +35,7 @@ public class Adb {
 
     private static String runAdbCommand(String deviceId, String command, boolean waitFor) {
         String adbCommand = adbPath + " -s " + deviceId + " " + command;
-        String output = OSUtils.runProcess(waitFor, 10 * 60, adbCommand);
+        String output = OSUtils.runProcess(waitFor, Settings.defaultTimeout * 5, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             killAdbProcess();
             output = OSUtils.runProcess(adbCommand);
@@ -99,20 +99,23 @@ public class Adb {
         return appFound;
     }
 
-    public static void installApp(String appFileName, String appId, boolean skipIfAvailable) {
-        boolean appFound = isAppInstalled(appId);
-        if (skipIfAvailable) {
-            if (appFound) {
-                // Do nothing
-            } else {
-                Log.info("Install " + Settings.baseTestAppDir + File.separator + appFileName);
-                Adb.runAdbCommand(Settings.deviceId, "install " + Settings.baseTestAppDir + File.separator + appFileName);
-            }
-        } else {
-            Log.info("Uninstall old version of the app.");
-            Adb.uninstallApp(appId);
-            Log.info("Install " + Settings.baseTestAppDir + File.separator + appFileName);
-            Adb.runAdbCommand(Settings.deviceId, "install " + Settings.baseTestAppDir + File.separator + appFileName);
+    public static void installApp(String testAppName, String packageId) throws IOException {
+        boolean appInstalled;
+        appInstalled = isAppInstalled(packageId);
+        if (appInstalled) {
+            Log.info("Uninstall a previous version " + packageId + " app.");
+            Adb.uninstallApp(packageId);
+        }
+
+        String apkPath = Settings.baseTestAppDir + File.separator + testAppName;
+        Log.info("Installing " + apkPath + " ...");
+        String output = Adb.runAdbCommand(Settings.deviceId, "install " + apkPath, true);
+        Log.info(output);
+
+        appInstalled = isAppInstalled(packageId);
+        if (!appInstalled) {
+            Log.error("Failed to install" + apkPath + "!");
+            throw new IOException("Failed to install" + apkPath + "!");
         }
     }
 

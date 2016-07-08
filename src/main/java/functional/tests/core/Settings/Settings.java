@@ -341,14 +341,12 @@ public class Settings {
 
         // Set automation name
         String automationNameString = properties.getProperty("automationName");
-        if ((automationNameString != null) && (automationNameString.equalsIgnoreCase("selendroid")))
-
-        {
-            automationName = AutomationName.SELENDROID;
-        } else
-
-        {
+        if (automationNameString == null) {
             automationName = AutomationName.APPIUM;
+        } else if (automationNameString != null && automationNameString.equalsIgnoreCase("Appium")) {
+            automationName = AutomationName.APPIUM;
+        } else if (automationNameString != null && automationNameString.equalsIgnoreCase("Selendroid")) {
+            automationName = AutomationName.SELENDROID;
         }
 
         // If defaultTimeout is not specified set it to 30 sec.

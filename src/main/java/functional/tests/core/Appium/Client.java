@@ -1,7 +1,6 @@
 package functional.tests.core.Appium;
 
 import functional.tests.core.Device.Android.Adb;
-import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Log.Log;
@@ -9,59 +8,41 @@ import functional.tests.core.Settings.Settings;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
 
     public static AppiumDriver<?> driver;
 
-    public Client() {
-
-    }
-
-    public AppiumDriver<?> getDriver() {
+    public AppiumDriver<?> getDriver(){
         return driver;
     }
 
     public static void initAppiumDriver() {
 
-        Log.info("Start Appium client...");
+        Log.info("Start Appium client ...");
 
+        // Verify service
         if (Server.service == null || !Server.service.isRunning()) {
-            Log.fatal("An appium server node is not started!");
-            throw new RuntimeException("An appium server node is not started!");
+            Log.fatal("Appium service is null or not running!");
+            throw new RuntimeException("Appium service is null or not running!");
         }
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(MobileCapabilityType.APPIUM_VERSION, Settings.appiumVersion);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Settings.platformVersion);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Settings.platform);
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Settings.deviceName);
-        capabilities.setCapability(MobileCapabilityType.APP, Settings.baseTestAppDir + File.separator + Settings.testAppName);
-        capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, Settings.deviceBootTimeout);
-        capabilities.setCapability(MobileCapabilityType.LAUNCH_TIMEOUT, true);
+        // Load capabilities
+        Capabilities capabilitiesLoader = new Capabilities();
+        DesiredCapabilities capabilities = capabilitiesLoader.loadDesiredCapabilities();
 
-        // Set UDID for real devices
-        if ((Settings.deviceType == DeviceType.iOS) || (Settings.deviceType == DeviceType.Android)) {
-            capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
-        }
-
-        // Device Specific Settings
+        // Start AndroidDriver
         if (Settings.platform == PlatformType.Andorid) {
             try {
-                capabilities.setCapability("noSign", "true");
-                capabilities.setCapability(MobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
-                capabilities.setCapability(MobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
                 driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
                 if (Adb.isLocked(Settings.deviceId)) {
                     Adb.unlock(Settings.deviceId);
                 }
             } catch (Exception e) {
-                // Some times Appium fails to unlock device
+                // Sometimes Appium fails to unlock device
                 if (e.toString().contains("Screen did not unlock")) {
                     Adb.unlock(Settings.deviceId);
                     driver = new AndroidDriver<>(Server.service.getUrl(), capabilities);
@@ -69,30 +50,31 @@ public class Client {
             }
         }
 
-        // iOS Specific Settings
+        // Start IOSDriver
         if (Settings.platform == PlatformType.iOS) {
-            capabilities.setCapability("screenshotWaitTimeout", Settings.defaultTimeout);
-            capabilities.setCapability("autoAcceptAlerts", Settings.acceptAlerts);
-            capabilities.setCapability("launchTimeout", Settings.deviceBootTimeout * 1000);
             driver = new IOSDriver<>(Server.service.getUrl(), capabilities);
         }
 
         // Set default timeout
-        driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
-
-        Log.info("Appium client started.");
+        if (driver != null) {
+            driver.manage().timeouts().implicitlyWait(Settings.defaultTimeout, TimeUnit.SECONDS);
+            Log.info("Appium client started.");
+        } else {
+            Log.fatal("Driver is null! Appium client failed to start!");
+            throw new RuntimeException("Appium client failed to start!");
+        }
     }
 
     public static void stopAppiumDriver() {
 
-        Log.info("Stop Appium client...");
+        Log.info("Stop Appium client ...");
 
         if (driver != null) {
             try {
                 driver.quit();
                 Log.info("Appium client stopped.");
             } catch (Exception e) {
-                Log.fatal("Failed to stop Appium client.");
+                Log.fatal("Failed to stop Appium client!");
             }
         } else {
             Log.info("Appium client already stopped.");

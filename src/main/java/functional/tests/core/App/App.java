@@ -14,7 +14,6 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidKeyCode;
-import org.apache.commons.lang3.NotImplementedException;
 import org.openqa.selenium.*;
 
 import java.io.File;
@@ -29,7 +28,7 @@ public class App {
     /**
      * Restart application
      */
-    public static void restart(String appId) throws NotImplementedException {
+    public static void restart(String appId) throws UnsupportedOperationException {
         Log.info("Restarting current app...");
         if (Settings.platform == PlatformType.Andorid) {
             Adb.stopApplication(appId);
@@ -37,12 +36,12 @@ public class App {
             Adb.startApplication(appId);
             Wait.sleep(2000);
         } else {
-            throw new NotImplementedException("Restart app not implemented for iOS.");
+            throw new UnsupportedOperationException("Restart app not implemented for iOS.");
         }
         Log.info("Restarted.");
     }
 
-    public static void fullRestart() throws NotImplementedException {
+    public static void fullRestart() throws UnsupportedOperationException {
         Client.driver.resetApp();
     }
 

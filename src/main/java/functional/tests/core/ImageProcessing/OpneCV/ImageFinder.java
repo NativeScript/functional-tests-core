@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
 
 public class ImageFinder {
 
@@ -33,29 +32,26 @@ public class ImageFinder {
         //default tolerance level is 0.6
         //this is used when calculating differences in size and ratio between the object and the found object
         //the lower the value, the stricter the matching
-        return findImage(object_filename_nopng, scene_filename_nopng, 5.6);
+        return findImage(object_filename_nopng, scene_filename_nopng, 0.6);
     }
 
-    public Point[] findImage(String searchedImage, String image, double tolerance) {
+    public Point[] findImage(String object_filename_nopng, String scene_filename_nopng, double tolerance) {
 
         Log.info("ImageFinder - findImage() started...");
         setupOpenCVEnv();
-        String searched_image_filename = searchedImage.endsWith(".png") ? searchedImage : searchedImage + ".png";
-        String image_filename = image.endsWith(".png") ? image : image + ".png";
+        String object_filename = object_filename_nopng + ".png";
+        String scene_filename = scene_filename_nopng + ".png";
 
-        Mat img_object = Highgui.imread(searched_image_filename, Highgui.CV_LOAD_IMAGE_UNCHANGED);
-        Mat img_scene = Highgui.imread(image_filename, Highgui.CV_LOAD_IMAGE_UNCHANGED);
+        Mat img_object = Highgui.imread(object_filename, Highgui.CV_LOAD_IMAGE_UNCHANGED);
+        Mat img_scene = Highgui.imread(scene_filename, Highgui.CV_LOAD_IMAGE_UNCHANGED);
         double scene_height = img_scene.rows();
         double scene_width = img_scene.cols();
-        double object_height = img_object.rows();
-        double object_width = img_object.cols();
-        Log.info("Object height and width " + object_height + ", " + object_width);
         Log.info("Scene height and width: " + scene_height + ", " + scene_width);
 
         //rotateImage(scene_filename, img_scene);
         String jsonResults = null;
         try {
-            jsonResults = runAkazeMatch(searched_image_filename, image_filename);
+            jsonResults = runAkazeMatch(object_filename, scene_filename);
         } catch (InterruptedException e) {
             e.printStackTrace();
 
@@ -70,12 +66,12 @@ public class ImageFinder {
             return null;
         }
 
-        Log.info("Keypoints for " + searched_image_filename + " to be found in " + image_filename + " are in file " + jsonResults);
+        Log.info("Keypoints for " + object_filename + " to be found in " + scene_filename + " are in file " + jsonResults);
 
         double initial_height = img_object.size().height;
         double initial_width = img_object.size().width;
 
-        Highgui.imwrite(image_filename, img_scene);
+        Highgui.imwrite(scene_filename, img_scene);
 
         //finding homography
         LinkedList<Point> objList = new LinkedList<Point>();
@@ -131,7 +127,7 @@ public class ImageFinder {
         Mat H = Calib3d.findHomography(obj, scene);
 
         //Mat scene_corners = drawFoundHomography(scene_filename_nopng, img_object, filename, H);
-        Mat scene_corners = drawFoundHomography(image_filename.split(".png")[0], img_object, image_filename, H);
+        Mat scene_corners = drawFoundHomography(scene_filename_nopng, img_object, scene_filename, H);
         Point top_left = new Point(scene_corners.get(0, 0));
         Point top_right = new Point(scene_corners.get(1, 0));
         Point bottom_left = new Point(scene_corners.get(3, 0));
@@ -311,40 +307,24 @@ public class ImageFinder {
         }
     }
 
-    private String runAkazeMatch(String searchedImage, String image) throws InterruptedException, IOException {
+    private String runAkazeMatch(String object_filename, String scene_filename) throws InterruptedException, IOException {
 
         long timestamp = System.currentTimeMillis();
         String jsonFilename = "./target/keypoints/keypoints_" + timestamp + ".json";
         Log.info("Json file should be found at: " + jsonFilename);
         File file = new File(jsonFilename);
         file.getParentFile().mkdirs();
-        //String[] akazeMatchCommand = {"/Users/tsenov/git/functional-tests-core/lib/akaze/bin/akaze_match", object_filename, scene_filename, "--json", jsonFilename, "--dthreshold", "0.00000000001
-        // 001"};
-        //String[] akazeMatchCommand = {"/Users/tsenov/git/functional-tests-core/lib/akaze_2/akaze_match", scene_filename, object_filename, "--json", jsonFilename, "--dthreshold", "0.00000000001"};
-
-        String akazePath = "";
-
-        if (System.getProperty("os.name").toString().toLowerCase().contains("mac")) {
-            akazePath = "/Users/tsenov/git/functional-tests-core/lib/akaze_2/akaze_match";
-        } else if (System.getProperty("os.name").toString().toLowerCase().contains("win")) {
-            akazePath = "akaze/win/akaze_match";
-        } else {
-            akazePath = "akaze/linux/akaze_match";
-        }
-
-        String[] akazeMatchCommand = {akazePath, image, searchedImage, "--json", jsonFilename};// "0.00000000001"};
-
+        String[] akazeMatchCommand = {"akaze/bin/akaze_match", object_filename, scene_filename, "--json", jsonFilename, "--dthreshold", "0.00000000001"};
         try {
             ProcessBuilder p = new ProcessBuilder(akazeMatchCommand);
             Process proc = p.start();
             InputStream stdin = proc.getInputStream();
             InputStreamReader isr = new InputStreamReader(stdin);
             BufferedReader br = new BufferedReader(isr);
-            String line = "";
+            String line = null;
             while ((line = br.readLine()) != null)
-                System.out.print(line);
-            //noinspection Since15
-            boolean exitVal = proc.waitFor(500, TimeUnit.MILLISECONDS);
+                System.out.print(".");
+            int exitVal = proc.waitFor();
             Log.info("Akaze matching process exited with value: " + exitVal);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -359,12 +339,11 @@ public class ImageFinder {
     }
 
     private void setupOpenCVEnv() {
-        //System.setProperty("java.library.path", "/usr/local/lib/");cd lo
+        //System.setProperty("java.library.path", "/usr/local/lib/");
         Log.info(System.getProperty("os.name"));
         String platformName = System.getProperty("os.name");
         if (platformName.contains("Mac OS X")) {
-            System.setProperty("java.library.path", "/usr/local/Cellar/opencv/2.4.13/share/OpenCV/java");
-            //System.setProperty("java.library.path", "/Users/tsenov/Downloads/opencv-2.4.9/build/lib/");
+            System.setProperty("java.library.path", "/opt/opencv249/share/OpenCV/java/");
         } else {
             System.setProperty("java.library.path", "/usr/local/share/OpenCV/java/");
         }
@@ -513,4 +492,3 @@ class PointSortY implements Comparator<Point> {
         return (a.y < b.y) ? -1 : (a.y > b.y) ? 1 : 0;
     }
 }
-
