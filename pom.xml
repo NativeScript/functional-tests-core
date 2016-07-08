@@ -6,7 +6,7 @@
 
     <groupId>functional.tests.core</groupId>
     <artifactId>functional.tests.core</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
