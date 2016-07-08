@@ -6,6 +6,7 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
@@ -26,17 +27,19 @@ public abstract class UIBaseTest extends BaseTest {
     private static Device staticDevice;
     private Device device;
     private Client client;
+    private Sikuli sikuliImagePorcessing;
 
     public UIBaseTest() {
         this.client = new Client();
+        this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
+    }
+    
+    protected Sikuli sikuliImagePorcessing() {
+        return this.sikuliImagePorcessing;
     }
 
     public static Device baseDevice() {
         return staticDevice;
-    }
-
-    protected Client getClient() {
-        return this.client;
     }
 
     @BeforeSuite(alwaysRun = true)

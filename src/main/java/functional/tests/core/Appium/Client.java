@@ -19,11 +19,11 @@ public class Client {
 
     public static AppiumDriver<?> driver;
 
-    public Client(){
+    public Client() {
 
     }
 
-    public AppiumDriver<?> getDriver(){
+    public AppiumDriver<?> getDriver() {
         return driver;
     }
 
@@ -111,5 +111,13 @@ public class Client {
 
     public static void startActivity(String appPackage, String appActivity) {
         ((AndroidDriver) Client.driver).startActivity(appPackage, appActivity);
+    }
+
+    public int getDensityRation(int screenshotWidth) {
+        if (Settings.platform == PlatformType.iOS) {
+            return screenshotWidth / this.getDriver().manage().window().getSize().width;
+        } else {
+            return 1;
+        }
     }
 }
