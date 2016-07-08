@@ -86,7 +86,7 @@ public class Sikuli {
     }
 
     private Rectangle getRectangle(Point point, int screeentshotWidth) {
-        int densityRatio = this.client.getDensityRation(screeentshotWidth);
+        int densityRatio = this.client.getDensityRatio(screeentshotWidth);
 
         Rectangle rectangle = new Rectangle(point.x / densityRatio, point.y / densityRatio, 50, 50);
 
