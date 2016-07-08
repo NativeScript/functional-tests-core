@@ -159,7 +159,8 @@ public abstract class BaseTest {
         if (isFistTest) {
             isFistTest = false;
         } else {
-            if (Settings.restartApp) {
+            // The second condition aims to avoid both App.fullRestart() and Simctl.reinstallApp().
+            if (Settings.restartApp && previousTestStatus != ITestResult.FAILURE) {
                 if (Settings.deviceType == DeviceType.Simulator) {
                     Simctl.reinstallApp();
                     Client.stopAppiumDriver();

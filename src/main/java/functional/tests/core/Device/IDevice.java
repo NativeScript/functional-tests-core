@@ -1,11 +1,7 @@
 package functional.tests.core.Device;
 
-import functional.tests.core.Device.Android.Adb;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
-import functional.tests.core.Settings.Settings;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,9 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 public interface IDevice {
 
-    IDeviceControler getDeviceController();
-
-    void installApp(String appName);
+    void installApp(String appName, String packageId) throws IOException;
 
     void initDevice() throws DeviceException, TimeoutException;
 

@@ -3,7 +3,6 @@ package functional.tests.core.Find;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
-import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 
 public class Locators {
@@ -55,7 +54,7 @@ public class Locators {
         } else {
             String error = "findByText not implemented for platform: " + Settings.platform;
             Log.fatal(error);
-            throw new NotImplementedException(error);
+            throw new UnsupportedOperationException(error);
         }
     }
 

@@ -18,10 +18,11 @@
             <artifactId>testng</artifactId>
             <version>6.8.8</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.appium/java-client -->
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>3.3.0</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>opencv</groupId>

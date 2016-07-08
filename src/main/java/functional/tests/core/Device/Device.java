@@ -1,10 +1,12 @@
 package functional.tests.core.Device;
 
 import functional.tests.core.BaseTest.BaseTestExtended;
+import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
+import functional.tests.core.Settings.Settings;
 import org.testng.Assert;
 
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Device {
+
     private IDevice _device;
 
     public Device() {
@@ -37,6 +40,12 @@ public class Device {
 
     public void initTestApp() throws IOException {
         this._device.uninstallApps(uninstallAppsList());
+
+        // On Emulator Api17/8 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
+        // We count on AndroidMobileCapabilityType.APP_PACKAGE && AndroidMobileCapabilityType.APP_ACTIVITY to launch the app when installed.
+        if (Settings.deviceType == DeviceType.Emulator && (Settings.platformVersion.equalsIgnoreCase("4.2") || Settings.platformVersion.equalsIgnoreCase("4.3"))) {
+            this._device.installApp(Settings.testAppName, Settings.packageId);
+        }
     }
 
     public void stopTestApp() {
