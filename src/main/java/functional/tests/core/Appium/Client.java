@@ -95,7 +95,7 @@ public class Client {
         ((AndroidDriver) Client.driver).startActivity(appPackage, appActivity);
     }
 
-    public int getDensityRation(int screenshotWidth) {
+    public int getDensityRatio(int screenshotWidth) {
         if (Settings.platform == PlatformType.iOS) {
             return screenshotWidth / this.getDriver().manage().window().getSize().width;
         } else {
