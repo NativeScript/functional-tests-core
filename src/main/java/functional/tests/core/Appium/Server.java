@@ -38,32 +38,8 @@ public class Server {
                 .withLogFile(logFile)
                 .usingAnyFreePort();
 
-        // On OSX use appium version manager
         if (Settings.OS == OSType.MacOS) {
-            // Get appium path via appium-version-manager
-            String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
-            // If appium is not installed try to install it
-            if (appiumPath.contains("not installed")) {
-                Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
-                String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
-                if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
-                    String error = "Failed to install appium. Error: " + installAppium;
-                    Log.fatal(error);
-                    throw new AppiumException(error);
-                } else if (installAppium.contains("installed" + Settings.appiumVersion)) {
-                    Log.info("Appium " + Settings.appiumVersion + " installed.");
-                }
-                appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
-            }
-
-            String[] appiumPathLines = appiumPath.split("\\r?\\n");
-            Arrays.asList(appiumPathLines);
-            for (String line : appiumPathLines) {
-                if (line.contains("avm")) {
-                    appiumPath = line;
-                }
-            }
-
+            String appiumPath = "/usr/local/bin/appium";
             File appiumExecutable = new File(appiumPath);
             if (!appiumExecutable.exists()) {
                 String error = "Appium does not exist at: " + appiumPath;
@@ -74,7 +50,6 @@ public class Server {
                 serviceBuilder.withAppiumJS(appiumExecutable);
             }
         }
-
 
         // Set iOS specific Appium Server arguments
         if (Settings.platform == PlatformType.iOS) {
@@ -117,5 +92,36 @@ public class Server {
             Log.fatal("Failed to create appium log file.");
         }
         return logFile;
+    }
+
+    // On OSX we used to use appium version manager prior to 1.5.*
+    private static String avm() throws AppiumException {
+
+        // Get appium path via appium-version-manager
+        String appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
+
+        // If appium is not installed try to install it
+        if (appiumPath.contains("not installed")) {
+            Log.info("Appium " + Settings.appiumVersion + " not found. Installing it ...");
+            String installAppium = OSUtils.runProcess("avm " + Settings.appiumVersion);
+            if (installAppium.contains("appium " + Settings.appiumVersion + " install failed")) {
+                String error = "Failed to install appium. Error: " + installAppium;
+                Log.fatal(error);
+                throw new AppiumException(error);
+            } else if (installAppium.contains("installed" + Settings.appiumVersion)) {
+                Log.info("Appium " + Settings.appiumVersion + " installed.");
+            }
+            appiumPath = OSUtils.runProcess("avm bin " + Settings.appiumVersion);
+        }
+
+        String[] appiumPathLines = appiumPath.split("\\r?\\n");
+        Arrays.asList(appiumPathLines);
+        for (String line : appiumPathLines) {
+            if (line.contains("avm")) {
+                appiumPath = line;
+            }
+        }
+
+        return appiumPath;
     }
 }
