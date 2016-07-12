@@ -282,16 +282,16 @@ public class Settings {
             isRealDevice = true;
         }
 
+        appiumVersion = properties.getProperty("appiumVersion");
+
         deviceId = properties.getProperty("udid");
         deviceName = properties.getProperty("deviceName");
         platformVersion = properties.getProperty("platformVersion");
         testAppName = properties.getProperty("testAppName");
         testAppArchive = properties.getProperty("testAppArchive");
-        appiumVersion = properties.getProperty("appiumVersion");
         emulatorOptions = properties.getProperty("emulatorOptions");
         emulatorCreateOptions = properties.getProperty("emulatorCreateOptions");
         simulatorType = properties.getProperty("simulatorType");
-        appiumVersion = properties.getProperty("appiumVersion");
         appiumLogLevel = properties.getProperty("appiumLogLevel");
         logImageVerificationResults = properties.getProperty("logImageVerificationResults") != null ?
                 new Boolean(properties.getProperty("logImageVerificationResults")) : false;
