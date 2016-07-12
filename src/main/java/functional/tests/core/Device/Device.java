@@ -1,6 +1,6 @@
 package functional.tests.core.Device;
 
-import functional.tests.core.BaseTest.BaseTestExtended;
+import functional.tests.core.BaseTest.UIBaseTestExtended;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
@@ -8,7 +8,6 @@ import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.testng.Assert;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +98,7 @@ public class Device {
     }
 
     private String getLogContent() throws IOException {
-        String testName = BaseTestExtended.getTestNameToWriteFile();
+        String testName = UIBaseTestExtended.getTestNameToWriteFile();
         this.writeConsoleLogToFile(testName);
         String logContent = this._device.getContent(testName);
 

@@ -37,13 +37,16 @@ public class OSUtils {
     }
 
     public static void getScreenshot(String fileName) {
+        File path = new File(Settings.screenshotOutDir + File.separator + fileName + ".png");
+        getScreenshot(path);
+    }
+
+    public static void getScreenshot(File file) {
         try {
             BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-            String path = Settings.screenshotOutDir + File.separator + fileName + ".png";
-            File f = new File(path);
-            Log.debug("Save Picture: " + f.getAbsolutePath());
-            ImageIO.write(image, "png", f);
-            Log.error("Save screenshot of host OS: " + path);
+            Log.debug("Save Picture: " + file.getAbsolutePath());
+            ImageIO.write(image, "png", file);
+            Log.error("Save screenshot of host OS: " + file.getAbsolutePath());
         } catch (Exception e) {
             Log.error("Faield to take host OS screenshot.");
         }
