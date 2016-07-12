@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class BaseTest {
+
     protected static int previousTestStatus = ITestResult.SUCCESS;
 
     public BaseTest() {
@@ -23,14 +24,25 @@ public class BaseTest {
         }
     }
 
+    public static String getAppName() {
+        String appName = Settings.testAppImageFolder;
+        return appName;
+    }
+
+    protected static void takeScreenOfHost(String fileName) {
+        if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
+            OSUtils.getScreenshot("HostOS_" + fileName);
+        }
+    }
+
     @BeforeMethod(alwaysRun = true)
-    public void beforeMethod(Method method) throws Exception {
+    public void beforeMethodBaseTest(Method method) throws Exception {
         Log.separator();
         Log.info("Start test: " + method.getName());
     }
 
     @AfterMethod(alwaysRun = true)
-    public void afterMethod(ITestResult result) throws IOException {
+    public void afterMethodBaseTest(ITestResult result) throws IOException {
 
         // Get test case name
         String testCase = result.getMethod().getMethodName();
@@ -54,16 +66,5 @@ public class BaseTest {
     public String getTestName() {
         String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
         return methodName;
-    }
-
-    public static String getAppName() {
-        String appName = Settings.testAppImageFolder;
-        return appName;
-    }
-
-    protected static void takeScreenOfHost(String fileName) {
-        if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
-            OSUtils.getScreenshot("HostOS_" + fileName);
-        }
     }
 }

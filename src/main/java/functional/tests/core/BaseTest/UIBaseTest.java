@@ -9,7 +9,6 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
-import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -33,17 +32,31 @@ public abstract class UIBaseTest extends BaseTest {
         this.client = new Client();
         this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
     }
-    
-    protected Sikuli sikuliImagePorcessing() {
-        return this.sikuliImagePorcessing;
-    }
 
     public static Device baseDevice() {
         return staticDevice;
     }
 
+    private static void checkAppiumLogsForCrash() {
+        try {
+            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
+            String[] lines = appiumLog.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
+                    Log.fatal("App crashes at startup. Please see appium logs.");
+                }
+            }
+        } catch (IOException e) {
+            Log.info("Failed to check appium log files.");
+        }
+    }
+
+    protected Sikuli sikuliImagePorcessing() {
+        return this.sikuliImagePorcessing;
+    }
+
     @BeforeSuite(alwaysRun = true)
-    public void beforeSuite() throws Exception {
+    public void beforeSuiteUIBaseTest() throws Exception {
         this.device = new Device();
         staticDevice = this.device;
 
@@ -118,7 +131,7 @@ public abstract class UIBaseTest extends BaseTest {
     }
 
     @BeforeMethod(alwaysRun = true)
-    public void beforeMethod(Method method) throws Exception {
+    public void beforeMethodUIBaseTest(Method method) throws Exception {
         if (this.device == null) {
             this.device = new Device();
         }
@@ -161,7 +174,7 @@ public abstract class UIBaseTest extends BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void afterMethod(ITestResult result) throws IOException {
+    public void afterMethodUIBaseTest(ITestResult result) throws IOException {
 
         // Get test case name
         String testCase = result.getMethod().getMethodName();
@@ -174,27 +187,13 @@ public abstract class UIBaseTest extends BaseTest {
     }
 
     @AfterSuite(alwaysRun = true)
-    public void afterSuite() throws Exception {
+    public void afterSuiteUIBaseTest() throws Exception {
         Client.stopAppiumDriver();
 
         if (!Settings.debug) {
             Server.stopAppiumServer();
             this.device.stopTestApp();
             this.device.stopDevice();
-        }
-    }
-
-    private static void checkAppiumLogsForCrash() {
-        try {
-            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
-            String[] lines = appiumLog.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
-                    Log.fatal("App crashes at startup. Please see appium logs.");
-                }
-            }
-        } catch (IOException e) {
-            Log.info("Failed to check appium log files.");
         }
     }
 }

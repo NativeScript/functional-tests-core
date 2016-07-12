@@ -10,13 +10,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class UIBaseTestExtended extends UIBaseTest {
+
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
     private double minPercentTolerant = 0.001;
     private Map<String, Boolean> imagesResults;
 
+    public static String getTestNameToWriteFile() {
+        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
+
+        for (int i = 0; i < stackTraces.length; i++) {
+            StackTraceElement stackTrace = stackTraces[i];
+            try {
+                Class<?> cls = Class.forName(stackTrace.getClassName());
+                java.lang.reflect.Method method = cls.getDeclaredMethod(stackTrace.getMethodName());
+                Test annotation = method.getAnnotation(Test.class);
+                if (annotation != null) {
+                    String testName = stackTrace.getMethodName();
+
+                    return testName;
+                }
+            } catch (ClassNotFoundException e) {
+            } catch (NoSuchMethodException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        return "Couldn't parse test method name";
+    }
+
     @BeforeMethod(alwaysRun = true)
-    public void initBeforeTest() {
+    public void initBeforeUIBaseTestExtended() {
         this.imagesResults = new HashMap<String, Boolean>();
         this.imageCounter = 1;
     }
@@ -30,7 +54,7 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
     }
 
     public void compareElements(UIElement element, int timeOut, int waitTime) throws Exception {
-        this.compareElements(element, timeOut, waitTime,Integer.MAX_VALUE, minPercentTolerant);
+        this.compareElements(element, timeOut, waitTime, Integer.MAX_VALUE, minPercentTolerant);
     }
 
     public void compareScreens(int timeOut) throws Exception {
@@ -58,29 +82,6 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
 
     public String getTestName() {
         return getTestNameToWriteFile();
-    }
-
-    public static String getTestNameToWriteFile() {
-        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
-
-        for (int i = 0; i < stackTraces.length; i++) {
-            StackTraceElement stackTrace = stackTraces[i];
-            try {
-                Class<?> cls = Class.forName(stackTrace.getClassName());
-                java.lang.reflect.Method method = cls.getDeclaredMethod(stackTrace.getMethodName());
-                Test annotation = method.getAnnotation(Test.class);
-                if (annotation != null) {
-                    String testName = stackTrace.getMethodName();
-
-                    return testName;
-                }
-            } catch (ClassNotFoundException e) {
-            } catch (NoSuchMethodException e) {
-                //e.printStackTrace();
-            }
-        }
-
-        return "Couldn't parse test method name";
     }
 
     private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
