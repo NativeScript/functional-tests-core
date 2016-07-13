@@ -35,8 +35,8 @@ public class BasePage {
                 Log.info("Soft keyboard not present.");
             }
         } else {
-            By doneButtonLocator = By.name("Done");
-            By returnButtonLocator = By.name("Return");
+            By doneButtonLocator = By.id("Done");
+            By returnButtonLocator = By.id("Return");
             UIElement doneButton = Find.findElementByLocator(doneButtonLocator, 1);
             if (doneButton != null) {
                 ((IOSDriver) Client.driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY, "Done");
