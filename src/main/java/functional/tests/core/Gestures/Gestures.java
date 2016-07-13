@@ -34,13 +34,6 @@ public class Gestures {
 
     public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
-        // In iOS swipe with duration < 0.5 seconds is not possible
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration < 500) {
-                duration = 500;
-            }
-        }
-
         Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
