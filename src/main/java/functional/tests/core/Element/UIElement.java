@@ -27,10 +27,149 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UIElement {
+
     private MobileElement element;
 
     public UIElement(MobileElement element) {
         this.element = element;
+    }
+
+    public static void swipe(SwipeElementDirection direction, int duration) {
+        swipe(direction, duration, 0);
+    }
+
+    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
+        swipeFromCorner(direction, duration, 0);
+    }
+
+    public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+
+        // In iOS, the swipe gesture requires a short duration with Appium 1.5
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration >= 100) {
+                duration = duration / 10;
+            }
+        }
+
+        Dimension dimensions = Client.driver.manage().window().getSize();
+        int width = dimensions.width;
+        int height = dimensions.height;
+        int centerY = height / 2;
+        int centerX = width / 2;
+
+        int initialX = centerX;
+        int initialY = centerY;
+        int finalX = centerX;
+        int finalY = centerY;
+
+        int offset = (int) (height * 0.25D);
+
+        if (direction == SwipeElementDirection.DOWN) {
+            initialX = centerX;
+            initialY = centerY + offset;
+            finalX = centerX;
+            finalY = centerY - offset;
+        }
+        if (direction == SwipeElementDirection.UP) {
+            initialX = centerX;
+            initialY = centerY - offset;
+            finalX = centerX;
+            finalY = centerY + offset;
+        }
+        if (direction == SwipeElementDirection.LEFT) {
+            initialX = centerX + offset;
+            initialY = centerY;
+            finalX = centerX - offset;
+            finalY = centerY;
+        }
+        if (direction == SwipeElementDirection.RIGHT) {
+            initialX = centerX - offset;
+            initialY = centerY;
+            finalX = centerX + offset;
+            finalY = centerY;
+        }
+
+        try {
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Log.info("Swipe " + direction + " with " + duration + " duration.");
+            if (waitAfterSwipe > 0) {
+                Wait.sleep(waitAfterSwipe);
+            }
+        } catch (Exception e) {
+            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
+                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
+            } else {
+                String error = "Swipe " + direction + " with " + duration + " duration failed.";
+                Log.error(error);
+                Assert.fail(error);
+            }
+        }
+    }
+
+    private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
+
+        int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
+
+        // In iOS, the swipe gesture requires a short duration with Appium 1.5
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration >= 100) {
+                duration = duration / 10;
+            }
+        }
+
+        Dimension dimensions = Client.driver.manage().window().getSize();
+        int width = dimensions.width;
+        int height = dimensions.height;
+        int centerY = height / 2;
+        int centerX = width / 2;
+
+        int left = 3;
+        int top = 7;
+        int right = width - 3;
+        int bottom = height - 7;
+
+        int offset = (int) (height * 0.5D);
+
+        if (direction == SwipeElementDirection.DOWN) {
+            initialX = centerX;
+            initialY = top;
+            finalX = centerX;
+            finalY = top + offset;
+        }
+        if (direction == SwipeElementDirection.UP) {
+            initialX = centerX;
+            initialY = bottom;
+            finalX = centerX;
+            finalY = bottom - offset;
+        }
+        if (direction == SwipeElementDirection.LEFT) {
+            initialX = right;
+            initialY = centerY;
+            finalX = right - offset;
+            finalY = centerY;
+        }
+        if (direction == SwipeElementDirection.RIGHT) {
+            initialX = left;
+            initialY = centerY;
+            finalX = left + offset;
+            finalY = centerY;
+        }
+
+        try {
+            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            Log.info("Swipe " + direction + " with " + duration + " duration.");
+            if (waitAfterSwipe > 0) {
+                Wait.sleep(waitAfterSwipe);
+            }
+        } catch (Exception e) {
+            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
+                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
+            } else {
+                String error = "Swipe " + direction + " with " + duration + " duration failed.";
+                Log.error(error);
+                Assert.fail(error);
+            }
+        }
     }
 
     public String getAttribute(String value) {
@@ -44,26 +183,6 @@ public class UIElement {
         } catch (Exception e) {
         }
         return elementText;
-    }
-
-    public UIElement findElementById(String id) {
-        return new UIElement(this.element.findElementById(id));
-    }
-
-    public Dimension getSize() {
-        return this.element.getSize();
-    }
-
-    public boolean isSelected() {
-        return this.element.isSelected();
-    }
-
-    public boolean isEnabled() {
-        return this.element.isEnabled();
-    }
-
-    public UIElement findElement(By by) {
-        return new UIElement(this.element.findElement(by));
     }
 
     public void setText(String value) {
@@ -100,6 +219,26 @@ public class UIElement {
             Wait.sleep(Settings.defaultTapDuration);
         }
         Log.info("Set value of text field: " + value);
+    }
+
+    public UIElement findElementById(String id) {
+        return new UIElement(this.element.findElementById(id));
+    }
+
+    public Dimension getSize() {
+        return this.element.getSize();
+    }
+
+    public boolean isSelected() {
+        return this.element.isSelected();
+    }
+
+    public boolean isEnabled() {
+        return this.element.isEnabled();
+    }
+
+    public UIElement findElement(By by) {
+        return new UIElement(this.element.findElement(by));
     }
 
     public void sendKeys(String value) {
@@ -177,151 +316,12 @@ public class UIElement {
         this.tap(1, Settings.defaultTapDuration, Settings.defaultTapDuration);
     }
 
-    public static void swipe(SwipeElementDirection direction, int duration) {
-        swipe(direction, duration, 0);
-    }
-
     public void swipe(String direction, int duration) {
         swipeInElement(direction, duration);
     }
 
-
-    public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
-        swipeFromCorner(direction, duration, 0);
-    }
-
     public void swipeFromCorner(String direction, int duration) {
         swipeInElementFromCorner(direction, duration);
-    }
-
-    public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
-
-        // In iOS swipe with duration < 0.5 seconds is not possible
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration < 500) {
-                duration = 500;
-            }
-        }
-
-        Dimension dimensions = Client.driver.manage().window().getSize();
-        int width = dimensions.width;
-        int height = dimensions.height;
-        int centerY = height / 2;
-        int centerX = width / 2;
-
-        int initialX = centerX;
-        int initialY = centerY;
-        int finalX = centerX;
-        int finalY = centerY;
-
-        int offset = (int) (height * 0.25D);
-
-        if (direction == SwipeElementDirection.DOWN) {
-            initialX = centerX;
-            initialY = centerY + offset;
-            finalX = centerX;
-            finalY = centerY - offset;
-        }
-        if (direction == SwipeElementDirection.UP) {
-            initialX = centerX;
-            initialY = centerY - offset;
-            finalX = centerX;
-            finalY = centerY + offset;
-        }
-        if (direction == SwipeElementDirection.LEFT) {
-            initialX = centerX + offset;
-            initialY = centerY;
-            finalX = centerX - offset;
-            finalY = centerY;
-        }
-        if (direction == SwipeElementDirection.RIGHT) {
-            initialX = centerX - offset;
-            initialY = centerY;
-            finalX = centerX + offset;
-            finalY = centerY;
-        }
-
-        try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
-            Log.info("Swipe " + direction + " with " + duration + " duration.");
-            if (waitAfterSwipe > 0) {
-                Wait.sleep(waitAfterSwipe);
-            }
-        } catch (Exception e) {
-            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
-                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
-            } else {
-                String error = "Swipe " + direction + " with " + duration + " duration failed.";
-                Log.error(error);
-                Assert.fail(error);
-            }
-        }
-    }
-
-    private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
-
-        int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
-
-        // In iOS swipe with duration < 0.5 seconds is not possible
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration < 500) {
-                duration = 500;
-            }
-        }
-
-        Dimension dimensions = Client.driver.manage().window().getSize();
-        int width = dimensions.width;
-        int height = dimensions.height;
-        int centerY = height / 2;
-        int centerX = width / 2;
-
-        int left = 3;
-        int top = 7;
-        int right = width - 3;
-        int bottom = height - 7;
-
-        int offset = (int) (height * 0.5D);
-
-        if (direction == SwipeElementDirection.DOWN) {
-            initialX = centerX;
-            initialY = top;
-            finalX = centerX;
-            finalY = top + offset;
-        }
-        if (direction == SwipeElementDirection.UP) {
-            initialX = centerX;
-            initialY = bottom;
-            finalX = centerX;
-            finalY = bottom - offset;
-        }
-        if (direction == SwipeElementDirection.LEFT) {
-            initialX = right;
-            initialY = centerY;
-            finalX = right - offset;
-            finalY = centerY;
-        }
-        if (direction == SwipeElementDirection.RIGHT) {
-            initialX = left;
-            initialY = centerY;
-            finalX = left + offset;
-            finalY = centerY;
-        }
-
-        try {
-            Client.driver.swipe(initialX, initialY, finalX, finalY, duration);
-            Log.info("Swipe " + direction + " with " + duration + " duration.");
-            if (waitAfterSwipe > 0) {
-                Wait.sleep(waitAfterSwipe);
-            }
-        } catch (Exception e) {
-            if ((Settings.platform == PlatformType.Andorid) && (Settings.platformVersion.contains("4.2"))) {
-                Log.info("Known issue: Swipe works on Api17, but error is thrown.");
-            } else {
-                String error = "Swipe " + direction + " with " + duration + " duration failed.";
-                Log.error(error);
-                Assert.fail(error);
-            }
-        }
     }
 
     public void doubleTap() {
@@ -446,6 +446,14 @@ public class UIElement {
     }
 
     private void swipeInElement(String direction, int duration) {
+
+        // In iOS, the swipe gesture requires a short duration with Appium 1.5
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration >= 100) {
+                duration = duration / 10;
+            }
+        }
+
         int centerX = this.element.getLocation().x + (this.element.getSize().width / 2);
         int centerY = this.element.getLocation().y + (this.element.getSize().height / 2);
 
@@ -504,6 +512,13 @@ public class UIElement {
     }
 
     private void swipeInElementFromCorner(String direction, int duration) {
+
+        // In iOS, the swipe gesture requires a short duration with Appium 1.5
+        if (Settings.platform == PlatformType.iOS) {
+            if (duration >= 100) {
+                duration = duration / 10;
+            }
+        }
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 
