@@ -183,6 +183,7 @@ public class ImageVerification {
                 String tempImageStorage = Settings.screenshotResDir + "-temp" + File.separator + appName + File.separator;
                 String tempImageName = tempImageStorage + File.separator + Settings.deviceName + "_" + imageName + ".png";
                 saveImage(tempImageName, actualImage, tempImageStorage, String.format("Actual images will be also saved in %s folder.", Settings.screenshotResDir + "-temp"));
+                return true;
             } else {
                 long startTime = System.currentTimeMillis();
                 ImageVerificationResult result = null;

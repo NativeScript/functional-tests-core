@@ -180,6 +180,16 @@ public class Find {
         }
     }
 
+    public static UIElement byText(String str) {
+        if (Settings.platform == PlatformType.Andorid) {
+            return findByText(str);
+        } else if (Settings.platform == PlatformType.iOS) {
+            return findElementByLocator(By.id(str));
+        } else {
+            return null;
+        }
+    }
+
     private static List<UIElement> convertListOfMobileElementToUIElement(List<MobileElement> list) {
 
         ArrayList<UIElement> elements = new ArrayList<>();
