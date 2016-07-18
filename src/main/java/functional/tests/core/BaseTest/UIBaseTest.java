@@ -31,12 +31,14 @@ public abstract class UIBaseTest extends BaseTest {
     public Client client;
     public Find find;
     public Gestures gestures;
+    public TestsStateManager testsStateManager;
 
     public UIBaseTest() {
         this.client = new Client();
         this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
         this.find = new Find();
         this.gestures = new Gestures();
+        this.testsStateManager = new TestsStateManager();
     }
 
     public static Device baseDevice() {
@@ -142,6 +144,8 @@ public abstract class UIBaseTest extends BaseTest {
         }
 
         if (previousTestStatus == ITestResult.FAILURE) {
+            this.testsStateManager.resetLevel();
+
             try {
                 App.fullRestart();
             } catch (Exception e1) {
