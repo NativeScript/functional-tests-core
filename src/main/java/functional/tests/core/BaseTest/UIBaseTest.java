@@ -7,6 +7,7 @@ import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Find.Find;
+import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
@@ -29,11 +30,13 @@ public abstract class UIBaseTest extends BaseTest {
     private Sikuli sikuliImagePorcessing;
     public Client client;
     public Find find;
+    public Gestures gestures;
 
     public UIBaseTest() {
         this.client = new Client();
         this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
         this.find = new Find();
+        this.gestures = new Gestures();
     }
 
     public static Device baseDevice() {
@@ -66,9 +69,8 @@ public abstract class UIBaseTest extends BaseTest {
         if (!Settings.debug) {
             this.device.stopDevice();
             this.device.initDevice();
+            this.device.initTestApp();
         }
-
-        this.device.initTestApp();
 
         try {
             Server.initAppiumServer();

@@ -1,11 +1,13 @@
 package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.BaseTest.UIBaseTestExtended;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
+import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.ios.IOSDriver;
@@ -14,7 +16,18 @@ import org.openqa.selenium.By;
 import org.testng.Assert;
 
 public class BasePage {
+    private Gestures gestures;
+    private Find find;
+    private String page;
 
+    public BasePage(){
+    }
+
+    public BasePage(Gestures gestures, Find find, String page){
+        this.gestures = gestures;
+        this.find = find;
+        this.page = page;
+    }
     /**
      * Press the back button *
      */
@@ -87,7 +100,7 @@ public class BasePage {
      * Verify page is loaded
      */
     public static void loaded(UIElement element) {
-        String className = getClassName();
+        String className = UIBaseTestExtended.getTestNameToWriteFile();
         if (element != null) {
             Log.info(String.format("%s page loaded.", className));
         } else {
