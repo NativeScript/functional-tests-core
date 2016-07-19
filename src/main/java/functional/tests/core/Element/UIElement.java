@@ -34,8 +34,8 @@ public class UIElement {
         this.element = element;
     }
 
-    public static void swipe(SwipeElementDirection direction, int duration) {
-        swipe(direction, duration, 0);
+    public void swipe(SwipeElementDirection direction, int duration) {
+        swipeInElement(direction.toString(), duration);
     }
 
     public static void swipeFromCorner(SwipeElementDirection direction, int duration) {
@@ -473,25 +473,25 @@ public class UIElement {
                 + (this.element.getSize().height / 2)
                 + (this.element.getSize().height / 4);
 
-        if (direction.equals("down")) {
+        if (direction.equalsIgnoreCase("down")) {
             initialX = centerX;
             initialY = offsetYMax;
             finalX = centerX;
             finalY = offsetYMin;
         }
-        if (direction.equals("up")) {
+        if (direction.equalsIgnoreCase("up")) {
             initialX = centerX;
             initialY = offsetYMin;
             finalX = centerX;
             finalY = offsetYMax;
         }
-        if (direction.equals("left")) {
+        if (direction.equalsIgnoreCase("left")) {
             initialX = offsetXMax;
             initialY = centerY;
             finalX = offsetXMin;
             finalY = centerY;
         }
-        if (direction.equals("right")) {
+        if (direction.equalsIgnoreCase("right")) {
             initialX = offsetXMin;
             initialY = centerY;
             finalX = offsetXMax;
