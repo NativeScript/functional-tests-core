@@ -70,7 +70,11 @@ public class TestsStateManager {
             }
 
             this.usedPages = new ArrayList<String>();
-            pagesToNavigateToAsString = pagesAsString.substring(0, pagesAsString.length() - 2);
+            if(pagesAsString.endsWith("/")){
+                pagesToNavigateToAsString = pagesAsString.substring(0, pagesAsString.length() - 1);
+            }else{
+                pagesToNavigateToAsString = pagesAsString;
+            }
 
             ActionHelper.navigateTo(pagesToNavigateToAsString, this, this.client);
         } else {
