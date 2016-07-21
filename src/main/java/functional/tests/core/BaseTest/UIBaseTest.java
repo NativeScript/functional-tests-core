@@ -161,7 +161,11 @@ public abstract class UIBaseTest extends BaseTest {
                 }
             }
 
-            this.testsStateManager.resetNavigationToLastOpenedPage();
+            if (this.testsStateManager != null) {
+                this.testsStateManager.resetNavigationToLastOpenedPage();
+            }else   {
+                Log.error("TestStateManager is: " + this.testsStateManager + " in beforeMethodUIBaseTest!");
+            }
         }
 
         if (isFistTest) {

@@ -74,7 +74,9 @@ public class TestsStateManager {
 
             ActionHelper.navigateTo(pagesToNavigateToAsString, this, this.client);
         } else {
-            ActionHelper.navigateTo(this.mainPage, this, this.client);
+            if (this.mainPage != null && this.mainPage != "") {
+                ActionHelper.navigateTo(this.mainPage, this, this.client);
+            }
         }
     }
 
