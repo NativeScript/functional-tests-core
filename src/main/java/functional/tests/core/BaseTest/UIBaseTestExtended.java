@@ -1,14 +1,17 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.ExecutionOrder;
 import functional.tests.core.ImageProcessing.ImageVerification.ImageVerification;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+//@Listeners(ExecutionOrder.class)
 public abstract class UIBaseTestExtended extends UIBaseTest {
 
     private int imageCounter = 1;

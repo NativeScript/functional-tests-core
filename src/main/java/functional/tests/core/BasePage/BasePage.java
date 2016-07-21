@@ -20,14 +20,6 @@ public class BasePage {
     private Find find;
     private String page;
 
-    public BasePage(){
-    }
-
-    public BasePage(Gestures gestures, Find find, String page){
-        this.gestures = gestures;
-        this.find = find;
-        this.page = page;
-    }
     /**
      * Press the back button *
      */

@@ -28,17 +28,14 @@ public abstract class UIBaseTest extends BaseTest {
     private static Device staticDevice;
     private Device device;
     private Sikuli sikuliImagePorcessing;
+
     public Client client;
-    public Find find;
-    public Gestures gestures;
     public TestsStateManager testsStateManager;
 
     public UIBaseTest() {
         this.client = new Client();
         this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
-        this.find = new Find();
-        this.gestures = new Gestures();
-        this.testsStateManager = new TestsStateManager();
+        this.testsStateManager = new TestsStateManager(this.client);
     }
 
     public static Device baseDevice() {
@@ -144,8 +141,6 @@ public abstract class UIBaseTest extends BaseTest {
         }
 
         if (previousTestStatus == ITestResult.FAILURE) {
-            this.testsStateManager.resetLevel();
-
             try {
                 App.fullRestart();
             } catch (Exception e1) {
@@ -165,6 +160,8 @@ public abstract class UIBaseTest extends BaseTest {
                     throw e2;
                 }
             }
+
+            this.testsStateManager.resetNavigationMainPage();
         }
 
         if (isFistTest) {

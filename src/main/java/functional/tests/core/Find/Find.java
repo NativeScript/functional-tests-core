@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public class Find {
+    private Client client;
+
+    public Find(Client client){
+      this.client = client;
+    }
 
     /**
      * Find an element that has some attribute with specified value.
@@ -175,16 +180,6 @@ public class Find {
         }
         if (Settings.platform == PlatformType.iOS) {
             return findElementByLocator(By.id(value), waitForElementExists);
-        } else {
-            return null;
-        }
-    }
-
-    public static UIElement byText(String str) {
-        if (Settings.platform == PlatformType.Andorid) {
-            return findByText(str);
-        } else if (Settings.platform == PlatformType.iOS) {
-            return findElementByLocator(By.id(str));
         } else {
             return null;
         }

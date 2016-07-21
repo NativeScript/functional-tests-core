@@ -14,13 +14,18 @@ import java.util.concurrent.TimeUnit;
 
 public class Client {
 
+    private AppiumDriver<?> dr;
+
     public static AppiumDriver<?> driver;
 
-    public AppiumDriver<?> getDriver(){
+    public AppiumDriver<?> getDriver() {
         return driver;
     }
 
-    public static void initAppiumDriver() {
+    public Client() {
+    }
+
+    public static AppiumDriver<?> initAppiumDriver() {
 
         Log.info("Start Appium client ...");
 
@@ -63,6 +68,8 @@ public class Client {
             Log.fatal("Driver is null! Appium client failed to start!");
             throw new RuntimeException("Appium client failed to start!");
         }
+
+        return driver;
     }
 
     public static void stopAppiumDriver() {
