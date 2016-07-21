@@ -14,7 +14,7 @@ import java.util.List;
 public class FindHelper {
     private Client client;
 
-    public FindHelper(Client client){
+    public FindHelper(Client client) {
         this.client = client;
     }
 
@@ -22,8 +22,8 @@ public class FindHelper {
         return new UIElement((MobileElement) this.client.getDriver().findElement(locator));
     }
 
-    public static List<UIElement> findElementsByLocator(By locator) {
-        return convertListOfMobileElementToUIElement((List<MobileElement>) Client.driver.findElements(locator));
+    public List<UIElement> findElementsByLocator(By locator) {
+        return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
     public UIElement findByText(String value) {
@@ -44,7 +44,7 @@ public class FindHelper {
     }
 
     public UIElement byType(String value) {
-        return new UIElement((MobileElement) Client.driver.findElement(By.className(value)));
+        return new UIElement((MobileElement) this.client.driver.findElement(By.className(value)));
     }
 
     public UIElement byText(String str) {

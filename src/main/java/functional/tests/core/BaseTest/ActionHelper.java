@@ -41,7 +41,9 @@ public class ActionHelper {
             Log.info("Tap on '" + btnText + "' button.");
             demoBtn.click();
 
-            testsStateManager.setCurrentPage(btnText);
+            if (testsStateManager != null) {
+                testsStateManager.setCurrentPage(btnText);
+            }
 
             if (i < demos.length - 1) {
                 String nextBtnText = demos[i + 1];
@@ -56,11 +58,11 @@ public class ActionHelper {
     }
 
 
-    public static void navigateBack(Client client){
+    public static void navigateBack(Client client) {
         client.getDriver().navigate().back();
     }
 
-    public static void navigateForward(Client client){
+    public static void navigateForward(Client client) {
         client.getDriver().navigate().forward();
     }
 

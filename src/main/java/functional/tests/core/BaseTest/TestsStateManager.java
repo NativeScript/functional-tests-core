@@ -36,8 +36,6 @@ public class TestsStateManager {
         } else {
             this.mainPage = mainPage;
         }
-
-        this.currentPage = this.mainPage;
     }
 
     public String getMainPage() {
@@ -54,40 +52,55 @@ public class TestsStateManager {
     }
 
     public int getPageIndex(String page) {
-        return this.pages.get(page);
+        try {
+            return this.pages.get(page);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void resetNavigationToLastOpenedPage() {
+        this.navigationLevel = 0;
         if (this.usedPages.size() > 0) {
             String pagesAsString = "";
             String pagesToNavigateToAsString = "";
+
             for (int i = 0; i < this.usedPages.size(); i++) {
                 pagesAsString += this.usedPages.get(i) + "/";
             }
 
             this.usedPages = new ArrayList<String>();
-
             pagesToNavigateToAsString = pagesAsString.substring(0, pagesAsString.length() - 2);
 
-            if (pagesToNavigateToAsString.contains(this.currentPage)) {
-                ActionHelper.navigateTo(pagesToNavigateToAsString, this, this.client);
-            }
+            ActionHelper.navigateTo(pagesToNavigateToAsString, this, this.client);
+        } else {
+            ActionHelper.navigateTo(this.mainPage, this, this.client);
         }
     }
 
     public void resetNavigationMainPage() {
+        this.navigationLevel = 0;
         ActionHelper.navigateTo(this.mainPage, this, this.client);
     }
 
-    public void removeCurrentPage(String page) {
-        this.currentPage = page;
-        this.pages.remove(page);
-        this.decreasNavigationLevel();
-        this.usedPages.remove(page);
+    public void removeCurrentPage() {
+        this.pages.remove(this.currentPage);
+        if (this.navigationLevel < 0) {
+            Log.info("See the navigation");
+        }
+
+        if (this.usedPages.size() > 0) {
+            this.usedPages.remove(this.currentPage);
+        }
+
+        if (this.usedPages.size() > 0) {
+            this.currentPage = this.usedPages.get(this.usedPages.size() - 1);
+        }
     }
 
     public void navigateBack(Client client) {
-        this.decreasNavigationLevel();
+        this.removeCurrentPage();
+        this.decreaseNavigationLevel();
         ActionHelper.navigateBack(client);
     }
 
@@ -108,15 +121,7 @@ public class TestsStateManager {
         return this.navigationLevel;
     }
 
-    private int decreasNavigationLevel() {
-        if (this.navigationLevel < 0) {
-            Log.info("See the navigation");
-        }
-
-        if (this.usedPages.size() > 0) {
-            this.usedPages.remove(this.currentPage);
-        }
-
+    private int decreaseNavigationLevel() {
         this.navigationLevel--;
 
         return this.navigationLevel;
