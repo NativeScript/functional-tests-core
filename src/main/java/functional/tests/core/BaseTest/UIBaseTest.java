@@ -6,17 +6,12 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
-import functional.tests.core.Find.Find;
-import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -29,36 +24,16 @@ public abstract class UIBaseTest extends BaseTest {
     private Device device;
     private Sikuli sikuliImagePorcessing;
 
-    public Client client;
-    public TestsStateManager testsStateManager;
-
-    public UIBaseTest() {
-        this.client = new Client();
-        this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
-        this.testsStateManager = new TestsStateManager(this.client);
+    protected Sikuli sikuliImagePorcessing() {
+        return this.sikuliImagePorcessing;
     }
 
     public static Device baseDevice() {
         return staticDevice;
     }
 
-    private static void checkAppiumLogsForCrash() {
-        try {
-            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
-            String[] lines = appiumLog.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
-                    Log.fatal("App crashes at startup. Please see appium logs.");
-                }
-            }
-        } catch (IOException e) {
-            Log.info("Failed to check appium log files.");
-        }
-    }
-
-    protected Sikuli sikuliImagePorcessing() {
-        return this.sikuliImagePorcessing;
-    }
+    public Client client;
+    public TestsStateManager testsStateManager;
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
@@ -74,6 +49,9 @@ public abstract class UIBaseTest extends BaseTest {
         try {
             Server.initAppiumServer();
             Client.initAppiumDriver();
+            this.client = new Client();
+            this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
+            this.testsStateManager = new TestsStateManager(this.client);
         } catch (Exception e) {
             checkAppiumLogsForCrash();
             takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session");
@@ -134,6 +112,16 @@ public abstract class UIBaseTest extends BaseTest {
         this.device.writeConsoleLogToFile("init");
     }
 
+    @BeforeClass(alwaysRun = true)
+    public void beforeClassUIBaseTest() {
+        if (this.client == null)
+            this.client = new Client();
+        if (this.sikuliImagePorcessing == null)
+            this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
+        if (this.testsStateManager == null)
+            this.testsStateManager = new TestsStateManager(this.client);
+    }
+
     @BeforeMethod(alwaysRun = true)
     public void beforeMethodUIBaseTest(Method method) throws Exception {
         if (this.device == null) {
@@ -163,7 +151,7 @@ public abstract class UIBaseTest extends BaseTest {
 
             if (this.testsStateManager != null) {
                 this.testsStateManager.resetNavigationToLastOpenedPage();
-            }else   {
+            } else {
                 Log.error("TestStateManager is: " + this.testsStateManager + " in beforeMethodUIBaseTest!");
             }
         }
@@ -196,6 +184,13 @@ public abstract class UIBaseTest extends BaseTest {
         }
     }
 
+    @AfterClass(alwaysRun = true)
+    public void afterClassUIBaseTest() {
+        Log.info("Go to main page back from fonts page!");
+        if (this.testsStateManager != null)
+            this.testsStateManager.navigateToHomePage();
+    }
+
     @AfterSuite(alwaysRun = true)
     public void afterSuiteUIBaseTest() throws Exception {
         Client.stopAppiumDriver();
@@ -204,6 +199,20 @@ public abstract class UIBaseTest extends BaseTest {
             Server.stopAppiumServer();
             this.device.stopTestApp();
             this.device.stopDevice();
+        }
+    }
+
+    private static void checkAppiumLogsForCrash() {
+        try {
+            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
+            String[] lines = appiumLog.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
+                    Log.fatal("App crashes at startup. Please see appium logs.");
+                }
+            }
+        } catch (IOException e) {
+            Log.info("Failed to check appium log files.");
         }
     }
 }

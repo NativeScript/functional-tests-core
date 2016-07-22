@@ -20,6 +20,10 @@ public class BasePage {
     private Find find;
     private String page;
 
+    public BasePage(){
+    }
+
+
     /**
      * Press the back button *
      */
@@ -101,7 +105,7 @@ public class BasePage {
     }
 
     private static String getClassName() {
-        String className = Thread.currentThread().getStackTrace()[3].getClassName();
+        String className = UIBaseTestExtended.getTestNameToWriteFile();
         return className;
     }
 }

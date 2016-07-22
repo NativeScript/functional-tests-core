@@ -1,6 +1,7 @@
-package functional.tests.core.BaseTest;
+package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.BaseTest.TestsStateManager;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Find.FindHelper;
 import functional.tests.core.Log.Log;

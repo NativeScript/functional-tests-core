@@ -7,6 +7,7 @@ import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -63,8 +64,30 @@ public class BaseTest {
         }
     }
 
+    public static String getTestNameToWriteFile() {
+        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
+
+        for (int i = 0; i < stackTraces.length; i++) {
+            StackTraceElement stackTrace = stackTraces[i];
+            try {
+                Class<?> cls = Class.forName(stackTrace.getClassName());
+                java.lang.reflect.Method method = cls.getDeclaredMethod(stackTrace.getMethodName());
+                Test annotation = method.getAnnotation(Test.class);
+                if (annotation != null) {
+                    String testName = stackTrace.getMethodName();
+
+                    return testName;
+                }
+            } catch (ClassNotFoundException e) {
+            } catch (NoSuchMethodException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        return "Couldn't parse test method name";
+    }
+
     public String getTestName() {
-        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        return methodName;
+        return getTestNameToWriteFile();
     }
 }

@@ -1,46 +1,19 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.ExecutionOrder;
 import functional.tests.core.ImageProcessing.ImageVerification.ImageVerification;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-//@Listeners(ExecutionOrder.class)
 public abstract class UIBaseTestExtended extends UIBaseTest {
 
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
     private double minPercentTolerant = 0.001;
     private Map<String, Boolean> imagesResults;
-
-    public static String getTestNameToWriteFile() {
-        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
-
-        for (int i = 0; i < stackTraces.length; i++) {
-            StackTraceElement stackTrace = stackTraces[i];
-            try {
-                Class<?> cls = Class.forName(stackTrace.getClassName());
-                java.lang.reflect.Method method = cls.getDeclaredMethod(stackTrace.getMethodName());
-                Test annotation = method.getAnnotation(Test.class);
-                if (annotation != null) {
-                    String testName = stackTrace.getMethodName();
-
-                    return testName;
-                }
-            } catch (ClassNotFoundException e) {
-            } catch (NoSuchMethodException e) {
-                //e.printStackTrace();
-            }
-        }
-
-        return "Couldn't parse test method name";
-    }
 
     @BeforeMethod(alwaysRun = true)
     public void initBeforeUIBaseTestExtended() {
@@ -81,10 +54,6 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         for (String imageName : this.imagesResults.keySet()) {
             Assert.assertTrue(this.imagesResults.get(imageName), String.format("%s test failed because image %s is not as actual", getTestName(), imageName));
         }
-    }
-
-    public String getTestName() {
-        return getTestNameToWriteFile();
     }
 
     private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {

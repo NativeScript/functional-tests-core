@@ -1,7 +1,7 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.Find.FindHelper;
+import functional.tests.core.Find.ActionHelper;
 import functional.tests.core.Log.Log;
 import org.testng.ITestResult;
 
@@ -82,6 +82,29 @@ public class TestsStateManager {
             if (this.mainPage != null && this.mainPage != "") {
                 ActionHelper.navigateTo(this.mainPage, this, this.client);
             }
+        }
+    }
+
+    public void navigateToHomePage() {
+        Log.info("Navigate to home page!");
+        while (this.getLevel() > 0) {
+            this.navBack();
+        }
+    }
+
+    public void navigateToMainPage() {
+        Log.info("Navigate to main page!");
+        while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
+            this.navBack();
+        }
+    }
+
+    public void navBack() {
+        if (this.getLevel() > 0) {
+            this.navigateBack(this.client);
+            Log.info("Navigate back.");
+        } else {
+            Log.info("This is main page!");
         }
     }
 
