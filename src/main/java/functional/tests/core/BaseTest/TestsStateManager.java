@@ -68,11 +68,12 @@ public class TestsStateManager {
             for (int i = 0; i < this.usedPages.size(); i++) {
                 pagesAsString += this.usedPages.get(i) + "/";
             }
+            this.mainPage = this.usedPages.get(0);
 
             this.usedPages = new ArrayList<String>();
-            if(pagesAsString.endsWith("/")){
+            if (pagesAsString.endsWith("/")) {
                 pagesToNavigateToAsString = pagesAsString.substring(0, pagesAsString.length() - 1);
-            }else{
+            } else {
                 pagesToNavigateToAsString = pagesAsString;
             }
 
