@@ -20,7 +20,7 @@ import java.util.List;
 public class iOSDevice implements IDevice {
 
     public static final String simulatorLogPath = Settings.baseLogDir + File.separator + "simulator.log";
-    private static String simulatorGuid = null;
+    private static String simulatorUdid = null;
 
     private static void copySimulatorSystemLog() {
         if (Settings.deviceType == DeviceType.Simulator) {
@@ -29,7 +29,7 @@ public class iOSDevice implements IDevice {
                 Log.info(command);
                 OSUtils.runProcess(command);
             } else {
-                Log.error("simulatorGuid is null. Debug mode might be enabled.");
+                Log.error("simulatorUdid variable is null. Debug mode might be enabled.");
             }
         }
     }
@@ -71,42 +71,44 @@ public class iOSDevice implements IDevice {
 
     @Override
     public void initDevice() throws DeviceException {
+
         if (Settings.deviceType == DeviceType.Simulator) {
+            List<String> simulatorUdids = Simctl.getSimulatorsIdsByName(Settings.deviceName);
 
-            List<String> simulatorGuilds = Simctl.getSimulatorsIdsByName(Settings.deviceName);
-
-            if (simulatorGuilds.size() == 1) {
+            if (simulatorUdids.size() == 1) {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
-                Settings.deviceId = simulatorGuilds.get(0);
+                Settings.deviceId = simulatorUdids.get(0);
             } else {
-                if (simulatorGuilds.size() > 1) {
-                    Log.error("Multiple simulators with name " + Settings.deviceName + " found. Delete...");
-                    Simctl.deleteSimulator(Settings.deviceName);
-                } else {
-                    // Create simulator specified by settings
-                    String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
-                    if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
-                        Log.fatal("Failed to create simulator. Error: " + result);
-                        throw new DeviceException("Failed to create simulator. Error: " + result);
-                    } else {
-                        String guid = result;
-                        String[] rowList = result.split("\\r?\\n");
-                        for (String rowLine : rowList) {
-                            if (rowLine.contains("-")) {
-                                guid = rowLine.trim();
-                            }
-                        }
-                        simulatorGuid = guid;
-                        Settings.deviceId = simulatorGuid;
-                        Log.info("Simulator created: " + simulatorGuid);
-                    }
 
-                    // Verify created
-                    if (Simctl.getSimulatorsIdsByName(Settings.deviceName).size() < 1) {
-                        String error = "Simulator " + Settings.deviceName + " does not exist. Hint: verify SDKs available.";
-                        Log.error(error);
-                        throw new DeviceException(error);
+                if (simulatorUdids.size() > 1) {
+                    Log.error("Multiple simulators with name " + Settings.deviceName + " found. Deleting them ...");
+                    Simctl.deleteSimulator(Settings.deviceName);
+                } // ... and create it.
+
+                // Create simulator specified by settings
+                String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);
+
+                if (result.toLowerCase().contains("error") || result.toLowerCase().contains("invalid")) {
+                    Log.fatal("Failed to create simulator. Error: " + result);
+                    throw new DeviceException("Failed to create simulator. Error: " + result);
+                } else {
+                    String udid = result;
+                    String[] list = result.split("\\r?\\n");
+                    for (String line : list) {
+                        if (line.contains("-")) {
+                            udid = line.trim();
+                        }
                     }
+                    simulatorUdid = udid;
+                    Settings.deviceId = simulatorUdid;
+                    Log.info("Simulator created with UDID: " + simulatorUdid);
+                }
+
+                // Verify successfully created
+                if (Simctl.getSimulatorsIdsByName(Settings.deviceName).size() != 1) {
+                    String error = "Simulator " + Settings.deviceName + " does not exist. Hint: verify SDKs installed.";
+                    Log.error(error);
+                    throw new DeviceException(error);
                 }
             }
         } else if (Settings.deviceType == DeviceType.iOS) {
