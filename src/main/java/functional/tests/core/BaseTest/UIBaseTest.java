@@ -186,7 +186,7 @@ public abstract class UIBaseTest extends BaseTest {
 
     @AfterClass(alwaysRun = true)
     public void afterClassUIBaseTest() {
-        Log.info("Go to main page back from fonts page!");
+        Log.info("Navigate to home page in afterClassUIBaseTest!");
         if (this.testsStateManager != null)
             this.testsStateManager.navigateToHomePage();
     }
