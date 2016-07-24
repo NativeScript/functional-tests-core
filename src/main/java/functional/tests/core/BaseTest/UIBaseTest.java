@@ -186,13 +186,19 @@ public abstract class UIBaseTest extends BaseTest {
 
     @AfterClass(alwaysRun = true)
     public void afterClassUIBaseTest() {
-        Log.info("Navigate to home page in afterClassUIBaseTest!");
-        if (this.testsStateManager != null)
+        if (this.testsStateManager != null){
+            Log.info("Navigate to home page in afterClassUIBaseTest!");
             this.testsStateManager.navigateToHomePage();
+        }
     }
 
     @AfterSuite(alwaysRun = true)
     public void afterSuiteUIBaseTest() throws Exception {
+        if (this.testsStateManager != null){
+            Log.info("Navigate to home page in afterSuiteUIBaseTest!");
+            this.testsStateManager.navigateToHomePage();
+        }
+
         Client.stopAppiumDriver();
 
         if (!Settings.debug) {
