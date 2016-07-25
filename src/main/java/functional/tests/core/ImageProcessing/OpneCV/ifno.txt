@@ -1,3 +1,0 @@
-Sample code
-http://testdroid.com/tech/using-opencv-and-akaze-for-mobile-app-and-game-testing
-

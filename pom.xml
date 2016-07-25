@@ -17,16 +17,10 @@
             <artifactId>testng</artifactId>
             <version>6.8.8</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.appium/java-client -->
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
             <version>4.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>opencv</groupId>
-            <artifactId>opencv</artifactId>
-            <version>2.4.13</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
