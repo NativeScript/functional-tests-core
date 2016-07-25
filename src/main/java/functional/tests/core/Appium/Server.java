@@ -33,22 +33,25 @@ public class Server {
         // Create log file
         File logFile = createAppiumLogFile();
 
-        // Appium Version Manager is not available on Windows, so tests will use the global installation
+        // Set appium executable path
+        String appiumPath = "/usr/local/bin/appium";
+        if (Settings.OS == OSType.Windows) {
+            appiumPath = System.getenv("APPDATA") + "\\npm\\node_modules\\appium\\build\\lib\\main.js";
+        }
+
+        // Init AppiumServiceBuilder
         AppiumServiceBuilder serviceBuilder = new AppiumServiceBuilder()
                 .withLogFile(logFile)
                 .usingAnyFreePort();
 
-        if (Settings.OS == OSType.MacOS) {
-            String appiumPath = "/usr/local/bin/appium";
-            File appiumExecutable = new File(appiumPath);
-            if (!appiumExecutable.exists()) {
-                String error = "Appium does not exist at: " + appiumPath;
-                Log.fatal(error);
-                throw new AppiumException(error);
-            } else {
-                Log.info("Appium Executable: " + appiumPath);
-                serviceBuilder.withAppiumJS(appiumExecutable);
-            }
+        File appiumExecutable = new File(appiumPath);
+        if (!appiumExecutable.exists()) {
+            String error = "Appium does not exist at: " + appiumPath;
+            Log.fatal(error);
+            throw new AppiumException(error);
+        } else {
+            Log.info("Appium Executable: " + appiumPath);
+            serviceBuilder.withAppiumJS(appiumExecutable);
         }
 
         // Set iOS specific Appium Server arguments
@@ -62,6 +65,7 @@ public class Server {
             serviceBuilder.withArgument(GeneralServerFlag.LOG_LEVEL, Settings.appiumLogLevel);
         }
 
+        // Start appium server
         service = AppiumDriverLocalService.buildService(serviceBuilder);
         service.start();
         Log.info("Appium server started.");
