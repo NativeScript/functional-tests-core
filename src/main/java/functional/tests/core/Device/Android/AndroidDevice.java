@@ -77,25 +77,34 @@ public class AndroidDevice implements IDevice {
             }
 
         } catch (TimeoutException timeout) {
-            try {
-                Log.error("TimeoutException. Retry init device...");
-                Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
-                Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
-                OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot");
-                this.stopDevice();
-                if (!Settings.isRealDevice) {
-                    Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
-                }
-                this.initDevice();
-            } catch (TimeoutException secondTimeout) {
-                OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot_After_Retry");
+            // If init emulator fail -> recreate the emulator and give the test one more chance
+            if (!Settings.isRealDevice) {
                 try {
-                    throw secondTimeout;
-                } catch (TimeoutException e) {
+                    Log.error("TimeoutException. Retry init device...");
+                    Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
+                    Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
+                    OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot");
+                    this.stopDevice();
+                    if (!Settings.isRealDevice) {
+                        Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
+                    }
+                    this.initDevice();
+                } catch (TimeoutException secondTimeout) {
+                    OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot_After_Retry");
+                    try {
+                        throw secondTimeout;
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                    }
+                } catch (DeviceException e) {
                     e.printStackTrace();
                 }
-            } catch (DeviceException e) {
-                e.printStackTrace();
+            } else {
+                String error = "Failed to find device "
+                        + Settings.deviceId + " in " + String.valueOf(Settings.deviceBootTimeout)
+                        + " seconds.";
+                Log.fatal(error);
+                throw new TimeoutException(error);
             }
         }
     }

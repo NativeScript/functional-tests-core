@@ -236,16 +236,17 @@ public class Adb {
                 } else {
                     Log.info("Device " + deviceId + " not found. Wait...");
 
-                    try {
-                        emulatorStartupLog = FileSystem.readFile(emulatorStartLogPath);
-                    } catch (IOException e) {
-                        Log.error("Failed to read emulator log: " + emulatorStartLogPath);
-                    }
+                    if (!Settings.isRealDevice) {
+                        try {
+                            emulatorStartupLog = FileSystem.readFile(emulatorStartLogPath);
+                        } catch (IOException e) {
+                            Log.error("Failed to read emulator log: " + emulatorStartLogPath);
+                        }
 
-                    if (emulatorStartupLog.contains("ERROR")) {
-                        break;
+                        if (emulatorStartupLog.contains("ERROR")) {
+                            break;
+                        }
                     }
-
                     Wait.sleep(3000);
                 }
             } else {
