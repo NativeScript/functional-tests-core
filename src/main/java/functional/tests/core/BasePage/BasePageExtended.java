@@ -51,6 +51,18 @@ public abstract class BasePageExtended extends BasePage {
 
     public boolean navigateToPage(String demoPath) {
         this.navigateToMainPage();
+        return navgateTo(demoPath);
+    }
+
+    public boolean navigateToPage(String demoPath, boolean shouldRestartToMainPage) {
+        if (shouldRestartToMainPage){
+            this.navigateToMainPage();
+        }
+
+        return navgateTo(demoPath);
+    }
+
+    private boolean navgateTo(String demoPath) {
         if (this.testsStateManager.getCurrentPage() != null && this.testsStateManager.getCurrentPage() != "") {
             if (this.testsStateManager.getCurrentPage() != demoPath) {
                 return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);

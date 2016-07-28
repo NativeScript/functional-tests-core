@@ -3,10 +3,12 @@ package functional.tests.core.BaseTest;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
+import functional.tests.core.Settings.Doctor;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -34,6 +36,12 @@ public class BaseTest {
         if ((Settings.deviceType == DeviceType.Simulator) || (Settings.deviceType == DeviceType.Emulator)) {
             OSUtils.getScreenshot("HostOS_" + fileName);
         }
+    }
+
+    @BeforeSuite(alwaysRun = true)
+    public void beforeSuiteBaseTest() throws Exception {
+        // Verify setup is correct
+        Doctor.check();
     }
 
     @BeforeMethod(alwaysRun = true)

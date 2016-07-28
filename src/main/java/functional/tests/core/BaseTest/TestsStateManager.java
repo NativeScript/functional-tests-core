@@ -10,13 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestsStateManager {
-    private ITestResult status;
     private int navigationLevel;
     private String mainPage;
     private String currentPage;
     private Map<String, Integer> pages;
     private ArrayList<String> usedPages;
     private Client client;
+
+    public int status;
 
     public TestsStateManager(Client client) {
         this.navigationLevel = 0;

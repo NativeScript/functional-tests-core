@@ -385,16 +385,6 @@ public class Settings {
             Archive.extractArchive(tarFile, dest);
         }
 
-        // Verify setup is correct
-        Doctor.verifyJava();
-        Doctor.verifyAndroidHome();
-        Doctor.verifyMobileOS();
-        Doctor.verifyDeviceType();
-        Doctor.verifyTestAppPath();
-        Doctor.verifyOSTypeAndMobilePlatform();
-        Doctor.verifyXcrun();
-        Doctor.verifyIdeviceinstaller();
-
         // Set test app package id
         packageId = getPackageId();
 

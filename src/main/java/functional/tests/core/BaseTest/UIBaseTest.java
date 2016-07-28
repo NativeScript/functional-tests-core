@@ -9,6 +9,7 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
+import functional.tests.core.Settings.Doctor;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -149,7 +150,7 @@ public abstract class UIBaseTest extends BaseTest {
                 }
             }
 
-            if (this.testsStateManager != null) {
+            if (this.testsStateManager != null && this.testsStateManager.status != ITestResult.SUCCESS) {
                 this.testsStateManager.resetNavigationToLastOpenedPage();
             } else {
                 Log.error("TestStateManager is: " + this.testsStateManager + " in beforeMethodUIBaseTest!");
@@ -182,11 +183,15 @@ public abstract class UIBaseTest extends BaseTest {
         } else {
             this.device.writeConsoleLogToFile(testCase);
         }
+
+        if (this.testsStateManager != null){
+            this.testsStateManager.status = result.getStatus();
+        }
     }
 
     @AfterClass(alwaysRun = true)
     public void afterClassUIBaseTest() {
-        if (this.testsStateManager != null){
+        if (this.testsStateManager != null) {
             Log.info("Navigate to home page in afterClassUIBaseTest!");
             this.testsStateManager.navigateToHomePage();
         }
@@ -194,7 +199,7 @@ public abstract class UIBaseTest extends BaseTest {
 
     @AfterSuite(alwaysRun = true)
     public void afterSuiteUIBaseTest() throws Exception {
-        if (this.testsStateManager != null){
+        if (this.testsStateManager != null) {
             Log.info("Navigate to home page in afterSuiteUIBaseTest!");
             this.testsStateManager.navigateToHomePage();
         }

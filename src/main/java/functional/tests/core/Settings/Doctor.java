@@ -13,6 +13,18 @@ import java.io.FileNotFoundException;
 
 public class Doctor {
 
+    public static  void check() throws Exception {
+        // Verify setup is correct
+        Doctor.verifyJava();
+        Doctor.verifyAndroidHome();
+        Doctor.verifyMobileOS();
+        Doctor.verifyDeviceType();
+        Doctor.verifyTestAppPath();
+        Doctor.verifyOSTypeAndMobilePlatform();
+        Doctor.verifyXcrun();
+        Doctor.verifyIdeviceinstaller();
+    }
+
     // Verify Java version
     protected static void verifyJava() throws Exception {
         String version = System.getProperty("java.version");
