@@ -187,14 +187,14 @@ public class App {
                 jse.executeScript("var x = target.deactivateAppForDuration(" + String.valueOf(seconds) + "); var MAX_RETRY=5, retry_count = 0; while (!x && retry_count < MAX_RETRY) { x = target.deactivateAppForDuration(2); retry_count += 1}; x");
             } catch (WebDriverException e) {
                 if (e.getMessage().contains("An error occurred while executing user supplied JavaScript")) {
+                    Client.driver.findElement(By.id(Settings.testAppFriendlyName)).click();
+                } else {
                     // This hack workarounds run in background issue on iOS9
                     By appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
                     MobileElement element = (MobileElement) Client.driver.findElement(appLocator);
                     int offset = 5; // 5px offset within the top-left corner of element
                     Point elementTopLeft = element.getLocation();
                     Client.driver.tap(1, elementTopLeft.x + offset, elementTopLeft.y + offset, 500);
-                } else {
-                    throw new RuntimeException(e);
                 }
             }
         }
