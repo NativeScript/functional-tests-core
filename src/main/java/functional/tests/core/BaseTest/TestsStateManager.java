@@ -1,6 +1,7 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Element.UIElement;
 import functional.tests.core.Find.ActionHelper;
 import functional.tests.core.Log.Log;
 import org.testng.ITestResult;
@@ -89,7 +90,11 @@ public class TestsStateManager {
     public void navigateToHomePage() {
         Log.info("Navigate to home page!");
         while (this.getLevel() > 0) {
-            this.navBack();
+            try {
+                this.navBack();
+            } catch (Exception ex) {
+                Log.error("Could not navigate back: " + ex.getMessage());
+            }
         }
     }
 
@@ -97,6 +102,16 @@ public class TestsStateManager {
         Log.info("Navigate to main page!");
         while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
             this.navBack();
+        }
+    }
+
+    public void navBack(UIElement element) {
+        if (this.getLevel() > 0) {
+            element.click();
+            this.updatePagesOnNavigateBack();
+            Log.info("Navigate back.");
+        } else {
+            Log.info("This is main page!");
         }
     }
 
@@ -130,14 +145,19 @@ public class TestsStateManager {
     }
 
     public void navigateBack(Client client) {
-        this.removeCurrentPage();
-        this.decreaseNavigationLevel();
+        this.updatePagesOnNavigateBack();
         ActionHelper.navigateBack(client);
     }
 
     public void navigateForward(Client client) {
         this.increaseNavigationLevel();
         ActionHelper.navigateForward(client);
+    }
+
+    private int decreaseNavigationLevel() {
+        this.navigationLevel--;
+
+        return this.navigationLevel;
     }
 
     private void setNewPage() {
@@ -152,9 +172,8 @@ public class TestsStateManager {
         return this.navigationLevel;
     }
 
-    private int decreaseNavigationLevel() {
-        this.navigationLevel--;
-
-        return this.navigationLevel;
+    private void updatePagesOnNavigateBack() {
+        this.removeCurrentPage();
+        this.decreaseNavigationLevel();
     }
 }
