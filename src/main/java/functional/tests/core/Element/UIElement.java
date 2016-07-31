@@ -294,7 +294,7 @@ public class UIElement {
             Wait.sleep(waitAfterTap);
         }
         try {
-            Log.info("Tap " + this.getDescription());
+            Log.info("Tap on \"" + this.getDescription() + "\"");
         } catch (Exception e) {
             Log.error(e.getMessage());
         }

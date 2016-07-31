@@ -75,15 +75,16 @@ public class iOSDevice implements IDevice {
         if (Settings.deviceType == DeviceType.Simulator) {
             List<String> simulatorUdids = Simctl.getSimulatorsIdsByName(Settings.deviceName);
 
-            if (simulatorUdids.size() == 1) {
+            if (simulatorUdids.size() == 1 && Settings.recreateSimulator == false) {
                 Log.info("Simulator " + Settings.deviceName + " exists.");
                 Settings.deviceId = simulatorUdids.get(0);
             } else {
 
                 if (simulatorUdids.size() > 1) {
                     Log.error("Multiple simulators with name " + Settings.deviceName + " found. Deleting them ...");
-                    Simctl.deleteSimulator(Settings.deviceName);
-                } // ... and create it.
+                }
+
+                Simctl.deleteSimulator(Settings.deviceName);
 
                 // Create simulator specified by settings
                 String result = Simctl.createSimulator(Settings.deviceName, Settings.simulatorType, Settings.platformVersion);

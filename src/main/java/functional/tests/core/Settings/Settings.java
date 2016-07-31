@@ -54,6 +54,7 @@ public class Settings {
     public static String emulatorOptions;
     public static String emulatorCreateOptions;
     public static String simulatorType;
+    public static boolean recreateSimulator;
     public static String baseLogDir;
     public static String consoleLogDir;
     public static String screenshotOutDir;
@@ -89,7 +90,7 @@ public class Settings {
             Log.info(String.format("LOCAL STORAGE %s", baseResourcesDir));
             return baseResourcesDir;
         } else {
-            Log.info(String.format("%s=%s%n", storageEvnironmentVariable, env));
+            Log.info(String.format("%s=%s", storageEvnironmentVariable, env));
             return env;
         }
     }
@@ -296,6 +297,13 @@ public class Settings {
         logImageVerificationResults = properties.getProperty("logImageVerificationResults") != null ?
                 new Boolean(properties.getProperty("logImageVerificationResults")) : false;
 
+        // Set recreateSimulator
+        String recreateSimulatorString = properties.getProperty("recreateSimulator");
+        recreateSimulator = false;
+        if (recreateSimulatorString != null) {
+            recreateSimulator = stringToBoolean(recreateSimulatorString);
+        }
+
         // Set restartApp
         String restartAppString = properties.getProperty("restartApp");
         restartApp = true;
@@ -432,6 +440,7 @@ public class Settings {
         Log.info("(Android Only) Emulator Create Options: " + emulatorCreateOptions);
         Log.info("(iOS Only) Auto Accept Alerts: " + acceptAlertsString);
         Log.info("(iOS Simulator Only) Simulator Type: " + simulatorType);
+        Log.info("(iOS Simulator Only) Recreate Simulator: " + recreateSimulator);
         Log.info("(iOS Simulator Only) TestApp Archive: " + testAppArchive);
         Log.info("Should log image verification results: " + logImageVerificationResults);
         Log.separator();

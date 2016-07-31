@@ -2,6 +2,7 @@ package functional.tests.core.BaseTest;
 
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.ImageProcessing.ImageVerification.ImageVerification;
+import functional.tests.core.Log.Log;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
@@ -48,6 +49,11 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
     public void clearImagesResults() {
         this.imagesResults.clear();
         this.imageCounter = 1;
+    }
+
+    public void assertEquals(String actual, String expected) {
+        Assert.assertEquals(actual, expected, "assertEquals failed! Actual: " + actual + "; Expected: " + expected + ";");
+        Log.info("assertEquals passed! Actual: " + actual + "; Expected: " + expected + ";");
     }
 
     public void assertImagesResults() {

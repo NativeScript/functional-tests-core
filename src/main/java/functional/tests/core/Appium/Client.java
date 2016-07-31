@@ -8,6 +8,7 @@ import functional.tests.core.Settings.Settings;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import org.openqa.selenium.html5.Location;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.concurrent.TimeUnit;
@@ -108,5 +109,14 @@ public class Client {
         } else {
             return 1;
         }
+    }
+
+    public static void setLocation(Location location) {
+        if (Settings.platform == PlatformType.Andorid) {
+            ((AndroidDriver) Client.driver).setLocation(location);
+        } else if (Settings.platform == PlatformType.iOS) {
+            ((IOSDriver) Client.driver).setLocation(location);
+        }
+        Log.info("Set location to: " + location.toString());
     }
 }
