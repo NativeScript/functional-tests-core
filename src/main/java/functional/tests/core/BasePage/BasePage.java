@@ -7,7 +7,6 @@ import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
 import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
-import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.ios.IOSDriver;
@@ -16,13 +15,6 @@ import org.openqa.selenium.By;
 import org.testng.Assert;
 
 public class BasePage {
-    private Gestures gestures;
-    private Find find;
-    private String page;
-
-    public BasePage(){
-    }
-
 
     /**
      * Press the back button *

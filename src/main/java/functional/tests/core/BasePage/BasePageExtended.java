@@ -1,7 +1,6 @@
 package functional.tests.core.BasePage;
 
 import functional.tests.core.Appium.Client;
-import functional.tests.core.BasePage.BasePage;
 import functional.tests.core.BaseTest.TestsStateManager;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
@@ -15,6 +14,7 @@ import org.openqa.selenium.By;
 import java.util.List;
 
 public abstract class BasePageExtended extends BasePage {
+
     protected TestsStateManager testsStateManager;
     protected Client client;
     protected String mainPage;
@@ -31,45 +31,6 @@ public abstract class BasePageExtended extends BasePage {
         this.testsStateManager = testsStateManager;
         this.testsStateManager.setMainPage(this.mainPage);
         this.client = client;
-    }
-
-    public void navBack() {
-        this.testsStateManager.navigateBack(this.client);
-    }
-
-    public void navigateToMainPage() {
-        this.testsStateManager.navigateToMainPage();
-    }
-
-    public void navigateToHomePage() {
-        this.testsStateManager.navigateToHomePage();
-    }
-
-    public void resetNavigationToLastPage() {
-        this.testsStateManager.resetNavigationToLastOpenedPage();
-    }
-
-    public boolean navigateToPage(String demoPath) {
-        this.navigateToMainPage();
-        return navgateTo(demoPath);
-    }
-
-    public boolean navigateToPage(String demoPath, boolean shouldRestartToMainPage) {
-        if (shouldRestartToMainPage){
-            this.navigateToMainPage();
-        }
-
-        return navgateTo(demoPath);
-    }
-
-    private boolean navgateTo(String demoPath) {
-        if (this.testsStateManager.getCurrentPage() != null && this.testsStateManager.getCurrentPage() != "") {
-            if (this.testsStateManager.getCurrentPage() != demoPath) {
-                return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
-            }
-        }
-
-        return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
     }
 
     public static UIElement find(String value) {
@@ -97,5 +58,44 @@ public abstract class BasePageExtended extends BasePage {
 
     public static List<UIElement> findElementsByLocator(By locator) {
         return Find.findElementsByLocator(locator, Settings.shortTimeout);
+    }
+
+    public void navBack() {
+        this.testsStateManager.navigateBack(this.client);
+    }
+
+    public void navigateToMainPage() {
+        this.testsStateManager.navigateToMainPage();
+    }
+
+    public void navigateToHomePage() {
+        this.testsStateManager.navigateToHomePage();
+    }
+
+    public void resetNavigationToLastPage() {
+        this.testsStateManager.resetNavigationToLastOpenedPage();
+    }
+
+    public boolean navigateToPage(String demoPath) {
+        this.navigateToMainPage();
+        return navgateTo(demoPath);
+    }
+
+    public boolean navigateToPage(String demoPath, boolean shouldRestartToMainPage) {
+        if (shouldRestartToMainPage) {
+            this.navigateToMainPage();
+        }
+
+        return navgateTo(demoPath);
+    }
+
+    private boolean navgateTo(String demoPath) {
+        if (this.testsStateManager.getCurrentPage() != null && this.testsStateManager.getCurrentPage() != "") {
+            if (this.testsStateManager.getCurrentPage() != demoPath) {
+                return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
+            }
+        }
+
+        return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
     }
 }
