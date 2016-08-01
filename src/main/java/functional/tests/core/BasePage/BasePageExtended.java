@@ -21,16 +21,24 @@ public abstract class BasePageExtended extends BasePage {
     protected Gestures gestures;
     protected FindHelper find;
 
-    public BasePageExtended() {
+    public BasePageExtended(Client client, String mainPage, TestsStateManager testsStateManager) {
+        this(client, testsStateManager);
+        this.mainPage = mainPage;
+
+        if (this.mainPage != null && this.mainPage != "") {
+            this.testsStateManager.setMainPage(this.mainPage);
+        }
     }
 
-    public BasePageExtended(Client client, String mainPage, TestsStateManager testsStateManager) {
+    public BasePageExtended(Client client, TestsStateManager testsStateManager) {
+        this();
         this.gestures = new Gestures();
         this.find = new FindHelper(client);
-        this.mainPage = mainPage;
         this.testsStateManager = testsStateManager;
-        this.testsStateManager.setMainPage(this.mainPage);
         this.client = client;
+    }
+
+    public BasePageExtended() {
     }
 
     public static UIElement find(String value) {
