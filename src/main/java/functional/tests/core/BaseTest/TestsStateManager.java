@@ -88,7 +88,7 @@ public class TestsStateManager {
     }
 
     public void navigateToHomePage() {
-        Log.info("Navigate to home page!");
+        Log.info("Navigating to home page!");
         while (this.getLevel() > 0) {
             try {
                 this.navBack();
@@ -96,12 +96,27 @@ public class TestsStateManager {
                 Log.error("Could not navigate back: " + ex.getMessage());
             }
         }
+
+        Log.info("Navigated to home page!");
     }
 
     public void navigateToMainPage() {
-        Log.info("Navigate to main page!");
+        Log.info("Navigating to main page " + this.getMainPage() + " .....");
+
         while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
             this.navBack();
+        }
+
+        Log.info("Navigated to main page " + this.getMainPage() + " !");
+    }
+
+    public void navigateTo(UIElement element) {
+        if (this.getLevel() > 0) {
+            element.click();
+            this.increaseNavigationLevel();
+            Log.info("Navigate to " + element);
+        } else {
+            Log.info("This is main page!");
         }
     }
 
