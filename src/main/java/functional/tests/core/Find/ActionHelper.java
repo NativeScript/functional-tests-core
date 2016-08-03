@@ -59,6 +59,15 @@ public class ActionHelper {
     }
 
 
+    public static boolean navigateTo(UIElement element, TestsStateManager testsStateManager, Client client) {
+        Log.info("Navigating to \"" + element + "\".");
+        FindHelper find = new FindHelper(client);
+
+        element.click();
+
+        return true;
+    }
+
     public static void navigateBack(Client client) {
         client.getDriver().navigate().back();
     }

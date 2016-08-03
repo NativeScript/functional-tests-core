@@ -6,6 +6,7 @@ import functional.tests.core.Find.ActionHelper;
 import functional.tests.core.Log.Log;
 import org.testng.ITestResult;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,14 +111,12 @@ public class TestsStateManager {
         Log.info("Navigated to main page " + this.getMainPage() + " !");
     }
 
-    public void navigateTo(UIElement element) {
-        if (this.getLevel() > 0) {
-            element.click();
-            this.increaseNavigationLevel();
-            Log.info("Navigate to " + element);
-        } else {
-            Log.info("This is main page!");
-        }
+    public boolean navigateTo(UIElement element) {
+        ActionHelper.navigateTo(element,this, this.client);
+        this.increaseNavigationLevel();
+        Log.info("Navigate to " + element);
+
+        return true;
     }
 
     public void navBack(UIElement element) {
@@ -132,7 +131,7 @@ public class TestsStateManager {
 
     public void navBack() {
         if (this.getLevel() > 0) {
-            this.navigateBack(this.client);
+            this.navigateBack();
             Log.info("Navigate back.");
         } else {
             Log.info("This is main page!");
@@ -159,14 +158,14 @@ public class TestsStateManager {
         }
     }
 
-    public void navigateBack(Client client) {
+    public void navigateBack() {
         this.updatePagesOnNavigateBack();
-        ActionHelper.navigateBack(client);
+        ActionHelper.navigateBack(this.client);
     }
 
-    public void navigateForward(Client client) {
+    public void navigateForward() {
         this.increaseNavigationLevel();
-        ActionHelper.navigateForward(client);
+        ActionHelper.navigateForward(this.client);
     }
 
     private int decreaseNavigationLevel() {

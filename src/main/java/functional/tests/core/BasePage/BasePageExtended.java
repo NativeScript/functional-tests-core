@@ -69,7 +69,11 @@ public abstract class BasePageExtended extends BasePage {
     }
 
     public void navBack() {
-        this.testsStateManager.navigateBack(this.client);
+        this.testsStateManager.navigateBack();
+    }
+
+    public void navBack(UIElement element) {
+        this.testsStateManager.navBack(element);
     }
 
     public void navigateToMainPage() {
@@ -86,7 +90,7 @@ public abstract class BasePageExtended extends BasePage {
 
     public boolean navigateToPage(String demoPath) {
         this.navigateToMainPage();
-        return navgateTo(demoPath);
+        return navigateTo(demoPath);
     }
 
     public boolean navigateToPage(String demoPath, boolean shouldRestartToMainPage) {
@@ -94,10 +98,14 @@ public abstract class BasePageExtended extends BasePage {
             this.navigateToMainPage();
         }
 
-        return navgateTo(demoPath);
+        return navigateTo(demoPath);
     }
 
-    private boolean navgateTo(String demoPath) {
+    public boolean navigateTo(UIElement element) {
+        return this.testsStateManager.navigateTo(element);
+    }
+
+    private boolean navigateTo(String demoPath) {
         if (this.testsStateManager.getCurrentPage() != null && this.testsStateManager.getCurrentPage() != "") {
             if (this.testsStateManager.getCurrentPage() != demoPath) {
                 return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
