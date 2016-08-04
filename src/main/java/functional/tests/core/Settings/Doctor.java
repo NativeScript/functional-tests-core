@@ -3,6 +3,7 @@ package functional.tests.core.Settings;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
+import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
@@ -13,7 +14,7 @@ import java.io.FileNotFoundException;
 
 public class Doctor {
 
-    public static  void check() throws Exception {
+    public static void check() throws Exception {
         // Verify setup is correct
         Doctor.verifyJava();
         Doctor.verifyAndroidHome();
@@ -23,6 +24,7 @@ public class Doctor {
         Doctor.verifyOSTypeAndMobilePlatform();
         Doctor.verifyXcrun();
         Doctor.verifyIdeviceinstaller();
+        Doctor.checkAppiumVersion();
     }
 
     // Verify Java version
@@ -115,5 +117,29 @@ public class Doctor {
         }
     }
 
+    private static void checkAppiumVersion() throws AppiumException {
 
+        // Get appium appium-version
+        String appiumCommand = OSUtils.runProcess("appium -v ");
+
+        // If appium is not installed try to install it
+        if (appiumCommand.contains("not installed")) {
+            Log.warn("Appium " + Settings.appiumVersion + " not installed!!!");
+            inastallAppium();
+            return;
+
+        } else if (!appiumCommand.contains(Settings.appiumVersion)) {
+            Log.warn("Installed appium version " + appiumCommand + " is not compatible with desired version" + Settings.appiumVersion + "!!!");
+            inastallAppium();
+            return;
+        } else {
+            Log.warn("Appium " + Settings.appiumVersion + " is compatible with desired version " + Settings.appiumVersion + "!!!");
+        }
+    }
+
+    private static void inastallAppium() {
+        Log.warn("Installing Appium " + Settings.appiumVersion + " using npm install -g appium@" + Settings.appiumVersion + " -f!!!");
+        OSUtils.runProcess("npm install -g appium@" + Settings.appiumVersion + " -f");
+        Log.warn("Appium version " + Settings.appiumVersion + "is installed!!!");
+    }
 }

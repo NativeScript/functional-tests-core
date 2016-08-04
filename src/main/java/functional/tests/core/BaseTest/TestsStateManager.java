@@ -4,9 +4,7 @@ import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Find.ActionHelper;
 import functional.tests.core.Log.Log;
-import org.testng.ITestResult;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,17 +100,20 @@ public class TestsStateManager {
     }
 
     public void navigateToMainPage() {
-        Log.info("Navigating to main page " + this.getMainPage() + " .....");
 
-        while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
-            this.navBack();
+        if (this.getPageIndex(this.getMainPage()) >= this.getLevel()) {
+            Log.info("The navigation to the main page will be skipped because this should be the main page!!!");
         }
 
-        Log.info("Navigated to main page " + this.getMainPage() + " !");
+        while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
+            Log.info("Navigating to main page " + this.getMainPage() + " .....");
+            this.navBack();
+            Log.info("Nav back to go to: " + this.getMainPage() + " !");
+        }
     }
 
     public boolean navigateTo(UIElement element) {
-        ActionHelper.navigateTo(element,this, this.client);
+        ActionHelper.navigateTo(element, this, this.client);
         this.increaseNavigationLevel();
         Log.info("Navigate to " + element);
 
