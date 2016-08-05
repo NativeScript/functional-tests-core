@@ -3,7 +3,6 @@ package functional.tests.core.Find;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.BaseTest.TestsStateManager;
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.Find.FindHelper;
 import functional.tests.core.Log.Log;
 
 public class ActionHelper {
@@ -77,10 +76,10 @@ public class ActionHelper {
     }
 
     private static UIElement findButtonByTextContent(String text, FindHelper find) {
-        UIElement btn = find.byTextNaviagtion(text, 3);
+        UIElement btn = find.byText(text, 3);
 
         if (btn == null) {
-            btn = find.findByText(text, 3);
+            btn = find.byText(text, 3);
         }
 
         if (btn != null) {
@@ -88,7 +87,6 @@ public class ActionHelper {
         } else {
             Log.error(String.format("%s NOT loaded.", text));
         }
-//
         return btn;
     }
 }
