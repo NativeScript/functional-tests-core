@@ -51,7 +51,7 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.imageCounter = 1;
     }
 
-    public void assertEquals(String actual, String expected) {
+    public <T> void assertEquals(T actual, T expected) {
         Assert.assertEquals(actual, expected, "assertEquals failed! Actual: " + actual + "; Expected: " + expected + ";");
         Log.info("assertEquals passed! Actual: " + actual + "; Expected: " + expected + ";");
     }
