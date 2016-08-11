@@ -22,6 +22,21 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.imageCounter = 1;
     }
 
+    public boolean waitForScreen(int timeOut) throws Exception {
+        String testName = createImageName();
+        return ImageVerification.compareScreens(testName, timeOut, 0, 0, 00.1);
+    }
+
+    public boolean waitForScreen(String imageName, int timeOut, double percentTolerance) throws Exception {
+        return ImageVerification.compareScreens(imageName, timeOut, 0, 0, percentTolerance);
+    }
+
+    public boolean waitForScreen(int timeOut, double percentTolerance) throws Exception {
+        String testName = createImageName();
+        return ImageVerification.compareScreens(testName, timeOut, 0, 0, percentTolerance);
+    }
+
+
     public void compareElements(UIElement element, int timeOut) throws Exception {
         this.compareElements(element, timeOut, defaultWaitTime, Integer.MAX_VALUE, minPercentTolerant);
     }
