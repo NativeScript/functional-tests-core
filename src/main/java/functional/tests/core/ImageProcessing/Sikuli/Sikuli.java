@@ -68,22 +68,15 @@ public class Sikuli {
         }
 
         while (searchedImageMatch == null && timeoutInSeconds > 0) {
-            try {
-                this.client.wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Client.setWait(1000);
             timeoutInSeconds -= 1000;
+            screenBufferImage = ImageUtils.getScreen();
             finder = getFinder(screenBufferImage, imageName, (float) similarity);
 
             searchedImageMatch = finder.next();
         }
 
-        if (timeoutInSeconds <= 0 || searchedImageMatch != null) {
-            return false;
-        }
-
-        return true;
+        return timeoutInSeconds > 0 && searchedImageMatch != null && searchedImageMatch.isValid();
     }
 
     public UIRectangle findTextOnScreen(String text) {
