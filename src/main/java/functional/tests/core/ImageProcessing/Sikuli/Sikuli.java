@@ -54,6 +54,38 @@ public class Sikuli {
         return rectangles.toArray(rectanglesArray);
     }
 
+
+    public boolean waitForImage(String imageName, double similarity, int timeoutInSeconds) {
+        BufferedImage screenBufferImage = ImageUtils.getScreen();
+        timeoutInSeconds *= 1000;
+
+        Finder finder = getFinder(screenBufferImage, imageName, (float) similarity);
+
+        Match searchedImageMatch = finder.next();
+
+        if (searchedImageMatch != null && searchedImageMatch.isValid()) {
+            return true;
+        }
+
+        while (searchedImageMatch == null && timeoutInSeconds > 0) {
+            try {
+                this.client.wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeoutInSeconds -= 1000;
+            finder = getFinder(screenBufferImage, imageName, (float) similarity);
+
+            searchedImageMatch = finder.next();
+        }
+
+        if (timeoutInSeconds <= 0 || searchedImageMatch != null) {
+            return false;
+        }
+
+        return true;
+    }
+
     public UIRectangle findTextOnScreen(String text) {
         Settings.InfoLogs = true;
         Settings.OcrTextSearch = true;

@@ -23,9 +23,9 @@ public abstract class BasePageExtended extends BasePage {
 
     public BasePageExtended(Client client, String mainPage, TestsStateManager testsStateManager) {
         this(client, testsStateManager);
-        this.mainPage = mainPage;
 
         if (this.mainPage != null && this.mainPage != "") {
+            this.mainPage = mainPage;
             this.testsStateManager.setMainPage(this.mainPage);
         }
     }
