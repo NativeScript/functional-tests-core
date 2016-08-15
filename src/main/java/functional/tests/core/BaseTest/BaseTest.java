@@ -18,14 +18,7 @@ public class BaseTest {
 
     protected static int previousTestStatus = ITestResult.SUCCESS;
 
-    public BaseTest() {
-        try {
-            Log.initLogging();
-            Settings.initSettings();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public BaseTest() {}
 
     public static String getAppName() {
         String appName = Settings.testAppImageFolder;
@@ -40,7 +33,12 @@ public class BaseTest {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteBaseTest() throws Exception {
-        // Verify setup is correct
+        try {
+            Log.initLogging();
+            Settings.initSettings();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Doctor.check();
     }
 
