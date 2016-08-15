@@ -35,13 +35,13 @@ public class FindHelper {
         return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
-    private UIElement findByText(String value) {
+    private UIElement findTextByXPath(String value) {
         return findElementByLocator(Locators.findByTextLocator("*", value, true));
     }
 
     public UIElement byText(String value) {
         if (Settings.platform == PlatformType.Andorid) {
-            return findByText(value);
+            return this.findTextByXPath(value);
         } else if (Settings.platform == PlatformType.iOS) {
             return findElementByLocator(By.id(value));
         } else {
@@ -53,30 +53,17 @@ public class FindHelper {
         Client.setWait(timeOut);
         UIElement result;
         try {
-            result = findByText(value);
+            result = this.byText(value);
         } catch (Exception e) {
             Log.error("Failed to find element by: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
         }
         Client.setWait(Settings.defaultTimeout);
+
         return result;
     }
 
     public UIElement byType(String value) {
         return new UIElement((MobileElement) this.client.driver.findElement(By.className(value)));
     }
-
-    // Duplicated?
-//    public UIElement byTextNavigation(String value, int timeOut) {
-//        Client.setWait(timeOut);
-//        UIElement result;
-//        try {
-//            result = findByText(value);
-//        } catch (Exception e) {
-//            Log.error("Failed to find element by: " + value + " in " + String.valueOf(timeOut) + " seconds.");
-//            result = null;
-//        }
-//        Client.setWait(Settings.defaultTimeout);
-//        return result;
-//    }
 }
