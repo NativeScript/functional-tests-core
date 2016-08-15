@@ -27,23 +27,23 @@ public class FindHelper {
         return elements;
     }
 
-    private UIElement findElementByLocator(By locator) {
+    private UIElement findTextByXPath(String value) {
+        return this.byLocator(Locators.findByTextLocator("*", value, true));
+    }
+
+    public UIElement byLocator(By locator) {
         return new UIElement((MobileElement) this.client.getDriver().findElement(locator));
     }
 
-    private List<UIElement> findElementsByLocator(By locator) {
+    public List<UIElement> elementsByLocator(By locator) {
         return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
-    }
-
-    private UIElement findTextByXPath(String value) {
-        return findElementByLocator(Locators.findByTextLocator("*", value, true));
     }
 
     public UIElement byText(String value) {
         if (Settings.platform == PlatformType.Andorid) {
             return this.findTextByXPath(value);
         } else if (Settings.platform == PlatformType.iOS) {
-            return findElementByLocator(By.id(value));
+            return this.byLocator(By.id(value));
         } else {
             return null;
         }
