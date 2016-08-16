@@ -10,7 +10,7 @@ public class ActionHelper {
     public static void resetNavigation(String btnText, Client client) {
         FindHelper find = new FindHelper(client);
         if (btnText != null) {
-            UIElement demoBtn = findButtonByTextContent(btnText, find);
+            UIElement demoBtn = findButtonByTextContent(btnText, client);
             if (demoBtn == null) {
                 Log.error("Failed to navigate to '" + btnText + "' button.");
 
@@ -19,6 +19,10 @@ public class ActionHelper {
             Log.info("Tap on '" + btnText + "' button.");
             demoBtn.click();
         }
+    }
+
+    public static boolean navigateTo(String demoPath, Client client) {
+        return navigateTo(demoPath, null, client);
     }
 
     public static boolean navigateTo(String demoPath, TestsStateManager testsStateManager, Client client) {
@@ -34,7 +38,7 @@ public class ActionHelper {
 
         for (int i = 0; i < demos.length; i++) {
             String btnText = demos[i];
-            UIElement demoBtn = findButtonByTextContent(btnText, find);
+            UIElement demoBtn = findButtonByTextContent(btnText, client);
             if (demoBtn == null) {
                 return false;
             }
@@ -58,11 +62,8 @@ public class ActionHelper {
     }
 
 
-    public static boolean navigateTo(UIElement element, TestsStateManager testsStateManager, Client client) {
+    public static boolean navigateTo(UIElement element) {
         Log.info("Navigating to \"" + element + "\".");
-        FindHelper find = new FindHelper(client);
-
-        element.click();
 
         return true;
     }
@@ -75,7 +76,8 @@ public class ActionHelper {
         client.getDriver().navigate().forward();
     }
 
-    private static UIElement findButtonByTextContent(String text, FindHelper find) {
+    private static UIElement findButtonByTextContent(String text, Client client) {
+        FindHelper find = new FindHelper(client);
         UIElement btn = find.byText(text, 3);
 
         if (btn == null) {

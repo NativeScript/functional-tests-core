@@ -113,7 +113,7 @@ public class TestsStateManager {
     }
 
     public boolean navigateTo(UIElement element) {
-        ActionHelper.navigateTo(element, this, this.client);
+        ActionHelper.navigateTo(element);
         this.increaseNavigationLevel();
         Log.info("Navigate to " + element);
 

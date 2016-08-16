@@ -14,12 +14,8 @@ import org.openqa.selenium.By;
 import java.util.List;
 
 public abstract class BasePageExtended extends BasePage {
-
     protected TestsStateManager testsStateManager;
-    protected Client client;
     protected String mainPage;
-    protected Gestures gestures;
-    protected FindHelper find;
 
     public BasePageExtended(Client client, String mainPage, TestsStateManager testsStateManager) {
         this(client, testsStateManager);
@@ -30,11 +26,8 @@ public abstract class BasePageExtended extends BasePage {
     }
 
     public BasePageExtended(Client client, TestsStateManager testsStateManager) {
-        this();
-        this.gestures = new Gestures();
-        this.find = new FindHelper(client);
+        super(client);
         this.testsStateManager = testsStateManager;
-        this.client = client;
     }
 
     public BasePageExtended() {
