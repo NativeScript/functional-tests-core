@@ -61,10 +61,10 @@ public class ActionHelper {
         return true;
     }
 
-
     public static boolean navigateTo(UIElement element) {
         Log.info("Navigating to \"" + element + "\".");
-
+        element.click();
+        
         return true;
     }
 
