@@ -3,10 +3,12 @@ package functional.tests.core.Find;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.BaseTest.TestsStateManager;
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.Element.UIRectangle;
 import functional.tests.core.Log.Log;
+import functional.tests.core.Settings.Settings;
+import org.w3c.dom.css.Rect;
 
 public class ActionHelper {
-
     public static void resetNavigation(String btnText, Client client) {
         FindHelper find = new FindHelper(client);
         if (btnText != null) {
@@ -64,7 +66,7 @@ public class ActionHelper {
     public static boolean navigateTo(UIElement element) {
         Log.info("Navigating to \"" + element + "\".");
         element.click();
-        
+
         return true;
     }
 

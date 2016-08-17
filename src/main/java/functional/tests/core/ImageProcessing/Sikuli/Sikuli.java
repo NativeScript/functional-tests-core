@@ -110,8 +110,8 @@ public class Sikuli {
         return finder;
     }
 
-    private Rectangle getRectangle(Point point, int screeentshotWidth) {
-        int densityRatio = this.client.getDensityRatio(screeentshotWidth);
+    private Rectangle getRectangle(Point point, int screenShotWidth) {
+        int densityRatio = this.client.getDensityRatio(screenShotWidth);
 
         Rectangle rectangle = new Rectangle(point.x / densityRatio, point.y / densityRatio, 50, 50);
 

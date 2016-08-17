@@ -7,6 +7,20 @@ import org.openqa.selenium.By;
 
 public class Locators {
 
+    public static By byText(String text) {
+       return byText(text, true);
+    }
+
+    public static By byText(String text, boolean exactMatch) {
+        if (Settings.platform == PlatformType.Andorid) {
+            return findByTextLocator("*", text, false);
+        } else if (Settings.platform == PlatformType.iOS) {
+            return By.id(text);
+        } else {
+            return null;
+        }
+    }
+
     public static By findByTextLocator(String controlType, String value,
                                        boolean exactMatch) {
         if (Settings.platform == PlatformType.Andorid) {

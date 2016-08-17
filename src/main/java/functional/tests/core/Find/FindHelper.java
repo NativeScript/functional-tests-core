@@ -39,14 +39,12 @@ public class FindHelper {
         return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
+    public UIElement byTextContains(String value) {
+        return this.byLocator(Locators.byText(value, false));
+    }
+
     public UIElement byText(String value) {
-        if (Settings.platform == PlatformType.Andorid) {
-            return this.findTextByXPath(value);
-        } else if (Settings.platform == PlatformType.iOS) {
-            return this.byLocator(By.id(value));
-        } else {
-            return null;
-        }
+        return this.byLocator(Locators.byText(value));
     }
 
     public UIElement byText(String value, int timeOut) {

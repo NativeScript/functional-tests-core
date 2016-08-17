@@ -14,14 +14,16 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.opencv.core.Rect;
-import org.openqa.selenium.By;
+import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
+import sun.jvm.hotspot.interpreter.Bytecode;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -636,6 +638,16 @@ public class UIElement {
         rect.width = this.element.getSize().getWidth();
         rect.x = this.element.getLocation().getX();
         rect.y = this.element.getLocation().getY();
+
+        return rect;
+    }
+
+    public java.awt.Rectangle getUIRectangle() {
+        java.awt.Rectangle rect = new java.awt.Rectangle(
+                this.element.getLocation().getX(),
+                this.element.getLocation().getY(),
+                this.element.getSize().getHeight(),
+                this.element.getSize().getWidth());
 
         return rect;
     }

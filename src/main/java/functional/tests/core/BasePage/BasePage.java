@@ -4,10 +4,7 @@ import functional.tests.core.Appium.Client;
 import functional.tests.core.BaseTest.UIBaseTestExtended;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
-import functional.tests.core.Find.Find;
-import functional.tests.core.Find.FindHelper;
-import functional.tests.core.Find.Locators;
-import functional.tests.core.Find.Wait;
+import functional.tests.core.Find.*;
 import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
@@ -21,6 +18,7 @@ public class BasePage {
     public Client client;
     public Gestures gestures;
     public FindHelper find;
+    public WaitHelper wait;
 
     public BasePage() {
     }
@@ -29,6 +27,7 @@ public class BasePage {
         this.client = client;
         this.gestures = new Gestures();
         this.find = new FindHelper(client);
+        this.wait = new WaitHelper(client);
     }
 
     /**
