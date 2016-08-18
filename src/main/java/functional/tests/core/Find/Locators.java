@@ -126,12 +126,11 @@ public class Locators {
 
     public static By listViewItemsLocator() {
         if (Settings.platform == PlatformType.Andorid) {
-            return By.xpath("//android.widget.ListView/*");
+            return By.className("android.view.ViewGroup");
         } else {
-            return By.xpath("//UIATableView/UIATableCell");
+            return By.className("UIATableCell");
         }
     }
-
     public static By progressLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ProgressBar");
