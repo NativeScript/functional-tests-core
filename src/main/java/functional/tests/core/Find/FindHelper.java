@@ -19,6 +19,30 @@ public class FindHelper {
         this.client = client;
     }
 
+    public UIElement byLocator(By locator) {
+        return new UIElement((MobileElement) this.client.getDriver().findElement(locator));
+    }
+
+    public UIElement byText(String controlType, String value, boolean exactMatch) {
+        return this.byLocator(Locators.findByTextLocator(controlType, value, exactMatch));
+    }
+
+    public UIElement byText(String value, boolean exactMatch) {
+        return this.byLocator(Locators.findByTextLocator("*", value, exactMatch));
+    }
+
+//    public UIElement byText(String value) {
+//        return this.byLocator(Locators.findByTextLocator("*", value, true));
+//    }
+
+    private UIElement findTextByXPath(String value) {
+        return this.byLocator(Locators.findByTextLocator("*", value, true));
+    }
+
+    public UIElement byType(String value) {
+        return new UIElement((MobileElement) this.client.driver.findElement(By.className(value)));
+    }
+
     private List<UIElement> convertListOfMobileElementToUIElement(List<MobileElement> list) {
         ArrayList<UIElement> elements = new ArrayList<>();
         for (MobileElement element : list) {
@@ -27,43 +51,77 @@ public class FindHelper {
         return elements;
     }
 
-    private UIElement findTextByXPath(String value) {
-        return this.byLocator(Locators.findByTextLocator("*", value, true));
-    }
-
-    public UIElement byLocator(By locator) {
-        return new UIElement((MobileElement) this.client.getDriver().findElement(locator));
-    }
-
     public List<UIElement> elementsByLocator(By locator) {
         return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
+    public UIElement byLocator(By locator, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.byLocator(locator);
+        } catch (Exception e) {
+            Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public UIElement byText(String value, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.findTextByXPath(value);
+        } catch (Exception e) {
+            Log.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public UIElement byType(String value, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.byType(value);
+        } catch (Exception e) {
+            Log.error("Failed to find element by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public List<UIElement> elementsByLocator(By locator, int timeOut) {
+        this.client.setWait(timeOut);
+        List<UIElement> result;
+        try {
+            result = this.elementsByLocator(locator);
+        } catch (Exception e) {
+            Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
     public UIElement byText(String value) {
         if (Settings.platform == PlatformType.Andorid) {
-            return this.findTextByXPath(value);
+            return this.byText(value, Settings.shortTimeout);
         } else if (Settings.platform == PlatformType.iOS) {
-            return this.byLocator(By.id(value));
+            return this.byLocator(By.id(value), Settings.shortTimeout);
         } else {
             return null;
         }
     }
 
-    public UIElement byText(String value, int timeOut) {
-        Client.setWait(timeOut);
-        UIElement result;
-        try {
-            result = this.byText(value);
-        } catch (Exception e) {
-            Log.error("Failed to find element by: " + value + " in " + String.valueOf(timeOut) + " seconds.");
-            result = null;
-        }
-        Client.setWait(Settings.defaultTimeout);
-
-        return result;
-    }
-
-    public UIElement byType(String value) {
-        return new UIElement((MobileElement) this.client.driver.findElement(By.className(value)));
+    public UIElement getParent(UIElement element) {
+        String xpathString = element.getXpath() + "/..";
+        Log.debug("Looking for parent with the following Xpath: " + xpathString);
+        UIElement e = new UIElement((MobileElement) Client.driver.findElement(By.xpath(xpathString)));
+        Log.debug("Found " + e.getDescription());
+        return e;
     }
 }
