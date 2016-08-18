@@ -7,18 +7,15 @@ import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.interactions.Action;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 public class Find {
     private Client client;
 
-    public Find(Client client){
-      this.client = client;
+    public Find(Client client) {
+        this.client = client;
     }
 
     /**
