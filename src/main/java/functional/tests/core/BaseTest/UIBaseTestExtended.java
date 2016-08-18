@@ -49,6 +49,10 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.compareElements(element, timeOut, waitTime, Integer.MAX_VALUE, minPercentTolerant);
     }
 
+    public void compareScreens() throws Exception {
+        this.compareScreens(1, defaultWaitTime, 0, 0); // As '0' does not do the trick.
+    }
+
     public void compareScreens(int timeOut) throws Exception {
         this.compareScreens(timeOut, defaultWaitTime, 0, 0);
     }
