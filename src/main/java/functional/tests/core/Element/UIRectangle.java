@@ -2,13 +2,12 @@ package functional.tests.core.Element;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Log.Log;
-import io.appium.java_client.AppiumDriver;
 
 import java.awt.*;
 
 public class UIRectangle {
-    private Rectangle rectangle;
-    private Client client;
+    protected Rectangle rectangle;
+    protected Client client;
 
     public UIRectangle(Rectangle rectangle, Client client) {
         this.rectangle = rectangle;
@@ -16,8 +15,7 @@ public class UIRectangle {
     }
 
     public Rectangle extendRectangle(int xOffset, int yOffset, int widthOffset, int heightOffset) {
-        Rectangle rect = new Rectangle(this.rectangle.x + xOffset, this.rectangle.y + yOffset, this.rectangle.width + widthOffset, this.rectangle.height + heightOffset);
-        this.rectangle = rect;
+        this.rectangle = extendRectangle(this.rectangle, xOffset, yOffset, widthOffset, heightOffset);
 
         return this.rectangle;
     }
@@ -36,5 +34,11 @@ public class UIRectangle {
         Log.info("UIRectangle tap on x: " + this.rectangle.x + " y: " + this.rectangle.y);
         io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
         action.tap(this.rectangle.x, this.rectangle.y).perform();
+    }
+
+    public static Rectangle extendRectangle(Rectangle rect, int xOffset, int yOffset, int widthOffset, int heightOffset) {
+        Rectangle rectangle = new Rectangle(rect.x + xOffset, rect.y + yOffset, rect.width + widthOffset, rect.height + heightOffset);
+
+        return rectangle;
     }
 }
