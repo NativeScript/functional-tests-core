@@ -104,9 +104,8 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
     }
 
     private void compareElements(String imageName, UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        String testName = createImageName();
-        boolean result = ImageVerification.compareElements(element, testName, timeOut, waitTime, pixelTolerance, percentTolerance);
-        this.imagesResults.put(testName, result);
+        boolean result = ImageVerification.compareElements(element, imageName, timeOut, waitTime, pixelTolerance, percentTolerance);
+        this.imagesResults.put(imageName, result);
         this.imageCounter++;
     }
 
