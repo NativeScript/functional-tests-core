@@ -94,6 +94,14 @@ public class Locators {
         }
     }
 
+    public static By imageButtonLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.ImageButton");
+        } else {
+            return null;
+        }
+    }
+
     public static By labelLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.TextView");
