@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 public class Locators {
 
     public static By byText(String text) {
-       return byText(text, true);
+        return byText(text, true);
     }
 
     public static By byText(String text, boolean exactMatch) {
@@ -126,11 +126,12 @@ public class Locators {
 
     public static By listViewItemsLocator() {
         if (Settings.platform == PlatformType.Andorid) {
-            return By.className("android.view.ViewGroup");
+            return By.xpath("//android.widget.ListView/*");
         } else {
-            return By.className("UIATableCell");
+            return By.xpath("//UIATableView/UIATableCell");
         }
     }
+
     public static By progressLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ProgressBar");

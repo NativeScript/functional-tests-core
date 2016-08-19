@@ -20,6 +20,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.Assert;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -642,8 +643,8 @@ public class UIElement {
         java.awt.Rectangle rect = new java.awt.Rectangle(
                 this.element.getLocation().getX(),
                 this.element.getLocation().getY(),
-                this.element.getSize().getHeight(),
-                this.element.getSize().getWidth());
+                this.element.getSize().getWidth(),
+                this.element.getSize().getHeight());
 
         return rect;
     }

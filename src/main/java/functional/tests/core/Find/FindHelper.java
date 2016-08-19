@@ -40,6 +40,7 @@ public class FindHelper {
     }
 
     public UIElement byTextContains(String value) {
+        Client.setWait(8000);
         return this.byLocator(Locators.byText(value, false));
     }
 

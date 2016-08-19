@@ -22,6 +22,15 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.imageCounter = 1;
     }
 
+    public boolean waitForElement(UIElement element, int timeOut, double percentTolerance) throws Exception {
+        String testName = createImageName();
+        return this.waitForElement(testName, element, timeOut, percentTolerance);
+    }
+
+    public boolean waitForElement(String imageName, UIElement element, int timeOut, double percentTolerance) throws Exception {
+        return ImageVerification.compareElements(element, imageName, timeOut, 0, 0, percentTolerance);
+    }
+
     public boolean waitForScreen(int timeOut) throws Exception {
         String testName = createImageName();
         return ImageVerification.compareScreens(testName, timeOut, 0, 0, 00.1);
@@ -36,13 +45,16 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         return ImageVerification.compareScreens(testName, timeOut, 0, 0, percentTolerance);
     }
 
-
     public void compareElements(UIElement element, int timeOut) throws Exception {
         this.compareElements(element, timeOut, defaultWaitTime, Integer.MAX_VALUE, minPercentTolerant);
     }
 
     public void compareElements(UIElement element, int timeOut, double percentTolerance) throws Exception {
         this.compareElements(element, timeOut, defaultWaitTime, Integer.MAX_VALUE, percentTolerance);
+    }
+
+    public void compareElements(String imageName, UIElement element, int timeOut, double percentTolerance) throws Exception {
+        this.compareElements(imageName, element, timeOut, defaultWaitTime, Integer.MAX_VALUE, percentTolerance);
     }
 
     public void compareElements(UIElement element, int timeOut, int waitTime) throws Exception {
@@ -87,6 +99,11 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
     }
 
     private void compareElements(UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+        String testName = createImageName();
+        this.compareElements(testName, element, timeOut, waitTime, pixelTolerance, percentTolerance);
+    }
+
+    private void compareElements(String imageName, UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = createImageName();
         boolean result = ImageVerification.compareElements(element, testName, timeOut, waitTime, pixelTolerance, percentTolerance);
         this.imagesResults.put(testName, result);
