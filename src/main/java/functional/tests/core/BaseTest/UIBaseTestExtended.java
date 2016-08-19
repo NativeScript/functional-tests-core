@@ -70,11 +70,6 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.imageCounter = 1;
     }
 
-    public <T> void assertEquals(T actual, T expected) {
-        Assert.assertEquals(actual, expected, "assertEquals failed! Actual: " + actual + "; Expected: " + expected + ";");
-        Log.info("assertEquals passed! Actual: " + actual + "; Expected: " + expected + ";");
-    }
-
     public void assertImagesResults() {
         for (String imageName : this.imagesResults.keySet()) {
             Assert.assertTrue(this.imagesResults.get(imageName), String.format("%s test failed because image %s is not as actual", getTestName(), imageName));
