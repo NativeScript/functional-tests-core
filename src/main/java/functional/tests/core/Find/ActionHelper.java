@@ -51,9 +51,9 @@ public class ActionHelper {
 
             if (i < demos.length - 1) {
                 String nextBtnText = demos[i + 1];
-                UIElement nextDemoBtn = functional.tests.core.Find.Find.findByText(nextBtnText, 3);
+                UIElement nextDemoBtn = find.byText(nextBtnText, 3);
                 if (nextDemoBtn == null) {
-                    nextDemoBtn = functional.tests.core.Find.Find.findByText(nextBtnText, 3);
+                    nextDemoBtn = find.byText(nextBtnText, 3);
                 }
             }
         }
