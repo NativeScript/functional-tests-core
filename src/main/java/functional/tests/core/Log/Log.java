@@ -167,6 +167,13 @@ public class Log {
     /**
      * Log current screen *
      */
+    public static void logScreen(String value) {
+        logScreen(value, value, thumbHeight, thumbWidth);
+    }
+
+    /**
+     * Log current screen *
+     */
     public static void logScreen(String fileName, String title) {
         logScreen(fileName, title, thumbHeight, thumbWidth);
     }
