@@ -464,13 +464,13 @@ public class Adb {
     }
 
     /**
-     * Set Location mode to High accuracy.
+     * Change Location mode to High accuracy.
      * @param deviceId
      */
-    public static void setHighAccuracy(String deviceId) {
+    public static void changeLocationMode(String deviceId) {
         String command = "shell settings put secure location_providers_allowed gps,network";
         runAdbCommand(deviceId, command);
-        Log.info("Set Location mode to High accuracy by the following command:");
+        Log.info("Change Location mode to High accuracy by the following command:");
         Log.info(command);
     }
 }
