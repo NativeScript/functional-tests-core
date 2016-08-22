@@ -452,10 +452,25 @@ public class Adb {
         runAdbCommand(Settings.deviceId, command);
     }
 
+    /**
+     * Start Developer Settings.
+     * @param deviceId
+     */
     public static void startDeveloperOptions(String deviceId) {
         String command = "shell am start -n com.android.settings/.DevelopmentSettings";
         runAdbCommand(deviceId, command);
         Log.info("Start Development Settings by the following command:");
+        Log.info(command);
+    }
+
+    /**
+     * Change Location mode to High accuracy.
+     * @param deviceId
+     */
+    public static void changeLocationMode(String deviceId) {
+        String command = "shell settings put secure location_providers_allowed gps,network";
+        runAdbCommand(deviceId, command);
+        Log.info("Change Location mode to High accuracy by the following command:");
         Log.info(command);
     }
 }

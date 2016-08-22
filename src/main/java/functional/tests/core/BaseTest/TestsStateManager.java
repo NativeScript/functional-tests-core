@@ -10,14 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestsStateManager {
+
+    public int status;
     private int navigationLevel;
     private String mainPage;
     private String currentPage;
     private Map<String, Integer> pages;
     private ArrayList<String> usedPages;
     private Client client;
-
-    public int status;
 
     public TestsStateManager(Client client) {
         this.navigationLevel = 0;
@@ -26,10 +26,29 @@ public class TestsStateManager {
         this.client = client;
     }
 
+    /**
+     * Get the navigation level.
+     *
+     * @return
+     */
     public int getLevel() {
         return this.navigationLevel;
     }
 
+    /**
+     * Get the main page.
+     *
+     * @return
+     */
+    public String getMainPage() {
+        return this.mainPage;
+    }
+
+    /**
+     * Set the main page.
+     *
+     * @param mainPage
+     */
     public void setMainPage(String mainPage) {
         if (mainPage.contains("/") || mainPage.contains(("."))) {
             String splitSeparator = mainPage.contains("/") ? "/" : ".";
@@ -39,19 +58,31 @@ public class TestsStateManager {
         }
     }
 
-    public String getMainPage() {
-        return this.mainPage;
+    /**
+     * Get the current page.
+     *
+     * @return
+     */
+    public String getCurrentPage() {
+        return this.currentPage;
     }
 
+    /**
+     * Set the current page.
+     *
+     * @param page
+     */
     public void setCurrentPage(String page) {
         this.currentPage = page;
         this.setNewPage();
     }
 
-    public String getCurrentPage() {
-        return this.currentPage;
-    }
-
+    /**
+     * Get the index of a page.
+     *
+     * @param page
+     * @return
+     */
     public int getPageIndex(String page) {
         try {
             return this.pages.get(page);
@@ -60,6 +91,9 @@ public class TestsStateManager {
         }
     }
 
+    /**
+     * Navigate to the previous opened page.
+     */
     public void resetNavigationToLastOpenedPage() {
         this.navigationLevel = 0;
         if (this.usedPages.size() > 0) {
@@ -86,8 +120,11 @@ public class TestsStateManager {
         }
     }
 
+    /**
+     * Navigate to the home page.
+     */
     public void navigateToHomePage() {
-        Log.info("Navigating to home page!");
+        Log.info("Navigate to home page!");
         while (this.getLevel() > 0) {
             try {
                 this.navBack();
@@ -96,55 +133,75 @@ public class TestsStateManager {
                 Log.error("Could not navigate back: " + ex.getMessage());
             }
         }
-
         Log.info("Navigated to home page!");
     }
 
+    /**
+     * Navigate to the main page.
+     */
     public void navigateToMainPage() {
-
         if (this.getPageIndex(this.getMainPage()) >= this.getLevel()) {
-            Log.info("The navigation to the main page will be skipped because this should be the main page!!!");
+            Log.info("The navigation to the main page will be skipped because this should be the main page!");
         }
 
         while (this.getPageIndex(this.getMainPage()) < this.getLevel()) {
-            Log.info("Navigating to main page " + this.getMainPage() + " .....");
+            Log.info("Navigating to main page " + this.getMainPage() + " ...");
             this.navBack();
-            Log.info("Nav back to go to: " + this.getMainPage() + " !");
+            Log.info("Navigate back to go to: " + this.getMainPage() + " !");
         }
     }
 
+    /**
+     * Navigate to element.
+     *
+     * @param element
+     * @return
+     */
     public boolean navigateTo(UIElement element) {
         ActionHelper.navigateTo(element);
         this.increaseNavigationLevel();
         Log.info("Navigate to " + element);
-
         return true;
     }
 
+    /**
+     * Navigate back by element.
+     *
+     * @param element
+     */
     public void navBack(UIElement element) {
         if (this.getLevel() > 0) {
-            element.click();
+            element.tap();
             this.updatePagesOnNavigateBack();
-            Log.info("Navigate back.");
+            Log.info("Navigated back by element.");
         } else {
-            Log.info("This is main page!");
+            Log.info("This is the main page!");
         }
     }
 
+    /**
+     * Navigate back.
+     */
     public void navBack() {
         if (this.getLevel() > 0) {
             this.navigateBack();
-            Log.info("Navigate back.");
+            Log.info("Navigated back.");
         } else {
-            Log.info("This is main page!");
+            Log.info("This is the main page!");
         }
     }
 
+    /**
+     * Navigate to the main page.
+     */
     public void resetNavigationMainPage() {
         this.navigationLevel = 0;
         ActionHelper.navigateTo(this.mainPage, this, this.client);
     }
 
+    /**
+     * Remove current page.
+     */
     public void removeCurrentPage() {
         this.pages.remove(this.currentPage);
         if (this.navigationLevel < 0) {
@@ -160,22 +217,46 @@ public class TestsStateManager {
         }
     }
 
+    /**
+     * Navigate back.
+     */
     public void navigateBack() {
         this.updatePagesOnNavigateBack();
         ActionHelper.navigateBack(this.client);
     }
 
+    /**
+     * Navigate forward.
+     */
     public void navigateForward() {
         this.increaseNavigationLevel();
         ActionHelper.navigateForward(this.client);
     }
 
+    /**
+     * Decrease the navigation level.
+     *
+     * @return
+     */
     private int decreaseNavigationLevel() {
         this.navigationLevel--;
 
         return this.navigationLevel;
     }
 
+    /**
+     * Increase the navigation level.
+     *
+     * @return
+     */
+    private int increaseNavigationLevel() {
+        this.navigationLevel++;
+        return this.navigationLevel;
+    }
+
+    /**
+     * Set a new pages.
+     */
     private void setNewPage() {
         this.increaseNavigationLevel();
 
@@ -183,11 +264,9 @@ public class TestsStateManager {
         this.usedPages.add(this.currentPage);
     }
 
-    private int increaseNavigationLevel() {
-        this.navigationLevel++;
-        return this.navigationLevel;
-    }
-
+    /**
+     * Update pages on navigating back.
+     */
     private void updatePagesOnNavigateBack() {
         this.removeCurrentPage();
         this.decreaseNavigationLevel();
