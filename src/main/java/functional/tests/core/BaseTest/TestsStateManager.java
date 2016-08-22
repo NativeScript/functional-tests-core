@@ -91,6 +91,7 @@ public class TestsStateManager {
         while (this.getLevel() > 0) {
             try {
                 this.navBack();
+                Log.info("navBack");
             } catch (Exception ex) {
                 Log.error("Could not navigate back: " + ex.getMessage());
             }
