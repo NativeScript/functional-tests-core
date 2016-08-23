@@ -136,7 +136,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.xpath("//android.widget.ListView/*");
         } else {
-            return By.xpath("//UIATableView/UIATableCell");
+            return By.className("UIATableCell");
         }
     }
 
