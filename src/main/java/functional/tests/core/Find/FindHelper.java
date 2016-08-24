@@ -2,7 +2,6 @@ package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
@@ -23,14 +22,6 @@ public class FindHelper {
         return new UIElement((MobileElement) this.client.getDriver().findElement(locator));
     }
 
-    public UIElement byType(String value) {
-        return new UIElement((MobileElement) this.client.driver.findElement(By.className(value)));
-    }
-
-    public List<UIElement> elementsByLocator(By locator) {
-        return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
-    }
-
     public UIElement byLocator(By locator, int timeOut) {
         this.client.setWait(timeOut);
         UIElement result;
@@ -38,6 +29,23 @@ public class FindHelper {
             result = this.byLocator(locator);
         } catch (Exception e) {
             Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public UIElement byType(String value) {
+        return new UIElement((MobileElement) this.client.getDriver().findElement(By.className(value)));
+    }
+
+    public UIElement byType(String value, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.byType(value);
+        } catch (Exception e) {
+            Log.error("Failed to find element by value: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
         }
         this.client.setWait(Settings.defaultTimeout);
@@ -65,18 +73,8 @@ public class FindHelper {
         return this.byLocator(Locators.byText(value, false));
     }
 
-    public UIElement byType(String value, int timeOut) {
-        this.client.setWait(timeOut);
-        UIElement result;
-        try {
-            result = this.byType(value);
-        } catch (Exception e) {
-            Log.error("Failed to find element by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
-            result = null;
-        }
-        this.client.setWait(Settings.defaultTimeout);
-
-        return result;
+    public List<UIElement> elementsByLocator(By locator) {
+        return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
     public List<UIElement> elementsByLocator(By locator, int timeOut) {
@@ -85,7 +83,24 @@ public class FindHelper {
         try {
             result = this.elementsByLocator(locator);
         } catch (Exception e) {
-            Log.error("Failed to find element by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            Log.error("Failed to find elements by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public List<UIElement> elementsbyType(String value) {
+        return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(By.className(value)));
+    }
+
+    public List<UIElement> elementsbyType(String value, int timeOut) {
+        this.client.setWait(timeOut);
+        List<UIElement> result;
+        try {
+            result = this.elementsbyType(value);
+        } catch (Exception e) {
+            Log.error("Failed to find elements by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
         }
         this.client.setWait(Settings.defaultTimeout);
