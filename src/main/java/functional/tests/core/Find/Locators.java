@@ -13,7 +13,7 @@ public class Locators {
 
     public static By byText(String text, boolean exactMatch) {
         if (Settings.platform == PlatformType.Andorid) {
-            return findByTextLocator("*", text, false);
+            return findByTextLocator("*", text, exactMatch);
         } else if (Settings.platform == PlatformType.iOS) {
             return By.id(text);
         } else {
