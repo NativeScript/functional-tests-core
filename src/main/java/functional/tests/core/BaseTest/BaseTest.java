@@ -3,8 +3,10 @@ package functional.tests.core.BaseTest;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
+import functional.tests.core.Perf.PerfInfo;
 import functional.tests.core.Settings.Doctor;
 import functional.tests.core.Settings.Settings;
+import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -18,7 +20,8 @@ public class BaseTest {
 
     protected static int previousTestStatus = ITestResult.SUCCESS;
 
-    public BaseTest() {}
+    public BaseTest() {
+    }
 
     public static String getAppName() {
         String appName = Settings.testAppImageFolder;
@@ -67,6 +70,12 @@ public class BaseTest {
             Log.saveXmlTree(testCase + "_VisualTree.xml");
             Log.error("=> Test " + testCase + " failed!");
             takeScreenOfHost(testCase);
+        }
+
+        if (Settings.memoryUsageMaxLimit > 0) {
+            Long usedMemory = PerfInfo.getMem(Settings.deviceId);
+            Log.info("Performance info of used memory: " + usedMemory);
+            Assert.assertTrue(Settings.memoryUsageMaxLimit < usedMemory, "Used memory + " + usedMemory + "is more than expected " + Settings.memoryUsageMaxLimit);
         }
     }
 

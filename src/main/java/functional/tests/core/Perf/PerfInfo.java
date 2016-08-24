@@ -7,10 +7,10 @@ import functional.tests.core.Settings.Settings;
 
 public class PerfInfo {
 
-    public static long getMem() {
+    public static long getMem(String deviceId) {
         if (Settings.platform == PlatformType.Andorid) {
             String command = "shell dumpsys meminfo  | grep " + Settings.packageId;
-            String output = Adb.runAdbCommand(Settings.deviceId, command);
+            String output = Adb.runAdbCommand(deviceId, command);
 
             if (output.contains(Settings.packageId)) {
                 String memString = output.split(":")[0];
