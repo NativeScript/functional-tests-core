@@ -124,7 +124,6 @@ public class TestsStateManager {
      * Navigate to the home page.
      */
     public void navigateToHomePage() {
-        Log.info("Navigate to home page!");
         while (this.getLevel() > 0) {
             try {
                 this.navBack();
@@ -133,7 +132,6 @@ public class TestsStateManager {
                 Log.error("Could not navigate back: " + ex.getMessage());
             }
         }
-        Log.info("Navigated to home page!");
     }
 
     /**

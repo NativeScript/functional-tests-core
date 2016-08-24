@@ -184,7 +184,7 @@ public abstract class UIBaseTest extends BaseTest {
             this.device.writeConsoleLogToFile(testCase);
         }
 
-        if (this.testsStateManager != null){
+        if (this.testsStateManager != null) {
             this.testsStateManager.status = result.getStatus();
         }
     }
@@ -200,7 +200,6 @@ public abstract class UIBaseTest extends BaseTest {
     @AfterSuite(alwaysRun = true)
     public void afterSuiteUIBaseTest() throws Exception {
         if (this.testsStateManager != null) {
-            Log.info("Navigate to home page in afterSuiteUIBaseTest!");
             this.testsStateManager.navigateToHomePage();
         }
 
