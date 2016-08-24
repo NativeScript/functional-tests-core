@@ -75,7 +75,8 @@ public class BaseTest {
         if (Settings.memoryUsageMaxLimit > 0) {
             Long usedMemory = PerfInfo.getMem(Settings.deviceId);
             Log.info("Performance info of used memory: " + usedMemory);
-            Assert.assertTrue(Settings.memoryUsageMaxLimit < usedMemory, "Used memory + " + usedMemory + "is more than expected " + Settings.memoryUsageMaxLimit);
+            Assert.assertTrue(Settings.memoryUsageMaxLimit > usedMemory, "Used memory + " + usedMemory + " is more than expected !!!" + Settings.memoryUsageMaxLimit);
+            result.setStatus(ITestResult.FAILURE);
         }
     }
 
