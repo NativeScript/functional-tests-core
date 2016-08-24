@@ -24,4 +24,8 @@ public class PerfInfo {
             return 0;
         }
     }
+
+    public static long getMem() {
+        return getMem(Settings.deviceId);
+    }
 }
