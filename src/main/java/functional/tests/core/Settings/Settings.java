@@ -10,7 +10,6 @@ import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.ImageProcessing.ImageVerification.VerificationType;
 import io.appium.java_client.remote.AutomationName;
-import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -63,7 +62,7 @@ public class Settings {
     public static String testAppImageFolder;
     public static String appiumLogFile;
     public static String appiumLogLevel;
-    public static int memoryUsageMaxLimit;
+    public static int memoryMaxUsageLimit;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
     public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
@@ -260,8 +259,8 @@ public class Settings {
         return appId;
     }
 
-    private static int getMemoryUsageMaxLimit() {
-        String value = properties.getProperty("memoryUsageMaxLimit");
+    private static int getMemoryMaxUsageLimit() {
+        String value = properties.getProperty("memoryMaxUsageLimit");
         if (value != "" && value != null) {
             return Integer.parseInt(value);
         } else {
@@ -416,7 +415,7 @@ public class Settings {
             testAppName = Settings.testAppArchive.toLowerCase().replace("-release", "");
         }
         testAppImageFolder = testAppName.substring(0, testAppName.indexOf("."));
-        memoryUsageMaxLimit = getMemoryUsageMaxLimit();
+        memoryMaxUsageLimit = getMemoryMaxUsageLimit();
 
         Log.separator();
         Log.info("Settings initialized properly:");
@@ -455,7 +454,7 @@ public class Settings {
         Log.info("(iOS Simulator Only) Recreate Simulator: " + recreateSimulator);
         Log.info("(iOS Simulator Only) TestApp Archive: " + testAppArchive);
         Log.info("Should log image verification results: " + logImageVerificationResults);
-        Log.info("Memory usage max limit is set to: " + (memoryUsageMaxLimit > -1 ? memoryUsageMaxLimit : "is not set"));
+        Log.info("Memory usage max limit is set to: " + (memoryMaxUsageLimit > -1 ? memoryMaxUsageLimit : "is not set"));
         Log.separator();
     }
 
