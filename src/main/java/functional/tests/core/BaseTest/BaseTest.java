@@ -74,9 +74,9 @@ public class BaseTest {
 
         Long usedMemory = PerfInfo.getMem(Settings.deviceId);
         Log.info("Performance info of used memory: " + usedMemory);
+        Log.info("Expected max memory usage: " + Settings.memoryMaxUsageLimit);
 
         if (Settings.memoryMaxUsageLimit > 0) {
-            Log.info("Expected memory max usage: " + Settings.memoryMaxUsageLimit);
             boolean hasMemoryLeak = Settings.memoryMaxUsageLimit < usedMemory;
             if (hasMemoryLeak) {
                 Log.error("=== Memory leak appears after test " + result.getName() + " ====");
