@@ -1,6 +1,7 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Perf.PerfInfo;
