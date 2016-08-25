@@ -71,9 +71,9 @@ public class BaseTest {
             Log.error("=> Test " + testCase + " failed!");
             takeScreenOfHost(testCase);
         }
-        
+
         Long usedMemory = PerfInfo.getMem(Settings.deviceId);
-        Log.info("Performance info of used memory: " + usedMemory);
+        Log.info("Performance infgit o of used memory: " + usedMemory);
 
         if (Settings.memoryMaxUsageLimit > 0) {
             Log.info("Expected memory max usage: " + Settings.memoryMaxUsageLimit);
