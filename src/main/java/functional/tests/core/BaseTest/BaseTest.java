@@ -111,9 +111,9 @@ public class BaseTest {
         if (Settings.memoryMaxUsageLimit > 0) {
             boolean hasMemoryLeak = Settings.memoryMaxUsageLimit < usedMemory;
             if (hasMemoryLeak) {
+                result.setStatus(ITestResult.FAILURE);
                 Log.error("=== Memory leak appears after test " + result.getName() + " ====");
                 Assert.assertTrue(!hasMemoryLeak, "Used memory of " + usedMemory + " is more than expected " + Settings.memoryMaxUsageLimit + " !!!");
-                result.setStatus(ITestResult.FAILURE);
             }
         }
     }
