@@ -20,7 +20,7 @@ public class WaitHelper {
         this.find = new FindHelper(this.client);
     }
 
-    public boolean waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
+    public UIElement waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
         this.client.setWait(timeOut);
         UIElement result;
         try {
@@ -30,20 +30,20 @@ public class WaitHelper {
         }
         this.client.setWait(Settings.defaultTimeout);
         if (result != null) {
-            return true;
+            return result;
         } else {
             if (failOnNotVisible) {
                 Assert.fail("Failed to find element: " + locator.toString());
             }
-            return false;
+            return result;
         }
     }
 
-    public boolean waitForVisible(By locator, boolean failOnNotVisible) {
+    public UIElement waitForVisible(By locator, boolean failOnNotVisible) {
         return waitForVisible(locator, Settings.defaultTimeout, failOnNotVisible);
     }
 
-    public boolean waitForVisible(By locator) {
+    public UIElement waitForVisible(By locator) {
         return waitForVisible(locator, Settings.defaultTimeout, false);
     }
 
