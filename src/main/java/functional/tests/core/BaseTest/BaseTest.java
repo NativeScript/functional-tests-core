@@ -72,18 +72,7 @@ public class BaseTest {
             takeScreenOfHost(testCase);
         }
 
-        Long usedMemory = PerfInfo.getMem(Settings.deviceId);
-        Log.info("Performance info of used memory: " + usedMemory);
-        Log.info("Expected max memory usage: " + Settings.memoryMaxUsageLimit);
-
-        if (Settings.memoryMaxUsageLimit > 0) {
-            boolean hasMemoryLeak = Settings.memoryMaxUsageLimit < usedMemory;
-            if (hasMemoryLeak) {
-                Log.error("=== Memory leak appears after test " + result.getName() + " ====");
-                Assert.assertTrue(!hasMemoryLeak, "Used memory of " + usedMemory + " is more than expected " + Settings.memoryMaxUsageLimit + " !!!");
-                result.setStatus(ITestResult.FAILURE);
-            }
-        }
+        this.checkMemoryPerformance(result);
     }
 
     public static String getTestNameToWriteFile() {
@@ -111,5 +100,20 @@ public class BaseTest {
 
     public String getTestName() {
         return getTestNameToWriteFile();
+    }
+
+    private void checkMemoryPerformance(ITestResult result) {
+        Long usedMemory = PerfInfo.getMem(Settings.deviceId);
+        Log.info("Performance info of used memory: " + usedMemory);
+        Log.info("Expected max memory usage: " + Settings.memoryMaxUsageLimit);
+
+        if (Settings.memoryMaxUsageLimit > 0) {
+            boolean hasMemoryLeak = Settings.memoryMaxUsageLimit < usedMemory;
+            if (hasMemoryLeak) {
+                Log.error("=== Memory leak appears after test " + result.getName() + " ====");
+                Assert.assertTrue(!hasMemoryLeak, "Used memory of " + usedMemory + " is more than expected " + Settings.memoryMaxUsageLimit + " !!!");
+                result.setStatus(ITestResult.FAILURE);
+            }
+        }
     }
 }
