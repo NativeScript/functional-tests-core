@@ -2,14 +2,18 @@ package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class WaitHelper {
     private Client client;
@@ -22,21 +26,37 @@ public class WaitHelper {
 
     public UIElement waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
         this.client.setWait(timeOut);
-        UIElement result;
+        List<UIElement> results;
+
         try {
-            result = this.find.byLocator(locator);
+            results = this.find.elementsByLocator(locator);
         } catch (Exception e) {
-            result = null;
+            results = null;
         }
+
         this.client.setWait(Settings.defaultTimeout);
-        if (result != null) {
-            return result;
-        } else {
-            if (failOnNotVisible) {
-                Assert.fail("Failed to find element: " + locator.toString());
+
+        if (results != null) {
+            if (Settings.platform == PlatformType.Andorid) {
+                return results.get(0);
+            } else if (Settings.platform == PlatformType.iOS) {
+                for (UIElement element : results) {
+                    Rectangle rect = element.getUIRectangle();
+                    element.isDisplayed();
+                    if (rect.x >= 0 && rect.y >= 0 && rect.width > 0 && rect.height > 0) {
+                        return element;
+                    }
+                }
+            } else {
+                new NotImplementedException("This platform: " + Settings.platform + " is not implemented");
             }
-            return result;
         }
+
+        if (failOnNotVisible) {
+            Assert.fail("Failed to find element: " + locator.toString());
+        }
+
+        return null;
     }
 
     public UIElement waitForVisible(By locator, boolean failOnNotVisible) {
