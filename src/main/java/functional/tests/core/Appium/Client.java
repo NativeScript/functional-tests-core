@@ -111,12 +111,17 @@ public class Client {
         }
     }
 
-    public static void setLocation(Location location) {
+    public void setLocation(Location location) {
         if (Settings.platform == PlatformType.Andorid) {
             ((AndroidDriver) Client.driver).setLocation(location);
         } else if (Settings.platform == PlatformType.iOS) {
             ((IOSDriver) Client.driver).setLocation(location);
         }
         Log.info("Set location to: " + location.toString());
+    }
+
+    public void navigateBack() {
+        Client.driver.navigate().back();
+        Log.info("Navigate back.");
     }
 }
