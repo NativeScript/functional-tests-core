@@ -41,10 +41,11 @@ public class WaitHelper {
                 return results.get(0);
             } else if (Settings.platform == PlatformType.iOS) {
                 for (UIElement element : results) {
-                    Rectangle rect = element.getUIRectangle();
-                    element.isDisplayed();
-                    if (rect.x >= 0 && rect.y >= 0 && rect.width > 0 && rect.height > 0) {
-                        return element;
+                    if (element.isDisplayed()) {
+                        Rectangle rect = element.getUIRectangle();
+                        if (rect.x >= 0 && rect.y >= 0 && rect.width > 0 && rect.height > 0) {
+                            return element;
+                        }
                     }
                 }
             } else {
