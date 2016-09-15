@@ -6,10 +6,10 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Find.FindHelper;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
-import functional.tests.core.Settings.Doctor;
 import functional.tests.core.Settings.Settings;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -23,18 +23,19 @@ public abstract class UIBaseTest extends BaseTest {
     private static boolean isFistTest = true;
     private static Device staticDevice;
     private Device device;
-    private Sikuli sikuliImagePorcessing;
-
-    protected Sikuli sikuliImagePorcessing() {
-        return this.sikuliImagePorcessing;
-    }
+    private Sikuli skulkImageProcessing;
 
     public static Device baseDevice() {
         return staticDevice;
     }
 
+    protected Sikuli sikuliImagePorcessing() {
+        return this.skulkImageProcessing;
+    }
+
     public Client client;
     public TestsStateManager testsStateManager;
+    public FindHelper find;
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
@@ -50,9 +51,7 @@ public abstract class UIBaseTest extends BaseTest {
         try {
             Server.initAppiumServer();
             Client.initAppiumDriver();
-            this.client = new Client();
-            this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
-            this.testsStateManager = new TestsStateManager(this.client);
+            this.initHelpers();
         } catch (Exception e) {
             checkAppiumLogsForCrash();
             takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session");
@@ -115,12 +114,7 @@ public abstract class UIBaseTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void beforeClassUIBaseTest() {
-        if (this.client == null)
-            this.client = new Client();
-        if (this.sikuliImagePorcessing == null)
-            this.sikuliImagePorcessing = new Sikuli(BaseTest.getAppName(), this.client);
-        if (this.testsStateManager == null)
-            this.testsStateManager = new TestsStateManager(this.client);
+        this.initHelpers();
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -223,6 +217,18 @@ public abstract class UIBaseTest extends BaseTest {
             }
         } catch (IOException e) {
             Log.info("Failed to check appium log files.");
+        }
+    }
+
+    private void initHelpers() {
+        if (this.client == null)
+            this.client = new Client();
+        if (this.skulkImageProcessing == null)
+            this.skulkImageProcessing = new Sikuli(BaseTest.getAppName(), this.client);
+        if (this.testsStateManager == null)
+            this.testsStateManager = new TestsStateManager(this.client);
+        if (this.find == null) {
+            this.find = new FindHelper(this.client);
         }
     }
 }

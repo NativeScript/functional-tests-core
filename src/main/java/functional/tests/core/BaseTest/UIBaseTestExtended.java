@@ -77,6 +77,14 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         return compareScreens(timeOut, wait, Integer.MAX_VALUE, percentTolerance);
     }
 
+    public boolean compareScreens(String name, int timeOut, double percentTolerance) throws Exception {
+        boolean result = ImageVerification.compareScreens(name, timeOut, 0, 1, percentTolerance);
+        this.imagesResults.put(name, result);
+        this.imageCounter++;
+
+        return result;
+    }
+
     public void clearImagesResults() {
         this.imagesResults.clear();
         this.imageCounter = 1;
@@ -90,8 +98,14 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
 
     private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = createImageName();
-        boolean result = ImageVerification.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance);
-        this.imagesResults.put(testName, result);
+        boolean result = this.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance);
+
+        return result;
+    }
+
+    private boolean compareScreens(String name, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+        boolean result = ImageVerification.compareScreens(name, timeOut, waitTime, pixelTolerance, percentTolerance);
+        this.imagesResults.put(name, result);
         this.imageCounter++;
 
         return result;
