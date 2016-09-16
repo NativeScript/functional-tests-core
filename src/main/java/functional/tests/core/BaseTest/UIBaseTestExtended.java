@@ -78,9 +78,7 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
     }
 
     public boolean compareScreens(String name, int timeOut, double percentTolerance) throws Exception {
-        boolean result = ImageVerification.compareScreens(name, timeOut, 0, 1, percentTolerance);
-        this.imagesResults.put(name, result);
-        this.imageCounter++;
+        boolean result = this.compareScreens(name, timeOut, 0, Integer.MAX_VALUE, percentTolerance);
 
         return result;
     }
