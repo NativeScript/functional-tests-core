@@ -157,8 +157,9 @@ public class TestsStateManager {
      */
     public boolean navigateTo(UIElement element) {
         ActionHelper.navigateTo(element);
-        this.increaseNavigationLevel();
-        Log.info("Navigate to " + element);
+        String pageName = element.getText()==""?element.getId() : element.getText();
+        this.setCurrentPage(pageName);
+        Log.info("Navigate to " + pageName);
         return true;
     }
 

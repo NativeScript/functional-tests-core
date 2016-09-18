@@ -33,6 +33,9 @@ public class UIElement {
         this.element = element;
     }
 
+    public String getId(){
+        return this.element.getId();
+    }
     public void swipe(SwipeElementDirection direction, int duration) {
         swipeInElement(direction.toString(), duration);
     }
