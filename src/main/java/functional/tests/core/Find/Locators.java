@@ -100,6 +100,22 @@ public class Locators {
         }
     }
 
+
+    public static By textViewLocator(){
+        if(Settings.platform == PlatformType.Andorid){
+            return By.className("android.widget.TextView");
+        } else if(Settings.platform == PlatformType.iOS){
+            return By.className("UIATextView");
+        } else {
+            try {
+                throw new Exception("Not found.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     public static By imageLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ImageView");
