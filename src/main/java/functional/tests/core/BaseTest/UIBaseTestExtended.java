@@ -64,6 +64,10 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.compareScreens(1, defaultWaitTime, 0, 0); // As '0' does not do the trick.
     }
 
+    public void compareScreens(String name) throws Exception {
+        this.compareScreens(name, 1, defaultWaitTime, 0, 0);
+    }
+
     public void compareScreens(int timeOut) throws Exception {
         this.compareScreens(timeOut, defaultWaitTime, 0, 0);
     }
@@ -78,7 +82,6 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
 
     public boolean compareScreens(String name, int timeOut, double percentTolerance) throws Exception {
         boolean result = this.compareScreens(name, timeOut, 0, Integer.MAX_VALUE, percentTolerance);
-
         return result;
     }
 
@@ -89,7 +92,7 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
 
     public void assertImagesResults() {
         for (String imageName : this.imagesResults.keySet()) {
-            Assert.assertTrue(this.imagesResults.get(imageName), String.format("%s test failed because image %s is not as actual", getTestName(), imageName));
+            Assert.assertTrue(this.imagesResults.get(imageName), String.format("The test failed - %s does not match the actual image.", imageName));
         }
     }
 
