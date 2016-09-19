@@ -156,8 +156,9 @@ public class TestsStateManager {
      * @return
      */
     public boolean navigateTo(UIElement element) {
+        String pageName = element.getText() == "" ? element.getId() : element.getText();
+
         ActionHelper.navigateTo(element);
-        String pageName = element.getText()==""?element.getId() : element.getText();
         this.setCurrentPage(pageName);
         Log.info("Navigate to " + pageName);
         return true;
