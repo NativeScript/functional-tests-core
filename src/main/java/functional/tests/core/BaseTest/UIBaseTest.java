@@ -22,7 +22,7 @@ public abstract class UIBaseTest extends BaseTest {
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static Device staticDevice;
-    private Device device;
+    public Device device;
     private Sikuli skulkImageProcessing;
 
     public static Device baseDevice() {
