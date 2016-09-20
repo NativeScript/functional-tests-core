@@ -72,6 +72,10 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         this.compareScreens(timeOut, defaultWaitTime, 0, 0);
     }
 
+    public void compareScreens(String name, int timeOut) throws Exception {
+        this.compareScreens(name, timeOut, defaultWaitTime, 0, 0);
+    }
+
     public boolean compareScreens(int timeOut, double percentTolerance) throws Exception {
         return compareScreens(timeOut, defaultWaitTime, Integer.MAX_VALUE, percentTolerance);
     }
