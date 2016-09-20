@@ -9,14 +9,21 @@ public class PerfInfo {
 
     public static long getMem(String deviceId) {
         if (Settings.platform == PlatformType.Andorid) {
-            String command = "shell dumpsys meminfo  | grep " + Settings.packageId;
+            String command = "shell dumpsys meminfo | grep " + Settings.packageId;
             String output = Adb.runAdbCommand(deviceId, command);
 
             if (output.contains(Settings.packageId)) {
                 String memString = output.split(":")[0];
-                memString = memString.replace("kB", "").trim();
+
+                if (Settings.platformVersion.equalsIgnoreCase("7.0")) {
+                    memString = memString.replace(",", "").trim();
+                    memString = memString.replace("K", "").trim();
+                } else {
+                    memString = memString.replace("kB", "").trim();
+                }
                 return Long.parseLong(memString);
             } else {
+                Log.error("\"dumpsys meminfo\" command failed!");
                 return 0;
             }
         } else {
