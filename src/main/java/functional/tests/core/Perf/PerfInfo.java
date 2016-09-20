@@ -11,10 +11,8 @@ public class PerfInfo {
         if (Settings.platform == PlatformType.Andorid) {
             String command = "shell dumpsys meminfo | grep " + Settings.packageId;
             String output = Adb.runAdbCommand(deviceId, command);
-
             if (output.contains(Settings.packageId)) {
                 String memString = output.split(":")[0];
-
                 if (Settings.platformVersion.equalsIgnoreCase("7.0")) {
                     memString = memString.replace(",", "").trim();
                     memString = memString.replace("K", "").trim();
