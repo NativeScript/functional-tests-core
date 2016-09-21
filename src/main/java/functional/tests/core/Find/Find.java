@@ -22,21 +22,21 @@ public class Find {
      * Find an element that has some attribute with specified value.
      */
     public static UIElement findByText(String controlType, String value, boolean exactMatch) {
-        return findElementByLocator(Locators.findByTextLocator(controlType, value, exactMatch));
+        return findElementByLocator(Locators.findByTextLocator(controlType, value, exactMatch, false));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
     public static UIElement findByText(String value, boolean exactMatch) {
-        return findElementByLocator(Locators.findByTextLocator("*", value, exactMatch));
+        return findElementByLocator(Locators.findByTextLocator("*", value, exactMatch, false));
     }
 
     /**
      * Find an element that has some attribute with specified value.
      */
     public static UIElement findByText(String value) {
-        return findElementByLocator(Locators.findByTextLocator("*", value, true));
+        return findElementByLocator(Locators.findByTextLocator("*", value, true, false));
     }
 
     /**
