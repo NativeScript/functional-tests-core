@@ -5,18 +5,18 @@ import functional.tests.core.BaseTest.UIBaseTestExtended;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.*;
-import functional.tests.core.Gestures.Gestures;
+import functional.tests.core.Gestures.GesturesHelper;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.HideKeyboardStrategy;
-import org.apache.commons.lang.NullArgumentException;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
 public class BasePage {
     public Client client;
-    public Gestures gestures;
+    public GesturesHelper gestures;
     public FindHelper find;
     public WaitHelper wait;
 
@@ -25,7 +25,7 @@ public class BasePage {
 
     public BasePage(Client client) {
         this.client = client;
-        this.gestures = new Gestures();
+        this.gestures = new GesturesHelper(client);
         this.find = new FindHelper(client);
         this.wait = new WaitHelper(client);
     }
@@ -113,5 +113,21 @@ public class BasePage {
     private static String getClassName() {
         String className = UIBaseTestExtended.getTestNameToWriteFile();
         return className;
+    }
+
+    public void scrollTo(String example) {
+        Log.info("Swiping to \"" + example + "\" ...");
+        UIElement demoBtn = this.find.byText(example, 3);
+
+        int count = 0;
+        while (demoBtn == null) {
+            if (count <= 3) {
+                demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, 750, 5);
+            } else {
+                Assert.fail("Failed to swipe to \"" + example + "\".");
+            }
+            count++;
+        }
+        Log.info("Swiped to '" + example + "' successfully.");
     }
 }

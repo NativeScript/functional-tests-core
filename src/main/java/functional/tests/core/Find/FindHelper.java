@@ -2,13 +2,10 @@ package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
-import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.SwipeElementDirection;
 import org.openqa.selenium.By;
-import org.testng.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +16,6 @@ public class FindHelper {
 
     public FindHelper(Client client) {
         this.client = client;
-    }
-
-    public void swipeTo(String example) {
-        Log.info("Swiping to \"" + example + "\" ...");
-        UIElement demoBtn = this.byText(example, 3);
-
-        int count = 0;
-        while (demoBtn == null) {
-            if (count <= 3) {
-                demoBtn = Gestures.swipeToElement(SwipeElementDirection.DOWN, example, 750, 5);
-            } else {
-                Assert.fail("Failed to swipe to \"" + example + "\".");
-            }
-            count++;
-        }
-        Log.info("Swiped to '" + example + "' successfully.");
     }
 
     public UIElement byLocator(By locator) {
@@ -80,6 +61,19 @@ public class FindHelper {
         UIElement result;
         try {
             result = this.byLocator(Locators.byText(value));
+        } catch (Exception e) {
+            Log.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(Settings.defaultTimeout);
+        return result;
+    }
+
+    public UIElement byText(String value, Boolean exactMatch, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.byLocator(Locators.byText(value, exactMatch, false));
         } catch (Exception e) {
             Log.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
