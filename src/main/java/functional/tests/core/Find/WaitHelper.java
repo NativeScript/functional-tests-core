@@ -37,7 +37,7 @@ public class WaitHelper {
         this.client.setWait(Settings.defaultTimeout);
 
         if (results != null) {
-            if (Settings.platform == PlatformType.Andorid) {
+            if (Settings.platform == PlatformType.Andorid && results.size() >= 0) {
                 return results.get(0);
             } else if (Settings.platform == PlatformType.iOS) {
                 for (UIElement element : results) {
