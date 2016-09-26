@@ -5,11 +5,13 @@ import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.util.Set;
 
 public class Capabilities {
 
@@ -18,8 +20,15 @@ public class Capabilities {
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         // Common
+        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+            //capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
+            capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
+        } else {
+            capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, Settings.automationName);
+        }
+
         capabilities.setCapability(MobileCapabilityType.APPIUM_VERSION, Settings.appiumVersion);
-        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, Settings.automationName);
+
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Settings.platform);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Settings.platformVersion);
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Settings.deviceName);
