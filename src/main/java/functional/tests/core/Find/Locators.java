@@ -127,7 +127,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ProgressBar");
         } else {
-            return By.className("UIAActivityIndicator");
+            return createIosElement("ActivityIndicator");
         }
     }
 
@@ -135,7 +135,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.Button");
         } else {
-            return By.className("UIAButton");
+            return createIosElement("Button");
         }
     }
 
@@ -143,7 +143,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.EditText");
         } else {
-            return By.className("UIATextField");
+            return createIosElement("TextField");
         }
     }
 
@@ -151,7 +151,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.TextView");
         } else if (Settings.platform == PlatformType.iOS) {
-            return By.className("UIATextView");
+            return createIosElement("TextView");
         } else {
             try {
                 throw new Exception("Not found.");
@@ -166,7 +166,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ImageView");
         } else {
-            return By.className("UIAImage");
+            return createIosElement("Image");
         }
     }
 
@@ -182,7 +182,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.TextView");
         } else {
-            return By.className("UIAStaticText");
+            return createIosElement("StaticText");
         }
     }
 
@@ -190,7 +190,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ListView");
         } else {
-            return By.className("UIATableView");
+            return createIosElement("TableView");
         }
     }
 
@@ -198,7 +198,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.xpath("//android.widget.ListView/*");
         } else {
-            return By.className("UIATableCell");
+            return createIosElement("TableCell");
         }
     }
 
@@ -206,7 +206,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ProgressBar");
         } else {
-            return By.className("UIAProgressIndicator");
+            return createIosElement("ProgressIndicator");
         }
     }
 
@@ -214,7 +214,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ScrollView");
         } else {
-            return By.className("UIAScrollView");
+            return createIosElement("ScrollView");
         }
     }
 
@@ -222,7 +222,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.EditText");
         } else {
-            return By.className("UIASearchBar");
+            return createIosElement("SearchBar");
         }
     }
 
@@ -230,7 +230,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.SeekBar");
         } else {
-            return By.className("UIASlider");
+            return createIosElement("Slider");
         }
     }
 
@@ -238,7 +238,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.Switch");
         } else {
-            return By.className("UIASwitch");
+            return createIosElement("Switch");
         }
     }
 
@@ -246,7 +246,21 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.webkit.WebView");
         } else {
-            return By.className("UIAScrollView");
+            return createIosElement("ScrollView");
         }
+    }
+
+    private static By createIosElement(String element) {
+        String xCUIElementType = "XCUIElementType";
+        String uIA = "UIA";
+        String elementType;
+
+        if (Settings.platformVersion.toString().startsWith("10")) {
+            elementType = xCUIElementType;
+        } else {
+            elementType = uIA;
+        }
+
+        return By.className(elementType + element);
     }
 }
