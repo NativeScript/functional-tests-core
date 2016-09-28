@@ -12,23 +12,29 @@ public class Locators {
     }
 
     public static By byText(String text, boolean exactMatch, boolean caseSensitive) {
+
         if (Settings.platform == PlatformType.Andorid) {
             return findByTextLocator("*", text, exactMatch, caseSensitive);
-        } else if (Settings.platform == PlatformType.iOS) {
-            return By.id(text);
-        } else {
-            return null;
         }
+
+        if (Settings.platform == PlatformType.iOS) {
+            Double platformVersion = Double.parseDouble(Settings.platformVersion.trim());
+            if (platformVersion < 10) {
+                return By.id(text);
+            } else if (platformVersion >= 10 && (!exactMatch || !caseSensitive)) {
+                return findByTextLocator("*", text, exactMatch, caseSensitive);
+            }
+        }
+
+        return null;
     }
 
     public static By findByTextLocator(String controlType, String value, boolean exactMatch, boolean caseSensitive) {
 
         // Android
         if (Settings.platform == PlatformType.Andorid) {
-
             // exactMatch = true
             if (exactMatch) {
-
                 // caseSensitive = true
                 if (caseSensitive) {
                     return By.xpath("//" + controlType
@@ -56,7 +62,6 @@ public class Locators {
             } else
             // exactMatch = false
             {
-
                 // caseSensitive = true
                 if (caseSensitive) {
                     return By.xpath("//*"
@@ -65,7 +70,6 @@ public class Locators {
                             + "\") or contains(@text,\"" + value
                             + "\")]");
                 } else
-
                 // caseSensitive = false
                 {
                     return By.xpath("//*"
@@ -82,41 +86,19 @@ public class Locators {
                 }
 
             }
-        } else
-            // iOS
-            // TODO: Refactor
-            if (Settings.platform == PlatformType.iOS) {
-                if (exactMatch) {
-                    // TODO : Fix the logic in this if statement
-                    String up = value.toUpperCase();
-                    String down = value.toLowerCase();
-                    return By.xpath("//" + controlType
-                            + "[@visible=\"true\" and (contains(translate(@name,\""
-                            + up + "\",\"" + down + "\"), \"" + down
-                            + "\") or contains(translate(@hint,\"" + up + "\",\""
-                            + down + "\"), \"" + down
-                            + "\") or contains(translate(@label,\"" + up + "\",\""
-                            + down + "\"), \"" + down
-                            + "\") or contains(translate(@value,\"" + up + "\",\""
-                            + down + "\"), \"" + down + "\"))]");
-                } else {
-                    String up = value.toUpperCase();
-                    String down = value.toLowerCase();
-                    return By.xpath("//" + controlType
-                            + "[@visible=\"true\" and (contains(translate(@name,\""
-                            + up + "\",\"" + down + "\"), \"" + down
-                            + "\") or contains(translate(@hint,\"" + up + "\",\""
-                            + down + "\"), \"" + down
-                            + "\") or contains(translate(@label,\"" + up + "\",\""
-                            + down + "\"), \"" + down
-                            + "\") or contains(translate(@value,\"" + up + "\",\""
-                            + down + "\"), \"" + down + "\"))]");
-                }
+        } else if (Settings.platform == PlatformType.iOS) {
+            if (exactMatch) {
+                return By.xpath("//" + controlType
+                        + "[@label='" + value + "']");
             } else {
-                String error = "findByText not implemented for platform: " + Settings.platform;
-                Log.fatal(error);
-                throw new UnsupportedOperationException(error);
+                return By.xpath("//" + controlType
+                        + "[contains(@label,'" + value + "')]");
             }
+        } else {
+            String error = "findByText not implemented for platform: " + Settings.platform;
+            Log.fatal(error);
+            throw new UnsupportedOperationException(error);
+        }
     }
 
     public static By findByTextLocator(String value, boolean exactMatch) {
