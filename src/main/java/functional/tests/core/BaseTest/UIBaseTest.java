@@ -7,6 +7,7 @@ import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Find.FindHelper;
+import functional.tests.core.Gestures.GesturesHelper;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
@@ -22,20 +23,34 @@ public abstract class UIBaseTest extends BaseTest {
     private static boolean failAtStartUp = false;
     private static boolean isFistTest = true;
     private static Device staticDevice;
+    public Client client;
     public Device device;
+    public FindHelper find;
+    public GesturesHelper gestures;
+    public TestsStateManager testsStateManager;
     private Sikuli skulkImageProcessing;
 
     public static Device baseDevice() {
         return staticDevice;
     }
 
+    private static void checkAppiumLogsForCrash() {
+        try {
+            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
+            String[] lines = appiumLog.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
+                    Log.fatal("App crashes at startup. Please see appium logs.");
+                }
+            }
+        } catch (IOException e) {
+            Log.info("Failed to check appium log files.");
+        }
+    }
+
     protected Sikuli sikuliImagePorcessing() {
         return this.skulkImageProcessing;
     }
-
-    public Client client;
-    public TestsStateManager testsStateManager;
-    public FindHelper find;
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
@@ -206,29 +221,16 @@ public abstract class UIBaseTest extends BaseTest {
         }
     }
 
-    private static void checkAppiumLogsForCrash() {
-        try {
-            String appiumLog = FileSystem.readFile(Settings.appiumLogFile);
-            String[] lines = appiumLog.split("\\r?\\n");
-            for (String line : lines) {
-                if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
-                    Log.fatal("App crashes at startup. Please see appium logs.");
-                }
-            }
-        } catch (IOException e) {
-            Log.info("Failed to check appium log files.");
-        }
-    }
-
     private void initHelpers() {
         if (this.client == null)
             this.client = new Client();
-        if (this.skulkImageProcessing == null)
-            this.skulkImageProcessing = new Sikuli(BaseTest.getAppName(), this.client);
+        if (this.find == null)
+            this.find = new FindHelper(this.client);
+        if (this.gestures == null)
+            this.gestures = new GesturesHelper(this.client);
         if (this.testsStateManager == null)
             this.testsStateManager = new TestsStateManager(this.client);
-        if (this.find == null) {
-            this.find = new FindHelper(this.client);
-        }
+        if (this.skulkImageProcessing == null)
+            this.skulkImageProcessing = new Sikuli(BaseTest.getAppName(), this.client);
     }
 }

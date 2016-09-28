@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import java.util.List;
 
 public abstract class BasePageExtended extends BasePage {
+
     protected TestsStateManager testsStateManager;
     protected String mainPage;
 
