@@ -254,7 +254,7 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.webkit.WebView");
         } else {
-            return createIosElement("ScrollView");
+            return createIosElement("WebView");
         }
     }
 
@@ -263,6 +263,33 @@ public class Locators {
             return By.className("android.widget.FrameLayout");
         } else {
             throw new NotImplementedException();
+        }
+    }
+
+    // Not sure that for iOS the element is Picker
+    public static By timePickerLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.TimePicker");
+        } else {
+            return createIosElement("Picker");
+        }
+    }
+
+    // Not sure that for iOS the element is Picker
+    public static By datePickerLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.DatePicker");
+        } else {
+            return createIosElement("Picker");
+        }
+    }
+
+    // Not sure that for iOS the element is Picker
+    public static By listPicker() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.NumberPicker");
+        } else {
+            return createIosElement("Picker");
         }
     }
 
