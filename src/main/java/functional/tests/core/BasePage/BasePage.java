@@ -115,7 +115,7 @@ public class BasePage {
         return className;
     }
 
-    public void scrollTo(String example) {
+    public UIElement scrollTo(String example) {
         Log.info("Swiping to \"" + example + "\" ...");
         UIElement demoBtn = this.find.byText(example, 3);
 
@@ -129,5 +129,7 @@ public class BasePage {
             count++;
         }
         Log.info("Swiped to '" + example + "' successfully.");
+
+        return demoBtn;
     }
 }
