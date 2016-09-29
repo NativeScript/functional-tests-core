@@ -4,6 +4,7 @@ import functional.tests.core.Appium.Client;
 import functional.tests.core.BaseTest.TestsStateManager;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Element.UIRectangle;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.w3c.dom.css.Rect;
@@ -66,12 +67,26 @@ public class ActionHelper {
     public static boolean navigateTo(UIElement element) {
         element.click();
         Log.info("Navigating to \"" + element + "\".");
-        
+
         return true;
     }
 
     public static void navigateBack(Client client) {
-        client.getDriver().navigate().back();
+        if (Settings.platform == PlatformType.iOS) {
+            try {
+                client.getDriver().navigate().back();
+            } catch (Exception e) {
+                Log.error("Failed to navigate back using client.getDriver().navigate().back()!!!");
+                Log.info("Try to navigate using client.driver.findElement(Locators.byText(\"Back\")");
+                try {
+                    client.driver.findElement(Locators.byText("Back")).click();
+                } catch (Exception innerEx) {
+                    Log.error("Failed to navigate back using Locators.byText(\"Back\")");
+                }
+            }
+        } else {
+            client.getDriver().navigate().back();
+        }
     }
 
     public static void navigateForward(Client client) {
