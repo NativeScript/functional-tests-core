@@ -3,6 +3,7 @@ package functional.tests.core.Find;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 
 public class Locators {
@@ -144,6 +145,21 @@ public class Locators {
         }
     }
 
+    public static By textFieldLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.TextView");
+        } else if (Settings.platform == PlatformType.iOS) {
+            return createIosElement("TextView");
+        } else {
+            try {
+                throw new Exception("Not found.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     public static By imageLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ImageView");
@@ -172,7 +188,12 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.ListView");
         } else {
-            return createIosElement("TableView");
+            String element = "TableView";
+            if (Settings.platformVersion.startsWith("10")) {
+                element = "Table";
+            }
+
+            return createIosElement(element);
         }
     }
 
@@ -180,7 +201,12 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.xpath("//android.widget.ListView/*");
         } else {
-            return createIosElement("TableCell");
+            String element = "TableCell";
+            if (Settings.platformVersion.startsWith("10")) {
+                element = "Cell";
+            }
+
+            return createIosElement(element);
         }
     }
 
@@ -232,7 +258,19 @@ public class Locators {
         }
     }
 
+    public static By frameLayoutLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.FrameLayout");
+        } else {
+            throw new NotImplementedException();
+        }
+    }
+
     private static By createIosElement(String element) {
+        return By.className(createElementClassForIos(element));
+    }
+
+    private static String createElementClassForIos(String element) {
         String xCUIElementType = "XCUIElementType";
         String uIA = "UIA";
         String elementType;
@@ -243,6 +281,6 @@ public class Locators {
             elementType = uIA;
         }
 
-        return By.className(elementType + element);
+        return elementType + element;
     }
 }
