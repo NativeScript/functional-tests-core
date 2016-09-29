@@ -14,6 +14,8 @@ import io.appium.java_client.remote.HideKeyboardStrategy;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
+import java.util.Set;
+
 public class BasePage {
     public Client client;
     public GesturesHelper gestures;
@@ -118,9 +120,12 @@ public class BasePage {
     public UIElement scrollTo(String example) {
         Log.info("Swiping to \"" + example + "\" ...");
         UIElement demoBtn = this.find.byText(example, 3);
-
+        boolean isVisible = true;
+        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+            isVisible = demoBtn != null ? demoBtn.isDisplayed() : false;
+        }
         int count = 0;
-        while (demoBtn == null) {
+        while (demoBtn == null || !isVisible) {
             if (count <= 3) {
                 demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, 750, 5);
             } else {
