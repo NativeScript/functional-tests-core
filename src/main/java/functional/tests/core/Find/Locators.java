@@ -254,7 +254,12 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.webkit.WebView");
         } else {
-            return createIosElement("WebView");
+            String element = "WebView";
+            if (Settings.platformVersion.startsWith("10")) {
+                return null;
+            }
+
+            return createIosElement(element);
         }
     }
 
@@ -290,6 +295,14 @@ public class Locators {
             return By.className("android.widget.NumberPicker");
         } else {
             return createIosElement("Picker");
+        }
+    }
+
+    public static By navigationBarLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return null;
+        } else {
+            return createIosElement("NavigationBar");
         }
     }
 

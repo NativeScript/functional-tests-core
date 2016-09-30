@@ -46,7 +46,11 @@ public class ActionHelper {
                 return false;
             }
             Log.info("Tap on '" + btnText + "' button.");
-            demoBtn.click();
+            if(Settings.platform==PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+                demoBtn.tap();
+            }else {
+                demoBtn.click();
+            }
 
             if (testsStateManager != null) {
                 testsStateManager.setCurrentPage(btnText);
