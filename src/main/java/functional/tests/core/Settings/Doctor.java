@@ -120,7 +120,7 @@ public class Doctor {
 
     private static void verifyAppium() throws AppiumException {
         String message;
-        String appiumVersion = OSUtils.runProcess("appium -v ");
+        String appiumVersion = OSUtils.runProcess("appium -v ").trim();
         if (appiumVersion.equals("") || appiumVersion.contains("not installed")) {
             message = "Appium version " + Settings.appiumVersion + " is NOT installed! Command \"appium -v\" returns \"" + appiumVersion + "\".";
             Log.fatal(message);
@@ -134,7 +134,7 @@ public class Doctor {
             // installAppium();
             return;
         } else {
-            Log.debug("Appium version " + appiumVersion + " is compatible with desired version " + Settings.appiumVersion + "!");
+            Log.warn("Appium version " + appiumVersion + " is compatible with desired version " + Settings.appiumVersion + "!");
         }
     }
 

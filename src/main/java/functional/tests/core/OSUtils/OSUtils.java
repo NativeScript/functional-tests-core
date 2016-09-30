@@ -100,7 +100,7 @@ public class OSUtils {
     }
 
     public static String runProcess(String... command) {
-        return runProcess(true, 10 * 60, command);
+        return runProcess(true, 10 * 60, command); // Might be we should .trim()
     }
 
     public static String runProcess(int timeOut, String... command) {

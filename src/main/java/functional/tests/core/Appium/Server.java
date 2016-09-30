@@ -34,7 +34,7 @@ public class Server {
         File logFile = createAppiumLogFile();
 
         // Set appium executable path
-        String appiumPath = "/usr/local/bin/appium";
+        String appiumPath = Server.getAppiumPath();
         if (Settings.OS == OSType.Windows) {
             appiumPath = System.getenv("APPDATA") + "\\npm\\node_modules\\appium\\build\\lib\\main.js";
         }
@@ -96,6 +96,14 @@ public class Server {
             Log.fatal("Failed to create appium log file.");
         }
         return logFile;
+    }
+
+    // On different OSs, different nodejs managers might be in use,
+    // therefore appium installation location may vary.
+    private static String getAppiumPath() throws AppiumException {
+        String appiumPath = OSUtils.runProcess("which appium").trim();
+        // Log.warn("Appium installation is located at: " + appiumPath);
+        return appiumPath;
     }
 
     // On OSX we used to use appium version manager prior to 1.5.*
