@@ -53,42 +53,73 @@ public class AndroidDevice implements IDevice {
     }
 
     @Override
-    public void initDevice() throws TimeoutException, DeviceException {
+    public void initDevice() throws TimeoutException {
         try {
-            if (!Settings.isRealDevice) {
-                // Create emulator if create emulator options are available
-                if (Settings.emulatorCreateOptions != null)
+            // Device
+            if (Settings.isRealDevice) {
+                Adb.waitForDevice(Settings.deviceId, Settings.deviceBootTimeout);
+            }
+            // Emulator
+            else {
+                // Create
+                if (Settings.emulatorCreateOptions != null) {
+                    // If the emulator exists, it will do nothing
                     Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions);
+                }
 
+                // Start
                 String port = Settings.deviceId.split("-")[1];
                 Adb.startEmulator(Settings.deviceName, Integer.valueOf(port));
-            }
-            Adb.waitForDevice(Settings.deviceId, Settings.deviceBootTimeout);
-            if (!Settings.isRealDevice) {
-                // Wait until emulator boot
+
+                // Wait
                 Adb.waitUntilEmulatorBoot(Settings.deviceId, Settings.deviceBootTimeout);
-                // Unlock if locked
+
+                // Unlock
                 if (Adb.isLocked(Settings.deviceId)) {
-                    Log.info("Device is locked. Unlock it...");
+                    Log.info("Device is locked. Unlocking it ...");
                     Adb.unlock(Settings.deviceId);
                     Wait.sleep(3000);
                     Log.info("Device locked: " + String.valueOf(Adb.isLocked(Settings.deviceId)));
                 }
             }
-
         } catch (TimeoutException timeout) {
-            // If init emulator fail -> recreate the emulator and give the test one more chance
-            if (!Settings.isRealDevice) {
+            // Device
+            if (Settings.isRealDevice) {
+                String error = "Failed to find device " + Settings.deviceId +
+                        " in " + String.valueOf(Settings.deviceBootTimeout) + " seconds.";
+                Log.fatal(error);
+                throw new TimeoutException(error);
+            }
+            // Emulator - if init device failed for emulator,
+            // than recreate the emulator and try again
+            else {
                 try {
-                    Log.error("TimeoutException. Retry init device...");
+                    // Double timeout
+                    Log.error("TimeoutException. Retrying init device ...");
                     Settings.deviceBootTimeout = Settings.deviceBootTimeout * 2;
                     Log.info("Device boot timeout changed to " + String.valueOf(Settings.deviceBootTimeout));
                     OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot");
+
+                    // Stop
                     this.stopDevice();
-                    if (!Settings.isRealDevice) {
-                        Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
+
+                    // Recreate
+                    Adb.createEmulator(Settings.deviceName, Settings.emulatorCreateOptions, true);
+
+                    // Start
+                    String port = Settings.deviceId.split("-")[1];
+                    Adb.startEmulator(Settings.deviceName, Integer.valueOf(port));
+
+                    // Wait
+                    Adb.waitUntilEmulatorBoot(Settings.deviceId, Settings.deviceBootTimeout);
+
+                    // Unlock
+                    if (Adb.isLocked(Settings.deviceId)) {
+                        Log.info("Device is locked. Unlocking it ...");
+                        Adb.unlock(Settings.deviceId);
+                        Wait.sleep(3000);
+                        Log.info("Device locked: " + String.valueOf(Adb.isLocked(Settings.deviceId)));
                     }
-                    this.initDevice();
                 } catch (TimeoutException secondTimeout) {
                     OSUtils.getScreenshot("HostOS_Emulator_Failed_ToBoot_After_Retry");
                     try {
@@ -99,13 +130,10 @@ public class AndroidDevice implements IDevice {
                 } catch (DeviceException e) {
                     e.printStackTrace();
                 }
-            } else {
-                String error = "Failed to find device "
-                        + Settings.deviceId + " in " + String.valueOf(Settings.deviceBootTimeout)
-                        + " seconds.";
-                Log.fatal(error);
-                throw new TimeoutException(error);
             }
+        }
+        catch (DeviceException e) {
+            e.printStackTrace();
         }
     }
 
