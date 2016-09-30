@@ -8,6 +8,7 @@ import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
+import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ public class Doctor {
         Doctor.verifyOSTypeAndMobilePlatform();
         Doctor.verifyXcrun();
         Doctor.verifyIdeviceinstaller();
-        Doctor.checkAppiumVersion();
+        Doctor.verifyAppium();
     }
 
     // Verify Java version
@@ -117,29 +118,30 @@ public class Doctor {
         }
     }
 
-    private static void checkAppiumVersion() throws AppiumException {
-
-        // Get appium appium-version
-        String appiumCommand = OSUtils.runProcess("appium -v ");
-
-        // If appium is not installed try to install it
-        if (appiumCommand.contains("not installed")) {
-            Log.warn("Appium " + Settings.appiumVersion + " not installed!!!");
-            inastallAppium();
+    private static void verifyAppium() throws AppiumException {
+        String message;
+        String appiumVersion = OSUtils.runProcess("appium -v ");
+        if (appiumVersion.equals("") || appiumVersion.contains("not installed")) {
+            message = "Appium version " + Settings.appiumVersion + " is NOT installed! Command \"appium -v\" returns \"" + appiumVersion + "\".";
+            Log.fatal(message);
+            Assert.fail(message);
+            // installAppium();
             return;
-
-        } else if (!appiumCommand.contains(Settings.appiumVersion)) {
-            Log.warn("Installed appium version " + appiumCommand + " is not compatible with desired version" + Settings.appiumVersion + "!!!");
-            inastallAppium();
+        } else if (!appiumVersion.contains(Settings.appiumVersion)) {
+            message = "Appium version " + appiumVersion + " is NOT compatible with desired version " + Settings.appiumVersion + "!";
+            Log.fatal(message);
+            Assert.fail(message);
+            // installAppium();
             return;
         } else {
-            Log.warn("Appium " + Settings.appiumVersion + " is compatible with desired version " + Settings.appiumVersion + "!!!");
+            Log.debug("Appium version " + appiumVersion + " is compatible with desired version " + Settings.appiumVersion + "!");
         }
     }
 
-    private static void inastallAppium() {
-        Log.warn("Installing Appium " + Settings.appiumVersion + " using npm install -g appium@" + Settings.appiumVersion + " -f!!!");
-        OSUtils.runProcess("npm install -g appium@" + Settings.appiumVersion + " -f");
-        Log.warn("Appium version " + Settings.appiumVersion + "is installed!!!");
-    }
+//    // Update: if the appium version does not match, we will fail test execution while stabilize test infrastructure.
+//    private static void installAppium() {
+//        Log.warn("Installing Appium " + Settings.appiumVersion + " using npm install -g appium@" + Settings.appiumVersion + " -f!!!");
+//        OSUtils.runProcess("npm install -g appium@" + Settings.appiumVersion + " -f");
+//        Log.warn("Appium version " + Settings.appiumVersion + "is installed!!!");
+//    }
 }
