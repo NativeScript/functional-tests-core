@@ -101,7 +101,7 @@ public class ActionHelper {
         FindHelper find = new FindHelper(client);
         UIElement btn = find.byText(text, 3);
 
-        if (btn == null) {
+        if (btn == null || !btn.isDisplayed()) {
             btn = find.byText(text, 3);
         }
 
