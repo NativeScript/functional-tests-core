@@ -230,7 +230,11 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.EditText");
         } else {
-            return createIosElement("SearchBar");
+            String text = "SearchBar";
+            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+                text = "SearchField";
+            }
+            return createIosElement(text);
         }
     }
 
@@ -276,7 +280,11 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.TimePicker");
         } else {
-            return createIosElement("Picker");
+            String text = "Picker";
+            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+                text = "DatePicker";
+            }
+            return createIosElement(text);
         }
     }
 
@@ -285,7 +293,11 @@ public class Locators {
         if (Settings.platform == PlatformType.Andorid) {
             return By.className("android.widget.DatePicker");
         } else {
-            return createIosElement("Picker");
+            String text = "Picker";
+            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+                text = "DatePicker";
+            }
+            return createIosElement(text);
         }
     }
 

@@ -128,6 +128,7 @@ public class BasePage {
         while (demoBtn == null || !isVisible) {
             if (count <= 3) {
                 demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, 750, 5);
+                isVisible = demoBtn != null ? demoBtn.isDisplayed() : false;
             } else {
                 Assert.fail("Failed to swipe to \"" + example + "\".");
             }

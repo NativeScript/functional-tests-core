@@ -3,6 +3,9 @@ package functional.tests.core.BaseTest;
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Find.ActionHelper;
+import functional.tests.core.Find.Locators;
+import functional.tests.core.Find.Wait;
+import functional.tests.core.Find.WaitHelper;
 import functional.tests.core.Log.Log;
 
 import java.util.ArrayList;
@@ -52,7 +55,8 @@ public class TestsStateManager {
     public void setMainPage(String mainPage) {
         if (mainPage.contains("/") || mainPage.contains(("."))) {
             String splitSeparator = mainPage.contains("/") ? "/" : ".";
-            this.mainPage = mainPage.split(splitSeparator)[0];
+            String[] listOfPages = mainPage.split(splitSeparator);
+            this.mainPage = listOfPages[0];
         } else {
             this.mainPage = mainPage;
         }
@@ -132,12 +136,19 @@ public class TestsStateManager {
                 Log.error("Could not navigate back: " + ex.getMessage());
             }
         }
+
+        if (this.mainPage!=null){
+            WaitHelper wait = new WaitHelper(this.client);
+            UIElement checked= wait.waitForVisible(Locators.findByTextLocator(this.mainPage, true), false);
+            Log.info(this.mainPage +  " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
+        }
     }
 
     /**
      * Navigate to the main page.
      */
-    public void navigateToMainPage() {
+    public boolean navigateToMainPage() {
+        boolean hasNavigated = false;
         if (this.getPageIndex(this.getMainPage()) >= this.getLevel()) {
             Log.info("The navigation to the main page will be skipped because this should be the main page!");
         }
@@ -146,7 +157,10 @@ public class TestsStateManager {
             Log.info("Navigating to main page " + this.getMainPage() + " ...");
             this.navBack();
             Log.info("Navigate back to go to: " + this.getMainPage() + " !");
+            hasNavigated = true;
         }
+
+        return hasNavigated;
     }
 
     /**

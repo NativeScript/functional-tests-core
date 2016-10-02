@@ -6,6 +6,8 @@ import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.ActionHelper;
 import functional.tests.core.Find.Find;
+import functional.tests.core.Find.Locators;
+import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.By;
 
@@ -15,6 +17,7 @@ public abstract class BasePageExtended extends BasePage {
 
     protected TestsStateManager testsStateManager;
     protected String mainPage;
+    protected By elementToWaitForMainPage;
 
     public BasePageExtended(Client client, String mainPage, TestsStateManager testsStateManager) {
         this(client, testsStateManager);
@@ -87,8 +90,8 @@ public abstract class BasePageExtended extends BasePage {
         this.testsStateManager.navBack(element);
     }
 
-    public void navigateToMainPage() {
-        this.testsStateManager.navigateToMainPage();
+    public boolean navigateToMainPage() {
+        return this.testsStateManager.navigateToMainPage();
     }
 
     public void navigateToHomePage() {
