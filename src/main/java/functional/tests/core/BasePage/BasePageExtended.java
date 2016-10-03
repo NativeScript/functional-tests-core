@@ -90,8 +90,8 @@ public abstract class BasePageExtended extends BasePage {
         this.testsStateManager.navBack(element);
     }
 
-    public boolean navigateToMainPage() {
-        return this.testsStateManager.navigateToMainPage();
+    public void navigateToMainPage() {
+        this.testsStateManager.navigateToMainPage();
     }
 
     public void navigateToHomePage() {

@@ -147,7 +147,7 @@ public class TestsStateManager {
     /**
      * Navigate to the main page.
      */
-    public boolean navigateToMainPage() {
+    public void navigateToMainPage() {
         boolean hasNavigated = false;
         if (this.getPageIndex(this.getMainPage()) >= this.getLevel()) {
             Log.info("The navigation to the main page will be skipped because this should be the main page!");
@@ -160,7 +160,7 @@ public class TestsStateManager {
             hasNavigated = true;
         }
 
-        return hasNavigated;
+        //return hasNavigated;
     }
 
     /**

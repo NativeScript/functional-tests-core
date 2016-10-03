@@ -6,6 +6,7 @@ import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.Find;
+import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
 import functional.tests.core.Gestures.Gestures;
 import functional.tests.core.Log.Log;
@@ -64,8 +65,14 @@ public class App {
                 if (e.getMessage().contains("An error occurred while executing user supplied JavaScript")) {
                     Client.driver.findElement(By.id(Settings.testAppFriendlyName)).click();
                 } else {
+                    By appLocator;
                     // This hack workarounds run in background issue on iOS9
-                    By appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
+                    if (Settings.platformVersion.startsWith("10")){
+                        appLocator = Locators.scrollViewLocator();
+                    }else {
+                        appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
+                    }
+
                     MobileElement element = (MobileElement) Client.driver.findElement(appLocator);
                     int offset = 5; // 5px offset within the top-left corner of element
                     Point elementTopLeft = element.getLocation();
