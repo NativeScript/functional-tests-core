@@ -22,7 +22,7 @@ public class Locators {
             Double platformVersion = Double.parseDouble(Settings.platformVersion.trim());
             if (platformVersion < 10) {
                 return By.id(text);
-            } else if (platformVersion >= 10 && (!exactMatch || !caseSensitive)) {
+            } else if (platformVersion >= 10) {
                 return findByTextLocator("*", text, exactMatch, caseSensitive);
             }
         }
