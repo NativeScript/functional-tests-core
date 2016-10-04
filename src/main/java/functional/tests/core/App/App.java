@@ -18,13 +18,13 @@ import io.appium.java_client.android.AndroidKeyCode;
 import org.openqa.selenium.*;
 
 import java.io.File;
+import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class App {
 
     private static final String adbPath = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
-
 
     /**
      * Restart application
@@ -55,6 +55,8 @@ public class App {
             Adb.runAdbCommand(Settings.deviceId, "shell input keyevent 3");
             Wait.sleep(seconds * 1000);
             Adb.runAdbCommand(Settings.deviceId, "shell monkey -p " + Settings.packageId + " -c android.intent.category.LAUNCHER 1");
+        } else if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+            Client.driver.runAppInBackground(seconds);
         } else {
             try {
                 JavascriptExecutor jse = (JavascriptExecutor) Client.driver;
@@ -65,13 +67,8 @@ public class App {
                 if (e.getMessage().contains("An error occurred while executing user supplied JavaScript")) {
                     Client.driver.findElement(By.id(Settings.testAppFriendlyName)).click();
                 } else {
-                    By appLocator;
                     // This hack workarounds run in background issue on iOS9
-                    if (Settings.platformVersion.startsWith("10")){
-                        appLocator = Locators.scrollViewLocator();
-                    }else {
-                        appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
-                    }
+                    By appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
 
                     MobileElement element = (MobileElement) Client.driver.findElement(appLocator);
                     int offset = 5; // 5px offset within the top-left corner of element
@@ -80,6 +77,7 @@ public class App {
                 }
             }
         }
+
         Log.info("Bring " + Settings.packageId + " to front.");
         Wait.sleep(3000);
     }

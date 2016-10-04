@@ -90,10 +90,10 @@ public class Locators {
         } else if (Settings.platform == PlatformType.iOS) {
             if (exactMatch) {
                 return By.xpath("//" + controlType
-                        + "[@label='" + value + "']");
+                        + "[@label='" + value + "' or @value='" + value + "' or @hint='" + value + "']");
             } else {
                 return By.xpath("//" + controlType
-                        + "[contains(@label,'" + value + "')]");
+                        + "[contains(@label,'" + value + "') or contains(@value,'" + value + "') or contains(@hint,'" + value + "')]");
             }
         } else {
             String error = "findByText not implemented for platform: " + Settings.platform;
@@ -231,7 +231,7 @@ public class Locators {
             return By.className("android.widget.EditText");
         } else {
             String text = "SearchBar";
-            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+            if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
                 text = "SearchField";
             }
             return createIosElement(text);
@@ -281,7 +281,7 @@ public class Locators {
             return By.className("android.widget.TimePicker");
         } else {
             String text = "Picker";
-            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+            if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
                 text = "DatePicker";
             }
             return createIosElement(text);
@@ -294,7 +294,7 @@ public class Locators {
             return By.className("android.widget.DatePicker");
         } else {
             String text = "Picker";
-            if(Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+            if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
                 text = "DatePicker";
             }
             return createIosElement(text);
