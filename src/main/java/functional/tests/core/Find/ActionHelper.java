@@ -46,9 +46,9 @@ public class ActionHelper {
                 return false;
             }
             Log.info("Tap on '" + btnText + "' button.");
-            if(Settings.platform==PlatformType.iOS && Settings.platformVersion.startsWith("10")){
+            if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
                 demoBtn.tap();
-            }else {
+            } else {
                 demoBtn.click();
             }
 
@@ -76,18 +76,9 @@ public class ActionHelper {
     }
 
     public static void navigateBack(Client client) {
-        if (Settings.platform == PlatformType.iOS) {
-            try {
-                client.getDriver().navigate().back();
-            } catch (Exception e) {
-                Log.error("Failed to navigate back using client.getDriver().navigate().back()!!!");
-                Log.info("Try to navigate using client.driver.findElement(Locators.byText(\"Back\")");
-                try {
-                    client.driver.findElement(Locators.byText("Back")).click();
-                } catch (Exception innerEx) {
-                    Log.error("Failed to navigate back using Locators.byText(\"Back\")");
-                }
-            }
+        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+            Log.info("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
+            client.driver.findElement(Locators.byText("Back")).click();
         } else {
             client.getDriver().navigate().back();
         }

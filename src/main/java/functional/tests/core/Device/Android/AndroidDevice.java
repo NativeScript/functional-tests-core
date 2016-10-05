@@ -74,12 +74,19 @@ public class AndroidDevice implements IDevice {
                 // Wait
                 Adb.waitUntilEmulatorBoot(Settings.deviceId, Settings.deviceBootTimeout);
 
+                int waitToUnlock = 6000;
                 // Unlock
-                if (Adb.isLocked(Settings.deviceId)) {
+                while (Adb.isLocked(Settings.deviceId) && waitToUnlock >= 0) {
                     Log.info("Device is locked. Unlocking it ...");
                     Adb.unlock(Settings.deviceId);
                     Wait.sleep(3000);
                     Log.info("Device locked: " + String.valueOf(Adb.isLocked(Settings.deviceId)));
+                    waitToUnlock -= 3000;
+                }
+
+                if (Adb.isLocked(Settings.deviceId)){
+                    Log.info("Device is locked. We couldn't unlock it!!!");
+                    OSUtils.getScreenshot("HostOS_Emulator_Failed_UnLock");
                 }
             }
         } catch (TimeoutException timeout) {
@@ -131,8 +138,7 @@ public class AndroidDevice implements IDevice {
                     e.printStackTrace();
                 }
             }
-        }
-        catch (DeviceException e) {
+        } catch (DeviceException e) {
             e.printStackTrace();
         }
     }
