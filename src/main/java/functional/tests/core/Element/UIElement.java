@@ -47,13 +47,6 @@ public class UIElement {
 
     public static void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
-        // In iOS, the swipe gesture requires a short duration with Appium 1.5
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
-
         Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
         int height = dimensions.height;
@@ -112,13 +105,6 @@ public class UIElement {
     private static void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
-
-        // In iOS, the swipe gesture requires a short duration with Appium 1.5
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
 
         Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
@@ -450,13 +436,6 @@ public class UIElement {
 
     private void swipeInElement(String direction, int duration) {
 
-        // In iOS, the swipe gesture requires a short duration with Appium 1.5
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
-
         int centerX = this.element.getLocation().x + (this.element.getSize().width / 2);
         int centerY = this.element.getLocation().y + (this.element.getSize().height / 2);
 
@@ -515,13 +494,6 @@ public class UIElement {
     }
 
     private void swipeInElementFromCorner(String direction, int duration) {
-
-        // In iOS, the swipe gesture requires a short duration with Appium 1.5
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 

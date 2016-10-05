@@ -23,14 +23,7 @@ public class GesturesHelper {
         this.find = new FindHelper(this.client);
     }
 
-    private void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
-
-        // In Appium 1.5, the swipe gesture requires shorter duration on iOS
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
+    public void swipe(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
 
         Dimension dimensions = Client.driver.manage().window().getSize();
         int width = dimensions.width;
@@ -88,13 +81,6 @@ public class GesturesHelper {
     // Direction as String
     private void swipeInElement(MobileElement element, String direction, int duration) {
 
-        // In Appium 1.5, the swipe gesture requires shorter duration on iOS
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
-
         int centerX = element.getLocation().x + (element.getSize().width / 2);
         int centerY = element.getLocation().y + (element.getSize().height / 2);
 
@@ -144,13 +130,6 @@ public class GesturesHelper {
     // SwipeElementDirection
     private void swipeInElement(MobileElement element, SwipeElementDirection direction, int duration) {
 
-        // In Appium 1.5, the swipe gesture requires shorter duration on iOS
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
-
         int centerX = element.getLocation().x + (element.getSize().width / 2);
         int centerY = element.getLocation().y + (element.getSize().height / 2);
 
@@ -198,13 +177,6 @@ public class GesturesHelper {
     }
 
     private void swipeFromCorner(SwipeElementDirection direction, int duration, int waitAfterSwipe) {
-
-        // In Appium 1.5, the swipe gesture requires shorter duration on iOS
-        if (Settings.platform == PlatformType.iOS) {
-            if (duration >= 100) {
-                duration = duration / 10;
-            }
-        }
 
         int initialX = 0, initialY = 0, finalX = 0, finalY = 0;
 
