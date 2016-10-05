@@ -8,6 +8,7 @@ import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import org.testng.Assert;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +41,10 @@ public class Device {
     public void initTestApp() throws IOException {
         this._device.uninstallApps(uninstallAppsList());
 
-        // On Emulator Api17/8 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
+        // On Emulator Api17/18/19/21/22 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
         // We count on AndroidMobileCapabilityType.APP_PACKAGE && AndroidMobileCapabilityType.APP_ACTIVITY to launch the app when installed.
-        if (Settings.deviceType == DeviceType.Emulator && (Settings.platformVersion.equalsIgnoreCase("4.2") || Settings.platformVersion.equalsIgnoreCase("4.3"))) {
+        double platformVersion = Double.parseDouble(Settings.platformVersion.trim());
+        if (platformVersion <= 5.1) {
             this._device.installApp(Settings.testAppName, Settings.packageId);
         }
     }

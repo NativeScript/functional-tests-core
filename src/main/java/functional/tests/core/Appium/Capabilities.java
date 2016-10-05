@@ -8,6 +8,7 @@ import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.interactions.DoubleClickAction;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
@@ -40,9 +41,10 @@ public class Capabilities {
             capabilities.setCapability(MobileCapabilityType.UDID, Settings.deviceId);
         }
 
-        // On Emulator Api17/8 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
+        // On Emulator Api17/18/19/21/22 we install .apk by ADB due to REMOTE_INSTALL_TIMEOUT of Appium: https://github.com/appium/appium/issues/6633.
         // We count on AndroidMobileCapabilityType.APP_PACKAGE && AndroidMobileCapabilityType.APP_ACTIVITY to launch the app when installed.
-        if (Settings.deviceType == DeviceType.Emulator && (Settings.platformVersion.equalsIgnoreCase("4.2") || Settings.platformVersion.equalsIgnoreCase("4.3"))) {
+        double platformVersion = Double.parseDouble(Settings.platformVersion);
+        if (platformVersion <= 5.1) {
             // Do not set MobileCapabilityType.APP capability.
         } else {
             capabilities.setCapability(MobileCapabilityType.APP, Settings.baseTestAppDir + File.separator + Settings.testAppName);
