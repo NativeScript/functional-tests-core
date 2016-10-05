@@ -31,6 +31,7 @@ public class Locators {
     }
 
     public static By findByTextLocator(String controlType, String value, boolean exactMatch, boolean caseSensitive) {
+        String toLowerCaseValue = value.toLowerCase();
         // Android
         if (Settings.platform == PlatformType.Andorid) {
             // exactMatch = true
@@ -38,54 +39,33 @@ public class Locators {
                 // caseSensitive = true
                 if (caseSensitive) {
                     return By.xpath("//" + controlType
-                            + "[@content-desc=\"" + value
-                            + "\" or @resource-id=\"" + value
-                            + "\" or @text=\"" + value
-                            + "\"]");
-                } else
-
-                // caseSensitive = false
-                {
-                    return By.xpath("//" + controlType
-                            + "[@content-desc=\"" + value
-                            + "\" or @content-desc=\"" + value.toLowerCase()
-                            + "\" or @content-desc=\"" + value.toUpperCase()
-                            + "\" or @resource-id=\"" + value
-                            + "\" or @resource-id=\"" + value.toLowerCase()
-                            + "\" or @resource-id=\"" + value.toUpperCase()
-                            + "\" or @text=\"" + value
-                            + "\" or @text=\"" + value.toLowerCase()
-                            + "\" or @text=\"" + value.toUpperCase()
-                            + "\"]");
-                }
-
-            } else
-            // exactMatch = false
-            {
-                // caseSensitive = true
-                if (caseSensitive) {
-                    return By.xpath("//*"
-                            + "[contains(@content-desc,\"" + value
-                            + "\") or contains(@resource-id,\"" + value
-                            + "\") or contains(@text,\"" + value
-                            + "\")]");
+                            + "[@content-desc='" + value
+                            + "' or @resource-id='" + value
+                            + "' or @text='" + value
+                            + "']");
                 } else
                 // caseSensitive = false
                 {
-                    return By.xpath("//*"
-                            + "[contains(@content-desc,\"" + value
-                            + "\") or contains(@content-desc,\"" + value.toLowerCase()
-                            + "\") or contains(@content-desc,\"" + value.toUpperCase()
-                            + "\") or contains(@resource-id,\"" + value
-                            + "\") or contains(@resource-id,\"" + value.toLowerCase()
-                            + "\") or contains(@resource-id,\"" + value.toUpperCase()
-                            + "\") or contains(@text,\"" + value
-                            + "\") or contains(@text,\"" + value.toLowerCase()
-                            + "\") or contains(@text,\"" + value.toUpperCase()
-                            + "\")]");
+                    String result = "//" + controlType
+                            + "["
+                            + getXpathComparingAttributesForEqualityForAndroid("content-desc", toLowerCaseValue) + " or "
+                            + getXpathComparingAttributesForEqualityForAndroid("resource-id", toLowerCaseValue) + " or "
+                            + getXpathComparingAttributesForEqualityForAndroid("text", toLowerCaseValue)
+                            + "]";
+                    Log.info("Used Xpath: " + result);
+                    return By.xpath(result);
                 }
-
+            } else {
+                // exactMatch = falsе
+                String result = "//*["
+                        + getXpathComparingAttributesByTextContainsForAndroid("content-desc", toLowerCaseValue) + " or "
+                        + getXpathComparingAttributesByTextContainsForAndroid("resource-id", toLowerCaseValue) + " or "
+                        + getXpathComparingAttributesByTextContainsForAndroid("text", toLowerCaseValue)
+                        + "]";
+                Log.info("Used Xpath: " + result);
+                return By.xpath(result);
             }
+
         } else if (Settings.platform == PlatformType.iOS) {
             if (exactMatch) {
                 return By.xpath("//" + controlType
@@ -99,6 +79,23 @@ public class Locators {
             Log.fatal(error);
             throw new UnsupportedOperationException(error);
         }
+    }
+
+    // Doesn't work for iOS 10
+    private static String getXpathComparingAttributesForEqualityForAndroid(String attribute, String value) {
+        String result = String.format("%s='%s'", convertAttributeValueToLowerCase(attribute), value);
+        return result;
+    }
+
+    // Doesn't work for iOS 10
+    private static String getXpathComparingAttributesByTextContainsForAndroid(String attribute, String value) {
+        String result = String.format("contains(%s,'%s')", convertAttributeValueToLowerCase(attribute), value);
+        return result;
+    }
+
+    // Doesn't work for iOS 10
+    private static String convertAttributeValueToLowerCase(String attribute) {
+        return "translate(@" + attribute + ",'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')";
     }
 
     public static By findByTextLocator(String value, boolean exactMatch) {
@@ -269,9 +266,9 @@ public class Locators {
     public static By viewGroupLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             double platform = Double.parseDouble(Settings.platformVersion);
-            if(platform>=4.3) {
+            if (platform >= 4.3) {
                 return By.className("android.view.ViewGroup");
-            }else{
+            } else {
                 return By.className("android.view.View");
             }
         } else {

@@ -137,10 +137,10 @@ public class TestsStateManager {
             }
         }
 
-        if (this.mainPage!=null){
+        if (this.mainPage != null) {
             WaitHelper wait = new WaitHelper(this.client);
-            UIElement checked= wait.waitForVisible(Locators.findByTextLocator(this.mainPage, true), false);
-            Log.info(this.mainPage +  " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
+            UIElement checked = wait.waitForVisible(Locators.findByTextLocator(this.mainPage, true), false);
+            Log.info(this.mainPage + " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
         }
     }
 
@@ -248,6 +248,14 @@ public class TestsStateManager {
     }
 
     /**
+     * Update pages on navigating back.
+     */
+    public void updatePagesOnNavigateBack() {
+        this.removeCurrentPage();
+        this.decreaseNavigationLevel();
+    }
+
+    /**
      * Decrease the navigation level.
      *
      * @return
@@ -276,13 +284,5 @@ public class TestsStateManager {
 
         this.pages.put(this.currentPage, this.navigationLevel);
         this.usedPages.add(this.currentPage);
-    }
-
-    /**
-     * Update pages on navigating back.
-     */
-    private void updatePagesOnNavigateBack() {
-        this.removeCurrentPage();
-        this.decreaseNavigationLevel();
     }
 }
