@@ -322,8 +322,24 @@ public class Locators {
     public static By navigationBarLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return null;
-        } else {
+        }else{
             return createIosElement("NavigationBar");
+        }
+    }
+
+    public static By segmentedControlLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return null;
+        } else {
+            return createIosElement("SegmentedControl");
+        }
+    }
+
+    public static By tabHostLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.TabHost");
+        } else {
+            return null;
         }
     }
 
