@@ -266,7 +266,7 @@ public class Locators {
     public static By viewGroupLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             double platform = Double.parseDouble(Settings.platformVersion);
-            if (platform >= 5.1) {
+            if (platform > 5.1) {
                 return By.className("android.view.ViewGroup");
             } else {
                 return By.className("android.view.View");
