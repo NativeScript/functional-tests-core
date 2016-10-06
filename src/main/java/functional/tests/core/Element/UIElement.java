@@ -340,7 +340,12 @@ public class UIElement {
     public void longPress(int duration) {
         Log.info("LongPress: "); // + Elements.getElementDetails(element));
         TouchAction action = new TouchAction(Client.driver);
-        action.press(this.element).waitAction(duration).release().perform();
+        double platformVersion = Double.parseDouble(Settings.platformVersion);
+        if (Settings.platform == PlatformType.iOS && platformVersion >=10){
+            action.longPress(this.element).perform();
+        }else {
+            action.press(this.element).waitAction(duration).release().perform();
+        }
     }
 
     public void pinch() {
