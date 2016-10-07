@@ -42,6 +42,7 @@ public class Settings {
     public static int defaultTimeout;
     public static int deviceBootTimeout;
     public static String platformVersion;
+    public static Double platformVersionDouble;
     public static String deviceId;
     public static String deviceName;
     public static String testAppName;
@@ -298,6 +299,7 @@ public class Settings {
         deviceId = properties.getProperty("udid");
         deviceName = properties.getProperty("deviceName");
         platformVersion = properties.getProperty("platformVersion");
+        platformVersionDouble = Double.parseDouble(Settings.platformVersion);
         testAppName = properties.getProperty("testAppName");
         testAppArchive = properties.getProperty("testAppArchive");
         emulatorOptions = properties.getProperty("emulatorOptions");
