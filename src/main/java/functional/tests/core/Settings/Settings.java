@@ -299,7 +299,7 @@ public class Settings {
         deviceId = properties.getProperty("udid");
         deviceName = properties.getProperty("deviceName");
         platformVersion = properties.getProperty("platformVersion");
-        platformVersionDouble = Double.parseDouble(Settings.platformVersion);
+        platformVersionDouble = Double.parseDouble(Settings.platformVersion.trim());
         testAppName = properties.getProperty("testAppName");
         testAppArchive = properties.getProperty("testAppArchive");
         emulatorOptions = properties.getProperty("emulatorOptions");
