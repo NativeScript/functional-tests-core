@@ -127,7 +127,11 @@ public class BasePage {
         int count = 0;
         while (demoBtn == null || !isVisible) {
             if (count <= 3) {
-                demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, 750, 5);
+                int duration = 750;
+                if(Settings.platform ==PlatformType.iOS && Settings.platformVersionDouble>=10){
+                    duration = 3;
+                }
+                demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, duration, 5);
                 isVisible = demoBtn != null ? demoBtn.isDisplayed() : false;
             } else {
                 Assert.fail("Failed to swipe to \"" + example + "\".");
