@@ -7,6 +7,7 @@ import functional.tests.core.Element.UIRectangle;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import io.appium.java_client.MobileElement;
 import org.w3c.dom.css.Rect;
 
 public class ActionHelper {
@@ -77,8 +78,12 @@ public class ActionHelper {
 
     public static void navigateBack(Client client) {
         if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+            FindHelper find = new FindHelper(client);
             Log.info("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
-            client.driver.findElement(Locators.byText("Back")).click();
+            UIElement btnBack = find.byText("Back");
+            if(btnBack !=null && btnBack.isDisplayed()) {
+                btnBack.tap();
+            }
         } else {
             client.getDriver().navigate().back();
         }
