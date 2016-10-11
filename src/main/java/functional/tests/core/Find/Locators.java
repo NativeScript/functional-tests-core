@@ -39,10 +39,11 @@ public class Locators {
                 // caseSensitive = true
                 if (caseSensitive) {
                     return By.xpath("//" + controlType
-                            + "[@content-desc='" + value
-                            + "' or @resource-id='" + value
-                            + "' or @text='" + value
-                            + "']");
+                            + "["
+                            + getXpathComparingAttributesForEqualityForAndroid("content-desc", value) + " or "
+                            + getXpathComparingAttributesForEqualityForAndroid("resource-id", value) + " or "
+                            + getXpathComparingAttributesForEqualityForAndroid("text", value)
+                            + "]");
                 } else
                 // caseSensitive = false
                 {
@@ -83,13 +84,13 @@ public class Locators {
 
     // Doesn't work for iOS 10
     private static String getXpathComparingAttributesForEqualityForAndroid(String attribute, String value) {
-        String result = String.format("%s='%s'", convertAttributeValueToLowerCase(attribute), value);
+        String result = String.format("%s=\"%s\"", convertAttributeValueToLowerCase(attribute), value);
         return result;
     }
 
     // Doesn't work for iOS 10
     private static String getXpathComparingAttributesByTextContainsForAndroid(String attribute, String value) {
-        String result = String.format("contains(%s,'%s')", convertAttributeValueToLowerCase(attribute), value);
+        String result = String.format("contains(%s,\"%s\")", convertAttributeValueToLowerCase(attribute), value);
         return result;
     }
 
@@ -322,7 +323,7 @@ public class Locators {
     public static By navigationBarLocator() {
         if (Settings.platform == PlatformType.Andorid) {
             return null;
-        }else{
+        } else {
             return createIosElement("NavigationBar");
         }
     }
