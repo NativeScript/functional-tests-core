@@ -17,19 +17,9 @@ import java.util.Set;
 public class Capabilities {
 
     public DesiredCapabilities loadDesiredCapabilities() {
-
         DesiredCapabilities capabilities = new DesiredCapabilities();
-
-        // Common
-        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
-            //capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
-            capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
-        } else {
-            capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, Settings.automationName);
-        }
-
+        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, Settings.automationName);
         capabilities.setCapability(MobileCapabilityType.APPIUM_VERSION, Settings.appiumVersion);
-
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Settings.platform);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Settings.platformVersion);
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Settings.deviceName);

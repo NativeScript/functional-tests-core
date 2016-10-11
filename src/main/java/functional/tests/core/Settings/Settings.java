@@ -367,6 +367,10 @@ public class Settings {
             automationName = AutomationName.APPIUM;
         } else if (automationNameString != null && automationNameString.equalsIgnoreCase("Selendroid")) {
             automationName = AutomationName.SELENDROID;
+        } else if (Settings.platform == PlatformType.iOS && Settings.platformVersionDouble >= 10) {
+            automationName = "XCUITest";
+        } else {
+            automationName = automationNameString;
         }
 
         // If defaultTimeout is not specified set it to 30 sec.
