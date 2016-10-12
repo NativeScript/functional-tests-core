@@ -22,12 +22,12 @@ public class Settings {
     private static final String storageEvnironmentVariable = "STORAGE";
     private static final String userDir = System.getProperty("user.dir");
     private static final String appConfigPath = System.getProperty("appConfig");
-    private static final String baseResourcesDir = userDir + File.separator + "resources";
     private static final String baseOutputDir = userDir + File.separator + "target" + File.separator + "surefire-reports";
     private static final String storageMachine = "mcsofnsbuild03";
     private static final String sharedFolder = "tns-images";
     private static Properties properties;
 
+    public static final String baseResourcesDir = userDir + File.separator + "resources";
     public static OSType OS;
     public static PlatformType platform;
     public static DeviceType deviceType;
