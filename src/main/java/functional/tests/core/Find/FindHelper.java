@@ -2,6 +2,7 @@ package functional.tests.core.Find;
 
 import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
@@ -87,6 +88,10 @@ public class FindHelper {
     }
 
     public List<UIElement> elementsByLocator(By locator) {
+        if (Settings.platform == PlatformType.Andorid && Settings.platformVersionDouble >= 7.0) {
+            this.client.setWait(Settings.defaultTimeout);
+        }
+
         return convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
