@@ -2,6 +2,7 @@ package functional.tests.core.BaseTest;
 
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Log.Log;
+import functional.tests.core.OSUtils.FileSystem;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Perf.PerfInfo;
 import functional.tests.core.Settings.Doctor;
@@ -72,8 +73,9 @@ public class BaseTest {
         this.checkMemoryPerformance(result);
     }
 
-    @AfterSuite(alwaysRun= true)
+    @AfterSuite(alwaysRun = true)
     public void afterSuiteBaseTest() throws Exception {
+        FileSystem.writeCsvFile();
         Log.warn("Maximum used memory: " + Settings.maxUsedMemory);
     }
 

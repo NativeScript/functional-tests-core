@@ -6,7 +6,9 @@ import org.apache.commons.io.FileUtils;
 import org.testng.Assert;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -74,5 +76,16 @@ public class FileSystem {
             Assert.fail("File '" + file + "' does not exist!");
         }
         return size;
+    }
+
+    public static void writeCsvFile() throws FileNotFoundException {
+        PrintWriter pw = new PrintWriter(new File(Settings.baseLogDir + File.separator + "memory.csv"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Memory");
+        sb.append('\n');
+        sb.append(Settings.maxUsedMemory);
+        sb.append('\n');
+        pw.write(sb.toString());
+        pw.close();
     }
 }
