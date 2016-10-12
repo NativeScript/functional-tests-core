@@ -1,7 +1,6 @@
 package functional.tests.core.BaseTest;
 
 import functional.tests.core.Enums.DeviceType;
-import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Perf.PerfInfo;
@@ -9,10 +8,7 @@ import functional.tests.core.Settings.Doctor;
 import functional.tests.core.Settings.Settings;
 import org.testng.Assert;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -76,6 +72,11 @@ public class BaseTest {
         this.checkMemoryPerformance(result);
     }
 
+    @AfterSuite(alwaysRun= true)
+    public void afterSuiteBaseTest() throws Exception {
+        Log.warn("Maximum used memory: " + Settings.maxUsedMemory);
+    }
+
     public static String getTestNameToWriteFile() {
         StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
 
@@ -104,9 +105,14 @@ public class BaseTest {
     }
 
     private void checkMemoryPerformance(ITestResult result) {
-        Long usedMemory = PerfInfo.getMem(Settings.deviceId);
+        int usedMemory = PerfInfo.getMem(Settings.deviceId);
         Log.info("Performance info of used memory: " + usedMemory);
         Log.info("Expected max memory usage: " + Settings.memoryMaxUsageLimit);
+
+        if (Settings.maxUsedMemory < usedMemory) {
+            Settings.maxUsedMemory = usedMemory;
+            //Log.info("Maximum used memory: " + Settings.maxUsedMemory);
+        }
 
         if (Settings.memoryMaxUsageLimit > 0) {
             boolean hasMemoryLeak = Settings.memoryMaxUsageLimit < usedMemory;

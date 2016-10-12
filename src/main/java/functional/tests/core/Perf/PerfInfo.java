@@ -7,7 +7,7 @@ import functional.tests.core.Settings.Settings;
 
 public class PerfInfo {
 
-    public static long getMem(String deviceId) {
+    public static int getMem(String deviceId) {
         if (Settings.platform == PlatformType.Andorid) {
             String command = "shell dumpsys meminfo | grep " + Settings.packageId;
             String output = Adb.runAdbCommand(deviceId, command);
@@ -19,7 +19,7 @@ public class PerfInfo {
                 } else {
                     memString = memString.replace("kB", "").trim();
                 }
-                return Long.parseLong(memString);
+                return Integer.parseInt(memString);
             } else {
                 Log.error("\"dumpsys meminfo\" command failed!");
                 return 0;
@@ -30,7 +30,7 @@ public class PerfInfo {
         }
     }
 
-    public static long getMem() {
+    public static int getMem() {
         return getMem(Settings.deviceId);
     }
 }
