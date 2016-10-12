@@ -83,7 +83,7 @@ public class FindHelper {
     }
 
     public UIElement byTextContains(String value) {
-        return this.byLocator(Locators.byText(value, false, false));
+        return this.byLocator(Locators.byText(value, false, false), Settings.shortTimeout);
     }
 
     public List<UIElement> elementsByLocator(By locator) {
