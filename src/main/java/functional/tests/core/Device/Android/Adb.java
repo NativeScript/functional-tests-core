@@ -175,7 +175,7 @@ public class Adb {
         if (Settings.emulatorOptions != null) {
             command = command + " " + Settings.emulatorOptions;
         }
-        command = command + " > " + emulatorStartLogPath + " &";
+        command = command + " > " + emulatorStartLogPath + " 2>&1";
         Log.info("Starting emulator with command: " + command);
         OSUtils.runProcess(false, Integer.MAX_VALUE, command);
     }
