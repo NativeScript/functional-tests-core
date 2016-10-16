@@ -1,16 +1,21 @@
 package functional.tests.core.ImageProcessing;
 
 import functional.tests.core.Appium.Client;
+import functional.tests.core.Device.Android.Adb;
 import functional.tests.core.Element.UIElement;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.ImageProcessing.ImageVerification.ImageVerificationResult;
 import functional.tests.core.Log.Log;
 import functional.tests.core.OSUtils.FileSystem;
+import functional.tests.core.OSUtils.OSUtils;
 import functional.tests.core.Settings.Settings;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.firefox.internal.Streams;
 
 import javax.imageio.ImageIO;
+import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -88,10 +93,23 @@ public class ImageUtils {
      */
     public static BufferedImage getElementImage(UIElement element) {
         BufferedImage img = getScreen();
+        int screenWidth = 1;
+        int screenHeight = 1;
 
-        int screenWidth = Client.driver.manage().window().getSize().width;
-        int screenHeight = Client.driver.manage().window().getSize().height;
+        try {
+            screenWidth = Client.driver.manage().window().getSize().width;
+            screenHeight = Client.driver.manage().window().getSize().height;
+        } catch (Exception e) {
+            if (Settings.platform == PlatformType.Andorid) {
+                String windowSizeMsg = Adb.runAdbCommand(Settings.deviceId, "shell wm size");
+                String[] windowSizes = windowSizeMsg.replaceAll("[^-?0-9]+", " ").trim().split(" ");
+                Log.info(windowSizeMsg);
+                screenHeight = Integer.parseInt(windowSizes[0]);
+                screenWidth = Integer.parseInt(windowSizes[1]);
+            }
 
+            Log.error(" Client.driver.manage().window() failed: " + e.getMessage());
+        }
         int screenshotWidth = img.getWidth();
         int zoomFactor = screenshotWidth / screenWidth;
 
