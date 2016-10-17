@@ -13,9 +13,9 @@ import org.testng.Assert;
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class WaitHelper {
+
     private Client client;
     private FindHelper find;
 
@@ -25,8 +25,8 @@ public class WaitHelper {
     }
 
     public UIElement waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
-        this.client.setWait(timeOut);
         List<UIElement> results;
+        this.client.setWait(timeOut);
 
         try {
             results = this.find.elementsByLocator(locator);
@@ -37,7 +37,7 @@ public class WaitHelper {
         this.client.setWait(Settings.defaultTimeout);
 
         if (results != null) {
-            if (Settings.platform == PlatformType.Andorid && results.size() >= 0) {
+            if (Settings.platform == PlatformType.Andorid && results.size() > 0) {
                 return results.get(0);
             } else if (Settings.platform == PlatformType.iOS) {
                 for (UIElement element : results) {
