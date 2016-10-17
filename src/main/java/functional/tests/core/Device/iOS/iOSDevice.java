@@ -259,6 +259,6 @@ public class iOSDevice implements IDevice {
 
     @Override
     public String getStartupTime(String appId) throws IOException {
-        return "";
+        return null;
     }
 }

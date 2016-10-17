@@ -66,6 +66,7 @@ public class Settings {
     public static String appiumLogLevel;
     public static int memoryMaxUsageLimit;
     public static int maxUsedMemory;
+    public static String appLaunchTime;
     public static final String baseTestAppDir = userDir + File.separator + "testapp";
     public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
@@ -425,6 +426,7 @@ public class Settings {
         testAppImageFolder = testAppName.substring(0, testAppName.indexOf("."));
         memoryMaxUsageLimit = getMemoryMaxUsageLimit();
         maxUsedMemory = 0;
+        appLaunchTime = null;
 
         Log.separator();
         Log.info("Settings initialized properly:");

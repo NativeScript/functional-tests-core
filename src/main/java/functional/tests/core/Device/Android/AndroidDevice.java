@@ -237,13 +237,6 @@ public class AndroidDevice implements IDevice {
                 Log.fatal("App " + appId + " is not running.");
                 throw new AppiumException("App " + appId + " is not running.");
             }
-        } else {
-            String startTime = getStartupTime(Settings.packageId);
-            if (startTime != null) {
-                Log.info(Settings.testAppFriendlyName + " loaded in " + startTime + " seconds.");
-            } else {
-                Log.error("Failed to measure loading time of " + Settings.testAppFriendlyName);
-            }
         }
     }
 
@@ -294,8 +287,8 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public String getStartupTime(String appId) throws IOException {
-        String[] logEntries = Adb.getAdbLog(Settings.deviceId).split("\\r?\\n");
         String time = null;
+        String[] logEntries = Adb.getAdbLog(Settings.deviceId).split("\\r?\\n");
         for (String line : logEntries) {
             if (line.contains("Displayed " + Settings.packageId)) {
                 time = line;
@@ -303,7 +296,7 @@ public class AndroidDevice implements IDevice {
                 time = time.substring(time.lastIndexOf("+") + 1);
                 time = time.replace(" ", "");
                 time = time.replace("ms", "");
-                time = time.replace("s", ".");
+                time = time.replace("s", "");
                 break;
             }
         }

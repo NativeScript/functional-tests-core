@@ -82,8 +82,12 @@ public class FileSystem {
         PrintWriter pw = new PrintWriter(new File(Settings.baseLogDir + File.separator + "memory.csv"));
         StringBuilder sb = new StringBuilder();
         sb.append("Memory");
+        sb.append(",");
+        sb.append("LaunchTime");
         sb.append('\n');
         sb.append(Settings.maxUsedMemory);
+        sb.append(",");
+        sb.append(Settings.appLaunchTime);
         sb.append('\n');
         pw.write(sb.toString());
         pw.close();

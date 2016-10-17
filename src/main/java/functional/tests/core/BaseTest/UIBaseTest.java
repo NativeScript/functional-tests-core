@@ -6,6 +6,7 @@ import functional.tests.core.Appium.Server;
 import functional.tests.core.Device.Device;
 import functional.tests.core.Device.iOS.Simctl;
 import functional.tests.core.Enums.DeviceType;
+import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.FindHelper;
 import functional.tests.core.Gestures.GesturesHelper;
 import functional.tests.core.ImageProcessing.Sikuli.Sikuli;
@@ -116,6 +117,13 @@ public abstract class UIBaseTest extends BaseTest {
         // Verify app not crashed
         try {
             this.device.verifyAppRunning(Settings.deviceId, Settings.packageId);
+            if (Settings.platform == PlatformType.Andorid) {
+                String startTime = this.device.getStartupTime(Settings.packageId);
+                if (startTime != null) {
+                    Settings.appLaunchTime = startTime;
+                    Log.info(Settings.testAppFriendlyName + " loaded in " + Settings.appLaunchTime + " ms.");
+                }
+            }
         } catch (Exception e) {
             failAtStartUp = true;
             Log.logScreen("Emulator", Settings.packageId + " failed at startup.");
