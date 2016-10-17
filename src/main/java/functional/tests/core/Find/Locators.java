@@ -344,6 +344,14 @@ public class Locators {
         }
     }
 
+    public static By tabWidgetLocator() {
+        if (Settings.platform == PlatformType.Andorid) {
+            return By.className("android.widget.TabWidget");
+        } else {
+            return null;
+        }
+    }
+
     private static By createIosElement(String element) {
         return By.className(createElementClassForIos(element));
     }
