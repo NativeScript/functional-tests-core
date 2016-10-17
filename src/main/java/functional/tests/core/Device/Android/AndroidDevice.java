@@ -84,7 +84,7 @@ public class AndroidDevice implements IDevice {
                     waitToUnlock -= 3000;
                 }
 
-                if (Adb.isLocked(Settings.deviceId)){
+                if (Adb.isLocked(Settings.deviceId)) {
                     Log.info("Device is locked. We couldn't unlock it!!!");
                     OSUtils.getScreenshot("HostOS_Emulator_Failed_UnLock");
                 }
@@ -206,6 +206,17 @@ public class AndroidDevice implements IDevice {
             }
             writer.close();
         } catch (Exception e) {
+            try {
+                String logFromAndroid = Adb.runAdbCommand(Settings.deviceId, "logcat -d");
+                String logLocation = Settings.consoleLogDir + File.separator + "logcat_" + fileName + ".log";
+                FileWriter writer = new FileWriter(logLocation, true);
+                writer.write(logFromAndroid);
+                writer.close();
+            } catch (Exception ex) {
+
+                Log.error("Failed to get logcat with command: adb -s " + Settings.deviceId + " logcat -d");
+                Log.error(ex.getMessage());
+            }
             Log.warn("Failed to get logcat.");
             e.printStackTrace();
         }
