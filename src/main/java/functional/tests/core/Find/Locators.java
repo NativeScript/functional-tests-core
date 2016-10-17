@@ -53,7 +53,7 @@ public class Locators {
                             + getXpathComparingAttributesForEqualityForAndroid("resource-id", toLowerCaseValue) + " or "
                             + getXpathComparingAttributesForEqualityForAndroid("text", toLowerCaseValue)
                             + "]";
-                    Log.info("Used Xpath: " + result);
+                    // Log.info("Used Xpath: " + result);
                     return By.xpath(result);
                 }
             } else {
@@ -63,7 +63,7 @@ public class Locators {
                         + getXpathComparingAttributesByTextContainsForAndroid("resource-id", toLowerCaseValue) + " or "
                         + getXpathComparingAttributesByTextContainsForAndroid("text", toLowerCaseValue)
                         + "]";
-                Log.info("Used Xpath: " + result);
+                // Log.info("Used Xpath: " + result);
                 return By.xpath(result);
             }
 
