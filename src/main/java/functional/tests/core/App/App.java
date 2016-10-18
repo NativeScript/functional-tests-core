@@ -52,6 +52,8 @@ public class App {
     public static void runInBackground(int seconds) {
         Log.info("Run current app in background for " + seconds + " seconds.");
         if (Settings.platform == PlatformType.Andorid) {
+            // Execute twice due to a Launcher crash.
+            Adb.runAdbCommand(Settings.deviceId, "shell input keyevent 3");
             Adb.runAdbCommand(Settings.deviceId, "shell input keyevent 3");
             Wait.sleep(seconds * 1000);
             Adb.runAdbCommand(Settings.deviceId, "shell monkey -p " + Settings.packageId + " -c android.intent.category.LAUNCHER 1");
