@@ -190,6 +190,7 @@ public class Adb {
             OSUtils.stopProcess("emulator64-crash-service.exe");
             OSUtils.stopProcess("emulator-crash-service.exe");
             OSUtils.stopProcess("emulator-check.exe");
+            OSUtils.stopProcess("emulator64-arm.exe");
         } else {
             OSUtils.stopProcess("emulator64-x86");
             OSUtils.stopProcess("emulator-x86");
@@ -199,6 +200,7 @@ public class Adb {
             OSUtils.stopProcess("emulator64-crash-service");
             OSUtils.stopProcess("emulator-crash-service");
             OSUtils.stopProcess("emulator-check");
+            OSUtils.stopProcess("emulator64-arm");
 
             // Linux Ubuntu
             // For some reason the 'qemu-system-i386' process appears as 'qemu-system-i38'.
