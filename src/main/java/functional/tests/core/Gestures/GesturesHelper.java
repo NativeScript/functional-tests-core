@@ -4,7 +4,9 @@ import functional.tests.core.Appium.Client;
 import functional.tests.core.Element.UIElement;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Find.FindHelper;
+import functional.tests.core.Find.Locators;
 import functional.tests.core.Find.Wait;
+import functional.tests.core.Find.WaitHelper;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
 import io.appium.java_client.MobileElement;
@@ -242,27 +244,16 @@ public class GesturesHelper {
     }
 
     public UIElement swipeToElement(SwipeElementDirection direction, String elementText, int duration, int retryCount) {
-        for (int i = 0; i < retryCount; i++) {
-            UIElement element = this.find.byText(elementText, true, 2);
-            if ((element != null) && (element.isDisplayed())) {
-                Log.info(elementText + " found.");
-                return element;
-            } else {
-                Log.info("Swipe " + direction.toString() + " to " + elementText);
-                this.swipe(direction, duration, Settings.defaultTapDuration * 2);
-            }
-            if (i == retryCount - 1) {
-                Log.error(elementText + " not found after " + String.valueOf(i + 1) + " swipes.");
-            }
-        }
-        return null;
+        return this.swipeToElement(direction, Locators.byText(elementText), duration, retryCount);
     }
 
     public UIElement swipeToElement(SwipeElementDirection direction, By locator, int duration, int retryCount) {
         Log.info("Swipe " + direction.toString() + " to " + locator.toString());
+        WaitHelper helper = new WaitHelper(this.client);
+
         for (int i = 0; i < retryCount; i++) {
-            UIElement element = this.find.byLocator(locator, 2);
-            if ((element != null) && (element.isDisplayed())) {
+            UIElement element = helper.waitForVisible(locator, 2, false);
+            if ((element != null)) {
                 Log.info("Element found by locator \"" + locator.toString() + "\".");
                 return element;
             } else {

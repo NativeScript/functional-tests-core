@@ -36,7 +36,12 @@ public class BasePage {
      * Press the back button *
      */
     public static void navigateBack() {
-        Client.driver.navigate().back();
+        try {
+            Client.driver.navigate().back();
+        } catch (Exception ex) {
+            Log.info("Navigate back failed with command Client.driver.navigate().back()");
+            Log.error(ex.getMessage());
+        }
         Log.info("Navigate back.");
     }
 
@@ -119,20 +124,16 @@ public class BasePage {
 
     public UIElement scrollTo(String example) {
         Log.info("Swiping to \"" + example + "\" ...");
-        UIElement demoBtn = this.find.byText(example, 3);
-        boolean isVisible = true;
-        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
-            isVisible = demoBtn != null ? demoBtn.isDisplayed() : false;
-        }
+        UIElement demoBtn = this.wait.waitForVisible(Locators.byText(example, true, false), 3, false);
+
         int count = 0;
-        while (demoBtn == null || !isVisible) {
+        while (demoBtn == null) {
             if (count <= 3) {
                 int duration = 750;
-                if(Settings.platform ==PlatformType.iOS && Settings.platformVersionDouble>=10){
+                if (Settings.platform == PlatformType.iOS && Settings.platformVersionDouble >= 10) {
                     duration = 3;
                 }
                 demoBtn = this.gestures.swipeToElement(SwipeElementDirection.DOWN, example, duration, 5);
-                isVisible = demoBtn != null ? demoBtn.isDisplayed() : false;
             } else {
                 Assert.fail("Failed to swipe to \"" + example + "\".");
             }

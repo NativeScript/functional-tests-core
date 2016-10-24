@@ -77,11 +77,11 @@ public class ActionHelper {
     }
 
     public static void navigateBack(Client client) {
-        if (Settings.platform == PlatformType.iOS && Settings.platformVersion.startsWith("10")) {
+        if (Settings.platform == PlatformType.iOS && Settings.platformVersionDouble >= 10) {
             FindHelper find = new FindHelper(client);
             Log.info("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
             UIElement btnBack = find.byText("Back");
-            if(btnBack !=null && btnBack.isDisplayed()) {
+            if (btnBack != null && btnBack.isDisplayed()) {
                 btnBack.tap();
             }
         } else {

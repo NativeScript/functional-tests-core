@@ -37,21 +37,18 @@ public class WaitHelper {
         this.client.setWait(Settings.defaultTimeout);
 
         if (results != null) {
-            if (Settings.platform == PlatformType.Andorid && results.size() > 0) {
-                return results.get(0);
-            } else if (Settings.platform == PlatformType.iOS) {
-                for (UIElement element : results) {
-                    if (element.isDisplayed()) {
-                        Rectangle rect = element.getUIRectangle();
-                        if (rect.x >= 0 && rect.y >= 0 && rect.width > 0 && rect.height > 0) {
-                            return element;
-                        }
+            for (UIElement element : results) {
+                if (element.isDisplayed()) {
+                    Rectangle rect = element.getUIRectangle();
+                    if (rect.x >= 0 && rect.y >= 0 && rect.width > 0 && rect.height > 0) {
+                        return element;
                     }
                 }
-            } else {
-                new NotImplementedException("This platform: " + Settings.platform + " is not implemented");
             }
+        } else {
+            new NotImplementedException("This platform: " + Settings.platform + " is not implemented");
         }
+
 
         if (failOnNotVisible) {
             Assert.fail("Failed to find element: " + locator.toString());
