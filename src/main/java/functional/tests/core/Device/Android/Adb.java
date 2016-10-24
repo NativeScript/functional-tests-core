@@ -76,7 +76,7 @@ public class Adb {
     }
 
     public static List<String> getInstalledApps() {
-        String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages");
+        String rowData = runAdbCommand(Settings.deviceId, "shell pm list packages -3");
         String trimData = rowData.replace("package:", "");
         String[] list = trimData.split("\\r?\\n");
         return Arrays.asList(list);
@@ -109,8 +109,8 @@ public class Adb {
 
         String apkPath = Settings.baseTestAppDir + File.separator + testAppName;
         Log.info("Installing " + apkPath + " ...");
-        String output = Adb.runAdbCommand(Settings.deviceId, "install -r" + apkPath, true);
-        Log.info(output);
+        String output = Adb.runAdbCommand(Settings.deviceId, "install -r " + apkPath, true);
+        Log.info("Installer output:" + output);
 
         appInstalled = isAppInstalled(packageId);
         if (!appInstalled) {
@@ -456,6 +456,7 @@ public class Adb {
 
     /**
      * Start Developer Settings.
+     *
      * @param deviceId
      */
     public static void startDeveloperOptions(String deviceId) {
@@ -467,6 +468,7 @@ public class Adb {
 
     /**
      * Change Location mode to High accuracy.
+     *
      * @param deviceId
      */
     public static void changeLocationMode(String deviceId) {
