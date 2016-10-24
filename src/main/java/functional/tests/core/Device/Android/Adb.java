@@ -109,7 +109,7 @@ public class Adb {
 
         String apkPath = Settings.baseTestAppDir + File.separator + testAppName;
         Log.info("Installing " + apkPath + " ...");
-        String output = Adb.runAdbCommand(Settings.deviceId, "install " + apkPath, true);
+        String output = Adb.runAdbCommand(Settings.deviceId, "install -r" + apkPath, true);
         Log.info(output);
 
         appInstalled = isAppInstalled(packageId);
