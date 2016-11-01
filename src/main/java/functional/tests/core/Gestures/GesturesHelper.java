@@ -252,7 +252,8 @@ public class GesturesHelper {
         WaitHelper helper = new WaitHelper(this.client);
 
         for (int i = 0; i < retryCount; i++) {
-            UIElement element = helper.waitForVisible(locator, 2, false);
+            UIElement element = (Settings.platform == PlatformType.iOS && Settings.platformVersionDouble < 9) ?
+                    this.find.byLocator(locator) : helper.waitForVisible(locator, 2, false);
             if ((element != null)) {
                 Log.info("Element found by locator \"" + locator.toString() + "\".");
                 return element;
