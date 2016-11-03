@@ -294,6 +294,9 @@ public class AndroidDevice implements IDevice {
         for (String line : logEntries) {
             if (line.contains("Displayed " + Settings.packageId)) {
                 time = line;
+                time = time.substring(time.indexOf("Displayed"));
+                Log.info(time);
+
                 time = time.substring(time.lastIndexOf("+"));
                 time = time.replace(" ", "");
                 matchesSubstring = this.countSubstring("s", time);
