@@ -287,20 +287,52 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public String getStartupTime(String appId) throws IOException {
-        String time = null;
+        Integer matchesSubstring = 0;
+        String time, seconds, miliseconds;
+        time = seconds = miliseconds = null;
         String[] logEntries = Adb.getAdbLog(Settings.deviceId).split("\\r?\\n");
         for (String line : logEntries) {
             if (line.contains("Displayed " + Settings.packageId)) {
                 time = line;
-                time = time.substring(time.lastIndexOf(Settings.packageId) + 1);
-                time = time.substring(time.lastIndexOf("+") + 1);
+                time = time.substring(time.lastIndexOf("+"));
                 time = time.replace(" ", "");
-                time = time.replace("ms", "");
-                time = time.replace("s", "");
+                matchesSubstring = this.countSubstring("s", time);
+
+                // +222ms
+                if (matchesSubstring == 1) {
+                    miliseconds = time.substring(time.indexOf("+") + 1, time.indexOf("ms"));
+                    if (miliseconds != null) {
+                        time = miliseconds;
+                    }
+                }
+
+                // +4s222ms
+                if (matchesSubstring == 2) {
+                    seconds = time.substring(time.indexOf("+") + 1, time.indexOf("s"));
+                    miliseconds = time.substring(time.indexOf("s") + 1, time.indexOf("ms"));
+
+                    // +4s22ms
+                    if (miliseconds.length() == 2) {
+                        miliseconds.concat("0");
+                    }
+
+                    // +4s2ms
+                    if (miliseconds.length() == 1) {
+                        miliseconds.concat("00");
+                    }
+
+                    if (seconds != null && miliseconds != null) {
+                        time = seconds + miliseconds;
+                    }
+                }
                 break;
             }
         }
         return time;
+    }
+
+    public int countSubstring(String subStr, String str) {
+        return (str.length() - str.replace(subStr, "").length()) / subStr.length();
     }
 
     @Override

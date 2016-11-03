@@ -13,7 +13,7 @@ public class PerfInfo {
             String output = Adb.runAdbCommand(deviceId, command);
             if (output.contains(Settings.packageId)) {
                 String memString = output.split(":")[0];
-                if (Settings.platformVersion.equalsIgnoreCase("7.0")) {
+                if (Settings.platformVersionDouble == 7.0) {
                     memString = memString.replace(",", "").trim();
                     memString = memString.replace("K", "").trim();
                 } else {
