@@ -316,12 +316,12 @@ public class AndroidDevice implements IDevice {
 
                     // +4s22ms
                     if (miliseconds.length() == 2) {
-                        miliseconds.concat("0");
+                        miliseconds = miliseconds.concat("0");
                     }
 
                     // +4s2ms
                     if (miliseconds.length() == 1) {
-                        miliseconds.concat("00");
+                        miliseconds = miliseconds.concat("00");
                     }
 
                     if (seconds != null && miliseconds != null) {
