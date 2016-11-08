@@ -86,21 +86,16 @@ public class Doctor {
     // Verify Device
     protected static void verifyDevice() throws Exception {
         Boolean isAvailable = false;
+        List<String> devices= null;
         if (Settings.platform == PlatformType.Andorid) {
-            List<String> devices = Adb.getDevices();
-            for (String device : devices) {
-                if (device.trim().contains(Settings.deviceId)) {
-                    isAvailable = true;
-                    break;
-                }
-            }
+            devices = Adb.getDevices();
         } else if (Settings.platform == PlatformType.iOS) {
-            List<String> devices = iOSDevice.getDevices();
-            for (String device : devices) {
-                if (device.trim().contains(Settings.deviceId)) {
-                    isAvailable = true;
-                    break;
-                }
+            devices = iOSDevice.getDevices();
+        }
+        for (String device : devices) {
+            if (device.trim().contains(Settings.deviceId)) {
+                isAvailable = true;
+                break;
             }
         }
 
