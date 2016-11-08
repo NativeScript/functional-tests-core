@@ -1,7 +1,6 @@
 package functional.tests.core.Settings;
 
-import functional.tests.core.Device.Android.Adb;
-import functional.tests.core.Device.iOS.iOSDevice;
+import functional.tests.core.Device.Device;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
@@ -86,14 +85,11 @@ public class Doctor {
     // Verify Device
     protected static void verifyDevice() throws Exception {
         Boolean isAvailable = false;
-        List<String> devices= null;
-        if (Settings.platform == PlatformType.Andorid) {
-            devices = Adb.getDevices();
-        } else if (Settings.platform == PlatformType.iOS) {
-            devices = iOSDevice.getDevices();
-        }
-        for (String device : devices) {
-            if (device.trim().contains(Settings.deviceId)) {
+        Device device = new Device();
+        List<String> devices = device.getDevices();
+
+        for (String line : devices) {
+            if (line.trim().contains(Settings.deviceId)) {
                 isAvailable = true;
                 break;
             }

@@ -35,7 +35,8 @@ public class iOSDevice implements IDevice {
         }
     }
 
-    public static List<String> getDevices() {
+    @Override
+    public List<String> getDevices() {
         String command = "instruments -s";
         String rowData = OSUtils.runProcess(command);
         String[] list = rowData.split("\\r?\\n");

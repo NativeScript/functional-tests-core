@@ -1,7 +1,6 @@
 package functional.tests.core.Device;
 
 import functional.tests.core.BaseTest.UIBaseTestExtended;
-import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Exceptions.AppiumException;
 import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
@@ -28,6 +27,10 @@ public class Device {
 
     public IDevice getDevice() {
         return this._device;
+    }
+
+    public List<String> getDevices() {
+        return this._device.getDevices();
     }
 
     public void initDevice() throws UnknownPlatformException, TimeoutException, InterruptedException, DeviceException {

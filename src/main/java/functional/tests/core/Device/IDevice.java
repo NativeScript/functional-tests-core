@@ -15,6 +15,8 @@ public interface IDevice {
 
     void stopDevice();
 
+    List<String> getDevices();
+
     void stopApps(List<String> uninstallAppsList);
 
     void uninstallApps(List<String> uninstallAppsList);

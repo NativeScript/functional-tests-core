@@ -48,6 +48,11 @@ public class AndroidDevice implements IDevice {
     }
 
     @Override
+    public List<String> getDevices() {
+        return Adb.getDevices();
+    }
+
+    @Override
     public void installApp(String testAppName, String packageId) throws IOException {
         Adb.installApp(testAppName, packageId);
     }
