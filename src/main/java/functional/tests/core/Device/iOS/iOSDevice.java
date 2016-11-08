@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class iOSDevice implements IDevice {
@@ -32,6 +33,13 @@ public class iOSDevice implements IDevice {
                 Log.error("simulatorUdid variable is null. Debug mode might be enabled.");
             }
         }
+    }
+
+    public static List<String> getDevices() {
+        String command = "instruments -s";
+        String rowData = OSUtils.runProcess(command);
+        String[] list = rowData.split("\\r?\\n");
+        return Arrays.asList(list);
     }
 
     private static void uninstallApp(String appId) {

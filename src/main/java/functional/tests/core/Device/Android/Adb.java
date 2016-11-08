@@ -47,7 +47,7 @@ public class Adb {
         return runAdbCommand(deviceId, command, true);
     }
 
-    protected static List<String> getDevices() {
+    public static List<String> getDevices() {
         String rowData = runAdbCommand("devices");
         String[] list = rowData.split("\\r?\\n");
         return Arrays.asList(list);

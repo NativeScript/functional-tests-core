@@ -1,9 +1,12 @@
 package functional.tests.core.Settings;
 
+import functional.tests.core.Device.Android.Adb;
+import functional.tests.core.Device.iOS.iOSDevice;
 import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.OSType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Exceptions.AppiumException;
+import functional.tests.core.Exceptions.DeviceException;
 import functional.tests.core.Exceptions.UnknownDeviceTypeException;
 import functional.tests.core.Exceptions.UnknownPlatformException;
 import functional.tests.core.Log.Log;
@@ -12,6 +15,7 @@ import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class Doctor {
 
@@ -26,6 +30,10 @@ public class Doctor {
         Doctor.verifyXcrun();
         Doctor.verifyIdeviceinstaller();
         Doctor.verifyAppium();
+
+        if (Settings.isRealDevice == true) {
+            Doctor.verifyDevice();
+        }
     }
 
     // Verify Java version
@@ -72,6 +80,34 @@ public class Doctor {
             String error = "Unknown device type.";
             Log.fatal(error);
             throw new UnknownDeviceTypeException(error);
+        }
+    }
+
+    // Verify Device
+    protected static void verifyDevice() throws Exception {
+        Boolean isAvailable = false;
+        if (Settings.platform == PlatformType.Andorid) {
+            List<String> devices = Adb.getDevices();
+            for (String device : devices) {
+                if (device.trim().contains(Settings.deviceId)) {
+                    isAvailable = true;
+                    break;
+                }
+            }
+        } else if (Settings.platform == PlatformType.iOS) {
+            List<String> devices = iOSDevice.getDevices();
+            for (String device : devices) {
+                if (device.trim().contains(Settings.deviceId)) {
+                    isAvailable = true;
+                    break;
+                }
+            }
+        }
+
+        if (isAvailable == false) {
+            String error = "Device " + Settings.deviceId + " NOT available.";
+            Log.fatal(error);
+            throw new DeviceException(error);
         }
     }
 
