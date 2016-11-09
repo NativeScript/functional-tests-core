@@ -297,7 +297,8 @@ public class AndroidDevice implements IDevice {
         time = seconds = miliseconds = null;
         String[] logEntries = Adb.getAdbLog(Settings.deviceId).split("\\r?\\n");
         for (String line : logEntries) {
-            if (line.contains("Displayed " + Settings.packageId)) {
+            // Displayed org.nativescript.nativescriptsdkexamplesng/com.tns.NativeScriptActivity: +19s259ms (total +2m58s7ms)
+            if (line.contains("Displayed " + Settings.packageId) && !line.contains("(total")) {
                 time = line;
                 time = time.substring(time.indexOf("Displayed"));
                 Log.info(time);
