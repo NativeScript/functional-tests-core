@@ -4,6 +4,8 @@ import functional.tests.core.Enums.DeviceType;
 import functional.tests.core.Enums.PlatformType;
 import functional.tests.core.Log.Log;
 import functional.tests.core.Settings.Settings;
+import functional.tests.core.OSUtils.FileSystem;
+
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -83,6 +85,19 @@ public class Capabilities {
                 // This is required by the safe simulator restart. TODO: Test on Android
                 capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
             }
+
+
+            // TODO: Setup for real scenario. This is only an example
+//            cat ~/Desktop/myconfig.xcconfig
+//            DEVELOPMENT_TEAM=W7TGC3P93K
+//            CODE_SIGN_IDENTITY = iPhone Developer
+
+//            if (Settings.isRealDevice && Settings.deviceType == DeviceType.iOS) {
+//                if (FileSystem.exist("/Users/tsenov/Desktop/myconfig.xcconfig")) {
+//                    capabilities.setCapability("xcodeConfigFile", "/Users/tsenov/Desktop/myconfig.xcconfig");
+//                }
+//            }
+
         }
 
         Log.info(capabilities.toString());
