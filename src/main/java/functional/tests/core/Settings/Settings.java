@@ -49,7 +49,7 @@ public class Settings {
     public static String testAppName;
     public static String testAppFriendlyName;
     public static String packageId;
-    public static String defaultActivity = "com.tns.NativeScriptActivity"; // This is hardcoded in runtime now
+    public static String defaultActivity;
     public static String testAppArchive;
     public static String appiumVersion;
     public static String automationName;
@@ -298,7 +298,10 @@ public class Settings {
         }
 
         appiumVersion = properties.getProperty("appiumVersion");
-
+        defaultActivity = properties.getProperty("defaultActivity")
+        if (defaultActivity == null || defaultActivity == "") {
+            defaultActivity = "com.tns.NativeScriptActivity";
+        }
         deviceId = properties.getProperty("udid");
         deviceName = properties.getProperty("deviceName");
         platformVersion = properties.getProperty("platformVersion");
