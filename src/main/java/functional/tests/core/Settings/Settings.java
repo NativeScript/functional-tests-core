@@ -298,7 +298,7 @@ public class Settings {
         }
 
         appiumVersion = properties.getProperty("appiumVersion");
-        defaultActivity = properties.getProperty("defaultActivity")
+        defaultActivity = properties.getProperty("defaultActivity");
         if (defaultActivity == null || defaultActivity == "") {
             defaultActivity = "com.tns.NativeScriptActivity";
         }
