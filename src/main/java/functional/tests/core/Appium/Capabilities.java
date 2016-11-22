@@ -86,17 +86,11 @@ public class Capabilities {
                 capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
             }
 
-
-            // TODO: Setup for real scenario. This is only an example
-//            cat ~/Desktop/myconfig.xcconfig
-//            DEVELOPMENT_TEAM=W7TGC3P93K
-//            CODE_SIGN_IDENTITY = iPhone Developer
-
-//            if (Settings.isRealDevice && Settings.deviceType == DeviceType.iOS) {
-//                if (FileSystem.exist("/Users/tsenov/Desktop/myconfig.xcconfig")) {
-//                    capabilities.setCapability("xcodeConfigFile", "/Users/tsenov/Desktop/myconfig.xcconfig");
-//                }
-//            }
+            if (Settings.isRealDevice) {
+                if (FileSystem.exist(Settings.xCode8ConfigFile)) {
+                    capabilities.setCapability("xcodeConfigFile", Settings.xCode8ConfigFile);
+                }
+            }
 
         }
 

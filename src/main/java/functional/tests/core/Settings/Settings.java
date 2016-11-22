@@ -71,6 +71,7 @@ public class Settings {
     public static final String baseTestDataDir = baseResourcesDir + File.separator + "testdata";
 
     public static final int defaultTapDuration = 250;
+    public static String xCode8ConfigFile;
 
     private static OSType getOSType() {
         OSType detectedOS;
@@ -297,6 +298,11 @@ public class Settings {
             isRealDevice = true;
         }
 
+        if (isRealDevice && Settings.platform == PlatformType.iOS) {
+            xCode8ConfigFile = baseResourcesDir + File.separator + "xcode" + File.separator + "xcode8config.xcconfig";
+            setupDevelopmentTeam();
+        }
+
         appiumVersion = properties.getProperty("appiumVersion");
         defaultActivity = properties.getProperty("defaultActivity");
         if (defaultActivity == null || defaultActivity == "") {
@@ -479,6 +485,25 @@ public class Settings {
             return false;
         } else {
             return null;
+        }
+    }
+
+    private static void setupDevelopmentTeam() {
+        File file = new File(xCode8ConfigFile);
+        FileSystem.ensureFolderExists(file.getParent());
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String teamId = System.getenv("DEVELOPMENT_TEAM");
+        String fileContext = String.format("DEVELOPMENT_TEAM=%s\nCODE_SIGN_IDENTITY=iPhone Developer", teamId);
+
+        try {
+            FileUtils.write(file, fileContext);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
