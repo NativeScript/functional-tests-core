@@ -83,8 +83,13 @@ public class Simctl {
         }
 
         Log.info("Create simulator with following command:");
-        Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
-        String output = OSUtils.runProcess("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
+//        Log.info("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
+//        String output = OSUtils.runProcess("xcrun simctl create \"" + simulatorName + "\" \"" + deviceType + "\" \"" + iOSVersion + "\"");
+
+        String command = "xcrun simctl create \"" + simulatorName + "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") + "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
+        Log.info(command);
+        String output = OSUtils.runProcess(command);
+
         return output;
     }
 
