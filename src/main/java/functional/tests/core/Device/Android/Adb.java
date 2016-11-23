@@ -288,7 +288,8 @@ public class Adb {
 
                     if (line.contains("Recent #0") &&
                             ((line.contains("com.android.launcher"))
-                                    || (line.contains("com.google.android.googlequicksearchbox")))) {
+                                    || (line.contains("com.google.android.googlequicksearchbox"))
+                                    || (line.contains("com.google.android.apps.nexuslauncher")))) {
                         found = true;
                         break;
                     }
