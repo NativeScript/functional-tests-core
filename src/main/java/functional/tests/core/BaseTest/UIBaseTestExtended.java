@@ -115,7 +115,7 @@ public abstract class UIBaseTestExtended extends UIBaseTest {
         return result;
     }
 
-    private void compareElements(UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+    public void compareElements(UIElement element, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = createImageName();
         this.compareElements(testName, element, timeOut, waitTime, pixelTolerance, percentTolerance);
     }
