@@ -7,14 +7,11 @@ import functional.tests.core.Settings.Settings;
 import functional.tests.core.OSUtils.FileSystem;
 
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
-import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-import org.openqa.selenium.interactions.DoubleClickAction;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.util.Set;
 
 public class Capabilities {
 
@@ -46,8 +43,8 @@ public class Capabilities {
         if (Settings.platform == PlatformType.Andorid) {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, Settings.packageId);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, Settings.defaultActivity);
-            capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, Settings.defaultActivity);
-            capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, Settings.packageId);
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, Settings.appWaitActivity);
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, Settings.appWaitPackage);
             // capabilities.setCapability(AndroidMobileCapabilityType.INTENT_ACTION, "android.intent.action.MAIN");
             // capabilities.setCapability(AndroidMobileCapabilityType.INTENT_CATEGORY, "org.nativescript.TestApp.MAIN");
             // capabilities.setCapability(AndroidMobileCapabilityType.INTENT_FLAGS, "0x10200000");

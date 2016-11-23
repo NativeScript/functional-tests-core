@@ -44,6 +44,8 @@ public class Settings {
     public static int deviceBootTimeout;
     public static String platformVersion;
     public static Double platformVersionDouble;
+    public static String appWaitActivity;
+    public static String appWaitPackage;
     public static String deviceId;
     public static String deviceName;
     public static String testAppName;
@@ -369,6 +371,20 @@ public class Settings {
             } else {
                 imageVerificationTypeString = "Default";
             }
+        }
+
+        String appWaitActivityString = properties.getProperty("appWaitActivity");
+        if (appWaitActivityString == null) {
+            appWaitActivity = Settings.defaultActivity;
+        } else {
+            appWaitActivity = appWaitActivityString;
+        }
+
+        String appWaitPackageString = properties.getProperty("appWaitPackage");
+        if (appWaitPackageString == null) {
+            appWaitPackage = Settings.packageId;
+        } else {
+            appWaitPackage = appWaitPackageString;
         }
 
         // Set automation name
