@@ -147,6 +147,10 @@ public class Doctor {
 
     private static void verifyAppium() throws AppiumException {
         String message;
+
+        String appiumPath = OSUtils.runProcess("which appium").trim();
+        Log.info("Appium installation is located at: " + appiumPath);
+
         String appiumVersion = OSUtils.runProcess("appium -v ").trim();
         if (appiumVersion.equals("") || appiumVersion.contains("not installed")) {
             message = "Appium version " + Settings.appiumVersion + " is NOT installed! Command \"appium -v\" returns \"" + appiumVersion + "\".";
