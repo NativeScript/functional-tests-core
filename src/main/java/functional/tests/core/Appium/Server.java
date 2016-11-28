@@ -102,7 +102,7 @@ public class Server {
     // therefore appium installation location may vary.
     private static String getAppiumPath() throws AppiumException {
         String appiumPath = OSUtils.runProcess("which appium").trim();
-        // Log.warn("Appium installation is located at: " + appiumPath);
+        Log.info("Appium installation is located at: " + appiumPath);
         return appiumPath;
     }
 
