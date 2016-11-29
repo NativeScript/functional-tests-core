@@ -12,13 +12,8 @@ public class PerfInfo {
             String command = "shell dumpsys meminfo | grep " + Settings.packageId;
             String output = Adb.runAdbCommand(deviceId, command);
             if (output.contains(Settings.packageId)) {
-                String memString = output.split(":")[0];
-                if (Settings.platformVersionDouble == 7.0) {
-                    memString = memString.replace(",", "").trim();
-                    memString = memString.replace("K", "").trim();
-                } else {
-                    memString = memString.replace("kB", "").trim();
-                }
+                String memString = output.split(":")[0].toLowerCase();
+                memString = memString.replace("kb", "").replace(",", "").replace("k", "").trim();
                 return Integer.parseInt(memString);
             } else {
                 Log.error("\"dumpsys meminfo\" command failed!");
