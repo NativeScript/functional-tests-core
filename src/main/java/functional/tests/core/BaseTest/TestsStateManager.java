@@ -56,9 +56,9 @@ public class TestsStateManager {
         if (mainPage.contains("/") || mainPage.contains(("."))) {
             String splitSeparator = mainPage.contains("/") ? "/" : ".";
             String[] listOfPages = mainPage.split(splitSeparator);
-            this.mainPage = listOfPages[0];
+            this.mainPage = listOfPages[0].toLowerCase();
         } else {
-            this.mainPage = mainPage;
+            this.mainPage = mainPage.toLowerCase();
         }
     }
 
@@ -77,7 +77,7 @@ public class TestsStateManager {
      * @param page
      */
     public void setCurrentPage(String page) {
-        this.currentPage = page;
+        this.currentPage = page.toLowerCase();
         this.setNewPage();
     }
 
@@ -148,7 +148,6 @@ public class TestsStateManager {
      * Navigate to the main page.
      */
     public void navigateToMainPage() {
-        boolean hasNavigated = false;
         if (this.getPageIndex(this.getMainPage()) >= this.getLevel()) {
             Log.info("The navigation to the main page will be skipped because this should be the main page!");
         }
@@ -157,10 +156,7 @@ public class TestsStateManager {
             Log.info("Navigating to main page " + this.getMainPage() + " ...");
             this.navBack();
             Log.info("Navigate back to go to: " + this.getMainPage() + " !");
-            hasNavigated = true;
         }
-
-        //return hasNavigated;
     }
 
     /**
@@ -169,13 +165,18 @@ public class TestsStateManager {
      * @param element
      * @return
      */
-    public boolean navigateTo(UIElement element) {
-        String pageName = element.getText() == "" ? element.getId() : element.getText();
+    public boolean navigateTo(UIElement element, String pageName) {
+        return ActionHelper.navigateTo(element, this, pageName);
+    }
 
-        ActionHelper.navigateTo(element);
-        this.setCurrentPage(pageName);
-        Log.info("Navigate to " + pageName);
-        return true;
+    public boolean navigateToPage(String demoPath) {
+        if (this.getCurrentPage() != null && this.getCurrentPage() != "") {
+            if (this.getCurrentPage() != demoPath) {
+                return ActionHelper.navigateTo(demoPath, this, this.client);
+            }
+        }
+
+        return false;
     }
 
     /**

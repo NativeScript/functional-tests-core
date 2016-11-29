@@ -116,16 +116,14 @@ public abstract class BasePageExtended extends BasePage {
     }
 
     public boolean navigateTo(UIElement element) {
-        return this.testsStateManager.navigateTo(element);
+        return this.navigateTo(element, "");
+    }
+
+    public boolean navigateTo(UIElement element, String mainPage) {
+        return this.testsStateManager.navigateTo(element, mainPage);
     }
 
     private boolean navigateTo(String demoPath) {
-        if (this.testsStateManager.getCurrentPage() != null && this.testsStateManager.getCurrentPage() != "") {
-            if (this.testsStateManager.getCurrentPage() != demoPath) {
-                return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
-            }
-        }
-
-        return ActionHelper.navigateTo(demoPath, this.testsStateManager, this.client);
+        return this.testsStateManager.navigateToPage(demoPath);
     }
 }

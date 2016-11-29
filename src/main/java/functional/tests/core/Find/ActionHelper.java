@@ -69,9 +69,15 @@ public class ActionHelper {
         return true;
     }
 
-    public static boolean navigateTo(UIElement element) {
+    public static boolean navigateTo(UIElement element, TestsStateManager testsStateManager, String pageName) {
+        pageName = (pageName == "" || pageName == null) ? (element.getText() == "" ? element.getId() : element.getText()) : pageName;
         element.click();
-        Log.info("Navigating to \"" + element + "\".");
+
+        Log.info("Navigating to \"" + pageName + "\".");
+
+        if (testsStateManager != null) {
+            testsStateManager.setCurrentPage(pageName);
+        }
 
         return true;
     }

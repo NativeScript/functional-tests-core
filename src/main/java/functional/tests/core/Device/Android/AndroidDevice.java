@@ -272,7 +272,7 @@ public class AndroidDevice implements IDevice {
     private boolean waitAppRunning(String deviceId, String appId, int timeOut) {
         int initTimeOut = 5;
         if (Settings.deviceName.toLowerCase().contains("arm")) {
-            initTimeOut = initTimeOut * 5;
+            initTimeOut = initTimeOut * 10;
         }
         Wait.sleep(initTimeOut * 1000);
         long startTime = System.currentTimeMillis();
