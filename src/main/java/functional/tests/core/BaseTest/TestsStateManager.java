@@ -173,10 +173,12 @@ public class TestsStateManager {
         if (this.getCurrentPage() != null && this.getCurrentPage() != "") {
             if (this.getCurrentPage() != demoPath) {
                 return ActionHelper.navigateTo(demoPath, this, this.client);
+            }else{
+                return false;
             }
         }
 
-        return false;
+        return ActionHelper.navigateTo(demoPath, this, this.client);
     }
 
     /**
