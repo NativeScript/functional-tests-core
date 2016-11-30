@@ -20,7 +20,7 @@ public class ImageVerification {
 
     // TODO: Read this from global config
     private static final boolean IGNORE_HEADER = true;
-    private static final int SIMILAR_PIXEL_TOLERANCE = 20;
+    private static final int SIMILAR_PIXEL_TOLERANCE = 30;
     private static final int DEFAULT_PIXEL_TOLERANCE = 250;
     private static final double DEFAULT_PERCENT_TOLERANCE = 1.0;
     private static final int DEFAULT_WAIT_TIME = 1000;
