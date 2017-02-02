@@ -230,7 +230,7 @@ public class TestContextSetupManager {
      * @return
      */
     public Sikuli initSikuliImageProcessing() {
-        this.sikuliImageProcessing = new Sikuli(this.settings.testAppImageFolder + "map");
+        this.sikuliImageProcessing = new Sikuli(this.settings.testAppImageFolder + "-map");
         this.updateTestContext();
         return this.sikuliImageProcessing;
     }
