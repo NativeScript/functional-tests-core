@@ -117,15 +117,19 @@ public class IOSDevice implements IDevice {
 
         }
 
+        // Uninstall test apps
+        if (!this.settings.debug) {
+            // TODO(dtopuzov/vchimev): Check simctl erase works on booted simualtors
+            this.uninstallApps(Device.uninstallAppsList());
+        }
+
         // Start Appium Client
         this.client.initDriver();
         return this;
     }
 
     private void startRealDevice() throws DeviceException {
-        //String commandGetAvailableDevices = "instruments -s | grep -v 'Simulator' | grep '(*)' | sed -e '/Known Templates/,$d'";
-
-        // This command waits 
+        // This command waits
         String commandGetAvailableDevices = "ios-deploy -c";
         String devices = OSUtils.runProcess(commandGetAvailableDevices);
         if (!devices.contains(this.getId())) {
@@ -156,12 +160,6 @@ public class IOSDevice implements IDevice {
             IOSDevice.LOGGER_BASE.info("The device should be restarted!");
         }
 
-        // Uninstall test apps
-        if (!this.settings.debug) {
-            // TODO(dtopuzov/vchimev): Check simctl erase works on booted simualtors
-            this.uninstallApps(Device.uninstallAppsList());
-        }
-
         // Try to list all apps to verify if device works properly
         String fileContent = OSUtils.runProcess(this.settings.defaultTimeout, "ideviceinstaller -u " + this.getId() + " -l");
         IOSDevice.LOGGER_BASE.info("apps: " + fileContent);
@@ -176,19 +174,13 @@ public class IOSDevice implements IDevice {
     }
 
     private void startSimulator() throws DeviceException {
-        // Check if simulator is alive
-        if (!this.simctl.checkIfSimulatorIsAlive(this.getId())) {
 
-            // TODO(): Consider rename
-            this.settings.deviceId = this.simctl.initSimulator();
-
-            // Create simulator
-            // TODO(): Move "Create simulator" and "Verify successfully created" to private methods or even move to Simctl
+        if (!this.simctl.checkIfSimulatorIsAlive(this.getId()) && !this.settings.reuseDevice) {
             boolean available = this.simctl.checkIfSimulatorExists(this.getName());
+
             if (available) {
-                // TODO(): Make it work for simultor
-                IOSDevice.LOGGER_BASE.info("Uninstalling apps.");
-                this.uninstallApps(Device.uninstallAppsList());
+                this.simctl.eraseAllSimulatorsTheWithSameNames();
+                this.simctl.eraseData();
             }
             if (!available) {
                 String result = this.simctl.createSimulator(this.getName(),
@@ -209,44 +201,19 @@ public class IOSDevice implements IDevice {
                     }
                 }
 
-
-                // Verify successfully created
-                if (this.simctl.getSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
-                    String error = "Simulator " + this.settings.deviceName + " does not exist. Hint: verify SDKs installed.";
-                    IOSDevice.LOGGER_BASE.error(error);
-                    throw new DeviceException(error);
-                }
-
                 // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
                 if (String.valueOf(this.settings.platformVersion).contains("9")) {
                     this.simctl.resetSimulatorSettings();
                 }
             }
         }
-    }
 
-    private void uninstallApp(String appId) {
-        String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + this.settings.deviceId + " -U " + appId);
-        if (uninstallResult.contains("Complete")) {
-            IOSDevice.LOGGER_BASE.info(appId + " successfully uninstalled.");
-        } else {
-            IOSDevice.LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+        // Verify successfully created
+        if (this.simctl.getSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
+            String error = "Simulator " + this.settings.deviceName + " does not exist. Hint: verify SDKs installed.";
+            IOSDevice.LOGGER_BASE.error(error);
+            throw new DeviceException(error);
         }
-    }
-
-    private List<String> getInstalledApps() {
-        String rowData = OSUtils.runProcess("ideviceinstaller -u " + this.settings.deviceId + " -l");
-        String trimData = rowData.replace("package:", "");
-        String[] rowList = trimData.split("\\r?\\n");
-        List<String> list = new ArrayList<>();
-        for (String item : rowList) {
-            if (item.contains(".") && item.contains("-")) {
-                String rowAppId = item.replace(" ", "");
-                String appId = rowAppId.split("-")[0];
-                list.add(appId);
-            }
-        }
-        return list;
     }
 
     @Override
@@ -296,6 +263,8 @@ public class IOSDevice implements IDevice {
     public void uninstallApps(List<String> uninstallAppsList) {
 
         if (this.settings.isRealDevice) {
+            IOSDevice.LOGGER_BASE.info("Uninstalling apps.");
+
             List<String> installedApps = this.getInstalledApps();
 
             for (String appToUninstall : uninstallAppsList) {
@@ -305,20 +274,52 @@ public class IOSDevice implements IDevice {
                     }
                 }
             }
+
+            IOSDevice.LOGGER_BASE.info("Old apps uninstalled.");
+
         } else {
             // Still not working
-            //String command = "rm -rf ~/Library/Developer/CoreSimulator/Devices/" + this.settings.deviceId + "data/Containers/Bundle/Application/*";
-//            String command = "xcrun simctl uninstall" + this.settings.deviceId + " " + this.settings.packageId;
-//            IOSDevice.LOGGER_BASE.debug(command);
-//            OSUtils.runProcess(command)
-//
-            // this will reset content and setting of emulator only if the emulator is not booted
-//             String command = "xcrun simctl erase " + this.settings.deviceId;
-//            IOSDevice.LOGGER_BASE.debug(command);
-//            OSUtils.runProcess(command);
-        }
+            // String command = "rm -rf ~/Library/Developer/CoreSimulator/Devices/" + this.settings.deviceId + "data/Containers/Bundle/Application/*";
+            // String command = "xcrun simctl uninstall" + this.settings.deviceId + " " + this.settings.packageId;
 
-        IOSDevice.LOGGER_BASE.info("Old apps uninstalled.");
+            // IOSDevice.LOGGER_BASE.debug(command);
+            // OSUtils.runProcess(command);
+
+            IOSDevice.LOGGER_BASE.error("Uninstall apps is not implemented for simulators");
+        }
+    }
+
+    private void uninstallApp(String appId) {
+        if (this.settings.isRealDevice) {
+            String uninstallResult = OSUtils.runProcess("ideviceinstaller -u " + this.settings.deviceId + " -U " + appId);
+            if (uninstallResult.contains("Complete")) {
+                IOSDevice.LOGGER_BASE.info(appId + " successfully uninstalled.");
+            } else {
+                IOSDevice.LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+            }
+        } else {
+            IOSDevice.LOGGER_BASE.error("Uninstall apps is not implemented for simulators");
+        }
+    }
+
+    private List<String> getInstalledApps() {
+        List<String> list = new ArrayList<>();
+
+        if (this.settings.isRealDevice) {
+            String rowData = OSUtils.runProcess("ideviceinstaller -u " + this.settings.deviceId + " -l");
+            String trimData = rowData.replace("package:", "");
+            String[] rowList = trimData.split("\\r?\\n");
+            for (String item : rowList) {
+                if (item.contains(".") && item.contains("-")) {
+                    String rowAppId = item.replace(" ", "");
+                    String appId = rowAppId.split("-")[0];
+                    list.add(appId);
+                }
+            }
+        } else {
+            IOSDevice.LOGGER_BASE.warn("Not implemented for simulators!!!");
+        }
+        return list;
     }
 
     @Override
