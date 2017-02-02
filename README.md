@@ -2,6 +2,10 @@
 
 General purpose automation framework for native mobile apps based on [Appium][Appium Web].
 
+## Demo Project
+
+[NativeScript/functional-tests-demo](https://github.com/NativeScript/functional-tests-demo)
+
 ## Features 
 
 - Manage emulators, simulators and physical devices.
@@ -71,12 +75,6 @@ Prerequisites to run tests based on this framework.
 ### Environment Setup
     
 Please read [Environment Setup](docs/setup.md) document.
-
-## Sample usage
-
-### Hello-world project
-
-[NativeScript/functional-tests-demo](https://github.com/NativeScript/functional-tests-demo)
 
 ## NativeScript Functional Tests
 
