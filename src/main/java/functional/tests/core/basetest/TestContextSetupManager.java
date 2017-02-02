@@ -215,6 +215,7 @@ public class TestContextSetupManager {
 
     /**
      * Init Gestures.
+     *
      * @return
      */
     public Gestures initGestures() {
@@ -225,16 +226,18 @@ public class TestContextSetupManager {
 
     /**
      * Init sikuli image processing.
+     *
      * @return
      */
     public Sikuli initSikuliImageProcessing() {
-        this.sikuliImageProcessing = new Sikuli(this.settings.testAppName);
+        this.sikuliImageProcessing = new Sikuli(this.settings.testAppImageFolder + "map");
         this.updateTestContext();
         return this.sikuliImageProcessing;
     }
 
     /**
      * Init wait.
+     *
      * @return
      */
     public Wait initWait() {
@@ -245,6 +248,7 @@ public class TestContextSetupManager {
 
     /**
      * Inti Log.
+     *
      * @return
      */
     private Log initLog() {
