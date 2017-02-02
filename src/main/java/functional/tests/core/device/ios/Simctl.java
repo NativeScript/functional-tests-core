@@ -195,13 +195,50 @@ public class Simctl {
     }
 
     /**
+     * //This will reset content and setting of emulator only if the emulator is not booted
+     */
+    public void eraseData() {
+        Simctl.LOGGER_BASE.warn("Erase data from simulator");
+        String command = "xcrun simctl erase " + this.settings.deviceId;
+        Simctl.LOGGER_BASE.warn(command);
+        OSUtils.runProcess(command);
+    }
+
+    /**
      * TODO(): Add docs.
      *
      * @param deviceId
      * @return
      */
     public boolean checkIfSimulatorIsAlive(String deviceId) {
-        // TODO(): Implement it.
-        return false;
+        String rowDevices = OSUtils.runProcess("instruments -s | grep Booted");
+        String[] deviceList = rowDevices.split("\\r?\\n");
+
+        boolean found = false;
+        for (String device : deviceList) {
+            if (device.contains("iP")) {
+                LOGGER_BASE.debug(device);
+            }
+            if (device.contains(this.settings.deviceName)) {
+                found = true;
+            }
+        }
+        return found;
+    }
+
+    public String eraseAllSimulatorsTheWithSameNames() {
+        if (this.udids.size() == 0) {
+            LOGGER_BASE.error("Simulator " + this.settings.deviceName + " does NOT exist!");
+            // TODO(vchimev): Fail test execution.
+        } else if (this.udids.size() == 1) {
+            LOGGER_BASE.info("Simulator " + this.settings.deviceName + " exists.");
+            this.settings.deviceId = this.udids.get(0);
+            return this.udids.get(0);
+        } else {
+            LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
+            this.deleteSimulator();
+        }
+
+        return "";
     }
 }
