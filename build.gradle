@@ -26,6 +26,12 @@ dependencies {
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
 }
 
+javadoc {
+    source = project.sourceSets.main.java.srcDirs
+    options.linkSource true
+    failOnError false
+}
+
 task fatJar(type: Jar) {
     description 'Assembles a jar archive with dependencies.'
     baseName = project.name
