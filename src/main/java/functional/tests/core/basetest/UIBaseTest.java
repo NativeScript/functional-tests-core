@@ -29,11 +29,12 @@ import java.util.Map;
 public abstract class UIBaseTest extends BaseTest {
 
     private static final LoggerBase LOGGER = LoggerBase.getLogger("UIBaseTest");
-    private static int maxPixelTolerance = Integer.MAX_VALUE;
 
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
-    private double minPercentTolerant = 0.001;
+    private int maxPixelTolerance = Integer.MAX_VALUE;
+    private double minPercentTolerant = 0.001D;
+
     private Map<String, Boolean> imagesResults;
 
     private boolean firstTest;
@@ -52,7 +53,6 @@ public abstract class UIBaseTest extends BaseTest {
     public ImageUtils imageUtils;
 
     /**
-     *
      * Init UI Tests setup.
      */
     public UIBaseTest() {
@@ -276,7 +276,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void compareScreens() throws Exception {
-        this.compareScreens(1, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(1, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
     }
 
     /**
@@ -285,7 +285,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen() throws Exception {
-        this.compareScreens(1, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(1, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
         this.assertImagesResults();
     }
 
@@ -296,7 +296,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void compareScreens(String name) throws Exception {
-        this.compareScreens(name, 1, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(name, 1, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
     }
 
     /**
@@ -306,7 +306,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(String name) throws Exception {
-        this.compareScreens(name, 1, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(name, 1, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
         this.assertImagesResults();
     }
 
@@ -317,7 +317,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void compareScreens(int timeOut) throws Exception {
-        this.compareScreens(timeOut, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
     }
 
     /**
@@ -327,7 +327,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(int timeOut) throws Exception {
-        this.compareScreens(timeOut, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
         this.assertImagesResults();
     }
 
@@ -339,7 +339,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void compareScreens(String name, int timeOut) throws Exception {
-        this.compareScreens(name, timeOut, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(name, timeOut, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
     }
 
     /**
@@ -350,7 +350,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(String name, int timeOut) throws Exception {
-        this.compareScreens(name, timeOut, this.defaultWaitTime, maxPixelTolerance, 0);
+        this.compareScreens(name, timeOut, this.defaultWaitTime, this.maxPixelTolerance, this.minPercentTolerant);
         this.assertImagesResults();
     }
 
@@ -363,7 +363,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public boolean compareScreens(int timeOut, double percentTolerance) throws Exception {
-        return this.compareScreens(timeOut, this.defaultWaitTime, maxPixelTolerance, percentTolerance);
+        return this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, percentTolerance);
     }
 
     /**
@@ -374,7 +374,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(int timeOut, double percentTolerance) throws Exception {
-        this.compareScreens(timeOut, this.defaultWaitTime, maxPixelTolerance, percentTolerance);
+        this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, percentTolerance);
         this.assertImagesResults();
     }
 
@@ -388,7 +388,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public boolean compareScreens(int timeOut, int wait, double percentTolerance) throws Exception {
-        return this.compareScreens(timeOut, wait, maxPixelTolerance, percentTolerance);
+        return this.compareScreens(timeOut, wait, this.maxPixelTolerance, percentTolerance);
     }
 
     /**
@@ -400,7 +400,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(int timeOut, int wait, double percentTolerance) throws Exception {
-        this.compareScreens(timeOut, wait, maxPixelTolerance, percentTolerance);
+        this.compareScreens(timeOut, wait, this.maxPixelTolerance, percentTolerance);
         this.assertImagesResults();
     }
 
@@ -414,7 +414,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public boolean compareScreens(String name, int timeOut, double percentTolerance) throws Exception {
-        boolean result = this.compareScreens(name, timeOut, 0, maxPixelTolerance, percentTolerance);
+        boolean result = this.compareScreens(name, timeOut, 0, this.maxPixelTolerance, percentTolerance);
         return result;
     }
 
@@ -427,7 +427,7 @@ public abstract class UIBaseTest extends BaseTest {
      * @throws Exception
      */
     public void assertScreen(String name, int timeOut, double percentTolerance) throws Exception {
-        this.compareScreens(name, timeOut, 0, maxPixelTolerance, percentTolerance);
+        this.compareScreens(name, timeOut, 0, this.maxPixelTolerance, percentTolerance);
         this.assertImagesResults();
     }
 
