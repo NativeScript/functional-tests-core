@@ -195,7 +195,7 @@ public class Simctl {
     }
 
     /**
-     * //This will reset content and setting of emulator only if the emulator is not booted
+     * This will reset content and setting of emulator only if the emulator is not booted.
      */
     public void eraseData() {
         Simctl.LOGGER_BASE.warn("Erase data from simulator");
