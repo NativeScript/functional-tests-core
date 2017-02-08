@@ -379,7 +379,6 @@ public class IOSDevice implements IDevice {
 
             if (available) {
                 this.simctl.eraseAllSimulatorsTheWithSameNames();
-                this.simctl.eraseData();
             }
             if (!available) {
                 String result = this.simctl.createSimulator(this.getName(),
@@ -405,6 +404,8 @@ public class IOSDevice implements IDevice {
                     this.simctl.resetSimulatorSettings();
                 }
             }
+
+            this.simctl.eraseData();
         }
 
         // Verify successfully created
