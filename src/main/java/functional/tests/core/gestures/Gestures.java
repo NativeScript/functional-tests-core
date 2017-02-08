@@ -321,14 +321,15 @@ public class Gestures {
         if (direction == SwipeElementDirection.RIGHT) {
             initialY = window.y + offsetY;
             finalY = initialY;
-            initialX = window.width;
-            finalX = window.x;
+            initialX = window.width - 1 + offsetX;
+            finalX = -initialX;
         }
         if (direction == SwipeElementDirection.LEFT) {
             initialY = window.y + offsetY;
             finalY = initialY;
-            initialX = window.x + offsetX;
-            finalX = window.width - initialX;
+            initialX = window.x + 1 + offsetX;
+
+            finalX = window.width - initialX - 1;
         }
 
         LOGGER_BASE.debug("Initial Point: " + initialX + ":" + initialY);
