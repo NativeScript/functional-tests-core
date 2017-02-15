@@ -384,7 +384,6 @@ public class Adb {
      *
      * @param deviceId
      * @param timeOut
-     * @return
      * @throws TimeoutException
      */
     protected void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
