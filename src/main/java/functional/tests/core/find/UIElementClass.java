@@ -43,7 +43,7 @@ public class UIElementClass {
         if (this.settings.platform == PlatformType.Andorid) {
             return "android.widget.TextView";
         } else if (this.settings.platform == PlatformType.iOS) {
-            return this.createIosElement("TextView");
+            return this.createIosElement("StaticText");
         } else {
             try {
                 throw new Exception("Not found.");
