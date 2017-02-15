@@ -54,7 +54,7 @@ public class Doctor {
     /**
      * Verify host OS has Java 1.8+.
      *
-     * @throws Exception When Java is not available or Java version is < 1.8.
+     * @throws Exception When Java is not available or Java version is lower than 1.8.
      */
     protected static void verifyJava() throws Exception {
         String version = System.getProperty("java.version");

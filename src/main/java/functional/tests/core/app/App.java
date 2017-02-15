@@ -53,7 +53,7 @@ public class App {
 
     /**
      * TODO(): This does not work! Tested with Cuteness on Android.
-     * Steps: Go to About page and call slideBack() -> nothing happens.
+     * Steps: Go to About page and call slideBack() and nothing happens.
      * The problem: We should not use FromCorner.
      * We should swipe back with Y = this.context.getDevice().getWindowSize().height/2
      */
