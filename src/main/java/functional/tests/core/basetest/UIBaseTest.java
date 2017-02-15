@@ -140,6 +140,9 @@ public abstract class UIBaseTest extends BaseTest {
 
         this.imagesResults = new HashMap<String, Boolean>();
         this.imageCounter = 1;
+        if (this.settings.isRealDevice && this.settings.platform == PlatformType.iOS) {
+            this.device.getIDevice().ios().startIOSRealDeviceLogWatcher();
+        }
     }
 
     /**
@@ -158,7 +161,9 @@ public abstract class UIBaseTest extends BaseTest {
         this.checkMemoryPerformance(result);
 
         this.context.lastTestResult = result.getStatus();
-        this.testSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
+        if (result.getStatus() != ITestResult.SUCCESS) {
+            this.testSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
+        }
     }
 
     /**
@@ -224,7 +229,7 @@ public abstract class UIBaseTest extends BaseTest {
 
     /**
      * TODO(): Add docs.
-     *
+
      * @param element
      * @param timeOut
      * @throws Exception

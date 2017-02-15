@@ -106,6 +106,14 @@ public class UIElementClass {
         }
     }
 
+    public String recyclerViewLocator() {
+        if (this.settings.platform == PlatformType.Andorid) {
+            return "android.support.v7.widget.RecyclerView";
+        } else {
+            return this.createIosElement("CollectionView");
+        }
+    }
+
     public String cellLocator() {
         if (this.settings.platform == PlatformType.iOS) {
             String element = "TableCell";

@@ -81,6 +81,7 @@ public class Client {
                 this.driver = new IOSDriver<>(this.server.service.getUrl(), capabilities);
             } catch (Exception e) {
                 LOGGER_BASE.fatal(e.getMessage());
+
                 throw e;
             }
         }

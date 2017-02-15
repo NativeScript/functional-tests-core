@@ -144,6 +144,10 @@ public class Locators {
         }
     }
 
+    public By recyclerViewLocator() {
+        return By.className(this.uiElementClass.recyclerViewLocator());
+    }
+
     public By progressLocator() {
         return By.className(this.uiElementClass.progressLocator());
     }

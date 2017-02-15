@@ -1,6 +1,9 @@
 package functional.tests.core.device.ios;
 
+import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.OSUtils;
+
+import java.io.File;
 
 /**
  * IOS device log.
@@ -8,20 +11,35 @@ import functional.tests.core.utils.OSUtils;
 public class IOSDeviceLog {
     private String deviceId;
     private int lastByteIndex;
+    private Settings settings;
 
-    public IOSDeviceLog(String deviceId) {
+    public static final String IOS_REAL_DEVICE_LOG_FILE = "iOS_log.txt";
+
+    public IOSDeviceLog(String deviceId, Settings settings) {
         this.deviceId = deviceId;
+        this.settings = settings;
     }
 
     /**
      * Gets the last part of log, excluding everything from previous log.
      */
     public String getDeviceLogTail() {
-        String entireLog = IOSDeviceLog.getDeviceLog(this.deviceId);
+        String entireLog = "";
+        if (this.settings.isRealDevice) {
+            this.lastByteIndex = -1;
+            entireLog = IOSDeviceLog.getDeviceLog(this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE);
+        } else {
+            entireLog = IOSDeviceLog.getSimulatorLog(this.deviceId);
+        }
+
         if (this.lastByteIndex < 0 || this.lastByteIndex >= entireLog.length()) {
             this.lastByteIndex = 0;
         }
-        String logTail = entireLog.substring(this.lastByteIndex, entireLog.length() - 1);
+
+        String logTail = "";
+        if (!entireLog.isEmpty()) {
+            logTail = entireLog.substring(this.lastByteIndex, entireLog.length() - 1);
+        }
         this.lastByteIndex = entireLog.length() - 1;
 
         return logTail;
@@ -30,8 +48,18 @@ public class IOSDeviceLog {
     /**
      * Gets the whole device log.
      */
-    public static String getDeviceLog(String deviceId) {
+    public static String getSimulatorLog(String deviceId) {
         String entireLog = OSUtils.runProcess(String.format("cat ~/Library/Logs/CoreSimulator/%s/system.log", deviceId));
+
+        return entireLog;
+    }
+
+
+    /**
+     * Gets the whole device log.
+     */
+    public static String getDeviceLog(String fileFullName) {
+        String entireLog = OSUtils.runProcess(String.format("cat %s", fileFullName));
 
         return entireLog;
     }

@@ -27,9 +27,13 @@ public class Find {
     }
 
     public Find(Context context) {
-        this.client = context.client;
-        this.locators = context.locators;
-        this.settings = context.settings;
+        this(context.client, context.locators, context.settings);
+    }
+
+    public Find(Client client, Locators locators, Settings settings) {
+        this.client = client;
+        this.locators = locators;
+        this.settings = settings;
     }
 
     public UIElement byLocator(By locator) {

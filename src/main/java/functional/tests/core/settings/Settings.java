@@ -1,7 +1,7 @@
 package functional.tests.core.settings;
 
 import functional.tests.core.device.android.AndroidDevice;
-import functional.tests.core.device.ios.Simctl;
+import functional.tests.core.device.ios.IOSDevice;
 import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.ImageVerificationType;
 import functional.tests.core.enums.OSType;
@@ -192,7 +192,7 @@ public class Settings {
         this.deviceId = this.properties.getProperty("udid");
         if (this.deviceId == null && !this.isRealDevice) {
 
-            this.deviceId = Simctl.getSimulatorId(this.deviceName);
+            this.deviceId = IOSDevice.getDeviceUidid(this.deviceName);
         }
 
         LOGGER_BASE.info("Device Id: " + this.deviceId);
@@ -347,7 +347,7 @@ public class Settings {
     /**
      * Get screen orientation settings.
      *
-     * @return ScreenOrientation.
+     * * @return ScreenOrientation.
      */
     private ScreenOrientation getScreenOrientation() {
         String orientation = this.properties.getProperty("orientation", "none");

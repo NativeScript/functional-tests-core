@@ -18,12 +18,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class OSUtils {
 
-    private static final String[] WIN_RUNTIME = {"cmd.exe", "/C"};
-    private static final String[] OS_LINUX_RUNTIME = {"/bin/bash", "-l", "-c"};
-    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("OSUtils");
+    public static final String[] WIN_RUNTIME = {"cmd.exe", "/C"};
+    public static final String[] OS_LINUX_RUNTIME = {"/bin/bash", "-l", "-c"};
+    public static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("OSUtils");
 
-    private static <T> T[] concat(T[] first, T[] second) {
+    public static <T> T[] concat(T[] first, T[] second) {
         T[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
+    }
+
+    public static String[] concat(String[] first, String[] second) {
+        String[] result = Arrays.copyOf(first, first.length + second.length);
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }

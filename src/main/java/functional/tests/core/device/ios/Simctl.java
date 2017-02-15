@@ -1,5 +1,6 @@
 package functional.tests.core.device.ios;
 
+import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.find.Wait;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.settings.Settings;
@@ -10,8 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * TODO(dtopuzov): Add docs for everything in this class.
@@ -20,7 +19,6 @@ public class Simctl {
 
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Simctl");
     private Settings settings;
-    private List<String> udids;
 
     /**
      * TODO(): Add docs.
@@ -29,45 +27,6 @@ public class Simctl {
      */
     public Simctl(Settings settings) {
         this.settings = settings;
-        this.udids = this.getSimulatorUdidsByName(this.settings.deviceName);
-    }
-
-    public static String getSimulatorId(String simulatorName) {
-        String simulatorData = OSUtils.runProcess(String.format("instruments -s | grep \"%s\"", simulatorName));
-
-        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
-        Matcher matcher = pattern.matcher(simulatorData);
-        String simulatorId = "";
-        if (matcher.find()) {
-            simulatorId = matcher.group(1);
-        }
-
-        return simulatorId;
-    }
-
-    // TODO(vchimev): Rethink!
-    // - the name of this method,
-    // - get udid of the simulator in constructor
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @return
-     */
-    protected String initSimulator() {
-        if (this.udids.size() == 0) {
-            LOGGER_BASE.error("Simulator " + this.settings.deviceName + " does NOT exist!");
-            // TODO(vchimev): Fail test execution.
-        } else if (this.udids.size() == 1) {
-            LOGGER_BASE.info("Simulator " + this.settings.deviceName + " exists.");
-            this.settings.deviceId = this.udids.get(0);
-            return this.udids.get(0);
-        } else {
-            LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
-            this.deleteSimulator();
-        }
-
-        return "";
     }
 
     /**
@@ -76,7 +35,7 @@ public class Simctl {
      * @param name
      * @return
      */
-    protected List<String> getSimulatorUdidsByName(String name) {
+    public static List<String> getSimulatorUdidsByName(String name) {
         String command = "xcrun simctl list devices | grep " + name.replaceAll("\\s", "\\\\ ");
         String output = OSUtils.runProcess(command);
         String[] lines = output.split("\\r?\\n");
@@ -95,14 +54,64 @@ public class Simctl {
         return list;
     }
 
+    public String ensureOnlyOneSimulatorExist() {
+        LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
+        if (Simctl.getSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
+            Simctl.deleteSimulator(this.settings.deviceName);
+            return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
+        } else {
+            return this.settings.deviceId;
+        }
+
+    }
+
     /**
      * TODO(): Add docs.
      */
-    public void deleteSimulator() {
-        for (String udid : this.udids) {
-            LOGGER_BASE.info("Deleting " + this.settings.deviceName + " simulator with udid: " + udid);
+    public static void deleteSimulator(String name) {
+        for (String udid : Simctl.getSimulatorUdidsByName(name)) {
+            LOGGER_BASE.info("Deleting " + name + " simulator with udid: " + udid);
             OSUtils.runProcess("xcrun simctl delete " + udid);
         }
+    }
+
+    /**
+     * TODO(): Add docs.
+     *
+     * @param simulatorName
+     * @param deviceType
+     * @param iOSVersion
+     * @return
+     */
+    public String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
+        LOGGER_BASE.info("Create simulator with following command:");
+        String command = "xcrun simctl create \"" + simulatorName +
+                "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") +
+                "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
+
+        LOGGER_BASE.info(command);
+        String output = OSUtils.runProcess(command);
+
+        if (output.toLowerCase().contains("error") || output.toLowerCase().contains("invalid")) {
+            Simctl.LOGGER_BASE.fatal("Failed to create simulator. Error: " + output);
+            try {
+                throw new DeviceException("Failed to create simulator. Error: " + output);
+            } catch (DeviceException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String udid = output;
+            String[] list = output.split("\\r?\\n");
+            for (String line : list) {
+                if (line.contains("-")) {
+                    udid = line.trim();
+                }
+                this.settings.deviceId = udid;
+                Simctl.LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
+            }
+        }
+
+        return output;
     }
 
     /**
@@ -128,57 +137,6 @@ public class Simctl {
                 LOGGER_BASE.info("No need to restart simulator settings.");
             }
         }
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param deviceName
-     * @return
-     */
-    public boolean checkIfSimulatorExists(String deviceName) {
-        String rowDevices = OSUtils.runProcess("instruments -s");
-        String[] deviceList = rowDevices.split("\\r?\\n");
-
-        boolean found = false;
-        for (String device : deviceList) {
-            if (device.contains("iP")) {
-                LOGGER_BASE.debug(device);
-            }
-            if (device.contains(this.settings.deviceName)) {
-                found = true;
-            }
-        }
-        return found;
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param simulatorName
-     * @param deviceType
-     * @param iOSVersion
-     * @return
-     */
-    public String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
-        if (this.settings.debug) {
-            LOGGER_BASE.info("[Debug mode] Do not reset sim settings.");
-        } else {
-            // Due to Xcode 7.1 issues screenshots of iOS9 devices are broken if device is not zoomed at 100%
-            if (this.settings.platformVersion.toString().contains("9")) {
-                this.resetSimulatorSettings();
-            }
-        }
-
-        LOGGER_BASE.info("Create simulator with following command:");
-        String command = "xcrun simctl create \"" + simulatorName +
-                "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") +
-                "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
-
-        LOGGER_BASE.info(command);
-        String output = OSUtils.runProcess(command);
-
-        return output;
     }
 
     /**
@@ -223,22 +181,29 @@ public class Simctl {
                 found = true;
             }
         }
+
         return found;
     }
 
-    public String eraseAllSimulatorsTheWithSameNames() {
-        if (this.udids.size() == 0) {
-            LOGGER_BASE.error("Simulator " + this.settings.deviceName + " does NOT exist!");
-            // TODO(vchimev): Fail test execution.
-        } else if (this.udids.size() == 1) {
-            LOGGER_BASE.info("Simulator " + this.settings.deviceName + " exists.");
-            this.settings.deviceId = this.udids.get(0);
-            return this.udids.get(0);
-        } else {
-            LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
-            this.deleteSimulator();
-        }
+    /**
+     * TODO(): Add docs.
+     *
+     * @param deviceName
+     * @return
+     */
+    public boolean checkIfSimulatorExists(String deviceName) {
+        String rowDevices = OSUtils.runProcess("instruments -s");
+        String[] deviceList = rowDevices.split("\\r?\\n");
 
-        return "";
+        boolean found = false;
+        for (String device : deviceList) {
+            if (device.contains("iP")) {
+                LOGGER_BASE.debug(device);
+            }
+            if (device.contains(this.settings.deviceName)) {
+                found = true;
+            }
+        }
+        return found;
     }
 }

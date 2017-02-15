@@ -7,6 +7,7 @@ import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.HostException;
 import functional.tests.core.exceptions.MobilePlatformException;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.utils.Aapt;
 import functional.tests.core.utils.OSUtils;
@@ -46,7 +47,7 @@ public class Doctor {
         } catch (Exception e) {
             LOGGER_BASE.error("System and settings are NOT OK.");
             LOGGER_BASE.fatal(e.getMessage());
-            System.exit(-1);
+            SystemExtension.interruptProcess("Check Setting  again");
         }
     }
 
