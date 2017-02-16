@@ -38,6 +38,7 @@ public class TestSetupManager {
         try {
             this.context.server.initServer();
         } catch (Exception ex) {
+            this.takeScreenOfHost("Host_Fail_to_Init_Server");
             hasInit = false;
         }
 
@@ -133,7 +134,11 @@ public class TestSetupManager {
      * @throws TimeoutException
      */
     public void startDevice() throws MobileAppException, DeviceException, TimeoutException {
-        this.context.device.start();
+        try {
+            this.context.device.start();
+        } catch (Exception ex) {
+            this.takeScreenOfHost("onStartDevice");
+        }
     }
 
     /**
@@ -167,7 +172,6 @@ public class TestSetupManager {
         } else if (previousTestStatus == ITestResult.FAILURE) {
             this.context.log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             this.context.log.saveXmlTree(testCase + "_VisualTree.xml");
-            this.takeScreenOfHost(testCase);
         }
     }
 

@@ -86,7 +86,7 @@ public abstract class UIBaseTest extends BaseTest {
         // And on second call of this.testSetupManager.initServer() we should force debug log level.
         // It will be very usefull to get logs on failure.
 
-        // Start server (and retry on failure
+        // Start server (and retry on failure)
         if (!this.testSetupManager.initServer()) {
             this.testSetupManager.restartServer();
         }
