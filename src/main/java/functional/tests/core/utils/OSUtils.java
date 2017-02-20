@@ -38,7 +38,7 @@ public class OSUtils {
      * Get screenshot of host OS.
      *
      * @param fileName Name of file where screenshot will be saved.
-     * @param settings Settings object.
+     * @param settings MobileSettings object.
      */
     public static void getScreenshot(String fileName, Settings settings) {
         File file = new File(settings.screenshotOutDir + File.separator + fileName + ".png");

@@ -1,9 +1,9 @@
 package functional.tests.core.image;
 
-import functional.tests.core.appium.Client;
-import functional.tests.core.basetest.Context;
-import functional.tests.core.basetest.TestContextSetupManager;
-import functional.tests.core.element.UIRectangle;
+import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.basetest.MobileContext;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.enums.PlatformType;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Finder;
@@ -22,7 +22,7 @@ public class Sikuli {
     private String appName;
     private Client client;
     private ImageUtils imageUtils;
-    private Context context;
+    private MobileContext mobileContext;
 
     /**
      * TODO(): Add docs.
@@ -30,10 +30,10 @@ public class Sikuli {
      * @param appName
      */
     public Sikuli(String appName) {
-        this.context = TestContextSetupManager.getTestSetupManager().context;
+        this.mobileContext = MobileSetupManager.getTestSetupManager().getContext();
         this.appName = appName;
-        this.client = this.context.client;
-        this.imageUtils = this.context.imageUtils;
+        this.client = this.mobileContext.client;
+        this.imageUtils = this.mobileContext.imageUtils;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 ### Settings in config files
 
-For each test run you can specify settings in config files.
+For each test run you can specify mobileSettings in config files.
 
 #### Short example:
 ```
@@ -16,7 +16,7 @@ emulatorOptions=-wipe-data
 emulatorCreateOptions=-t android-23 --abi default/x86
 ```
 
-#### List of all the settings:
+#### List of all the mobileSettings:
 
 ##### Mandatory
 
@@ -112,9 +112,9 @@ UIAUTOMATOR2 for Android >= 7.0
 IOS_XCUI_TEST for iOS >= 10.0  
 APPIUM in all other cases  
 
-#### Android specific settings
+#### Android specific mobileSettings
 
-Those settings are reached through settings.android.*, for example `settings.android.getDefaultActivity`  
+Those mobileSettings are reached through mobileSettings.android.*, for example `mobileSettings.android.getDefaultActivity`  
 
 **appWaitActivity**  
 Activity that should be started when app is launched.  
@@ -136,9 +136,9 @@ Limit of time for loading the app (in milliseconds).
 Tests will fail if app load slower than the limit.
 If appLaunchTimeLimit is not specified it will be ignored and tests will not fail because app is slow.  
 
-#### iOS specific settings
+#### iOS specific mobileSettings
 
-Those settings are reached through settings.ios.*, for example `settings.android.acceptAlerts`  
+Those mobileSettings are reached through mobileSettings.ios.*, for example `mobileSettings.android.acceptAlerts`  
 
 **testAppArchive**  
 [Only for Simulators] Application package for simulators is actually a folder, so we took the decision to archive it in tgz file.
@@ -155,11 +155,11 @@ If simulator with specified *deviceName* is not available, then create new and u
 
 ### Settings @runtime
 
-Some more settings are auto-detected and available in test context at runtime.
+Some more mobileSettings are auto-detected and available in test mobileContext at runtime.
  
 Sample usage in tests:
 ```
-if (this.settings.platform == PlatformType.Android) {
+if (this.mobileSettings.platform == PlatformType.Android) {
     // TODO: Do something!
 }
 ```
@@ -194,17 +194,17 @@ If `true` Appium session length will be increased to allow more time for debuggi
 Automatically set to true if debugger session is detected.
 Also set to true if explicitly set to `true` in config file.  
 
-#### Android specific settings @runtime
+#### Android specific mobileSettings @runtime
 
-Those settings are reached through settings.android.*, for example `settings.android.defaultActivity`  
+Those mobileSettings are reached through mobileSettings.android.*, for example `mobileSettings.android.defaultActivity`  
 
 **defaultActivity**  
 Default launchable activity of app under test.  
 It is auto-detected from installation files.  
 
-#### iOS specific settings @runtime
+#### iOS specific mobileSettings @runtime
 
-Those settings are reached through settings.ios.*, for example `settings.android.xCode8ConfigFile`  
+Those mobileSettings are reached through mobileSettings.ios.*, for example `mobileSettings.android.xCode8ConfigFile`  
 
 **xCode8ConfigFile**    
 This file will be auto-generated at `{$project.root}/resources/xcode/xcode8config.xcconfig`

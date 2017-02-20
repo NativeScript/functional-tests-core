@@ -16,7 +16,7 @@ General purpose automation framework for native mobile apps based on [Appium][Ap
     - Get screenshots
     - Simulate environment (like geo location for example)
     - [Android] Get performance stats (memory usage, startup time, application size)
-    - All of the above managed via [configs files](docs/settings.md)
+    - All of the above managed via [configs files](docs/mobileSettings.md)
 - Interaction with native apps on iOS Simulators, Android Emulators as well as physical Android and iOS devices.
     - Locate elements via accessibility of the mobile platforms  
     - [Cross-platform locators](docs/cross-platform-locators.md) that work for both Android and iOS (and also with different backend automation)

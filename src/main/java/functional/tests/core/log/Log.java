@@ -1,7 +1,8 @@
 package functional.tests.core.log;
 
-import functional.tests.core.appium.Client;
-import functional.tests.core.basetest.Context;
+import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.mobile.device.Device;
 import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.image.ImageUtils;
 import functional.tests.core.image.ImageVerificationResult;
@@ -26,7 +27,6 @@ public class Log {
     private static int thumbWidth = 60;
     private static String templatePath = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "templates";
     private Client client;
-    private ImageUtils imageUtils;
     private Settings settings;
 
     /**
@@ -36,14 +36,12 @@ public class Log {
     }
 
     /**
-     * TODO(): Add docs.
-     *
-     * @param context
+     * @param client
+     * @param settings
      */
-    public Log(Context context) {
-        this.settings = context.settings;
-        this.client = context.client;
-        this.imageUtils = context.imageUtils;
+    public Log(Client client, Settings settings) {
+        this.settings = settings;
+        this.client = client;
     }
 
     /**
@@ -156,14 +154,11 @@ public class Log {
      * @param thumbWidth  Width of the template in the report template.
      */
     public void logScreen(String imageName, String title, int thumbHeight, int thumbWidth) {
+        Device device = MobileSetupManager.getTestSetupManager().getContext().device;
         try {
             String fullFileName = this.settings.screenshotOutDir + File.separator + imageName;
 
-            if (this.imageUtils != null) {
-                this.imageUtils.saveScreen(fullFileName);
-            } else {
-                this.error("ImageUtils is null.");
-            }
+            ImageUtils.saveScreen(fullFileName, device);
         } catch (AppiumException e) {
             this.error("Failed to get screenshot.");
         } catch (IOException e) {
@@ -224,7 +219,7 @@ public class Log {
      */
     public void logImageVerificationResult(ImageVerificationResult result, String imageName, int thumbHeight, int thumbWidth) {
         try {
-            this.imageUtils.saveImageVerificationResult(result, imageName);
+            ImageUtils.saveImageVerificationResult(result, imageName, this.settings);
             String message = String.format("%s does NOT look OK. Diff percents: %.2f%%. Waiting ...", imageName, result.diffPercent);
             LOGGER_BASE.info(message);
 

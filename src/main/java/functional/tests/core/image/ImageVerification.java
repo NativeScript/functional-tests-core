@@ -1,12 +1,12 @@
 package functional.tests.core.image;
 
-import functional.tests.core.basetest.Context;
-import functional.tests.core.basetest.TestContextSetupManager;
-import functional.tests.core.element.UIElement;
+import functional.tests.core.mobile.basetest.MobileContext;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.enums.ImageVerificationType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.exceptions.ImageVerificationException;
-import functional.tests.core.find.Wait;
+import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.settings.Settings;
@@ -32,17 +32,17 @@ public class ImageVerification {
     private static final int MIN_TIMEOUT = 1;
     private ImageVerificationType verificationType;
     private ImageUtils imageUtils;
-    private Context context;
+    private MobileContext mobileContext;
     private Settings settings;
 
     /**
      * TODO(): Add docs.
      */
     public ImageVerification() {
-        this.context = TestContextSetupManager.getTestSetupManager().context;
-        this.settings = this.context.settings;
-        this.imageUtils = this.context.imageUtils;
-        this.verificationType = this.context.settings.imageVerificationType;
+        this.mobileContext = MobileSetupManager.getTestSetupManager().getContext();
+        this.settings = this.mobileContext.settings;
+        this.imageUtils = this.mobileContext.imageUtils;
+        this.verificationType = this.mobileContext.settings.imageVerificationType;
     }
 
     /**
@@ -245,7 +245,7 @@ public class ImageVerification {
                                  IElementToImageConverter<BufferedImage> actualImage, int timeOut, int sleepTime,
                                  boolean ignoreHeader) throws Exception {
         BufferedImage expectedImage;
-        Log log = this.context.log;
+        Log log = this.mobileContext.log;
 
         // ImageVerificationType.Skip:
         // Do NOT perform image verification.
@@ -278,7 +278,7 @@ public class ImageVerification {
                 String actualImageFullName = this.imageUtils.getImageFullName(expectedImageFolderPath, actualImageName);
                 expectedImageFullName = actualImageFullName;
                 // Do NOT restart the app to preserve its state
-                this.context.shouldRestartAppOnFailure = false;
+                this.mobileContext.shouldRestartAppOnFailure = false;
             }
 
             // ImageVerificationType.FirstTimeCapture:
@@ -384,7 +384,7 @@ public class ImageVerification {
             int startY = 0;
             if (ignoreHeader) {
                 // TODO(): Reasearch if we can better define what is header
-                if (this.settings.platform == PlatformType.Andorid) {
+                if (this.settings.platform == PlatformType.Android) {
                     startY = (int) (height1 * 0.07);
                 } else if (this.settings.platform == PlatformType.iOS) {
                     startY = (int) (height1 * 0.03);
