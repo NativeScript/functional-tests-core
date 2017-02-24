@@ -1,9 +1,8 @@
 package functional.tests.core.image;
 
-import functional.tests.core.appium.Client;
-import functional.tests.core.basetest.Context;
-import functional.tests.core.basetest.TestContextSetupManager;
-import functional.tests.core.element.UIElement;
+import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.device.Device;
+import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.settings.Settings;
@@ -24,24 +23,18 @@ public class ImageUtils {
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("ImageUtils");
     private Client client;
     private Settings settings;
-    private Context context;
+    private Device device;
 
     /**
-     * TODO(svetli): Explain when we need ImageUtils().
-     */
-    public ImageUtils() {
-        this(TestContextSetupManager.getTestSetupManager().context);
-    }
-
-    /**
-     * TODO(svetli): Explain when we need ImageUtils(Context context).
+     * TODO(svetli): Explain when we need ImageUtils(MobileContext context).
      *
-     * @param context
+     * @param client
+     * @param settings
      */
-    public ImageUtils(Context context) {
-        this.context = TestContextSetupManager.getTestSetupManager().context;
-        this.client = this.context.client;
-        this.settings = this.context.settings;
+    public ImageUtils(Settings settings, Client client, Device device) {
+        this.client = client;
+        this.settings = settings;
+        this.device = device;
     }
 
     /**
@@ -69,7 +62,7 @@ public class ImageUtils {
      *                     For example: /Users/vchimev/Work/git/functional-tests/target/surefire-reports/screenshots/test_01_smoke.
      * @throws IOException When IO operation fails.
      */
-    public void saveBufferedImage(BufferedImage img, String fileFullName)
+    public static void saveBufferedImage(BufferedImage img, String fileFullName)
             throws IOException {
         String imageFormat = "png";
         String fullImageFileName = fileFullName.endsWith("." + imageFormat) ? fileFullName : String.format("%s.%s", fileFullName, imageFormat);
@@ -86,10 +79,10 @@ public class ImageUtils {
      * @throws AppiumException When fail to get screenshot.
      * @throws IOException     When fail to write image on disk.
      */
-    public void saveScreen(String imageFullName)
+    public static void saveScreen(String imageFullName, Device device)
             throws AppiumException, IOException {
-        BufferedImage img = this.context.device.getScreenshot();
-        this.saveBufferedImage(img, imageFullName);
+        BufferedImage img = device.getScreenshot();
+        saveBufferedImage(img, imageFullName);
     }
 
     /**
@@ -99,19 +92,19 @@ public class ImageUtils {
      * @param imageName Name of the image. For example: test_01_smoke.
      * @throws IOException When fail to write images on disk.
      */
-    public void saveImageVerificationResult(ImageVerificationResult result, String imageName)
+    public static void saveImageVerificationResult(ImageVerificationResult result, String imageName, Settings settings)
             throws IOException {
         String actualImageName = imageName + result.actualSuffix;
         String diffImageName = imageName + result.diffSuffix;
         String expectedImageName = imageName + result.expectedSuffix;
 
-        String actualImageFullName = this.getImageFullName(this.settings.screenshotOutDir, actualImageName);
-        String diffImageFullName = this.getImageFullName(this.settings.screenshotOutDir, diffImageName);
-        String expectedImageFullName = this.getImageFullName(this.settings.screenshotOutDir, expectedImageName);
+        String actualImageFullName = getImageFullName(settings.screenshotOutDir, actualImageName);
+        String diffImageFullName = getImageFullName(settings.screenshotOutDir, diffImageName);
+        String expectedImageFullName = getImageFullName(settings.screenshotOutDir, expectedImageName);
 
-        this.saveBufferedImage(result.actualImage, actualImageFullName);
-        this.saveBufferedImage(result.diffImage, diffImageFullName);
-        this.saveBufferedImage(result.expectedImage, expectedImageFullName);
+        saveBufferedImage(result.actualImage, actualImageFullName);
+        saveBufferedImage(result.diffImage, diffImageFullName);
+        saveBufferedImage(result.expectedImage, expectedImageFullName);
     }
 
     /**
@@ -126,7 +119,7 @@ public class ImageUtils {
         int screenHeight = 1;
 
         try {
-            Dimension dimension = this.context.getDevice().getWindowSize();
+            Dimension dimension = this.device.getWindowSize();
             screenWidth = dimension.width;
             screenHeight = dimension.height;
         } catch (Exception e) {
@@ -155,12 +148,25 @@ public class ImageUtils {
     }
 
     /**
+     * Get image full name.
+     *
+     * @param imageFolderPath Image folder of current application.
+     * @param imageName       Image name.
+     * @return Full path of image. For example: $STORAGE/images/uitests/Emulator-Api23-Default/flexbox_00_default.png
+     */
+    public static String getImageFullName(String imageFolderPath, String imageName) {
+        String imageFullName = imageFolderPath + File.separator + imageName + ".png";
+        LOGGER_BASE.debug("Image full name: " + imageFullName);
+        return imageFullName;
+    }
+
+    /**
      * Get current screen of mobile device.
      *
      * @return BufferedImage of current screen.
      */
     protected BufferedImage getScreen() {
-        return this.context.device.getScreenshot();
+        return this.device.getScreenshot();
     }
 
     /**
@@ -176,16 +182,4 @@ public class ImageUtils {
         return imageFolderPath;
     }
 
-    /**
-     * Get image full name.
-     *
-     * @param imageFolderPath Image folder of current application.
-     * @param imageName       Image name.
-     * @return Full path of image. For example: $STORAGE/images/uitests/Emulator-Api23-Default/flexbox_00_default.png
-     */
-    protected String getImageFullName(String imageFolderPath, String imageName) {
-        String imageFullName = imageFolderPath + File.separator + imageName + ".png";
-        LOGGER_BASE.debug("Image full name: " + imageFullName);
-        return imageFullName;
-    }
 }

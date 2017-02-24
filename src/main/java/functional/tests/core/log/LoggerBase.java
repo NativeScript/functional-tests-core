@@ -1,6 +1,6 @@
 package functional.tests.core.log;
 
-import functional.tests.core.basetest.TestContextSetupManager;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -50,7 +50,7 @@ public class LoggerBase {
         if (!logFile.exists()) {
             Properties props = new Properties();
             try {
-                props.load(TestContextSetupManager.class.getClass().getResourceAsStream("/log/log4j.properties"));
+                props.load(MobileSetupManager.class.getClass().getResourceAsStream("/log/log4j.properties"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
