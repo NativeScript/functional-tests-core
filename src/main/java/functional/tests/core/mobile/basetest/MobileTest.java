@@ -15,6 +15,8 @@ import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Locators;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
+import functional.tests.core.mobile.settings.MobileDoctor;
+import functional.tests.core.mobile.settings.MobileSettings;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -27,7 +29,7 @@ import java.util.Map;
 /**
  * Inherit this class in case to run tests on mobile devices.
  */
-public abstract class MobileTest extends BaseTest {
+public abstract class MobileTest {
 
     private static final LoggerBase LOGGER = LoggerBase.getLogger("MobileTest");
 
@@ -37,6 +39,12 @@ public abstract class MobileTest extends BaseTest {
     private double minPercentTolerant = 0.001D;
     private boolean firstTest;
 
+    protected MobileSetupManager mobileSetupManager;
+    protected MobileSettings settings;
+    protected Locators locators;
+    protected Log log;
+
+    public MobileContext context;
     public Client client;
     public Device device;
     public Find find;
@@ -44,7 +52,6 @@ public abstract class MobileTest extends BaseTest {
     public App app;
     public Wait wait;
     public ImageUtils imageUtils;
-    protected Log log;
     protected ImageVerification imageVerification;
     private Map<String, Boolean> imagesResults;
     private Sikuli sikuliImageProcessing;
@@ -54,7 +61,6 @@ public abstract class MobileTest extends BaseTest {
      * Init UI Tests setup.
      */
     public MobileTest() {
-        LoggerBase.initLog4j();
         this.initUITestHelpers();
         this.imageVerification = new ImageVerification();
     }
@@ -80,6 +86,13 @@ public abstract class MobileTest extends BaseTest {
      */
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
+
+        if (this.settings.debug) {
+            this.log.info("[DEBUG MODE] Skip doctor.");
+        } else {
+            MobileDoctor mobileDoctor = new MobileDoctor(this.settings);
+            mobileDoctor.check();
+        }
 
         // TODO(dtopuzov): For iOS it will be nice to retry starting session if this.mobileSetupManager.startDevice(); fails.
         // And on second call of this.mobileSetupManager.initServer() we should force debug log level.
@@ -108,6 +121,10 @@ public abstract class MobileTest extends BaseTest {
      */
     @BeforeMethod(alwaysRun = true)
     public void beforeMethodUIBaseTest(Method method) throws Exception {
+
+        this.context.setTestName(method.getName());
+        this.log.separator();
+        this.log.info("Start test: " + method.getName());
 
         // Perform actions when previous test passed.
         if (this.context.lastTestResult == ITestResult.SUCCESS && this.settings.restartApp && !this.firstTest) {
@@ -162,6 +179,18 @@ public abstract class MobileTest extends BaseTest {
         this.context.lastTestResult = result.getStatus();
         if (result.getStatus() != ITestResult.SUCCESS) {
             this.mobileSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
+        }
+
+        // Get test case name
+        String testCase = result.getMethod().getMethodName();
+
+        this.context.lastTestResult = result.getStatus();
+        if (this.context.lastTestResult == ITestResult.SUCCESS) {
+            this.log.info("=> Test " + testCase + " passed!");
+        } else if (this.context.lastTestResult == ITestResult.SKIP) {
+            this.log.error("=> Test " + testCase + " skipped!");
+        } else if (this.context.lastTestResult == ITestResult.FAILURE) {
+            this.log.error("=> Test " + testCase + " failed!");
         }
     }
 
@@ -533,6 +562,14 @@ public abstract class MobileTest extends BaseTest {
      * Init all tests helpers like find, wait, device.
      */
     private void initUITestHelpers() {
+        if (this.mobileSetupManager == null) {
+            LoggerBase.initLog4j();
+            this.mobileSetupManager = MobileSetupManager.initTestSetupBasic();
+            this.context = this.mobileSetupManager.getContext();
+            this.settings = this.context.settings;
+            this.locators = this.context.locators;
+            this.log = this.context.log;
+        }
         if (MobileSetupManager.getTestSetupManager().getContext().client == null) {
             this.locators = new Locators(this.settings);
             this.server = new Server(this.settings);
