@@ -77,6 +77,8 @@ public class Settings {
      * Init common settings.
      */
     public void initSettings() {
+        LOGGER_BASE.separator();
+
         this.os = this.getOSType();
 
         // Set locations and cleanup output folders
@@ -111,7 +113,6 @@ public class Settings {
         // Set restartApp
         this.restartApp = this.propertyToBoolean("restartApp", false);
 
-        LOGGER_BASE.separator();
         LOGGER_BASE.info("OS Type: " + this.os);
         LOGGER_BASE.info("Mobile Platform: " + this.platform);
         LOGGER_BASE.info("Device Name: " + this.deviceName);
@@ -164,8 +165,6 @@ public class Settings {
 
     /**
      * Set location settings such as baseLogDir, consoleLogDir, screenshotOutDir, screenshotResDir and appiumLogFile.
-     *
-     * @throws IOException when fail to set locations.
      */
     public void setupLocations() {
         this.baseLogDir = this.baseOutputDir + File.separator + "logs";

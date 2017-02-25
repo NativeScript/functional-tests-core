@@ -32,18 +32,6 @@ import java.util.Map;
 public abstract class MobileTest {
 
     private static final LoggerBase LOGGER = LoggerBase.getLogger("MobileTest");
-
-    private int imageCounter = 1;
-    private int defaultWaitTime = 1000;
-    private int maxPixelTolerance = Integer.MAX_VALUE;
-    private double minPercentTolerant = 0.001D;
-    private boolean firstTest;
-
-    protected MobileSetupManager mobileSetupManager;
-    protected MobileSettings settings;
-    protected Locators locators;
-    protected Log log;
-
     public MobileContext context;
     public Client client;
     public Device device;
@@ -52,7 +40,16 @@ public abstract class MobileTest {
     public App app;
     public Wait wait;
     public ImageUtils imageUtils;
+    protected MobileSetupManager mobileSetupManager;
+    protected MobileSettings settings;
+    protected Locators locators;
+    protected Log log;
     protected ImageVerification imageVerification;
+    private int imageCounter = 1;
+    private int defaultWaitTime = 1000;
+    private int maxPixelTolerance = Integer.MAX_VALUE;
+    private double minPercentTolerant = 0.001D;
+    private boolean firstTest;
     private Map<String, Boolean> imagesResults;
     private Sikuli sikuliImageProcessing;
     private Server server;
@@ -86,7 +83,6 @@ public abstract class MobileTest {
      */
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
-
         if (this.settings.debug) {
             this.log.info("[DEBUG MODE] Skip doctor.");
         } else {
@@ -563,29 +559,22 @@ public abstract class MobileTest {
      */
     private void initUITestHelpers() {
         if (this.mobileSetupManager == null) {
-            LoggerBase.initLog4j();
-            this.mobileSetupManager = MobileSetupManager.initTestSetupBasic();
+            this.mobileSetupManager = MobileSetupManager.initTestSetupBasic(true);
             this.context = this.mobileSetupManager.getContext();
-            this.settings = this.context.settings;
+            this.settings = this.mobileSetupManager.getContext().settings;
             this.locators = this.context.locators;
             this.log = this.context.log;
-        }
-        if (MobileSetupManager.getTestSetupManager().getContext().client == null) {
-            this.locators = new Locators(this.settings);
-            this.server = new Server(this.settings);
-            this.client = new Client(this.server, this.settings);
-            this.device = new Device(this.client, this.settings);
-            this.imageUtils = new ImageUtils(this.settings, this.client, this.device);
-            this.log = new Log(this.client, this.settings);
-            this.app = new App(this.device, this.settings);
-            this.find = new Find(this.client, this.locators, this.settings);
-            this.wait = new Wait(this.client, this.find, this.settings);
-            this.gestures = new Gestures(this.client, this.wait, this.device, this.locators, this.settings);
-            this.sikuliImageProcessing = new Sikuli(this.settings.testAppImageFolder + "-map");
-            this.context = new MobileContext(this.settings, this.log, this.client,
-                    this.server, this.device, this.sikuliImageProcessing,
-                    this.app, this.find, this.gestures, this.imageUtils, this.locators, this.wait);
-            this.mobileSetupManager.setContext(this.context);
+            this.locators = this.context.locators;
+            this.server = this.context.server;
+            this.client = this.context.client;
+            this.device = this.context.device;
+            this.imageUtils = this.context.imageUtils;
+            this.log = this.context.log;
+            this.app = this.context.app;
+            this.find = this.context.find;
+            this.wait = this.context.wait;
+            this.gestures = this.context.gestures;
+            this.sikuliImageProcessing = this.context.sikuliImageProcessing;
         }
     }
 }

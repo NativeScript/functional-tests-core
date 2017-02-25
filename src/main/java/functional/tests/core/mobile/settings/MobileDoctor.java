@@ -52,9 +52,9 @@ public class MobileDoctor extends Doctor {
             verifyIdeviceinstaller(this.mobileSettings);
             verifyAppium(this.mobileSettings);
             verifyTestAppProperties(this.mobileSettings);
-            LOGGER_BASE.info("System and mobileSettings are OK.");
+            LOGGER_BASE.info("MobileSettings are OK.");
         } catch (Exception e) {
-            LOGGER_BASE.error("System and mobileSettings are NOT OK.");
+            LOGGER_BASE.error("MobileSettings are NOT OK.");
             LOGGER_BASE.fatal(e.getMessage());
             SystemExtension.interruptProcess("Check Setting  again");
         }

@@ -25,10 +25,7 @@ import java.io.IOException;
  */
 public class MobileSettings extends Settings {
 
-    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("MobileSettings");
-
-    private Aapt aapt;
-
+    private static LoggerBase LOGGER_BASE = LoggerBase.getLogger("MobileSettings");
     public boolean reuseDevice;
     public boolean restartRealDevice;
     public boolean isRealDevice;
@@ -45,19 +42,15 @@ public class MobileSettings extends Settings {
     public SettingsIOS ios;
     public SettingsAndroid android;
     public DeviceType deviceType;
+    private Aapt aapt;
 
     /**
      * Init settings.
      */
     public MobileSettings() {
         this.deviceId = this.properties.getProperty("udid");
-        this.initSettings();
         // Init Platform MobileSettings
-        if (this.platform == PlatformType.Android) {
-            this.android = this.initSettingsAndroid();
-        } else if (this.platform == PlatformType.iOS) {
-            this.ios = this.initSettingsIOS();
-        }
+        this.initSettings();
     }
 
     /**
@@ -121,7 +114,6 @@ public class MobileSettings extends Settings {
         }
 
         this.android.isRealDevice = this.isRealDevice;
-        LOGGER_BASE.separator();
         return this.android;
     }
 
@@ -175,7 +167,6 @@ public class MobileSettings extends Settings {
         LOGGER_BASE.info("TestApp Package Id: " + this.packageId);
 
         this.ios.isRealDevice = this.isRealDevice;
-        LOGGER_BASE.separator();
         return this.ios;
     }
 
@@ -184,10 +175,8 @@ public class MobileSettings extends Settings {
      */
     public void initSettings() {
         super.initSettings();
-        this.deviceType = this.getDeviceType();
-        this.restartRealDevice = this.propertyToBoolean("restartRealDevice", false);
-        LOGGER_BASE.info("Restart real device:  " + this.restartRealDevice);
 
+        this.restartRealDevice = this.propertyToBoolean("restartRealDevice", false);
         this.platformVersion = Double.parseDouble(this.properties.getProperty("platformVersion").trim());
         this.appiumVersion = this.properties.getProperty("appiumVersion");
         this.automationName = this.getAutomationName();
@@ -212,11 +201,22 @@ public class MobileSettings extends Settings {
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
+        this.deviceType = this.getDeviceType();
 
-        LOGGER_BASE.separator();
+        if (this.platform == PlatformType.Android) {
+            LOGGER_BASE = LoggerBase.getLogger("AndroidSettings");
+            this.android = this.initSettingsAndroid();
+        } else if (this.platform == PlatformType.iOS) {
+            LOGGER_BASE = LoggerBase.getLogger("IOSSettings");
+            this.ios = this.initSettingsIOS();
+        }
+
         LOGGER_BASE.info("Platform Version: " + this.platformVersion);
         LOGGER_BASE.info("Device Type: " + this.deviceType);
         LOGGER_BASE.info("Real device: " + this.isRealDevice);
+        if (this.isRealDevice) {
+            LOGGER_BASE.info("Restart real device:  " + this.restartRealDevice);
+        }
         LOGGER_BASE.info("ReuseDevice: " + this.reuseDevice);
         LOGGER_BASE.info("Appium Version: " + this.appiumVersion);
         LOGGER_BASE.info("Appium Log File: " + this.appiumLogFile);
@@ -226,7 +226,7 @@ public class MobileSettings extends Settings {
         if (this.orientation != null) {
             LOGGER_BASE.info("Screen Orientation: " + this.orientation);
         }
-
+        LOGGER_BASE.separator();
     }
 
     /**
