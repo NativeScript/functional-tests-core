@@ -165,8 +165,6 @@ public class Settings {
 
     /**
      * Set location settings such as baseLogDir, consoleLogDir, screenshotOutDir, screenshotResDir and appiumLogFile.
-     *
-     * @throws IOException when fail to set locations.
      */
     public void setupLocations() {
         this.baseLogDir = this.baseOutputDir + File.separator + "logs";
