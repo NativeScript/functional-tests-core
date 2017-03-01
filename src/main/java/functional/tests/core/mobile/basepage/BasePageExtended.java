@@ -127,7 +127,16 @@ public abstract class BasePageExtended extends BasePage {
 
 
     /**
-     * This method unifies swipe and scrollTo methods according to platform and api level.
+     * This method unifies swipe and scroll methods according to platform and version.
+     *
+     * TODO(vchimev): Investigate how to improve performance (SDK on Emu-Api23-Def).
+     * Hint: appium fresh install, automationName, timeout.
+     *
+     * Log:
+     * 2017-02-27 13:09:24 INFO  Log - SDK app home page loaded.
+     * 2017-02-27 13:09:40 INFO  UIElement - Tap on "Color"
+     *
+     * Total: 16 seconds
      *
      * @param containerLocator
      * @param text
