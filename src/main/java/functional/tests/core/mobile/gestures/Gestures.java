@@ -1,13 +1,13 @@
 package functional.tests.core.mobile.gestures;
 
+import functional.tests.core.enums.PlatformType;
+import functional.tests.core.enums.Position;
+import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.element.UIElement;
-import functional.tests.core.enums.PlatformType;
-import functional.tests.core.enums.Position;
 import functional.tests.core.mobile.find.Locators;
 import functional.tests.core.mobile.find.Wait;
-import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import io.appium.java_client.SwipeElementDirection;
@@ -304,7 +304,7 @@ public class Gestures {
 
         if (direction == SwipeElementDirection.DOWN) {
             initialY = window.height + window.y - offsetY;
-            finalY = -initialY + 1 - window.y;
+            finalY = -initialY + 1 + window.y;
             initialX = window.x + offsetX;
             finalX = initialX;
         }
