@@ -127,7 +127,7 @@ public abstract class BasePageExtended extends BasePage {
 
 
     /**
-     * This method unifies swipe and scrollTo methods according to platform and api level.
+     * This method unifies swipe and scrollTo methods according to platform and api level and navigates to the page.
      *
      * @param containerLocator
      * @param text
@@ -136,13 +136,13 @@ public abstract class BasePageExtended extends BasePage {
      */
     public boolean scrollDownToElement(UIElement containerLocator, String text, Position position) {
         UIElement mainPage = null;
-
+        int retriesCount = 5;
         if (this.settings.platformVersion < 7.0 && this.settings.platform == PlatformType.Android) {
-            mainPage = this.gestures.swipeInWindowToElement(SwipeElementDirection.DOWN, this.locators.byText(text), 2, 250, 50);
+            mainPage = this.gestures.swipeInWindowToElement(SwipeElementDirection.DOWN, this.locators.byText(text), retriesCount, 250, 50);
         } else if (this.settings.platformVersion < 10 && this.settings.platform == PlatformType.iOS) {
-            mainPage = this.gestures.swipeInWindowToElement(SwipeElementDirection.DOWN, this.locators.byText(text), 2, 1250, 50);
+            mainPage = this.gestures.swipeInWindowToElement(SwipeElementDirection.DOWN, this.locators.byText(text), retriesCount, 1250, 50);
         } else {
-            mainPage = containerLocator.scrollInElementToElement(SwipeElementDirection.DOWN, position, this.locators.byText(text), 0, 2);
+            mainPage = containerLocator.scrollInElementToElement(SwipeElementDirection.DOWN, position, this.locators.byText(text), 0, retriesCount);
         }
 
         return this.navigateTo(mainPage, text);

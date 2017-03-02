@@ -43,7 +43,7 @@ public class UIElementClass {
         if (this.settings.platform == PlatformType.Android) {
             return "android.widget.TextView";
         } else if (this.settings.platform == PlatformType.iOS) {
-            return this.createIosElement("StaticText");
+            return this.createIosElement("TextView");
         } else {
             try {
                 throw new Exception("Not found.");
@@ -58,7 +58,7 @@ public class UIElementClass {
         if (this.settings.platform == PlatformType.Android) {
             return "android.widget.TextView";
         } else if (this.settings.platform == PlatformType.iOS) {
-            return this.createIosElement("TextView");
+            return this.createIosElement("TextField");
         } else {
             try {
                 throw new Exception("Not found.");
