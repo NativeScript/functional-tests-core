@@ -101,8 +101,8 @@ public class Settings {
         this.imageVerificationType = this.getImageVerificationType();
 
 
-        // If defaultTimeout is not specified set it to 30 sec.
-        this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", 30);
+        // If defaultTimeout is not specified set it to 60 sec.
+        this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", 60);
         this.shortTimeout = this.defaultTimeout / 5;
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
@@ -118,7 +118,9 @@ public class Settings {
         LOGGER_BASE.info("Device Name: " + this.deviceName);
         LOGGER_BASE.info("Take Screenshot After Test: " + this.takeScreenShotAfterTest);
         LOGGER_BASE.info("Image Verification Type: " + this.imageVerificationType);
-        LOGGER_BASE.info("Default Timeout: " + this.defaultTimeout);
+
+        // This was moved to MobileSettings.
+        // LOGGER_BASE.info("Default Timeout: " + this.defaultTimeout);
         LOGGER_BASE.info("Device Boot Time: " + this.deviceBootTimeout);
         LOGGER_BASE.info("TestApp Name: " + this.testAppName);
         LOGGER_BASE.info("Log Output Folder: " + this.baseLogDir);
@@ -132,12 +134,13 @@ public class Settings {
      * Helper method that converts property to int.
      *
      * @param property as String.
+     * @param defaultValue of property as int.
      * @return Value of property as int.
      */
     public int convertPropertyToInt(String property, int defaultValue) {
-        String defaultTimeoutString = this.properties.getProperty(property);
-        if (defaultTimeoutString != null) {
-            return Integer.valueOf(defaultTimeoutString);
+        String propertyString = this.properties.getProperty(property);
+        if (propertyString != null) {
+            return Integer.valueOf(propertyString);
         } else {
             return defaultValue;
         }
