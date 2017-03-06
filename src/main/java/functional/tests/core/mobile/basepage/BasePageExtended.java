@@ -68,6 +68,14 @@ public abstract class BasePageExtended extends BasePage {
     }
 
     /**
+     * Returns NavigationManager
+     * @return
+     */
+    public NavigationManager getNavigationManager() {
+        return this.navigationManager;
+    }
+
+    /**
      * Navigates to elements and set the element text as key in navigation stack.
      *
      * @param element

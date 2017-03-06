@@ -276,6 +276,20 @@ public class NavigationManager {
     }
 
     /**
+     * Navigate back.
+     */
+    public void slideBack() {
+        if (this.getLevel() > 0) {
+            this.updatePagesOnNavigateBack();
+            this.mobileContext.app.slideBack();
+            LOGGER_BASE.info("Navigated back.");
+        } else {
+            LOGGER_BASE.info("This is the main page!");
+        }
+    }
+
+
+    /**
      * Remove current page.
      */
     public void removeCurrentPage() {
