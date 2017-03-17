@@ -22,8 +22,10 @@ public class Adb {
 
     private static final String ADB_PATH = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
     private static final String ANDROID_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "android";
+    private static final String AVDMANAGER_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "bin" + File.separator + "avdmanager";
     private static final String EMULATOR_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "emulator";
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Adb");
+    private String avdPath;
     private String emulatorStartLogPath;
     private MobileSettings settings;
 
@@ -33,8 +35,18 @@ public class Adb {
      * @param settings
      */
     public Adb(MobileSettings settings) {
+        this.avdPath = this.getAvdPath();
         this.settings = settings;
         this.emulatorStartLogPath = this.settings.baseLogDir + File.separator + "emulator.log";
+    }
+
+    private String getAvdPath() {
+        String output = OSUtils.runProcess(true, 5, ANDROID_PATH + " -h");
+        if (output.toLowerCase().contains("android command is no longer available")) {
+            return AVDMANAGER_PATH;
+        } else {
+            return ANDROID_PATH;
+        }
     }
 
     /**
@@ -252,28 +264,33 @@ public class Adb {
      */
     public void createEmulator(String avdName, String options, Boolean force) throws DeviceException {
 
-        String avds = OSUtils.runProcess(ANDROID_PATH + " list avds");
+        String avds = OSUtils.runProcess(this.avdPath + " list avds");
         Boolean emulatorExists = false;
         if (avds.contains(avdName + ".avd")) {
             LOGGER_BASE.info(avdName + " already exists.");
             emulatorExists = true;
         }
-        if (force || (!emulatorExists)) {
+        if (force || !emulatorExists) {
             // Create emulator
             String command;
             if (this.settings.os == OSType.Windows) {
                 LOGGER_BASE.fatal("Create emulator not implemented for Windows systems.");
                 throw new UnsupportedOperationException("Create emulator not implemented for Windows systems.");
             } else {
-                command = "echo no | " + ANDROID_PATH + " -s create avd -n " + avdName + " " + options + " -f";
+                // Please, have in mind that the `emulatorCreateOptions` should comply with the Android SDK Tools version installed.
+                // Example:
+                // SDK Tools 25.2.5: `-t android-24 --abi default/x86`
+                // SDK Tools 25.3.0: `-k "system-images;android-24;default;x86" -b default/x86`
+                command = "echo no | " + this.avdPath + " create avd -n " + avdName + " " + options + " -f";
             }
 
             LOGGER_BASE.info("Create emulator with command: ");
             LOGGER_BASE.info(command);
-            OSUtils.runProcess(command);
+            String output = OSUtils.runProcess(command);
+            LOGGER_BASE.info(output);
 
             // Verify it exists
-            avds = OSUtils.runProcess(ANDROID_PATH + " list avds");
+            avds = OSUtils.runProcess(this.avdPath + " list avds");
             if (avds.contains(avdName + ".avd")) {
                 LOGGER_BASE.info(avdName + " created successfully.");
             } else {
