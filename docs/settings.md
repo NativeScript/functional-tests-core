@@ -100,8 +100,11 @@ Example: `-wipe-data -gpu on`
 
 **emulatorCreateOptions**  
 If specified emulator name is not available and if `emulatorCreateOptions` is specified then we will try to create emulator with specified options.  
-Example: `-t android-23 --abi default/x86`  
-Details: Please read [official Android docs](https://developer.android.com/studio/tools/help/android.html)  
+Please, have in mind that the `emulatorCreateOptions` should comply with the Android SDK Tools version installed.
+Example:
+SDK Tools 25.2.5: `-t android-24 --abi default/x86`
+SDK Tools 25.3.0: `-k "system-images;android-24;default;x86" -b default/x86`
+Details: Please read [official Android docs](https://developer.android.com/studio/tools/help/android.html)
 
 **automationName**   
 Name of Appium backend automation.
