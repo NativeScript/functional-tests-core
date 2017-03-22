@@ -1,9 +1,9 @@
 package functional.tests.core.mobile.element;
 
+import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.basetest.MobileSetupManager;
-import functional.tests.core.log.LoggerBase;
 
 import java.awt.*;
 
@@ -38,7 +38,7 @@ public class UIRectangle {
     public void tap() {
         LOGGER_BASE.info("UIRectangle tap on x: " + this.rectangle.x + " y: " + this.rectangle.y);
         io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
-        action.tap(this.rectangle.x, this.rectangle.y).perform();
+        action.tap(this.rectangle.x + 35, this.rectangle.y + 10).waitAction(250).perform();
     }
 
     public Rectangle extendRectangle(int xOffset, int yOffset, int widthOffset, int heightOffset) {

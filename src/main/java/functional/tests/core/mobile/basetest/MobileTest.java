@@ -13,6 +13,7 @@ import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Locators;
+import functional.tests.core.mobile.find.UIElementClass;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
 import functional.tests.core.mobile.settings.MobileDoctor;
@@ -45,6 +46,7 @@ public abstract class MobileTest {
     protected Locators locators;
     protected Log log;
     protected ImageVerification imageVerification;
+    protected UIElementClass uiElements;
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
     private int maxPixelTolerance = Integer.MAX_VALUE;
@@ -104,6 +106,30 @@ public abstract class MobileTest {
 
         // Mark this test as first in suite
         this.firstTest = true;
+    }
+
+    /**
+     * Executed before each UI Test method.
+     * Actions:
+     * 1. [If restartApp=true] Restart app under test.
+     * 2. [Only if previous test failed] Restart appium session and app under test.
+     *
+     * @throws Exception
+     */
+    @BeforeClass(alwaysRun = true)
+    public void beforeMethodUIBaseClass() throws Exception {
+
+        // Perform set of actions on test fail.
+        if (this.context.lastTestResult == ITestResult.FAILURE && this.context.shouldRestartAppOnFailure) {
+            try {
+                // Restart app under test
+                this.context.app.restart();
+                this.context.shouldRestartAppOnFailure = false;
+            } catch (Exception e) {
+                // Restart might fail if server or client are dead
+                this.mobileSetupManager.restartSession();
+            }
+        }
     }
 
     /**
@@ -175,18 +201,18 @@ public abstract class MobileTest {
         this.context.lastTestResult = result.getStatus();
         if (result.getStatus() != ITestResult.SUCCESS) {
             this.mobileSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
-        }
 
-        // Get test case name
-        String testCase = result.getMethod().getMethodName();
+            // Get test case name
+            String testCase = result.getMethod().getMethodName();
 
-        this.context.lastTestResult = result.getStatus();
-        if (this.context.lastTestResult == ITestResult.SUCCESS) {
-            this.log.info("=> Test " + testCase + " passed!");
-        } else if (this.context.lastTestResult == ITestResult.SKIP) {
-            this.log.error("=> Test " + testCase + " skipped!");
-        } else if (this.context.lastTestResult == ITestResult.FAILURE) {
-            this.log.error("=> Test " + testCase + " failed!");
+            this.context.lastTestResult = result.getStatus();
+            if (this.context.lastTestResult == ITestResult.SUCCESS) {
+                this.log.info("=> Test " + testCase + " passed!");
+            } else if (this.context.lastTestResult == ITestResult.SKIP) {
+                this.log.error("=> Test " + testCase + " skipped!");
+            } else if (this.context.lastTestResult == ITestResult.FAILURE) {
+                this.log.error("=> Test " + testCase + " failed!");
+            }
         }
     }
 
@@ -196,7 +222,12 @@ public abstract class MobileTest {
     @AfterClass(alwaysRun = true)
     public void afterClassUIBaseTest() {
         if (this.context.navigationManager != null) {
-            this.context.navigationManager.navigateToHomePage();
+            try {
+                this.context.navigationManager.navigateToHomePage();
+            } catch (Exception ex) {
+                LOGGER.error(ex.getMessage());
+            }
+
             this.context.navigationManager = null;
         }
     }
@@ -216,12 +247,14 @@ public abstract class MobileTest {
         this.mobileSetupManager.fullStop();
     }
 
+
     /**
      * Get memory usage and log it.
      * Assert memory usage is less than memoryMaxUsageLimit (if memoryMaxUsageLimit is specified).
      *
      * @param result
      */
+
     protected void checkMemoryPerformance(ITestResult result) {
         if (this.settings.platform == PlatformType.Android) {
             int usedMemory = this.device.getMemUsage(this.settings.packageId);
@@ -562,6 +595,7 @@ public abstract class MobileTest {
             this.mobileSetupManager = MobileSetupManager.initTestSetupBasic(true);
             this.context = this.mobileSetupManager.getContext();
             this.settings = this.mobileSetupManager.getContext().settings;
+            this.uiElements = this.mobileSetupManager.getContext().uiElementClass;
             this.locators = this.context.locators;
             this.log = this.context.log;
             this.locators = this.context.locators;

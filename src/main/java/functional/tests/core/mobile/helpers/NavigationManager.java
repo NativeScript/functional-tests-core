@@ -1,17 +1,22 @@
 package functional.tests.core.mobile.helpers;
 
+import functional.tests.core.enums.ClickType;
+import functional.tests.core.enums.PlatformType;
+import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.basetest.MobileSetupManager;
 import functional.tests.core.mobile.element.UIElement;
-import functional.tests.core.enums.ClickType;
-import functional.tests.core.enums.PlatformType;
 import functional.tests.core.mobile.find.Wait;
-import functional.tests.core.log.LoggerBase;
+import org.openqa.selenium.By;
+import org.testng.ITestResult;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * This class is for handling the navigation in application which is like a tree.
@@ -31,6 +36,10 @@ public class NavigationManager {
     private Wait wait;
     private MobileContext mobileContext;
     private int scrollToElementRetriesCount;
+    private Function<String, UIElement> scrollMethod;
+    private Function<String, Rectangle> scrollToRectangleMethod;
+    private Consumer<String> navigate;
+    private By homePageLocator;
 
     /**
      * TODO(): Add docs.
@@ -54,6 +63,39 @@ public class NavigationManager {
         this.client = this.mobileContext.client;
         this.wait = this.mobileContext.wait;
         this.scrollToElementRetriesCount = 5;
+    }
+
+
+    public Function<String, UIElement> getScrollMethod() {
+        return this.scrollMethod;
+    }
+
+    public void setScrollMethod(Function<String, UIElement> scrollMethod) {
+        this.scrollMethod = scrollMethod;
+    }
+
+    public Function<String, Rectangle> getScrollToRectangleMethod() {
+        return this.scrollToRectangleMethod;
+    }
+
+    public void setScrollToRectangleMethod(Function<String, Rectangle> scrollToRectangleMethod) {
+        this.scrollToRectangleMethod = scrollToRectangleMethod;
+    }
+
+    public Consumer<String> getNavigationMethod() {
+        return this.navigate;
+    }
+
+    public void setNavigation(Consumer<String> navigation) {
+        this.navigate = navigation;
+    }
+
+    public By getHomePageLocator() {
+        return this.homePageLocator;
+    }
+
+    public void setHomePageLocator(By locator) {
+        this.homePageLocator = locator;
     }
 
     /**
@@ -166,8 +208,7 @@ public class NavigationManager {
      */
     public void resetNavigationMainPage() {
         this.navigateToMainPage();
-        for (String page :
-                this.usedPages) {
+        for (Object page : this.usedPages.toArray()) {
             this.usedPages.remove(page);
             if (page == this.mainPage) {
                 break;
@@ -191,9 +232,17 @@ public class NavigationManager {
             }
         }
 
-        if (this.mainPage != null && !this.mainPage.isEmpty()) {
-            UIElement checked = this.wait.waitForVisible(this.mobileContext.locators.findByTextLocator(this.mainPage, true), false);
-            LOGGER_BASE.info(this.mainPage + " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
+        if (this.getHomePageLocator() != null) {
+            try {
+                UIElement checked = this.wait.waitForVisible(this.getHomePageLocator(), 2, false);
+                LOGGER_BASE.info(this.mainPage + " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
+                if (checked == null) {
+                    this.mobileContext.lastTestResult = ITestResult.FAILURE;
+
+                }
+            } catch (Exception ex) {
+                this.mobileContext.lastTestResult = ITestResult.FAILURE;
+            }
         }
     }
 

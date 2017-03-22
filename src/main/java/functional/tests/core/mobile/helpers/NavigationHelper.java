@@ -5,9 +5,12 @@ import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
+import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.mobile.find.Find;
 import io.appium.java_client.SwipeElementDirection;
 import org.testng.Assert;
+
+import java.awt.*;
 
 /**
  * Navigation provides methods for navigation.
@@ -48,13 +51,37 @@ public class NavigationHelper {
 
         for (int i = 0; i < demos.length; i++) {
             String btnText = demos[i];
-            UIElement demoBtn = scrollTo(btnText, mobileContext, scrollToElementRetriesCount);
-            if (demoBtn == null) {
+            UIElement demoBtn = null;
+            UIRectangle rectBtn = null;
+            if (navigationManager != null) {
+                if (navigationManager != null && navigationManager.getScrollMethod() != null) {
+                    demoBtn = navigationManager.getScrollMethod().apply(btnText);
+                } else if (navigationManager != null && navigationManager.getScrollToRectangleMethod() != null) {
+                    Rectangle rect = navigationManager.getScrollToRectangleMethod().apply(btnText);
+                    if (rect != null) {
+                        rectBtn = new UIRectangle(rect, mobileContext);
+                    }
+                } else if (navigationManager != null && navigationManager.getNavigationMethod() != null) {
+                    navigationManager.getNavigationMethod().accept(btnText);
+                } else {
+                    demoBtn = scrollTo(btnText, mobileContext, scrollToElementRetriesCount);
+                }
+            } else {
+                demoBtn = scrollTo(btnText, mobileContext, scrollToElementRetriesCount);
+            }
+
+            if (demoBtn == null && rectBtn == null) {
                 return false;
             }
-            demoBtn.tap();
+            if (demoBtn != null) {
+                demoBtn.tap();
+            }
+            if (rectBtn != null) {
+                LOGGER_BASE.info(demoPath);
+                rectBtn.tap();
+            }
 
-            if (navigationManager != null) {
+            if (navigationManager != null && !btnText.isEmpty()) {
                 navigationManager.setCurrentPage(btnText);
             }
 

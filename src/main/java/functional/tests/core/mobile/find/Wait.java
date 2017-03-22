@@ -35,6 +35,21 @@ public class Wait {
         }
     }
 
+
+    public UIElement waitForVisibleDefault(By locator, int timeOut, boolean failOnNotVisible) {
+        List<UIElement> results;
+        this.client.setWait(timeOut);
+        try {
+            results = this.find.elementsByLocator(locator);
+
+        } catch (Exception e) {
+            results = null;
+        }
+
+        this.client.setWait(this.settings.defaultTimeout);
+        return null;
+    }
+
     /**
      * Wait for element until it gets visible.
      * (Android) Visible == Center of the element is inside view port.
@@ -46,33 +61,63 @@ public class Wait {
      * @return UIElement (if found).
      */
     public UIElement waitForVisible(By locator, int timeOut, boolean failOnNotVisible) {
-        List<UIElement> results;
-        this.client.setWait(timeOut);
-
-        try {
-            results = this.find.elementsByLocator(locator);
-        } catch (Exception e) {
-            results = null;
+        List<UIElement> elements = this.forVisibleElements(locator, timeOut, failOnNotVisible);
+        if (elements != null && elements.size() > 0) {
+            return elements.get(0);
         }
 
-        this.client.setWait(this.settings.defaultTimeout);
+        return null;
+    }
 
-        if (results != null) {
-            for (UIElement element : results) {
-                if (element.isVisible()) {
-                    return element;
-                }
-            }
+    /**
+     * Wait for element until it gets visible.
+     * (Android) Visible == Center of the element is inside view port.
+     * (iOS) Visible == Top left corner of the element is inside view port.
+     *
+     * @param locator Locator for element.
+     * @param timeOut Timeout.
+     * @return UIElement (if found).
+     */
+    public List<UIElement> forVisibleElements(By locator, int timeOut, boolean failOnNotVisible) {
+        List<UIElement> results = this.forElements(locator, timeOut);
+        if (results != null && results.size() > 0) {
+            results.removeIf(e -> !e.isVisible());
         } else {
             new NotImplementedException("This platform: " + this.settings.platform + " is not implemented");
         }
 
-
-        if (failOnNotVisible) {
+        if (failOnNotVisible && (results == null || results.size() == 0)) {
             Assert.fail("Failed to find element: " + locator.toString());
         }
 
-        return null;
+        return results;
+    }
+
+    /**
+     * Wait for element until it gets visible.
+     * (Android) Visible == Center of the element is inside view port.
+     * (iOS) Visible == Top left corner of the element is inside view port.
+     *
+     * @param locator Locator for element.
+     * @param timeOut Timeout.
+     * @return UIElement (if found).
+     */
+    public List<UIElement> forElements(By locator, int timeOut) {
+        List<UIElement> results = null;
+        LOGGER_BASE.info("Start to search: " + System.currentTimeMillis());
+        this.client.setWait(0);
+        long startTime = System.currentTimeMillis();
+        while ((System.currentTimeMillis() - startTime) < timeOut * 1000 && (results == null || results.size() == 0)) {
+            try {
+                results = this.find.elementsByLocator(locator);
+            } catch (Exception e) {
+                results = null;
+            }
+        }
+
+        LOGGER_BASE.info("End time total: " + (System.currentTimeMillis() - startTime));
+
+        return results;
     }
 
     public UIElement waitForVisible(By locator, boolean failOnNotVisible) {

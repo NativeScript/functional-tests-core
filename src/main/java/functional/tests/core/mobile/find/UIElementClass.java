@@ -69,6 +69,19 @@ public class UIElementClass {
         }
     }
 
+    public String staticTextLocator() {
+        if (this.settings.platform == PlatformType.iOS) {
+            return this.createIosElement("StaticText");
+        } else {
+            try {
+                throw new Exception("Not found.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
     public String imageLocator() {
         if (this.settings.platform == PlatformType.Android) {
             return "android.widget.ImageView";

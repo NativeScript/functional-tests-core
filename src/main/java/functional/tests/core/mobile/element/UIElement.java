@@ -34,7 +34,7 @@ public class UIElement {
 
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("UIElement");
 
-    private MobileElement element;
+    public MobileElement element;
     private Client client;
     private MobileContext mobileContext;
     private MobileSettings settings;
@@ -413,19 +413,25 @@ public class UIElement {
         if (this.elementRectangle == null) {
             this.elementRectangle = this.getUIRectangle();
             if (startPosition == Position.FromCorner) {
-                if (this.elementRectangle.getX() == 0) {
+                if (this.elementRectangle.getX() == 0 && this.offsetX == 0) {
                     this.offsetX = 10;
                 }
-                if (this.elementRectangle.getY() == 0) {
+                if (this.elementRectangle.getY() == 0 && this.offsetY == 0) {
                     this.offsetY = 10;
                 }
 
-                if (this.elementRectangle.width + this.elementRectangle.x == this.mobileContext.device.getWindowSize().width) {
+                if (this.elementRectangle.width + this.elementRectangle.x == this.mobileContext.device.getWindowSize().width
+                        && this.offsetX == 0) {
                     this.offsetX = 10;
                 }
 
-                if (this.elementRectangle.height + this.elementRectangle.y == this.mobileContext.device.getWindowSize().height) {
+                if (this.elementRectangle.height + this.elementRectangle.y == this.mobileContext.device.getWindowSize().height
+                        && this.offsetY == 0) {
                     this.offsetY = 15;
+                }
+
+                if (direction == SwipeElementDirection.RIGHT) {
+                    this.offsetX *= -1;
                 }
             }
         }
@@ -433,6 +439,27 @@ public class UIElement {
         this.mobileContext.gestures.scrollInRectangle(direction, this.elementRectangle, startPosition, this.offsetX, this.offsetY, waitAfter);
     }
 
+    public UIElement scrollInElementToElement(SwipeElementDirection direction, Position startPosition, By locator, int waitAfter, int retryCount, int offsetX, int offsetY) {
+        LOGGER_BASE.debug("Swipe " + direction.toString());
+        UIElement element = null;
+        for (int i = 0; i < retryCount; i++) {
+            element = this.mobileContext.wait.waitForVisible(locator, 2, false);
+            if (element != null) {
+                LOGGER_BASE.info("element found by locator \"" + locator.toString() + "\".");
+                return element;
+            } else {
+                LOGGER_BASE.info("Swipe " + direction.toString());
+                this.mobileContext.gestures.scrollInRectangle(direction, this.getUIRectangle(), startPosition, offsetX, offsetY, waitAfter);
+            }
+        }
+
+        if (element == null) {
+            LOGGER_BASE.info("element not found after " + retryCount + " swipes by locator \"" + locator.toString() + "\".");
+        }
+
+        return element;
+
+    }
 
     /**
      * Swipes to element as long as the element by given locator is found or retry counts is equal zero.
@@ -500,7 +527,7 @@ public class UIElement {
             }
         }
 
-        this.mobileContext.gestures.swipeInRectangle(direction, this.elementRectangle, duration, waitAfter);
+        this.mobileContext.gestures.swipeInRectangle(direction, this.getUIRectangle(), duration, waitAfter);
     }
 
     public java.awt.Rectangle getUIRectangle() {
