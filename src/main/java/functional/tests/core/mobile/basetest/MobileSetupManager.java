@@ -13,6 +13,7 @@ import functional.tests.core.mobile.appium.Server;
 import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Locators;
+import functional.tests.core.mobile.find.UIElementClass;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
 import functional.tests.core.mobile.settings.MobileSettings;
@@ -45,6 +46,7 @@ public class MobileSetupManager {
     private Wait wait;
     private Gestures gestures;
     private Sikuli sikuliImageProcessing;
+    private UIElementClass uiElements;
 
     private MobileSetupManager() {
     }
@@ -67,6 +69,7 @@ public class MobileSetupManager {
             mobileSetupManager = new MobileSetupManager();
             mobileSetupManager.settings = new MobileSettings();
             mobileSetupManager.log = new Log();
+            mobileSetupManager.uiElements = new UIElementClass(mobileSetupManager.settings);
             mobileSetupManager.locators = new Locators(mobileSetupManager.settings);
             mobileSetupManager.server = new Server(mobileSetupManager.settings);
             mobileSetupManager.client = new Client(mobileSetupManager.server, mobileSetupManager.settings);
@@ -76,19 +79,34 @@ public class MobileSetupManager {
             mobileSetupManager.app = new App(mobileSetupManager.device, mobileSetupManager.settings);
             mobileSetupManager.find = new Find(mobileSetupManager.client, mobileSetupManager.locators, mobileSetupManager.settings);
             mobileSetupManager.wait = new Wait(mobileSetupManager.client, mobileSetupManager.find, mobileSetupManager.settings);
-            mobileSetupManager.gestures = new Gestures(mobileSetupManager.client, mobileSetupManager.wait,
-                    mobileSetupManager.device, mobileSetupManager.locators,
+
+            mobileSetupManager.gestures = new Gestures(
+                    mobileSetupManager.client,
+                    mobileSetupManager.wait,
+                    mobileSetupManager.device,
+                    mobileSetupManager.locators,
                     mobileSetupManager.settings);
+
             mobileSetupManager.sikuliImageProcessing =
                     new Sikuli(mobileSetupManager.settings.testAppImageFolder + "-map",
                             mobileSetupManager.client,
                             mobileSetupManager.imageUtils);
-            mobileSetupManager.context = new MobileContext(mobileSetupManager.settings, mobileSetupManager.log,
-                    mobileSetupManager.client, mobileSetupManager.server,
-                    mobileSetupManager.device, mobileSetupManager.sikuliImageProcessing,
-                    mobileSetupManager.app, mobileSetupManager.find,
-                    mobileSetupManager.gestures, mobileSetupManager.imageUtils,
-                    mobileSetupManager.locators, mobileSetupManager.wait);
+
+            mobileSetupManager.context = new MobileContext(
+                    mobileSetupManager.settings,
+                    mobileSetupManager.log,
+                    mobileSetupManager.client,
+                    mobileSetupManager.server,
+                    mobileSetupManager.device,
+                    mobileSetupManager.sikuliImageProcessing,
+                    mobileSetupManager.app,
+                    mobileSetupManager.find,
+                    mobileSetupManager.gestures,
+                    mobileSetupManager.imageUtils,
+                    mobileSetupManager.locators,
+                    mobileSetupManager.wait,
+                    mobileSetupManager.uiElements);
+
             mobileSetupManager.context.lastTestResult = ITestResult.SUCCESS;
 
             MobileSetupManager.initSettings.put(getAppConfig(), mobileSetupManager);

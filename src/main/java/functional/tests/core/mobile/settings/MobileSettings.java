@@ -25,7 +25,7 @@ import java.io.IOException;
  */
 public class MobileSettings extends Settings {
 
-    private static LoggerBase logger = LoggerBase.getLogger("MobileSettings");
+    private static LoggerBase loggerBase = LoggerBase.getLogger("MobileSettings");
     public boolean reuseDevice;
     public boolean restartRealDevice;
     public boolean isRealDevice;
@@ -63,47 +63,47 @@ public class MobileSettings extends Settings {
         this.aapt = new Aapt(this);
 
         this.android = new SettingsAndroid();
-        logger.separatorAndroid();
+        loggerBase.separatorAndroid();
 
         if (this.deviceId == null && this.deviceType == DeviceType.Emulator) {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
             this.deviceId = AndroidDevice.generateDeviceId(this.platformVersion);
         }
-        logger.info("Device Id: " + this.deviceId);
+        loggerBase.info("Device Id: " + this.deviceId);
 
         // Set testAppImageFolder
         String testAppName = this.testAppName.toLowerCase().replace("-release", "");
         this.testAppImageFolder = this.testAppName.substring(0, testAppName.indexOf(".")).toLowerCase();
-        logger.info("TestApp Images Folder: " + this.testAppImageFolder);
+        loggerBase.info("TestApp Images Folder: " + this.testAppImageFolder);
 
         this.packageId = this.aapt.getPackage();
-        logger.info("TestApp Package Id: " + this.packageId);
+        loggerBase.info("TestApp Package Id: " + this.packageId);
 
         this.android.defaultActivity = this.getDefaultActivity();
-        logger.info("Default Activity: " + this.android.defaultActivity);
+        loggerBase.info("Default Activity: " + this.android.defaultActivity);
 
         this.android.appWaitActivity = this.getAppWaitActivity();
-        logger.info("App Wait Activity: " + this.android.appWaitActivity);
+        loggerBase.info("App Wait Activity: " + this.android.appWaitActivity);
 
         this.android.appWaitPackage = this.getAppWaitPackage();
-        logger.info("App Wait Package: " + this.android.appWaitPackage);
+        loggerBase.info("App Wait Package: " + this.android.appWaitPackage);
 
         this.testAppFriendlyName = this.aapt.getApplicationLabel(this);
-        logger.info("TestApp Friendly Name: " + this.testAppFriendlyName);
+        loggerBase.info("TestApp Friendly Name: " + this.testAppFriendlyName);
 
         if (this.deviceType == DeviceType.Emulator) {
             this.android.emulatorOptions = this.properties.getProperty("emulatorOptions");
-            logger.info("Emulator Options: " + this.android.emulatorOptions);
+            loggerBase.info("Emulator Options: " + this.android.emulatorOptions);
 
             this.android.emulatorCreateOptions = this.properties.getProperty("emulatorCreateOptions");
-            logger.info("Emulator Create Options: " + this.android.emulatorCreateOptions);
+            loggerBase.info("Emulator Create Options: " + this.android.emulatorCreateOptions);
         }
         this.android.memoryMaxUsageLimit = this.getMemoryMaxUsageLimit();
-        logger.info("Memory Usage Max Limit: "
+        loggerBase.info("Memory Usage Max Limit: "
                 + (this.android.memoryMaxUsageLimit > -1 ? this.android.memoryMaxUsageLimit : "not set"));
 
         this.android.appLaunchTimeLimit = this.getappLaunchTimeLimit();
-        logger.info("App Launch Time Limit: "
+        loggerBase.info("App Launch Time Limit: "
                 + (this.android.appLaunchTimeLimit > -1 ? this.android.appLaunchTimeLimit : "not set"));
 
         // Set isRealDevice
@@ -124,26 +124,26 @@ public class MobileSettings extends Settings {
      */
     public SettingsIOS initSettingsIOS() {
         this.ios = new SettingsIOS();
-        logger.separatorIOS();
+        loggerBase.separatorIOS();
 
         if (this.deviceId == null && !this.isRealDevice) {
 
             this.deviceId = IOSDevice.getDeviceUidid(this.deviceName);
         }
 
-        logger.info("Device Id: " + this.deviceId);
+        loggerBase.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
-        logger.info("Auto Accept Alerts: " + this.ios.acceptAlerts);
+        loggerBase.info("Auto Accept Alerts: " + this.ios.acceptAlerts);
 
         // Set isRealDevice
         if (this.deviceType == DeviceType.Simulator) {
             this.isRealDevice = false;
             this.ios.testAppArchive = this.properties.getProperty("testAppArchive");
-            logger.info("TestApp Archive: " + this.ios.testAppArchive);
+            loggerBase.info("TestApp Archive: " + this.ios.testAppArchive);
             this.testAppImageFolder = this.ios.testAppArchive.substring(0, this.ios.testAppArchive.indexOf("."));
             this.ios.simulatorType = this.properties.getProperty("simulatorType");
-            logger.info("Simulator Type: " + this.ios.simulatorType);
+            loggerBase.info("Simulator Type: " + this.ios.simulatorType);
 
             this.extractApp();
         } else {
@@ -153,18 +153,18 @@ public class MobileSettings extends Settings {
 
             this.testAppImageFolder = this.testAppName.replace(".ipa", "");
             this.setupDevelopmentTeam();
-            logger.info("xCode 8 config file. Initialized if it is real device " + this.ios.xCode8ConfigFile);
+            loggerBase.info("xCode 8 config file. Initialized if it is real device " + this.ios.xCode8ConfigFile);
         }
 
         // TODO(dtopuzov): Find better way to get testAppFriendlyName.
         this.testAppFriendlyName = this.testAppImageFolder;
-        logger.info("TestApp Friendly Name: " + this.testAppFriendlyName);
+        loggerBase.info("TestApp Friendly Name: " + this.testAppFriendlyName);
 
         this.testAppImageFolder = this.testAppImageFolder.toLowerCase();
-        logger.info("TestApp Images Folder: " + this.testAppImageFolder);
+        loggerBase.info("TestApp Images Folder: " + this.testAppImageFolder);
 
         this.packageId = this.getIOSPackageId();
-        logger.info("TestApp Package Id: " + this.packageId);
+        loggerBase.info("TestApp Package Id: " + this.packageId);
 
         this.ios.isRealDevice = this.isRealDevice;
         return this.ios;
@@ -195,68 +195,38 @@ public class MobileSettings extends Settings {
 
         // Set orientation
         this.orientation = this.getScreenOrientation();
-
-        // Set timeouts
-        this.setMobileDefaultTimeout();
-        this.setMobileShortTimeout();
+        // If defaultTimeout is not specified set it to 30 sec.
+        this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", 30);
+        this.shortTimeout = this.defaultTimeout / 5;
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
         this.deviceType = this.getDeviceType();
 
         if (this.platform == PlatformType.Android) {
-            logger = LoggerBase.getLogger("AndroidSettings");
+            loggerBase = LoggerBase.getLogger("AndroidSettings");
             this.android = this.initSettingsAndroid();
         } else if (this.platform == PlatformType.iOS) {
-            logger = LoggerBase.getLogger("IOSSettings");
+            loggerBase = LoggerBase.getLogger("IOSSettings");
             this.ios = this.initSettingsIOS();
         }
 
-        logger.info("Platform Version: " + this.platformVersion);
-        logger.info("Device Type: " + this.deviceType);
-        logger.info("Real device: " + this.isRealDevice);
-        logger.info("Default Timeout: " + this.defaultTimeout);
+        loggerBase.info("Platform Version: " + this.platformVersion);
+        loggerBase.info("Device Type: " + this.deviceType);
+        loggerBase.info("Real device: " + this.isRealDevice);
         if (this.isRealDevice) {
-            logger.info("Restart real device:  " + this.restartRealDevice);
+            loggerBase.info("Restart real device:  " + this.restartRealDevice);
         }
-        logger.info("ReuseDevice: " + this.reuseDevice);
-        logger.info("Appium Version: " + this.appiumVersion);
-        logger.info("Appium Log File: " + this.appiumLogFile);
-        logger.info("Appium Log Level: " + this.appiumLogLevel);
-        logger.info("Automation Name: " + this.automationName);
-        logger.info("Restart app Between Tests: " + this.restartApp);
+        loggerBase.info("ReuseDevice: " + this.reuseDevice);
+        loggerBase.info("Appium Version: " + this.appiumVersion);
+        loggerBase.info("Appium Log File: " + this.appiumLogFile);
+        loggerBase.info("Appium Log Level: " + this.appiumLogLevel);
+        loggerBase.info("Automation Name: " + this.automationName);
+        loggerBase.info("Restart app Between Tests: " + this.restartApp);
         if (this.orientation != null) {
-            logger.info("Screen Orientation: " + this.orientation);
+            loggerBase.info("Screen Orientation: " + this.orientation);
         }
-        logger.separator();
-    }
-
-    private void setMobileDefaultTimeout() {
-        int defaultTimeout;
-        switch (this.automationName) {
-//            TODO(): Assign default values per platform version.
-//            case AutomationName.SELENDROID:
-//                defaultTimeout = 60;
-//                break;
-//            case AutomationName.APPIUM:
-//                defaultTimeout = 60;
-//                break;
-//            case "UIAutomator2":
-//                defaultTimeout = 60;
-//                break;
-//            case AutomationName.IOS_XCUI_TEST:
-//                defaultTimeout = 60;
-//                break;
-            default:
-                defaultTimeout = 60;
-                break;
-        }
-        // If defaultTimeout is not specified, set it to 60 sec.
-        this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", defaultTimeout);
-    }
-
-    private void setMobileShortTimeout() {
-        this.shortTimeout = this.defaultTimeout / 5;
+        loggerBase.separator();
     }
 
     /**
@@ -354,7 +324,7 @@ public class MobileSettings extends Settings {
             String command = "/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' " + plistPath;
             result = OSUtils.runProcess(command).trim();
         } else {
-            logger.error("File " + plistPath + " does not exist.");
+            loggerBase.error("File " + plistPath + " does not exist.");
         }
         return result;
     }

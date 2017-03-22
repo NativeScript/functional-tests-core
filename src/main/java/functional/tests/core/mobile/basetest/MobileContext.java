@@ -9,6 +9,7 @@ import functional.tests.core.mobile.appium.Server;
 import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Locators;
+import functional.tests.core.mobile.find.UIElementClass;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
 import functional.tests.core.mobile.helpers.NavigationManager;
@@ -19,6 +20,7 @@ import functional.tests.core.mobile.settings.MobileSettings;
  */
 public class MobileContext {
 
+    public UIElementClass uiElementClass;
     public Server server;
     public MobileSettings settings;
     public Wait wait;
@@ -37,12 +39,7 @@ public class MobileContext {
     private String testName;
 
     /**
-     * Init empty test context with empty helpers.
-     */
-    public MobileContext() {
-    }
-
-    /**
+     *
      * @param settings
      * @param log
      * @param client
@@ -55,11 +52,12 @@ public class MobileContext {
      * @param imageUtils
      * @param locators
      * @param wait
+     * @param uiElementClass
      */
     public MobileContext(MobileSettings settings, Log log, Client client,
                          Server server, Device device, Sikuli sikuliImageProcessing,
                          App app, Find find, Gestures gestures, ImageUtils imageUtils,
-                         Locators locators, Wait wait) {
+                         Locators locators, Wait wait, UIElementClass uiElementClass) {
         this.settings = settings;
         this.log = log;
         this.client = client;
@@ -73,6 +71,7 @@ public class MobileContext {
         this.shouldRestartAppOnFailure = true;
         this.server = server;
         this.wait = wait;
+        this.uiElementClass = uiElementClass;
     }
 
     /**

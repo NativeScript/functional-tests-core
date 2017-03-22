@@ -66,6 +66,10 @@ public class Gestures {
         if (startPosition == Position.FromCorner) {
             //windowRectangle.height = (int) (windowRectangle.height - windowRectangle.height * 0.10D);
             offsetX = (int) (windowRectangle.height * 0.15D);
+
+            if (direction == SwipeElementDirection.RIGHT) {
+                offsetX *= -1;
+            }
             offsetY = (int) (windowRectangle.height * 0.15D);
         }
 
@@ -245,7 +249,24 @@ public class Gestures {
     }
 
     /**
-     * Swipes by given swipe direction.
+     * Swipes by given swipe direction to absolute coordinates.
+     *
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     */
+    public void scrollTo(int startX, int startY, int endX, int endY) {
+        // calculating the speed to avoid inertia
+        int duration = (startY - endY) * 10;
+        if (this.settings.platform == PlatformType.iOS) {
+            endY = endY - startY;
+        }
+        new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
+    }
+
+    /**
+     * Swipes by given swipe direction and relative point from initial x and initial y.
      * Rectangle which limits the final swipe to the bound of rectangle and initial x, y and final x, y.
      *
      * @param waitAfterSwipe
@@ -256,10 +277,10 @@ public class Gestures {
      * @param settings
      * @param client
      */
-    private static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
+    public static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
         try {
             if (settings.platform == PlatformType.Android) {
-                new TouchAction(client.driver).press(initialX, initialY).moveTo(finalX, finalY).perform();
+                new TouchAction(client.driver).press(initialX, initialY).waitAction(250).moveTo(finalX, finalY).perform();
             }
 
             if (settings.platform == PlatformType.iOS) {
@@ -304,7 +325,7 @@ public class Gestures {
 
         if (direction == SwipeElementDirection.DOWN) {
             initialY = window.height + window.y - offsetY;
-            finalY = -initialY + 1 + window.y;
+            finalY = window.y - initialY;
             initialX = window.x + offsetX;
             finalX = initialX;
         }

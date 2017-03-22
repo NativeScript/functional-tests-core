@@ -68,7 +68,8 @@ public abstract class BasePageExtended extends BasePage {
     }
 
     /**
-     * Returns NavigationManager
+     * Returns NavigationManager.
+     *
      * @return
      */
     public NavigationManager getNavigationManager() {
@@ -133,6 +134,20 @@ public abstract class BasePageExtended extends BasePage {
         return this.navigationManager.navigateTo(example);
     }
 
+    /**
+     * @param containerLocator
+     * @param text
+     * @param position
+     * @param retriesCount
+     * @param offsetX
+     * @param offsetY
+     * @return
+     */
+    public UIElement scrollDownToElement(UIElement containerLocator, String text, Position position, int retriesCount, int offsetX, int offsetY) {
+        UIElement mainPage = containerLocator.scrollInElementToElement(SwipeElementDirection.DOWN, position, this.locators.byText(text), 0, retriesCount, offsetX, offsetY);
+
+        return mainPage;
+    }
 
     /**
      * This method unifies swipe and scrollTo methods according to platform and api level and navigates to the page.
@@ -142,7 +157,7 @@ public abstract class BasePageExtended extends BasePage {
      * @param position
      * @return
      */
-    public boolean scrollDownToElement(UIElement containerLocator, String text, Position position) {
+    public boolean scrollDownToElementAndNavigate(UIElement containerLocator, String text, Position position) {
         UIElement mainPage = null;
         int retriesCount = 5;
         if (this.settings.platformVersion < 7.0 && this.settings.platform == PlatformType.Android) {
