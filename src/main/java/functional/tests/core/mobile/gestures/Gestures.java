@@ -222,7 +222,7 @@ public class Gestures {
             initialY = rectangle.y + rectangle.height / 2;
             finalY = initialY;
             initialX = rectangle.x + (int) (rectangle.x + rectangle.width * 0.15D);
-            finalX = rectangle.width;
+            finalX = rectangle.width - 1;
         }
 
         Gestures.swipe(duration, Settings.DEFAULT_TAP_DURATION * 2, initialX, initialY, finalX, finalY, this.client, this.settings);

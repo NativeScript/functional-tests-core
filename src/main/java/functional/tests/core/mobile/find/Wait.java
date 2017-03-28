@@ -1,10 +1,10 @@
 package functional.tests.core.mobile.find;
 
+import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.settings.MobileSettings;
-import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
@@ -70,52 +70,48 @@ public class Wait {
     }
 
     /**
-     * Wait for element until it gets visible.
+     * Waits for elements until at least one element is visible
      * (Android) Visible == Center of the element is inside view port.
      * (iOS) Visible == Top left corner of the element is inside view port.
      *
-     * @param locator Locator for element.
-     * @param timeOut Timeout.
-     * @return UIElement (if found).
+     * @param locator
+     * @param timeOut
+     * @param failOnNotVisible
+     * @return
      */
     public List<UIElement> forVisibleElements(By locator, int timeOut, boolean failOnNotVisible) {
-        List<UIElement> results = this.forElements(locator, timeOut);
-        if (results != null && results.size() > 0) {
-            results.removeIf(e -> !e.isVisible());
-        } else {
-            new NotImplementedException("This platform: " + this.settings.platform + " is not implemented");
-        }
-
-        if (failOnNotVisible && (results == null || results.size() == 0)) {
-            Assert.fail("Failed to find element: " + locator.toString());
-        }
-
-        return results;
-    }
-
-    /**
-     * Wait for element until it gets visible.
-     * (Android) Visible == Center of the element is inside view port.
-     * (iOS) Visible == Top left corner of the element is inside view port.
-     *
-     * @param locator Locator for element.
-     * @param timeOut Timeout.
-     * @return UIElement (if found).
-     */
-    public List<UIElement> forElements(By locator, int timeOut) {
         List<UIElement> results = null;
-        LOGGER_BASE.info("Start to search: " + System.currentTimeMillis());
-        this.client.setWait(0);
         long startTime = System.currentTimeMillis();
         while ((System.currentTimeMillis() - startTime) < timeOut * 1000 && (results == null || results.size() == 0)) {
             try {
                 results = this.find.elementsByLocator(locator);
+                if (results != null && results.size() > 0) {
+                    results.removeIf(uiElement -> !uiElement.isDisplayed());
+
+                    if (this.settings.platform == PlatformType.Android) {
+                        if (results.size() == 1) {
+                            if (!results.get(0).isVisible()) {
+                                results.remove(results.get(0));
+                            }
+                        } else {
+                            if (!results.get(0).isVisible()) {
+                                results.remove(results.get(0));
+                            }
+                            if (!results.get(results.size() - 1).isVisible()) {
+                                results.remove(results.get(results.size() - 1));
+                            }
+                        }
+                    } else {
+                    }
+                }
             } catch (Exception e) {
                 results = null;
             }
         }
 
-        LOGGER_BASE.info("End time total: " + (System.currentTimeMillis() - startTime));
+        if (failOnNotVisible && (results == null || results.size() == 0)) {
+            Assert.fail("Failed to find element: " + locator.toString());
+        }
 
         return results;
     }
