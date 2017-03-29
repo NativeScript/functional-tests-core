@@ -201,18 +201,17 @@ public abstract class MobileTest {
         this.context.lastTestResult = result.getStatus();
         if (result.getStatus() != ITestResult.SUCCESS) {
             this.mobileSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
+        }
+        // Get test case name
+        String testCase = result.getMethod().getMethodName();
 
-            // Get test case name
-            String testCase = result.getMethod().getMethodName();
-
-            this.context.lastTestResult = result.getStatus();
-            if (this.context.lastTestResult == ITestResult.SUCCESS) {
-                this.log.info("=> Test " + testCase + " passed!");
-            } else if (this.context.lastTestResult == ITestResult.SKIP) {
-                this.log.error("=> Test " + testCase + " skipped!");
-            } else if (this.context.lastTestResult == ITestResult.FAILURE) {
-                this.log.error("=> Test " + testCase + " failed!");
-            }
+        this.context.lastTestResult = result.getStatus();
+        if (this.context.lastTestResult == ITestResult.SUCCESS) {
+            this.log.info("=> Test " + testCase + " passed!");
+        } else if (this.context.lastTestResult == ITestResult.SKIP) {
+            this.log.error("=> Test " + testCase + " skipped!");
+        } else if (this.context.lastTestResult == ITestResult.FAILURE) {
+            this.log.error("=> Test " + testCase + " failed!");
         }
     }
 

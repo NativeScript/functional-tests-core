@@ -80,6 +80,7 @@ public class Wait {
      * @return
      */
     public List<UIElement> forVisibleElements(By locator, int timeOut, boolean failOnNotVisible) {
+        this.client.setWait(0);
         List<UIElement> results = null;
         long startTime = System.currentTimeMillis();
         while ((System.currentTimeMillis() - startTime) < timeOut * 1000 && (results == null || results.size() == 0)) {
@@ -112,6 +113,8 @@ public class Wait {
         if (failOnNotVisible && (results == null || results.size() == 0)) {
             Assert.fail("Failed to find element: " + locator.toString());
         }
+
+        this.client.setWait(this.settings.defaultTimeout);
 
         return results;
     }
