@@ -387,7 +387,11 @@ public class UIElement {
      */
     public void dragAndDrop(int xOffset, int yOffset, int duration) {
         Point point = this.element.getLocation();
-        this.client.driver.swipe(point.getX(), point.getY(), point.getX() + xOffset, point.getY() + yOffset, duration);
+        try {
+            this.client.driver.swipe(point.getX(), point.getY(), point.getX() + xOffset, point.getY() + yOffset, duration);
+        } catch (Exception ex) {
+            // This method throws exception for api17 for Android even though it is working.
+        }
     }
 
     /**

@@ -262,7 +262,11 @@ public class Gestures {
         if (this.settings.platform == PlatformType.iOS) {
             endY = endY - startY;
         }
-        new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
+        try {
+            new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
+        } catch (Exception ex) {
+            // This method throws exception for api17 for Android even though it is working.
+        }
     }
 
     /**
