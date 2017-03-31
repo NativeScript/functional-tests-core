@@ -22,6 +22,7 @@ public abstract class ScrollableListObject {
     private int retriesCount;
     private int timeOut;
     private Predicate<? super UIElement> excludeElementsFilter;
+    private By itemSubElement;
 
     public ScrollableListObject(MobileContext context) {
         this.context = context;
@@ -52,12 +53,23 @@ public abstract class ScrollableListObject {
     }
 
     /**
-     * Set fileter of items in main container that should be count and included
+     * Set sub element that contains text of list view items if necessary
+     *
+     * @param itemSubElement
+     */
+    public void setItemSubElement(By itemSubElement) {
+        this.itemSubElement = itemSubElement;
+    }
+
+    /**
+     * Set filter of items in main container that should be included in main list
+     *
      * @param excludeElements
      */
     public void setExcludeElementsFilter(Predicate<? super UIElement> excludeElements) {
         this.excludeElementsFilter = excludeElements;
     }
+
 
     /**
      * Returns locator for all elements.
@@ -87,7 +99,11 @@ public abstract class ScrollableListObject {
         }
         listOfElements.forEach(e -> {
             Rectangle rect = e.getUIRectangle();
-            this.cashedUIElements.put(e.getText(), rect);
+            if (this.itemSubElement != null) {
+                this.cashedUIElements.put(e.findElement(this.itemSubElement).getText(), rect);
+            } else {
+                this.cashedUIElements.put(e.getText(), rect);
+            }
             this.elements.add(rect);
         });
     }
