@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Provides ability to scroll in list like control from one element to another searching for element by text.
@@ -20,6 +21,7 @@ public abstract class ScrollableListObject {
     private final java.util.List<Rectangle> elements = new ArrayList<>();
     private int retriesCount;
     private int timeOut;
+    private Predicate<? super UIElement> excludeElementsFilter;
 
     public ScrollableListObject(MobileContext context) {
         this.context = context;
@@ -29,12 +31,14 @@ public abstract class ScrollableListObject {
 
     /**
      * The container that contains all  items.
+     *
      * @return
      */
     public abstract String getMainContainerLocatorName();
 
     /**
      * Items that returns text.
+     *
      * @return
      */
     public abstract String getMainContainerItemsName();
@@ -48,7 +52,16 @@ public abstract class ScrollableListObject {
     }
 
     /**
+     * Set fileter of items in main container that should be count and included
+     * @param excludeElements
+     */
+    public void setExcludeElementsFilter(Predicate<? super UIElement> excludeElements) {
+        this.excludeElementsFilter = excludeElements;
+    }
+
+    /**
      * Returns locator for all elements.
+     *
      * @return
      */
     public By getMainContainerItemsLocator() {
@@ -64,10 +77,14 @@ public abstract class ScrollableListObject {
         }
 
         if (this.cashedUIElements != null) {
+
             this.cashedUIElements.clear();
         }
 
         java.util.List<UIElement> listOfElements = this.context.wait.forVisibleElements(this.getMainContainerItemsLocator(), this.timeOut, false);
+        if (this.excludeElementsFilter != null) {
+            listOfElements.removeIf(this.excludeElementsFilter);
+        }
         listOfElements.forEach(e -> {
             Rectangle rect = e.getUIRectangle();
             this.cashedUIElements.put(e.getText(), rect);
