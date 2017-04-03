@@ -42,10 +42,10 @@ public class Adb {
 
     private String getAvdPath() {
         String output = OSUtils.runProcess(true, 5, ANDROID_PATH + " -h");
-        if (output.toLowerCase().contains("android command is no longer available")) {
-            return AVDMANAGER_PATH;
-        } else {
+        if (output.toLowerCase().contains("usage:")) {
             return ANDROID_PATH;
+        } else {
+            return AVDMANAGER_PATH;
         }
     }
 
