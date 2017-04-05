@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -18,11 +19,13 @@ public abstract class ScrollableListObject {
     private MobileContext context;
 
     private final Map<String, Rectangle> cashedUIElements = new HashMap<>();
-    private final java.util.List<Rectangle> elements = new ArrayList<>();
+    private final java.util.List<UIElement> elements = new ArrayList<>();
     private int retriesCount;
     private int timeOut;
     private Predicate<? super UIElement> excludeElementsFilter;
     private By itemSubElement;
+
+    private Function<String, By> specificElementLocator;
 
     public ScrollableListObject(MobileContext context) {
         this.context = context;
@@ -53,7 +56,7 @@ public abstract class ScrollableListObject {
     }
 
     /**
-     * Set sub element that contains text of list view items if necessary
+     * Set sub element that contains text of list view item.
      *
      * @param itemSubElement
      */
@@ -62,14 +65,13 @@ public abstract class ScrollableListObject {
     }
 
     /**
-     * Set filter of items in main container that should be included in main list
+     * Set filter of items in main container that should be included in main list.
      *
      * @param excludeElements
      */
     public void setExcludeElementsFilter(Predicate<? super UIElement> excludeElements) {
         this.excludeElementsFilter = excludeElements;
     }
-
 
     /**
      * Returns locator for all elements.
@@ -78,6 +80,15 @@ public abstract class ScrollableListObject {
      */
     public By getMainContainerItemsLocator() {
         return By.xpath("//" + this.getMainContainerLocatorName() + "//" + this.getMainContainerItemsName());
+    }
+
+    /**
+     * Set specific locator for item in list view.
+     *
+     * @return
+     */
+    public void setSpecificElementLocator(Function<String, By> specificElementLocator) {
+        this.specificElementLocator = specificElementLocator;
     }
 
     /**
@@ -97,42 +108,63 @@ public abstract class ScrollableListObject {
         if (this.excludeElementsFilter != null) {
             listOfElements.removeIf(this.excludeElementsFilter);
         }
+
+
         listOfElements.forEach(e -> {
             Rectangle rect = e.getUIRectangle();
             if (this.itemSubElement != null) {
-                this.cashedUIElements.put(e.findElement(this.itemSubElement).getText(), rect);
+                UIElement el;
+                try {
+                    el = e.findElement(this.itemSubElement);
+                    String text = el.getText();
+                    if (!this.cashedUIElements.containsKey(text)) {
+                        this.cashedUIElements.put(text, rect);
+                    }
+                } catch (Exception ex) {
+
+                }
+
             } else {
                 this.cashedUIElements.put(e.getText(), rect);
             }
-            this.elements.add(rect);
+            this.elements.add(e);
         });
     }
 
     public Rectangle scrollTo(String example) {
-        this.loadItems();
-        Rectangle el = this.getUiElementFromCache(example);
-        int counter = 0;
-        while (el == null && counter < this.retriesCount) {
-            if (this.elements == null || this.elements.size() == 0) {
+        UIElement element = null;
+        if (this.specificElementLocator != null) {
+            element = this.context.wait.waitForVisible(this.specificElementLocator.apply(example), 2, false);
+        }
+        if (element != null) {
+            return element.getUIRectangle();
+        } else {
+            this.loadItems();
+            Rectangle el = this.getUiElementFromCache(example);
+            int counter = 0;
+            while (el == null && counter < this.retriesCount) {
+                if (this.elements == null || this.elements.size() == 0) {
+                    this.loadItems();
+                    el = this.getUiElementFromCache(example);
+                    if (el != null) {
+                        break;
+                    }
+                }
+                Rectangle firstElement = this.elements.get(0).getUIRectangle();
+                this.context.gestures.scrollTo(
+                        (int) firstElement.getWidth() / 2,
+                        (int) this.elements.get(this.elements.size() - 1).getUIRectangle().getY(),
+                        (int) firstElement.getWidth() / 2,
+                        (int) firstElement.getY());
+
                 this.loadItems();
                 el = this.getUiElementFromCache(example);
-                if (el != null) {
-                    break;
-                }
+
+                counter++;
             }
-            this.context.gestures.scrollTo(
-                    (int) this.elements.get(0).getWidth() / 2,
-                    (int) this.elements.get(this.elements.size() - 1).getY(),
-                    (int) this.elements.get(0).getWidth() / 2,
-                    (int) this.elements.get(0).getY());
 
-            this.loadItems();
-            el = this.getUiElementFromCache(example);
-
-            counter++;
+            return el;
         }
-
-        return el;
     }
 
     private Rectangle getUiElementFromCache(String key) {

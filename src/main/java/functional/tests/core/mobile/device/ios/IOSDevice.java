@@ -336,7 +336,7 @@ public class IOSDevice implements IDevice {
             if (this.settings.debug) {
                 IOSDevice.LOGGER_BASE.error("device with " + this.getId() + " not found.");
                 IOSDevice.LOGGER_BASE.info("Trying to find device!!! ");
-                this.settings.deviceId = devices.substring(devices.lastIndexOf("(") + 1, devices.lastIndexOf(")"));
+                this.settings.deviceId = devices.substring(devices.lastIndexOf("(") + 1, devices.lastIndexOf(")")).trim();
             } else {
                 String error = "device " + this.getId() + " not found.";
                 IOSDevice.LOGGER_BASE.error(error);
