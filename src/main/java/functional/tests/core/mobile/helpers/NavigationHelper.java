@@ -74,7 +74,11 @@ public class NavigationHelper {
                 return false;
             }
             if (demoBtn != null) {
-                demoBtn.tap();
+                if (mobileContext.settings.platformVersion < 10 && mobileContext.settings.platform == PlatformType.iOS) {
+                    demoBtn.click();
+                } else {
+                    demoBtn.tap();
+                }
             }
             if (rectBtn != null) {
                 LOGGER_BASE.info(demoPath);

@@ -249,7 +249,7 @@ public class Gestures {
     }
 
     /**
-     * Swipes by given swipe direction to absolute coordinates.
+     * Scrolls to absolute coordinates for Android and calculate relative coordinates for iOS.
      *
      * @param startX
      * @param startY
@@ -257,11 +257,12 @@ public class Gestures {
      * @param endY
      */
     public void scrollTo(int startX, int startY, int endX, int endY) {
-        // calculating the speed to avoid inertia
+        // Calculating the speed to avoid inertia. It is like pixel per milliseconds except for iOS9
         int duration = (startY - endY) * 10;
         if (this.settings.platform == PlatformType.iOS) {
             endY = endY - startY;
         }
+
         try {
             new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
         } catch (Exception ex) {

@@ -24,8 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * TODO(dtopuzov): Add docs for everything in this class.
@@ -61,24 +59,12 @@ public class IOSDevice implements IDevice {
         this.iosDeviceLog = new IOSDeviceLog(this.getId(), this.settings);
     }
 
-    /**
-     * Finds device uidid by device name.
-     *
-     * @param name
-     * @return
-     */
     public static String getDeviceUidid(String name) {
-        String simulatorData = OSUtils.runProcess(String.format("instruments -s | grep \"%s\"", name));
+        List<String> simulators = Simctl.getAvailableSimulatorUdidsByName(name);
 
-        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
-        Matcher matcher = pattern.matcher(simulatorData);
-        String simulatorId = "";
-        if (matcher.find()) {
-            simulatorId = matcher.group(1);
-        }
-
-        return simulatorId;
+        return simulators.size() > 0 ? simulators.get(0) : "";
     }
+
 
     @Override
     public String getName() {
@@ -375,10 +361,10 @@ public class IOSDevice implements IDevice {
 
     private void startSimulator() throws DeviceException {
         if (!this.settings.debug) {
-            this.simctl.eraseData();
+            this.simctl.eraseData(this.settings.deviceId);
         }
 
-        if (!this.simctl.checkIfSimulatorIsAlive(this.getId()) && !this.settings.reuseDevice) {
+        if (!this.simctl.checkIfSimulatorIsBooted(this.getId()) && !this.settings.reuseDevice) {
             boolean available = this.simctl.checkIfSimulatorExists(this.getName());
 
             this.settings.deviceId = this.simctl.ensureOnlyOneSimulatorExist();
@@ -390,10 +376,13 @@ public class IOSDevice implements IDevice {
             }
         }
 
-        // Verify successfully created
-        if (this.simctl.getSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
-            String error = "Simulator " + this.settings.deviceName + " does not exist. Hint: verify SDKs installed.";
-            IOSDevice.LOGGER_BASE.error(error);
+        // Verify simulator is available
+        if (Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
+            String error = String.format("Simulator %s does not exist. Hint: verify SDKs installed.%s Simulator info: %s",
+                    this.settings.deviceName,
+                    System.lineSeparator(),
+                    Simctl.getSimulatorsBy(this.settings.deviceName));
+            SystemExtension.interruptProcess(error);
             throw new DeviceException(error);
         }
     }
