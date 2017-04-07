@@ -1,8 +1,8 @@
 package functional.tests.core.mobile.device.ios;
 
 import functional.tests.core.exceptions.DeviceException;
-import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.log.LoggerBase;
+import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.FileSystem;
@@ -11,6 +11,7 @@ import functional.tests.core.utils.OSUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,9 +21,13 @@ public class Simctl {
 
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Simctl");
     private MobileSettings settings;
+    private static String xcrun = "xcrun simctl ";
+    private static String xcrunFormat = xcrun + " %s ";
+    private static String xcrunListDevices = String.format(xcrunFormat, "list devices ");
+    private static String xcrunListDevicesWithParamsFormat = xcrunListDevices + " %s ";
 
     /**
-     * TODO(): Add docs.
+     * Using to controls simulators.
      *
      * @param settings
      */
@@ -31,53 +36,108 @@ public class Simctl {
     }
 
     /**
-     * TODO(): Add docs.
+     * This will reset content and setting of emulator only if the emulator is not booted.
+     */
+    public static void eraseData(String deviceId) {
+        Simctl.LOGGER_BASE.warn("Erase data from simulator");
+        String command = String.format(xcrunFormat, "erase " + deviceId);
+        Simctl.LOGGER_BASE.warn(command);
+        OSUtils.runProcess(command);
+    }
+
+    /**
+     * Deletes simulator.
+     */
+    public static void deleteSimulator(String name) {
+        Simctl.getAvailableSimulatorUdidsByName(name).forEach(s -> {
+            LOGGER_BASE.info("Deleting " + name + " simulator with udid: " + s);
+            OSUtils.runProcess(String.format(xcrunFormat, "delete " + s));
+        });
+    }
+
+    /**
+     * Check if simulator is alive.
+     *
+     * @param deviceId
+     * @return
+     */
+    public static boolean checkIfSimulatorIsBooted(String deviceId) {
+        return Simctl.getSimulatorsBy(deviceId, "Booted").size() > 0;
+    }
+
+    /**
+     * Check if simulator already exists.
+     *
+     * @param deviceName
+     * @return
+     */
+    public static boolean checkIfSimulatorExists(String deviceName) {
+        List<String> devices = Simctl.getSimulatorsBy(deviceName);
+        return devices.size() > 0;
+    }
+
+    /**
+     * Get all devices.
+     *
+     * @param params
+     * @return
+     */
+    public static List<String> getSimulatorsBy(String... params) {
+        String paramsList = "";
+        for (String param : params) {
+            paramsList += String.format(" | grep  '%s'", param);
+        }
+
+        String command = String.format(xcrunListDevicesWithParamsFormat, paramsList);
+        String output = OSUtils.runProcess(command);
+
+        if (output.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<String> lines = Arrays.asList(output.split(System.lineSeparator()));
+        lines.removeIf(l -> l.isEmpty());
+        List<String> results = new ArrayList<>();
+        lines.forEach(l -> results.add(l.trim()));
+
+        return results;
+    }
+
+    /**
+     * Get all simulators by name.
      *
      * @param name
      * @return
      */
-    public static List<String> getSimulatorUdidsByName(String name) {
-        String command = "xcrun simctl list devices | grep " + name.replaceAll("\\s", "\\\\ ");
-        String output = OSUtils.runProcess(command);
-        String[] lines = output.split("\\r?\\n");
-        List<String> list = new ArrayList<>();
-
-        for (String line : lines) {
-            // TODO(vchimev): Rethink! If the simulator is unavailable, it means that:
-            // - runtime profile not found => test execution should exit earlier,
-            // - the simulator is broken and should be recreated.
-            if (!line.contains("unavailable") && !line.isEmpty()) {
-                String udid = line.substring(line.indexOf('(') + 1, line.indexOf(')'));
-                list.add(udid);
+    public static List<String> getAvailableSimulatorUdidsByName(String name) {
+        List<String> lines = Simctl.getSimulatorsBy(name);
+        ArrayList<String> listOfDevices = new ArrayList<>();
+        lines.forEach(l -> {
+            if (!l.contains("unavailable") && !l.isEmpty()) {
+                String udid = l.substring(l.indexOf('(') + 1, l.indexOf(')')).trim();
+                listOfDevices.add(udid);
             }
-        }
+        });
 
-        return list;
+        return listOfDevices;
     }
 
     public String ensureOnlyOneSimulatorExist() {
-        LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
-        if (Simctl.getSimulatorUdidsByName(this.settings.deviceName).size() != 1) {
+        if (Simctl.getSimulatorsBy(this.settings.deviceName).size() > 1) {
+            LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
             Simctl.deleteSimulator(this.settings.deviceName);
             return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
+        } else if (Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName).size() == 0) {
+            LOGGER_BASE.error("No simulators found with name " + this.settings.deviceName);
+            return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
         } else {
+            LOGGER_BASE.error(String.format("Ensured only single simulator %s with uidid: %s found!", this.settings.deviceName, this.settings.deviceId));
             return this.settings.deviceId;
         }
-
     }
 
     /**
-     * TODO(): Add docs.
-     */
-    public static void deleteSimulator(String name) {
-        for (String udid : Simctl.getSimulatorUdidsByName(name)) {
-            LOGGER_BASE.info("Deleting " + name + " simulator with udid: " + udid);
-            OSUtils.runProcess("xcrun simctl delete " + udid);
-        }
-    }
-
-    /**
-     * TODO(): Add docs.
+     * Creates simulator by name, type, iOS version.
      *
      * @param simulatorName
      * @param deviceType
@@ -116,7 +176,7 @@ public class Simctl {
     }
 
     /**
-     * TODO(): Add docs.
+     * Reset simulator default settings.
      */
     protected void resetSimulatorSettings() {
         if (this.settings.debug) {
@@ -144,8 +204,8 @@ public class Simctl {
      * TODO(): Add docs.
      */
     public void reinstallApp() {
-        String uninstallCommand = "xcrun simctl uninstall booted " + this.settings.packageId;
-        String installCommand = "xcrun simctl install booted " + Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName;
+        String uninstallCommand = String.format(xcrunFormat, "uninstall booted " + this.settings.packageId);
+        String installCommand = String.format(xcrunFormat, "install booted " + Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName);
         OSUtils.runProcess(uninstallCommand);
         Wait.sleep(250);
         OSUtils.runProcess(installCommand);
@@ -153,58 +213,4 @@ public class Simctl {
         LOGGER_BASE.info(this.settings.packageId + " re installed.");
     }
 
-    /**
-     * This will reset content and setting of emulator only if the emulator is not booted.
-     */
-    public void eraseData() {
-        Simctl.LOGGER_BASE.warn("Erase data from simulator");
-        String command = "xcrun simctl erase " + this.settings.deviceId;
-        Simctl.LOGGER_BASE.warn(command);
-        OSUtils.runProcess(command);
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param deviceId
-     * @return
-     */
-    public boolean checkIfSimulatorIsAlive(String deviceId) {
-        String rowDevices = OSUtils.runProcess("instruments -s | grep Booted");
-        String[] deviceList = rowDevices.split("\\r?\\n");
-
-        boolean found = false;
-        for (String device : deviceList) {
-            if (device.contains("iP")) {
-                LOGGER_BASE.debug(device);
-            }
-            if (device.contains(this.settings.deviceName)) {
-                found = true;
-            }
-        }
-
-        return found;
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param deviceName
-     * @return
-     */
-    public boolean checkIfSimulatorExists(String deviceName) {
-        String rowDevices = OSUtils.runProcess("instruments -s");
-        String[] deviceList = rowDevices.split("\\r?\\n");
-
-        boolean found = false;
-        for (String device : deviceList) {
-            if (device.contains("iP")) {
-                LOGGER_BASE.debug(device);
-            }
-            if (device.contains(this.settings.deviceName)) {
-                found = true;
-            }
-        }
-        return found;
-    }
 }
