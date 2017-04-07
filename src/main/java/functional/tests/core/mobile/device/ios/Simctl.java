@@ -167,7 +167,7 @@ public class Simctl {
                 if (line.contains("-")) {
                     udid = line.trim();
                 }
-                this.settings.deviceId = udid;
+                this.settings.deviceId = udid.trim();
                 Simctl.LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
             }
         }
