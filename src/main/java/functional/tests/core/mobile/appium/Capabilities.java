@@ -54,7 +54,7 @@ public class Capabilities {
         }
 
         if (settings.isRealDevice == true) {
-            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId);
+            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
 
         capabilities.setCapability(MobileCapabilityType.APP,
@@ -115,7 +115,7 @@ public class Capabilities {
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
-            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId);
+            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
 
         if (settings.isRealDevice) {

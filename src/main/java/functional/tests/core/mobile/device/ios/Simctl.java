@@ -172,7 +172,7 @@ public class Simctl {
             }
         }
 
-        return output;
+        return output.trim();
     }
 
     /**
