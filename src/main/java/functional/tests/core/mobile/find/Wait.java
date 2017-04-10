@@ -90,19 +90,8 @@ public class Wait {
                     results.removeIf(uiElement -> !uiElement.isDisplayed());
 
                     if (this.settings.platform == PlatformType.Android) {
-                        if (results.size() == 1) {
-                            if (!results.get(0).isVisible()) {
-                                results.remove(results.get(0));
-                            }
-                        } else {
-                            if (!results.get(0).isVisible()) {
-                                results.remove(results.get(0));
-                            }
-                            if (!results.get(results.size() - 1).isVisible()) {
-                                results.remove(results.get(results.size() - 1));
-                            }
-                        }
-                    } else {
+                        removeNotVisibleElementsFromHead(results);
+                        removeNotVisibleElementsFromTail(results);
                     }
                 }
             } catch (Exception e) {
@@ -167,5 +156,17 @@ public class Wait {
 
     public boolean waitForNotVisible(By locator) {
         return this.waitForNotVisible(locator, this.settings.shortTimeout, true);
+    }
+
+    private static void removeNotVisibleElementsFromTail(List<UIElement> elements) {
+        while (elements.size() > 0 && !elements.get(elements.size() - 1).isVisible()) {
+            elements.remove(elements.get(elements.size() - 1));
+        }
+    }
+
+    private static void removeNotVisibleElementsFromHead(List<UIElement> elements) {
+        while (elements.size() > 0 && !elements.get(0).isVisible()) {
+            elements.remove(0);
+        }
     }
 }
