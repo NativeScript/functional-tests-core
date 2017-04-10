@@ -123,11 +123,12 @@ public class Simctl {
     }
 
     public String ensureOnlyOneSimulatorExist() {
-        if (Simctl.getSimulatorsBy(this.settings.deviceName).size() > 1) {
+        List<String> simulators = Simctl.getSimulatorsBy(this.settings.deviceName);
+        if (simulators.size() > 1) {
             LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
             Simctl.deleteSimulator(this.settings.deviceName);
             return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
-        } else if (Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName).size() == 0) {
+        } else if (simulators.size() == 0) {
             LOGGER_BASE.error("No simulators found with name " + this.settings.deviceName);
             return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
         } else {

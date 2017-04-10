@@ -367,24 +367,25 @@ public class IOSDevice implements IDevice {
         if (!this.simctl.checkIfSimulatorIsBooted(this.getId()) && !this.settings.reuseDevice) {
             boolean available = this.simctl.checkIfSimulatorExists(this.getName());
 
-            this.settings.deviceId = this.simctl.ensureOnlyOneSimulatorExist();
-
             if (!available) {
                 if (String.valueOf(this.settings.platformVersion).contains("9")) {
                     this.simctl.resetSimulatorSettings();
                 }
             }
+
+            this.settings.deviceId = this.simctl.ensureOnlyOneSimulatorExist();
         }
 
         // Verify simulator is available
-        if (Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName).size() == 0) {
+        List<String> simulators = Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName);
+        if (simulators.size() == 0) {
             String error = String.format("Simulator %s does not exist. Hint: verify SDKs installed.%s Simulator info: %s",
                     this.settings.deviceName,
                     System.lineSeparator(),
                     Simctl.getSimulatorsBy(this.settings.deviceName));
             SystemExtension.interruptProcess(error);
             throw new DeviceException(error);
-        } else if (Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName).size() > 2) {
+        } else if (simulators.size() > 2) {
             String error = String.format("Found more simulator with name: %s",
                     this.settings.deviceName,
                     System.lineSeparator(),
