@@ -147,12 +147,21 @@ public class Simctl {
      */
     public String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
         LOGGER_BASE.info("Create simulator with following command:");
-        String command = "xcrun simctl create \"" + simulatorName +
-                "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") +
-                "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
+//        String command = "xcrun simctl create \"" + simulatorName +
+//                "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") +
+//                "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
 
-        LOGGER_BASE.info(command);
-        String output = OSUtils.runProcess(command);
+
+        String deviceTypeNameSpace = deviceType.trim().replace(" ", "-");
+        String iOSVersionParsed = iOSVersion.trim().replace(".", "-");
+        String createSimulatorCommand = String.format(
+                "xcrun simctl create '%s' 'com.apple.CoreSimulator.SimDeviceType.%s' 'com.apple.CoreSimulator.SimRuntime.iOS-%s'",
+                simulatorName,
+                deviceTypeNameSpace,
+                iOSVersionParsed);
+
+        LOGGER_BASE.info(createSimulatorCommand);
+        String output = OSUtils.runProcess(createSimulatorCommand);
 
         if (output.toLowerCase().contains("error") || output.toLowerCase().contains("invalid")) {
             Simctl.LOGGER_BASE.fatal("Failed to create simulator. Error: " + output);
