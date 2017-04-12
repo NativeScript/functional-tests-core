@@ -1,13 +1,16 @@
 package functional.tests.core.log;
 
-import functional.tests.core.mobile.appium.Client;
-import functional.tests.core.mobile.basetest.MobileSetupManager;
-import functional.tests.core.mobile.device.Device;
+import functional.tests.core.enums.DeviceType;
 import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.image.ImageUtils;
 import functional.tests.core.image.ImageVerificationResult;
+import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.mobile.device.Device;
+import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.FileSystem;
+import functional.tests.core.utils.OSUtils;
 import org.testng.Reporter;
 
 import java.io.File;
@@ -33,6 +36,18 @@ public class Log {
      * TODO(): Add docs.
      */
     public Log() {
+    }
+
+    /**
+     * Takes screenshot of display.
+     *
+     * @param settings
+     * @param fileName
+     */
+    public static void logScreenOfHost(MobileSettings settings, String fileName) {
+        if ((settings.deviceType == DeviceType.Simulator) || (settings.deviceType == DeviceType.Emulator)) {
+            OSUtils.getScreenshot("HostOS_" + fileName, settings);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package functional.tests.core.mobile.appium;
 
 import functional.tests.core.enums.PlatformType;
+import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.IDevice;
 import functional.tests.core.mobile.find.Wait;
@@ -69,7 +70,6 @@ public class Client {
                 this.driver = new AndroidDriver<>(this.server.service.getUrl(), capabilities);
             } catch (Exception e) {
                 LOGGER_BASE.fatal(e.getMessage());
-                throw e;
             }
         }
 
@@ -81,8 +81,6 @@ public class Client {
                 this.driver = new IOSDriver<>(this.server.service.getUrl(), capabilities);
             } catch (Exception e) {
                 LOGGER_BASE.fatal(e.getMessage());
-
-                throw e;
             }
         }
 
@@ -93,6 +91,8 @@ public class Client {
         } else {
             String error = "Appium client failed to start!";
             LOGGER_BASE.fatal(error);
+            Log.logScreenOfHost(this.settings, "failed to start appium driver");
+
             throw new RuntimeException(error);
         }
     }

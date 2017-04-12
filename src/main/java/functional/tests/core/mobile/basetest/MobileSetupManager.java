@@ -1,6 +1,5 @@
 package functional.tests.core.mobile.basetest;
 
-import functional.tests.core.enums.DeviceType;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.image.ImageUtils;
@@ -18,7 +17,6 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
-import functional.tests.core.utils.OSUtils;
 import org.testng.ITestResult;
 
 import java.io.IOException;
@@ -149,7 +147,7 @@ public class MobileSetupManager {
         try {
             this.context.server.initServer();
         } catch (Exception ex) {
-            this.takeScreenOfHost("Host_Fail_to_Init_Server");
+            Log.logScreenOfHost(this.settings, "Host_Fail_to_Init_Server");
             hasInit = false;
         }
 
@@ -162,7 +160,7 @@ public class MobileSetupManager {
     public void restartServer() {
         // TODO(dtopuzov): It looks this need improvements.
         this.checkLogsForCrash();
-        this.takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session");
+        Log.logScreenOfHost(this.settings, "HostOS_Failed_To_Init_Appium_Session");
         LOGGER_BASE.info("Retry initializing appium server and client");
         this.context.settings.appiumLogLevel = "debug";
         this.context.settings.deviceBootTimeout = this.context.settings.deviceBootTimeout * 2;
@@ -182,7 +180,7 @@ public class MobileSetupManager {
             this.initServer();
         } catch (Exception re) {
             try {
-                this.takeScreenOfHost("HostOS_Failed_To_Init_Appium_Session_After_Retry");
+                Log.logScreenOfHost(this.settings, "HostOS_Failed_To_Init_Appium_Session_After_Retry");
                 String log = this.context.server.service.getStdOut();
                 if (log != null) {
                     LOGGER_BASE.separator();
@@ -233,7 +231,7 @@ public class MobileSetupManager {
             this.startDevice();
         } catch (Exception e2) {
             this.context.log.logScreen("Emulator", this.context.settings.packageId + " failed at startup.");
-            this.takeScreenOfHost("HostOS");
+            Log.logScreenOfHost(this.settings, "HostOS");
         }
     }
 
@@ -248,7 +246,7 @@ public class MobileSetupManager {
         try {
             this.context.device.start();
         } catch (Exception ex) {
-            this.takeScreenOfHost("onStartDevice");
+            Log.logScreenOfHost(this.settings, "onStartDevice");
         }
     }
 
@@ -283,17 +281,6 @@ public class MobileSetupManager {
         } else if (previousTestStatus == ITestResult.FAILURE) {
             this.context.log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             this.context.log.saveXmlTree(testCase + "_VisualTree.xml");
-        }
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param fileName
-     */
-    protected void takeScreenOfHost(String fileName) {
-        if ((this.context.settings.deviceType == DeviceType.Simulator) || (this.context.settings.deviceType == DeviceType.Emulator)) {
-            OSUtils.getScreenshot("HostOS_" + fileName, this.context.settings);
         }
     }
 
