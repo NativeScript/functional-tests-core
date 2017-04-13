@@ -83,12 +83,6 @@ public class IOSDevice implements IDevice {
 
     @Override
     public IDevice start() throws DeviceException {
-
-        // Stop simulators if reuseDevice=false
-        if (!this.settings.reuseDevice && !this.settings.debug) {
-            this.stop();
-        }
-
         // Simulator
         if (this.getType() == DeviceType.Simulator) {
             this.startSimulator();
@@ -360,13 +354,13 @@ public class IOSDevice implements IDevice {
     }
 
     private void startSimulator() throws DeviceException {
-        if (!this.settings.debug) {
+        if (!this.settings.reuseDevice && !this.settings.debug) {
+            this.stop();
             this.simctl.eraseData(this.settings.deviceId);
         }
 
-        if (!this.simctl.checkIfSimulatorIsBooted(this.getId()) && !this.settings.reuseDevice) {
+        if (!this.simctl.checkIfSimulatorIsBooted(this.getId())) {
             boolean available = this.simctl.checkIfSimulatorExists(this.getName());
-
             if (!available) {
                 if (String.valueOf(this.settings.platformVersion).contains("9")) {
                     this.simctl.resetSimulatorSettings();
