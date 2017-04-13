@@ -1,14 +1,14 @@
 package functional.tests.core.image;
 
-import functional.tests.core.mobile.basetest.MobileContext;
-import functional.tests.core.mobile.basetest.MobileSetupManager;
-import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.enums.ImageVerificationType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.exceptions.ImageVerificationException;
-import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
+import functional.tests.core.mobile.basetest.MobileContext;
+import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.mobile.element.UIElement;
+import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.FileSystem;
 import org.testng.Assert;

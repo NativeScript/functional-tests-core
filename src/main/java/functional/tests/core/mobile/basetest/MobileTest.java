@@ -50,7 +50,7 @@ public abstract class MobileTest {
     private int imageCounter = 1;
     private int defaultWaitTime = 1000;
     private int maxPixelTolerance = Integer.MAX_VALUE;
-    private double minPercentTolerant = 0.001D;
+    private double minPercentTolerant = 0.003D;
     private boolean firstTest;
     private Map<String, Boolean> imagesResults;
     private Sikuli sikuliImageProcessing;
