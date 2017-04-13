@@ -84,8 +84,6 @@ public abstract class ScrollableListObject {
 
     /**
      * Set specific locator for item in list view.
-     *
-     * @return
      */
     public void setSpecificElementLocator(Function<String, By> specificElementLocator) {
         this.specificElementLocator = specificElementLocator;
