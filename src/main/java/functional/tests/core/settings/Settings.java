@@ -32,6 +32,7 @@ public class Settings {
     public static OSType os;
     public String baseLogDir;
     public String consoleLogDir;
+    public String perfDir;
     public String screenshotOutDir;
     public String screenshotResDir;
     public String baseOutputDir;
@@ -124,6 +125,7 @@ public class Settings {
         LOGGER_BASE.info("Device Boot Time: " + this.deviceBootTimeout);
         LOGGER_BASE.info("TestApp Name: " + this.testAppName);
         LOGGER_BASE.info("Log Output Folder: " + this.baseLogDir);
+        LOGGER_BASE.info("Performance Folder: " + this.perfDir);
         LOGGER_BASE.info("Screenshot Output Folder: " + this.screenshotOutDir);
         LOGGER_BASE.info("Screenshot Resources Folder: " + this.screenshotResDir);
         LOGGER_BASE.info("Debug: " + this.debug);
@@ -133,7 +135,7 @@ public class Settings {
     /**
      * Helper method that converts property to int.
      *
-     * @param property as String.
+     * @param property     as String.
      * @param defaultValue of property as int.
      * @return Value of property as int.
      */
@@ -172,6 +174,7 @@ public class Settings {
     public void setupLocations() {
         this.baseLogDir = this.baseOutputDir + File.separator + "logs";
         this.consoleLogDir = this.baseLogDir + File.separator + "console";
+        this.perfDir = this.getStorage() + File.separator + "perf";
         this.screenshotOutDir = this.baseOutputDir + File.separator + "screenshots";
         this.screenshotResDir = this.getStorage() + File.separator + "images";
 

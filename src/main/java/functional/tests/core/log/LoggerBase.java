@@ -1,6 +1,7 @@
 package functional.tests.core.log;
 
 import functional.tests.core.mobile.basetest.MobileSetupManager;
+import functional.tests.core.utils.OSUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -8,7 +9,6 @@ import org.testng.Reporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 /**
@@ -78,10 +78,7 @@ public class LoggerBase {
      * @return
      */
     public static String formatLoggerMessage(String msg, String level) {
-        java.util.Date date = new java.util.Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-        String timestamp = sdf.format(date);
-        return String.format("%s %s - %s", timestamp, level, msg);
+        return String.format("%s %s - %s", OSUtils.getTimestamp(), level, msg);
     }
 
     /**

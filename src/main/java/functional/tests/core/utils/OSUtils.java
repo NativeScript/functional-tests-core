@@ -10,7 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -227,5 +231,31 @@ public class OSUtils {
         }
 
         return null;
+    }
+
+    /**
+     * Get timestamp.
+     *
+     * @return timestamp.
+     */
+    public static String getTimestamp() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    /**
+     * Get local hostname.
+     *
+     * @return hostname.
+     */
+    public static String getHostName() {
+        String hostname = "Unknown";
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+            LOGGER_BASE.info("Hostname can not be resolved!");
+        }
+        return hostname;
     }
 }
