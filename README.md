@@ -1,3 +1,5 @@
+This is a test.
+
 # Functional Tests - Core Framework
 
 General purpose automation framework for native mobile apps based on [Appium][Appium Web].
