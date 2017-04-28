@@ -52,6 +52,17 @@ public class FileSystem {
     }
 
     /**
+     * Append content of String to file.
+     *
+     * @param filePath File path as String.
+     * @param text     Content to be written in file.
+     * @throws IOException When fail to write in file.
+     */
+    public static void appendFile(String filePath, String text) throws IOException {
+        FileUtils.writeStringToFile(new File(filePath), text, true);
+    }
+
+    /**
      * Write content of String to file.
      *
      * @param filePath File path as String.

@@ -26,11 +26,11 @@ import java.util.concurrent.TimeoutException;
 public class AndroidDevice implements IDevice {
 
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("AndroidDevice");
+    public int maxUsedMemory = -1;
+    public int appLaunchTime = -1;
     private Client client;
     private Adb adb;
     private MobileSettings settings;
-    public int maxUsedMemory = -1;
-    public int appLaunchTime = -1;
 
 
     /**
@@ -43,6 +43,26 @@ public class AndroidDevice implements IDevice {
         this.client = client;
         this.settings = settings;
         this.adb = new Adb(this.settings);
+    }
+
+    /**
+     * Generates device id for emulators based on Android version.
+     * <p>
+     * Algorithm:
+     * Main port is 5 next two numbers comes from platform version and last one is like minor version * 2.
+     *
+     * @param platformVersion Android version (for example 6.0).
+     * @return Device id (for example emulator-5600).
+     */
+    public static String generateDeviceId(double platformVersion) {
+        // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
+        String mainPort = "5";
+        String platformVersionString = platformVersion + "";
+        String port = String.format("emulator-%s%s", mainPort, platformVersionString.replace(".", ""));
+        int platformVersionMinor = (int) ((platformVersion - (int) platformVersion) * 10);
+        int endPort = platformVersionMinor * 2;
+        port += endPort + "";
+        return port;
     }
 
     @Override
@@ -356,28 +376,55 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void logPerfInfo() throws IOException {
-        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName;
-        String appSize = String.valueOf(FileSystem.getFileSize(appPath));
+        String fileName = "perfInfo.csv";
+        String localFilePath = this.settings.baseLogDir + File.separator + fileName;
+        String storageFilePath = this.getPerfFolderPath() + File.separator + fileName;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(OSUtils.getTimestamp() + ",");
+        sb.append(OSUtils.getHostName() + ",");
+        sb.append(this.maxUsedMemory + ",");
+        sb.append(this.appLaunchTime + ",");
+        sb.append(this.getAppSize() + '\n');
 
         LOGGER_BASE.info("Maximum used memory: " + this.maxUsedMemory);
         LOGGER_BASE.info("Application launch time: " + this.appLaunchTime);
-        LOGGER_BASE.info("Application size: " + appSize);
-        StringBuilder sb = new StringBuilder();
-        sb.append("Memory");
-        sb.append(",");
-        sb.append("Launch");
-        sb.append(",");
-        sb.append("AppSize");
-        sb.append('\n');
-        sb.append(this.maxUsedMemory);
-        sb.append(",");
-        sb.append(this.appLaunchTime);
-        sb.append(",");
-        sb.append(appSize);
-        sb.append('\n');
+        LOGGER_BASE.info("Application size: " + this.getAppSize());
+
         String perfInfoLog = sb.toString();
-        String filePath = this.settings.baseLogDir + File.separator + "perfInfo.csv";
-        FileSystem.writeFile(filePath, perfInfoLog);
+        String rowHeader = "Timestamp,Hostname,Memory,Launch,AppSize" + System.lineSeparator();
+
+        // local file
+        FileSystem.writeFile(localFilePath, rowHeader + perfInfoLog);
+
+        // storage file
+        if (FileSystem.exist(storageFilePath)) {
+            FileSystem.appendFile(storageFilePath, perfInfoLog);
+        } else {
+            FileSystem.writeFile(storageFilePath, rowHeader + perfInfoLog);
+        }
+    }
+
+    /**
+     * Get file size of the aplication.
+     *
+     * @return File size of the application in kB.
+     */
+    private String getAppSize() {
+        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName;
+        return String.valueOf(FileSystem.getFileSize(appPath));
+    }
+
+    /**
+     * Get perf folder path.
+     *
+     * @return path to perf folder for current application. For example: $STORAGE/perf/uitests/Emulator-Api23-Default
+     */
+    private String getPerfFolderPath() {
+        String perfFolderPath = this.settings.perfDir + File.separator + this.settings.testAppImageFolder + File.separator + this.settings.deviceName;
+        LOGGER_BASE.debug("Perf folder path: " + perfFolderPath);
+        FileSystem.ensureFolderExists(perfFolderPath);
+        return perfFolderPath;
     }
 
     /**
@@ -388,26 +435,6 @@ public class AndroidDevice implements IDevice {
      */
     public void startActivity(String appPackage, String appActivity) {
         ((AndroidDriver) this.client.driver).startActivity(appPackage, appActivity);
-    }
-
-    /**
-     * Generates device id for emulators based on Android version.
-     * <p>
-     * Algorithm:
-     * Main port is 5 next two numbers comes from platform version and last one is like minor version * 2.
-     *
-     * @param platformVersion Android version (for example 6.0).
-     * @return Device id (for example emulator-5600).
-     */
-    public static String generateDeviceId(double platformVersion) {
-        // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
-        String mainPort = "5";
-        String platformVersionString = platformVersion + "";
-        String port = String.format("emulator-%s%s", mainPort, platformVersionString.replace(".", ""));
-        int platformVersionMinor = (int) ((platformVersion - (int) platformVersion) * 10);
-        int endPort = platformVersionMinor * 2;
-        port += endPort + "";
-        return port;
     }
 
     private void startEmulator() throws DeviceException, TimeoutException {
