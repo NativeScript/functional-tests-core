@@ -376,29 +376,33 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void logPerfInfo() throws IOException {
-        String fileName = "perfInfo.csv";
-        String localFilePath = this.settings.baseLogDir + File.separator + fileName;
-        String storageFilePath = this.settings.perfDir + File.separator + fileName;
+        if (this.settings.isRealDevice) {
+            String fileName = "perfInfo.csv";
+            String localFilePath = this.settings.baseLogDir + File.separator + fileName;
+            String storageFilePath = this.settings.perfDir + File.separator + fileName;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(OSUtils.getTimestamp() + ",");
-        sb.append(OSUtils.getHostName() + ",");
-        sb.append(this.maxUsedMemory + ",");
-        sb.append(this.appLaunchTime + ",");
-        sb.append(this.getAppSize() + '\n');
+            StringBuilder sb = new StringBuilder();
+            sb.append(OSUtils.getTimestamp() + ",");
+            sb.append(OSUtils.getHostName() + ",");
+            sb.append(this.maxUsedMemory + ",");
+            sb.append(this.appLaunchTime + ",");
+            sb.append(this.getAppSize() + '\n');
 
-        LOGGER_BASE.info("Maximum used memory: " + this.maxUsedMemory);
-        LOGGER_BASE.info("Application launch time: " + this.appLaunchTime);
-        LOGGER_BASE.info("Application size: " + this.getAppSize());
+            LOGGER_BASE.info("Maximum used memory: " + this.maxUsedMemory);
+            LOGGER_BASE.info("Application launch time: " + this.appLaunchTime);
+            LOGGER_BASE.info("Application size: " + this.getAppSize());
 
-        String perfInfoLog = sb.toString();
-        String rowHeader = "Timestamp,Hostname,Memory,Launch,AppSize" + System.lineSeparator();
+            String perfInfoLog = sb.toString();
+            String rowHeader = "Timestamp,Hostname,Memory,Launch,AppSize" + System.lineSeparator();
 
-        // local file
-        FileSystem.writeCsvFile(localFilePath, perfInfoLog, rowHeader);
+            // local file
+            FileSystem.writeCsvFile(localFilePath, perfInfoLog, rowHeader);
 
-        // storage file
-        FileSystem.writeCsvFile(storageFilePath, perfInfoLog, rowHeader);
+            // storage file
+            FileSystem.writeCsvFile(storageFilePath, perfInfoLog, rowHeader);
+        } else {
+            LOGGER_BASE.info("Do not log perf info for emulators.");
+        }
     }
 
     /**
