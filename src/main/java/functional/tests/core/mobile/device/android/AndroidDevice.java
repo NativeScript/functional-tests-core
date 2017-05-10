@@ -378,7 +378,7 @@ public class AndroidDevice implements IDevice {
     public void logPerfInfo() throws IOException {
         String fileName = "perfInfo.csv";
         String localFilePath = this.settings.baseLogDir + File.separator + fileName;
-        String storageFilePath = this.getPerfFolderPath() + File.separator + fileName;
+        String storageFilePath = this.settings.perfDir + File.separator + fileName;
 
         StringBuilder sb = new StringBuilder();
         sb.append(OSUtils.getTimestamp() + ",");
@@ -395,14 +395,10 @@ public class AndroidDevice implements IDevice {
         String rowHeader = "Timestamp,Hostname,Memory,Launch,AppSize" + System.lineSeparator();
 
         // local file
-        FileSystem.writeFile(localFilePath, rowHeader + perfInfoLog);
+        FileSystem.writeCsvFile(localFilePath, perfInfoLog, rowHeader);
 
         // storage file
-        if (FileSystem.exist(storageFilePath)) {
-            FileSystem.appendFile(storageFilePath, perfInfoLog);
-        } else {
-            FileSystem.writeFile(storageFilePath, rowHeader + perfInfoLog);
-        }
+        FileSystem.writeCsvFile(storageFilePath, perfInfoLog, rowHeader);
     }
 
     /**
@@ -413,18 +409,6 @@ public class AndroidDevice implements IDevice {
     private String getAppSize() {
         String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName;
         return String.valueOf(FileSystem.getFileSize(appPath));
-    }
-
-    /**
-     * Get perf folder path.
-     *
-     * @return path to perf folder for current application. For example: $STORAGE/perf/uitests/Emulator-Api23-Default
-     */
-    private String getPerfFolderPath() {
-        String perfFolderPath = this.settings.perfDir + File.separator + this.settings.testAppImageFolder + File.separator + this.settings.deviceName;
-        LOGGER_BASE.debug("Perf folder path: " + perfFolderPath);
-        FileSystem.ensureFolderExists(perfFolderPath);
-        return perfFolderPath;
     }
 
     /**

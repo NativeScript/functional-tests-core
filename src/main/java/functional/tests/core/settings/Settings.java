@@ -125,7 +125,7 @@ public class Settings {
         LOGGER_BASE.info("Device Boot Time: " + this.deviceBootTimeout);
         LOGGER_BASE.info("TestApp Name: " + this.testAppName);
         LOGGER_BASE.info("Log Output Folder: " + this.baseLogDir);
-        LOGGER_BASE.info("Performance Folder: " + this.perfDir);
+        LOGGER_BASE.info("config.perfapp Folder: " + this.perfDir);
         LOGGER_BASE.info("Screenshot Output Folder: " + this.screenshotOutDir);
         LOGGER_BASE.info("Screenshot Resources Folder: " + this.screenshotResDir);
         LOGGER_BASE.info("Debug: " + this.debug);

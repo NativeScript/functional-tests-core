@@ -117,6 +117,11 @@ public class MobileSettings extends Settings {
         return this.android;
     }
 
+    private void getPerfStorage() {
+        this.perfDir = this.perfDir + File.separator + this.testAppFriendlyName + File.separator + this.deviceName;
+        loggerBase.info("Performance storage for device: " + this.perfDir);
+    }
+
     /**
      * Init iOS specific settings.
      *
@@ -210,6 +215,8 @@ public class MobileSettings extends Settings {
             loggerBase = LoggerBase.getLogger("IOSSettings");
             this.ios = this.initSettingsIOS();
         }
+
+        this.getPerfStorage();
 
         loggerBase.info("Platform Version: " + this.platformVersion);
         loggerBase.info("Device Type: " + this.deviceType);
