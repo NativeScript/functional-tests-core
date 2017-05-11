@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 /**
@@ -21,15 +22,21 @@ import java.util.Properties;
  */
 public class Settings {
 
-    public static final int DEFAULT_TAP_DURATION = 250;
     protected static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Settings");
     protected static final String APP_CONFIG_PATH = System.getProperty("appConfig");
     protected static final String STORAGE_ENVIRONMENT_VARIABLE = "STORAGE";
     protected static final String USER_DIR = System.getProperty("user.dir");
+
+    public static final int DEFAULT_TAP_DURATION = 250;
     public static final String BASE_RESOURCE_DIR = USER_DIR + File.separator + "resources";
     public static final String BASE_TEST_DATA_DIR = BASE_RESOURCE_DIR + File.separator + "testdata";
     public static final String BASE_TEST_APP_DIR = USER_DIR + File.separator + "testapp";
     public static OSType os;
+
+    protected Properties properties;
+
+    public final String buildRunStartupTime = new SimpleDateFormat("dd MM yyyy HH:mm:ss").format(System.currentTimeMillis());
+
     public String baseLogDir;
     public String consoleLogDir;
     public String perfDir;
@@ -49,7 +56,6 @@ public class Settings {
     public PlatformType platform;
     public ImageVerificationType imageVerificationType;
     public LoggerBase log;
-    protected Properties properties;
 
     /**
      * Init settings.
@@ -125,7 +131,7 @@ public class Settings {
         LOGGER_BASE.info("Device Boot Time: " + this.deviceBootTimeout);
         LOGGER_BASE.info("TestApp Name: " + this.testAppName);
         LOGGER_BASE.info("Log Output Folder: " + this.baseLogDir);
-        LOGGER_BASE.info("config.perfapp Folder: " + this.perfDir);
+        LOGGER_BASE.info("Perfapp Folder: " + this.perfDir);
         LOGGER_BASE.info("Screenshot Output Folder: " + this.screenshotOutDir);
         LOGGER_BASE.info("Screenshot Resources Folder: " + this.screenshotResDir);
         LOGGER_BASE.info("Debug: " + this.debug);

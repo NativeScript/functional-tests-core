@@ -382,7 +382,7 @@ public class AndroidDevice implements IDevice {
             String storageFilePath = this.settings.perfDir + File.separator + fileName;
 
             StringBuilder sb = new StringBuilder();
-            sb.append(OSUtils.getTimestamp() + ",");
+            sb.append(this.settings.buildRunStartupTime + ",");
             sb.append(OSUtils.getHostName() + ",");
             sb.append(this.maxUsedMemory + ",");
             sb.append(this.appLaunchTime + ",");
