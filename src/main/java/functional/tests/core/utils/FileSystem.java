@@ -92,12 +92,6 @@ public class FileSystem {
     public static void ensureFolderExists(String directory) {
         File file = new File(directory);
         if (!file.exists()) {
-            if (file.isDirectory()) {
-                file.mkdirs();
-            }
-            if (file.isFile()){
-                new File(file.getParent()).mkdirs();
-            }
             boolean result = file.mkdirs();
             if (!result) {
                 LOGGER_BASE.error("Failed to create folder: " + directory);
@@ -124,17 +118,14 @@ public class FileSystem {
     }
 
     public static void writeCsvFile(String storageFilePath, String log, String header) {
+        FileSystem.ensureFolderExists(new File(storageFilePath).getParent());
 
-        FileSystem.ensureFolderExists(storageFilePath);
-        // storage file
         try {
             if (FileSystem.exist(storageFilePath)) {
-                FileSystem.appendFile(storageFilePath, log);
-
+                FileSystem.appendFile(storageFilePath, System.lineSeparator() + log);
             } else {
-                if (header != null && header != "") {
-                    FileSystem.writeFile(storageFilePath, header + log);
-                }
+                String content = header + System.lineSeparator() + log;
+                FileSystem.writeFile(storageFilePath, content);
             }
         } catch (IOException e) {
             e.printStackTrace();
