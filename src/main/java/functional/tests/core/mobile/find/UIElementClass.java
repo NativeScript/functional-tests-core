@@ -283,6 +283,14 @@ public class UIElementClass {
         }
     }
 
+    public String linearLayoutCompatLocator() {
+        if (this.settings.platform == PlatformType.Android) {
+            return "android.support.v7.widget.LinearLayoutCompat";
+        } else {
+            return null;
+        }
+    }
+
     private String createIosElement(String element) {
         String xCUIElementType = "XCUIElementType";
         String uIA = "UIA";
