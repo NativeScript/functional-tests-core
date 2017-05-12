@@ -59,6 +59,7 @@ public class FileSystem {
      * @throws IOException When fail to write in file.
      */
     public static void appendFile(String filePath, String text) throws IOException {
+        LOGGER_BASE.info(filePath);
         FileUtils.writeStringToFile(new File(filePath), text, true);
     }
 
@@ -70,6 +71,7 @@ public class FileSystem {
      * @throws IOException When fail to write in file.
      */
     public static void writeFile(String filePath, String text) throws IOException {
+        LOGGER_BASE.info(filePath);
         FileUtils.writeStringToFile(new File(filePath), text);
     }
 
