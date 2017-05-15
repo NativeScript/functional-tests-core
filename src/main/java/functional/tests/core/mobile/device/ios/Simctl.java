@@ -192,7 +192,7 @@ public class Simctl {
         if (this.settings.debug) {
             LOGGER_BASE.info("[Debug mode] Do not reset sim settings.");
         } else {
-            String path = this.settings.screenshotResDir + File.separator + this.settings.testAppImageFolder;
+            String path = this.settings.screenshotResDir + File.separator + this.settings.testAppName;
             if (FileSystem.exist(path)) {
                 LOGGER_BASE.info("This test run will compare images. Reset simulator zoom.");
                 try {

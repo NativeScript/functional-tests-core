@@ -71,10 +71,10 @@ public class MobileSettings extends Settings {
         }
         loggerBase.info("Device Id: " + this.deviceId);
 
-        // Set testAppImageFolder
-        String testAppName = this.testAppFileName.toLowerCase().replace("-release", "");
-        this.testAppImageFolder = this.testAppFileName.substring(0, testAppName.indexOf(".")).toLowerCase();
-        loggerBase.info("TestApp Images Folder: " + this.testAppImageFolder);
+        // Set testAppName
+        String name = this.testAppFileName.toLowerCase().replace("-release", "");
+        this.testAppName = this.testAppFileName.substring(0, name.indexOf(".")).toLowerCase();
+        loggerBase.info("TestApp Name: " + this.testAppName);
 
         this.packageId = this.aapt.getPackage();
         loggerBase.info("TestApp Package Id: " + this.packageId);
@@ -117,8 +117,11 @@ public class MobileSettings extends Settings {
         return this.android;
     }
 
-    private void getPerfStorage() {
-        this.perfDir = this.perfDir + File.separator + this.testAppImageFolder + File.separator + this.deviceName;
+    /**
+     * Set the performance storage.
+     */
+    private void setPerfStorage() {
+        this.perfDir = this.perfDir + File.separator + this.testAppName + File.separator + this.deviceName;
         loggerBase.info("Performance storage for device: " + this.perfDir);
     }
 
@@ -146,7 +149,7 @@ public class MobileSettings extends Settings {
             this.isRealDevice = false;
             this.ios.testAppArchive = this.properties.getProperty("testAppArchive");
             loggerBase.info("TestApp Archive: " + this.ios.testAppArchive);
-            this.testAppImageFolder = this.ios.testAppArchive.substring(0, this.ios.testAppArchive.indexOf("."));
+            this.testAppName = this.ios.testAppArchive.substring(0, this.ios.testAppArchive.indexOf("."));
             this.ios.simulatorType = this.properties.getProperty("simulatorType");
             loggerBase.info("Simulator Type: " + this.ios.simulatorType);
 
@@ -156,17 +159,17 @@ public class MobileSettings extends Settings {
             this.ios.xCode8ConfigFile = BASE_RESOURCE_DIR +
                     File.separator + "xcode" + File.separator + "xcode8config.xcconfig";
 
-            this.testAppImageFolder = this.testAppFileName.replace(".ipa", "");
+            this.testAppName = this.testAppFileName.replace(".ipa", "");
             this.setupDevelopmentTeam();
             loggerBase.info("xCode 8 config file. Initialized if it is real device " + this.ios.xCode8ConfigFile);
         }
 
         // TODO(dtopuzov): Find better way to get testAppFriendlyName.
-        this.testAppFriendlyName = this.testAppImageFolder;
+        this.testAppFriendlyName = this.testAppName;
         loggerBase.info("TestApp Friendly Name: " + this.testAppFriendlyName);
 
-        this.testAppImageFolder = this.testAppImageFolder.toLowerCase();
-        loggerBase.info("TestApp Images Folder: " + this.testAppImageFolder);
+        this.testAppName = this.testAppName.toLowerCase();
+        loggerBase.info("TestApp Name: " + this.testAppName);
 
         this.packageId = this.getIOSPackageId();
         loggerBase.info("TestApp Package Id: " + this.packageId);
@@ -216,7 +219,7 @@ public class MobileSettings extends Settings {
             this.ios = this.initSettingsIOS();
         }
 
-        this.getPerfStorage();
+        this.setPerfStorage();
 
         loggerBase.info("Platform Version: " + this.platformVersion);
         loggerBase.info("Device Type: " + this.deviceType);

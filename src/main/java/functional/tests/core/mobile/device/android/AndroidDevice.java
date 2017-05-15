@@ -385,7 +385,7 @@ public class AndroidDevice implements IDevice {
             sb.append(this.settings.buildRunStartupTime + ",");
             sb.append(OSUtils.getHostName() + ",");
             sb.append(this.settings.deviceId + ",");
-            sb.append(this.settings.testAppImageFolder + ",");
+            sb.append(this.settings.testAppName + ",");
             sb.append(this.maxUsedMemory + ",");
             sb.append(this.appLaunchTime + ",");
             sb.append(this.getAppSize() + '\n');

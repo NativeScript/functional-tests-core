@@ -86,7 +86,7 @@ public class MobileSetupManager {
                     mobileSetupManager.settings);
 
             mobileSetupManager.sikuliImageProcessing =
-                    new Sikuli(mobileSetupManager.settings.testAppImageFolder + "-map",
+                    new Sikuli(mobileSetupManager.settings.testAppName + "-map",
                             mobileSetupManager.client,
                             mobileSetupManager.imageUtils);
 

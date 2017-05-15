@@ -44,7 +44,7 @@ public class Settings {
     public String screenshotResDir;
     public String baseOutputDir;
     public String testAppFileName;
-    public String testAppImageFolder;
+    public String testAppName;
     public String deviceName;
     public boolean debug;
     public boolean restartApp;
