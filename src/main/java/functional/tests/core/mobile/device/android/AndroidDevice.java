@@ -384,6 +384,8 @@ public class AndroidDevice implements IDevice {
             StringBuilder sb = new StringBuilder();
             sb.append(this.settings.buildRunStartupTime + ",");
             sb.append(OSUtils.getHostName() + ",");
+            sb.append(this.settings.deviceId + ",");
+            sb.append(this.settings.testAppImageFolder + ",");
             sb.append(this.maxUsedMemory + ",");
             sb.append(this.appLaunchTime + ",");
             sb.append(this.getAppSize() + '\n');
@@ -393,7 +395,7 @@ public class AndroidDevice implements IDevice {
             LOGGER_BASE.info("Application size: " + this.getAppSize());
 
             String perfInfoLog = sb.toString();
-            String rowHeader = "Timestamp,Hostname,Memory,Launch,AppSize" + System.lineSeparator();
+            String rowHeader = "Timestamp,Hostname,Device,AppName,Memory,Launch,AppSize" + System.lineSeparator();
 
             // local file
             FileSystem.writeCsvFile(localFilePath, perfInfoLog, rowHeader);

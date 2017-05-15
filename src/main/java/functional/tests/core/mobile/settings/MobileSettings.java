@@ -118,7 +118,7 @@ public class MobileSettings extends Settings {
     }
 
     private void getPerfStorage() {
-        this.perfDir = this.perfDir + File.separator + this.testAppFriendlyName + File.separator + this.deviceName;
+        this.perfDir = this.perfDir + File.separator + this.testAppImageFolder + File.separator + this.deviceName;
         loggerBase.info("Performance storage for device: " + this.perfDir);
     }
 
