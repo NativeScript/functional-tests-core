@@ -58,7 +58,7 @@ public class Capabilities {
         }
 
         capabilities.setCapability(MobileCapabilityType.APP,
-                settings.BASE_TEST_APP_DIR + File.separator + settings.testAppName);
+                settings.BASE_TEST_APP_DIR + File.separator + settings.testAppFileName);
 
         return capabilities;
     }
@@ -106,7 +106,7 @@ public class Capabilities {
         // capabilities.setCapability(IOSMobileCapabilityType.LOCATION_SERVICES_ENABLED, true);
         // capabilities.setCapability(IOSMobileCapabilityType.SEND_KEY_STRATEGY, "setValue");
         // capabilities.setCapability(IOSMobileCapabilityType.WAIT_FOR_APP_SCRIPT, true);
-        // capabilities.setCapability(IOSMobileCapabilityType.APP_NAME, settings.testAppName);
+        // capabilities.setCapability(IOSMobileCapabilityType.APP_NAME, settings.testAppFileName);
 
         if (settings.deviceType == DeviceType.Simulator) {
             // This is required by the safe simulator restart.

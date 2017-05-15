@@ -36,10 +36,10 @@ Name of the mobile platform - Android or iOS.
 Version ot the mobile OS.
 For example: 4.4, 7.0, 10.0
 
-**testAppName**  
-Android: Name of apk file (including file extension).  
-iOS Device: Name of ipa file (including file extension).  
-iOS Simulator: Name of tgz archive of the *.app folder (including file extension).  
+**testAppFileName**
+Android: Name of apk file (including file extension). Example: template-hello-world-ng-release.apk
+iOS Device: Name of ipa file (including file extension). Example: template-hello-world-ng.ipa
+iOS Simulator: Name of tgz archive of the *.app folder (including file extension). Example: template-hello-world-ng.tgz
 Notes: Tests apps are supposed to be available at `${project.root}/testapp folder`.
 
 **deviceType**  

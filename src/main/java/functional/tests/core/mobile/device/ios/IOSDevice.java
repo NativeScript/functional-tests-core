@@ -254,7 +254,7 @@ public class IOSDevice implements IDevice {
 
     @Override
     public void logPerfInfo() throws IOException {
-        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName;
+        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName;
         String appSize = String.valueOf(FileSystem.getFileSize(appPath));
 
         LOGGER_BASE.info("Application size: " + appSize);

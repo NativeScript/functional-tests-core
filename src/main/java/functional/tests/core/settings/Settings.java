@@ -43,7 +43,7 @@ public class Settings {
     public String screenshotOutDir;
     public String screenshotResDir;
     public String baseOutputDir;
-    public String testAppName;
+    public String testAppFileName;
     public String testAppImageFolder;
     public String deviceName;
     public boolean debug;
@@ -92,7 +92,7 @@ public class Settings {
         this.setupLocations();
 
         this.platform = this.getPlatformType();
-        this.testAppName = this.properties.getProperty("testAppName");
+        this.testAppFileName = this.properties.getProperty("testAppName");
         this.logImageVerificationStatus = this.properties.getProperty("logImageVerificationStatus") != null ?
                 new Boolean(this.properties.getProperty("logImageVerificationStatus")) : false;
 
@@ -129,7 +129,7 @@ public class Settings {
         // This was moved to MobileSettings.
         // LOGGER_BASE.info("Default Timeout: " + this.defaultTimeout);
         LOGGER_BASE.info("Device Boot Time: " + this.deviceBootTimeout);
-        LOGGER_BASE.info("TestApp Name: " + this.testAppName);
+        LOGGER_BASE.info("TestApp File Name: " + this.testAppFileName);
         LOGGER_BASE.info("Log Output Folder: " + this.baseLogDir);
         LOGGER_BASE.info("Perfapp Folder: " + this.perfDir);
         LOGGER_BASE.info("Screenshot Output Folder: " + this.screenshotOutDir);

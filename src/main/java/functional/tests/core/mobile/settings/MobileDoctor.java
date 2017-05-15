@@ -126,7 +126,7 @@ public class MobileDoctor extends Doctor {
      */
     protected static void verifyTestAppPath(MobileSettings mobileSettings) throws FileNotFoundException {
         File appDir = new File(MobileSettings.BASE_TEST_APP_DIR);
-        File app = new File(appDir, mobileSettings.testAppName);
+        File app = new File(appDir, mobileSettings.testAppFileName);
 
         if (mobileSettings.deviceType == DeviceType.Simulator) {
             app = new File(appDir, mobileSettings.ios.testAppArchive);

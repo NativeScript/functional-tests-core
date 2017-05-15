@@ -72,8 +72,8 @@ public class MobileSettings extends Settings {
         loggerBase.info("Device Id: " + this.deviceId);
 
         // Set testAppImageFolder
-        String testAppName = this.testAppName.toLowerCase().replace("-release", "");
-        this.testAppImageFolder = this.testAppName.substring(0, testAppName.indexOf(".")).toLowerCase();
+        String testAppName = this.testAppFileName.toLowerCase().replace("-release", "");
+        this.testAppImageFolder = this.testAppFileName.substring(0, testAppName.indexOf(".")).toLowerCase();
         loggerBase.info("TestApp Images Folder: " + this.testAppImageFolder);
 
         this.packageId = this.aapt.getPackage();
@@ -156,7 +156,7 @@ public class MobileSettings extends Settings {
             this.ios.xCode8ConfigFile = BASE_RESOURCE_DIR +
                     File.separator + "xcode" + File.separator + "xcode8config.xcconfig";
 
-            this.testAppImageFolder = this.testAppName.replace(".ipa", "");
+            this.testAppImageFolder = this.testAppFileName.replace(".ipa", "");
             this.setupDevelopmentTeam();
             loggerBase.info("xCode 8 config file. Initialized if it is real device " + this.ios.xCode8ConfigFile);
         }
@@ -246,7 +246,7 @@ public class MobileSettings extends Settings {
     private void extractApp() {
         // Make sure no old app is available.
         try {
-            FileSystem.deletePath(BASE_TEST_APP_DIR + File.separator + this.testAppName);
+            FileSystem.deletePath(BASE_TEST_APP_DIR + File.separator + this.testAppFileName);
             // Extract archive.
             File tgzPath = new File(BASE_TEST_APP_DIR + File.separator + this.ios.testAppArchive);
             File dir = new File(BASE_TEST_APP_DIR);
@@ -345,9 +345,9 @@ public class MobileSettings extends Settings {
     private String getPlistPath() {
         String plistPath = null;
         if (this.deviceType == DeviceType.Simulator) {
-            plistPath = BASE_TEST_APP_DIR + File.separator + this.testAppName + File.separator + "Info.plist";
+            plistPath = BASE_TEST_APP_DIR + File.separator + this.testAppFileName + File.separator + "Info.plist";
         } else if (this.deviceType == DeviceType.iOS) {
-            String ipaPath = BASE_TEST_APP_DIR + File.separator + this.testAppName;
+            String ipaPath = BASE_TEST_APP_DIR + File.separator + this.testAppFileName;
             OSUtils.runProcess("unzip -o " + ipaPath + " -d " + BASE_TEST_APP_DIR);
             String appName = OSUtils.runProcess("ls " + BASE_TEST_APP_DIR + File.separator + "Payload").trim();
             plistPath = BASE_TEST_APP_DIR +
