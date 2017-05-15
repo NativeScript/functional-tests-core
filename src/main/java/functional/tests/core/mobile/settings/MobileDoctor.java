@@ -126,7 +126,7 @@ public class MobileDoctor extends Doctor {
      */
     protected static void verifyTestAppPath(MobileSettings mobileSettings) throws FileNotFoundException {
         File appDir = new File(MobileSettings.BASE_TEST_APP_DIR);
-        File app = new File(appDir, mobileSettings.testAppName);
+        File app = new File(appDir, mobileSettings.testAppFileName);
 
         if (mobileSettings.deviceType == DeviceType.Simulator) {
             app = new File(appDir, mobileSettings.ios.testAppArchive);
@@ -233,9 +233,9 @@ public class MobileDoctor extends Doctor {
             throw new Exception("testAppFriendlyName can not be null.");
         }
 
-        // Verify testAppImageFolder (this is only app name, not full path, so can't assert is exists)
-        if (mobileSettings.testAppImageFolder == null) {
-            throw new Exception("testAppImageFolder can not be null.");
+        // Verify testAppName. Example: template-hello-world-ng
+        if (mobileSettings.testAppName == null) {
+            throw new Exception("testAppName can not be null.");
         }
     }
 }

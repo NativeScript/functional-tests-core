@@ -59,7 +59,7 @@ public class Aapt {
         String value;
         String command = this.aaptPath +
                 " dump badging " + this.settings.BASE_TEST_APP_DIR +
-                File.separator + this.settings.testAppName + " | grep " + grep;
+                File.separator + this.settings.testAppFileName + " | grep " + grep;
         String result = OSUtils.runProcess(command);
 
         // Parse result

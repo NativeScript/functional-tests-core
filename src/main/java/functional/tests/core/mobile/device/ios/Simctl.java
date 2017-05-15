@@ -192,7 +192,7 @@ public class Simctl {
         if (this.settings.debug) {
             LOGGER_BASE.info("[Debug mode] Do not reset sim settings.");
         } else {
-            String path = this.settings.screenshotResDir + File.separator + this.settings.testAppImageFolder;
+            String path = this.settings.screenshotResDir + File.separator + this.settings.testAppName;
             if (FileSystem.exist(path)) {
                 LOGGER_BASE.info("This test run will compare images. Reset simulator zoom.");
                 try {
@@ -215,7 +215,7 @@ public class Simctl {
      */
     public void reinstallApp() {
         String uninstallCommand = String.format(xcrunFormat, "uninstall booted " + this.settings.packageId);
-        String installCommand = String.format(xcrunFormat, "install booted " + Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppName);
+        String installCommand = String.format(xcrunFormat, "install booted " + Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName);
         OSUtils.runProcess(uninstallCommand);
         Wait.sleep(250);
         OSUtils.runProcess(installCommand);

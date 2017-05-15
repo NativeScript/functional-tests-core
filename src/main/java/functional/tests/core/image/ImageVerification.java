@@ -72,7 +72,7 @@ public class ImageVerification {
      * @throws Exception
      */
     public boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return this.verifyImages(this.settings.testAppImageFolder, expectedElementImage, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
+        return this.verifyImages(this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getElementImage(element);
@@ -92,7 +92,7 @@ public class ImageVerification {
      * @throws Exception
      */
     public boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        return this.verifyImages(this.settings.testAppImageFolder, pageName, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
+        return this.verifyImages(this.settings.testAppName, pageName, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getScreen();
@@ -140,7 +140,7 @@ public class ImageVerification {
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getElementImage(element);
             }
-        }, this.settings.testAppImageFolder, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
+        }, this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
     }
 
     /**
@@ -203,7 +203,7 @@ public class ImageVerification {
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getScreen();
             }
-        }, this.settings.testAppImageFolder, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
+        }, this.settings.testAppName, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
     }
 
     /**

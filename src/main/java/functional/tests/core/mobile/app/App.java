@@ -46,7 +46,7 @@ public class App {
      * @return Name of application under test.
      */
     public String getName() {
-        return this.settings.testAppName;
+        return this.settings.testAppFileName;
     }
 
     /**

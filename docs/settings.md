@@ -36,10 +36,10 @@ Name of the mobile platform - Android or iOS.
 Version ot the mobile OS.
 For example: 4.4, 7.0, 10.0
 
-**testAppName**  
-Android: Name of apk file (including file extension).  
-iOS Device: Name of ipa file (including file extension).  
-iOS Simulator: Name of tgz archive of the *.app folder (including file extension).  
+**testAppFileName**
+Android: Name of apk file (including file extension). Example: template-hello-world-ng-release.apk
+iOS Device: Name of ipa file (including file extension). Example: template-hello-world-ng.ipa
+iOS Simulator: Name of tgz archive of the *.app folder (including file extension). Example: template-hello-world-ng.tgz
 Notes: Tests apps are supposed to be available at `${project.root}/testapp folder`.
 
 **deviceType**  
@@ -187,9 +187,10 @@ Calculated as `defaultTimeout / 5`
 **testAppFriendlyName**
 Name of the label under icon that launch the application.  
 
-**testAppImageFolder**  
-Auto-generated based on application name.  
-If `STORAGE` environment variable is not set this folder is relative to ${project.root}/resources/images.  
+**testAppName**
+It is retrieved automatically from *testAppFileName*. Example: template-hello-world-ng
+It is used for path generation for images and performance data.
+If `STORAGE` environment variable is not set this folder is relative to ${project.root}/resources/images.
 If `STORAGE` environment variable is set this folder is relative to $STORAGE/images.  
 
 **debug**  
