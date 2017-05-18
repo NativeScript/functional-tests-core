@@ -197,10 +197,12 @@ public class MobileDoctor extends Doctor {
                     mobileSettings.appiumVersion + " is NOT installed! " +
                     "Command \"appium -v\" returns \"" + appiumVersion + "\".";
             throw new AppiumException(message);
-        } else if (!appiumVersion.contains(mobileSettings.appiumVersion)) {
-            message = "Appium version " +
-                    appiumVersion + " is NOT compatible with desired version " + mobileSettings.appiumVersion + "!";
-            throw new AppiumException(message);
+        } else if (mobileSettings.appiumVersion != null) {
+            if (!appiumVersion.contains(mobileSettings.appiumVersion)) {
+                message = "Appium version " +
+                        appiumVersion + " is NOT compatible with desired version " + mobileSettings.appiumVersion + "!";
+                throw new AppiumException(message);
+            }
         }
     }
 

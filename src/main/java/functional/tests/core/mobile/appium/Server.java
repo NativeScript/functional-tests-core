@@ -59,6 +59,7 @@ public class Server {
         AppiumServiceBuilder serviceBuilder = new AppiumServiceBuilder()
                 .withLogFile(logFile)
                 .usingAnyFreePort()
+                .withIPAddress("127.0.0.1")
                 .withAppiumJS(appiumExecutable);
 
         // Set iOS specific Appium server arguments
