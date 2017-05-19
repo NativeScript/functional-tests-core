@@ -80,6 +80,15 @@ public class Client {
             try {
                 this.driver = new IOSDriver<>(this.server.service.getUrl(), capabilities);
             } catch (Exception e) {
+                String log = this.server.getServerLogs();
+                if (log.contains("Please update to the latest Carthage")) {
+                    LOGGER_BASE.fatal("Carthage is not up-to-date, please run `brew upgrade carthage`!");
+                } else if (log.contains("Please make sure that you have Carthage installed")) {
+                    LOGGER_BASE.fatal("Carthage is not available, please run `brew install carthage`!");
+                } else if (log.contains("marekcirkos/peertalk.git")) {
+                    LOGGER_BASE.fatal("Appium 1.6.3 is not compatible with Carthage 0.22.0. " +
+                            "Please see https://github.com/appium/appium/issues/8442");
+                }
                 LOGGER_BASE.fatal(e.getMessage());
             }
         }
@@ -92,7 +101,6 @@ public class Client {
             String error = "Appium client failed to start!";
             LOGGER_BASE.fatal(error);
             Log.logScreenOfHost(this.settings, "failed to start appium driver");
-
             throw new RuntimeException(error);
         }
     }

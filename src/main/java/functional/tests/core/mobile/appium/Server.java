@@ -5,6 +5,7 @@ import functional.tests.core.enums.PlatformType;
 import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.settings.MobileSettings;
+import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -155,5 +156,19 @@ public class Server {
 
         // Return Appium executable file.
         return appiumExecutable;
+    }
+
+    /**
+     * Get Appium server logs.
+     *
+     * @return appium server log as string.
+     */
+    public String getServerLogs() {
+        try {
+            return FileSystem.readFile(this.settings.appiumLogFile);
+        } catch (IOException e) {
+            LOGGER_BASE.error("Failed to get Appium Server logs form " + this.settings.appiumLogFile);
+            return "";
+        }
     }
 }
