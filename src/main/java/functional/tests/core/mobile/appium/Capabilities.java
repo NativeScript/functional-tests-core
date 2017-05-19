@@ -1,6 +1,5 @@
 package functional.tests.core.mobile.appium;
 
-import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
@@ -102,16 +101,6 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.LAUNCH_TIMEOUT, settings.deviceBootTimeout * 1000); // In ms.
         capabilities.setCapability(IOSMobileCapabilityType.SCREENSHOT_WAIT_TIMEOUT, settings.defaultTimeout);
         capabilities.setCapability(IOSMobileCapabilityType.SHOW_IOS_LOG, true);
-        // capabilities.setCapability(IOSMobileCapabilityType.NATIVE_INSTRUMENTS_LIB, true);
-        // capabilities.setCapability(IOSMobileCapabilityType.LOCATION_SERVICES_ENABLED, true);
-        // capabilities.setCapability(IOSMobileCapabilityType.SEND_KEY_STRATEGY, "setValue");
-        // capabilities.setCapability(IOSMobileCapabilityType.WAIT_FOR_APP_SCRIPT, true);
-        // capabilities.setCapability(IOSMobileCapabilityType.APP_NAME, settings.testAppFileName);
-
-        if (settings.deviceType == DeviceType.Simulator) {
-            // This is required by the safe simulator restart.
-            capabilities.setCapability(MobileCapabilityType.NO_RESET, true);
-        }
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
@@ -122,7 +111,7 @@ public class Capabilities {
             if (FileSystem.exist(settings.ios.xCode8ConfigFile)) {
                 capabilities.setCapability("xcodeConfigFile", settings.ios.xCode8ConfigFile);
             }
-
+            capabilities.setCapability(MobileCapabilityType.NO_RESET, false);
             capabilities.setCapability(MobileCapabilityType.FULL_RESET, true);
         }
 
