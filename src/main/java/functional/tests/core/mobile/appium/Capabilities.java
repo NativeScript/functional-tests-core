@@ -26,7 +26,7 @@ public class Capabilities {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, settings.automationName);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, settings.platform);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, settings.platformVersion);
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, String.valueOf(settings.platformVersion));
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, settings.deviceName);
 
         // Increase the NEW_COMMAND_TIMEOUT capability
