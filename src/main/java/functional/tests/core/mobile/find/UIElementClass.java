@@ -183,6 +183,14 @@ public class UIElementClass {
         }
     }
 
+    public String secureTextField() {
+        if (this.settings.platform == PlatformType.iOS) {
+            return this.createIosElement("SecureTextField");
+        } else {
+            throw new NotImplementedException();
+        }
+    }
+
     public String webViewLocator() {
         if (this.settings.platform == PlatformType.Android) {
             return "android.webkit.WebView";
