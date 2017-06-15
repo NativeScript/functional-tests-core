@@ -278,9 +278,14 @@ public class MobileSetupManager {
             if (this.context.settings.takeScreenShotAfterTest) {
                 this.context.log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
             }
+            this.log.info("=> Test " + testCase + " passed!");
         } else if (previousTestStatus == ITestResult.FAILURE) {
             this.context.log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             this.context.log.saveXmlTree(testCase + "_VisualTree.xml");
+            this.log.error("=> Test " + testCase + " failed!");
+        } else if (this.context.lastTestResult == ITestResult.SKIP) {
+            this.context.log.logScreen(testCase + "_skip", "Screenshot after " + testCase);
+            this.log.error("=> Test " + testCase + " skipped!");
         }
     }
 
