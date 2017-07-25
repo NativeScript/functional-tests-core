@@ -72,7 +72,7 @@ public class MobileSettings extends Settings {
         loggerBase.info("Device Id: " + this.deviceId);
 
         // Set testAppName
-        String name = this.testAppFileName.toLowerCase().replace("-release", "");
+        String name = this.testAppFileName.toLowerCase().replace("-release", "").replace("-debug", "");
         this.testAppName = this.testAppFileName.substring(0, name.indexOf(".")).toLowerCase();
         loggerBase.info("TestApp Name: " + this.testAppName);
 
