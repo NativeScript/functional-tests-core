@@ -392,23 +392,9 @@ public class IOSDevice implements IDevice {
     // TODO(): Research how to uninstall app on booted simulator
     private void uninstallApp(String appId) {
         if (this.settings.isRealDevice) {
-            String uninstallResult = OSUtils.runProcess("ideviceinstaller -U " + appId + " -U " + appId);
+            String uninstallResult = OSUtils.runProcess("ideviceinstaller --udid " + appId + " --uninstall " + appId);
             if (!uninstallResult.contains("Complete")) {
                 IOSDevice.LOGGER_BASE.error(String.format("Failed to uninstall %s with ideviceinstaller tool. Error: ", appId, uninstallResult));
-            }
-
-            String commandSecondCheck = String.format("ios-deploy --list -1 %s", appId);
-            String resultOfSecondCheck = OSUtils.runProcess(commandSecondCheck);
-
-            if (!(resultOfSecondCheck.contains("Unable to find bundle with id:") && resultOfSecondCheck.contains(appId))) {
-                String uninstallAppCommand = String.format("ios-deploy --uninstall_only -1 %s", appId);
-                String result = OSUtils.runProcess(uninstallAppCommand);
-                if (result.contains("OK") && result.contains(appId)) {
-                    IOSDevice.LOGGER_BASE.info(String.format("The app under test: %s is uninstalled successfully with ios-deploy tool", appId));
-                } else {
-                    IOSDevice.LOGGER_BASE.info(String.format("IOS-deploy tool doesn't manage to remove the app under test %s", appId));
-                }
-
             } else {
                 IOSDevice.LOGGER_BASE.info(appId + " successfully uninstalled.");
             }
