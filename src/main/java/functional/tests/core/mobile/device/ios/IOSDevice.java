@@ -310,7 +310,7 @@ public class IOSDevice implements IDevice {
     }
 
     private void startRealDevice() throws DeviceException {
-        String commandGetAvailableDevices = "ios-deploy -c";
+        String commandGetAvailableDevices = "idevice_id --list";
         String devices = OSUtils.runProcess(commandGetAvailableDevices);
         if (!devices.contains(this.getId())) {
             if (this.settings.debug) {
