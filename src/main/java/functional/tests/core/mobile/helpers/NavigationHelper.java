@@ -150,29 +150,16 @@ public class NavigationHelper {
      */
     public static void navigateBack(MobileContext mobileContext) {
         if (mobileContext.settings.platform == PlatformType.iOS) {
-            UIElement btnBack = null;
-            Find find = mobileContext.find;
-            String text = "";
-
             if (mobileContext.settings.platformVersion >= 10 && mobileContext.settings.platformVersion < 11) {
-                text = "Back";
-            } else if (mobileContext.settings.platformVersion >= 11) {
-                text = "go back";
-            }
-
-            if (mobileContext.settings.platformVersion > 10) {
-                btnBack = find.byText("go back");
-                LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(" + text + ")");
-            }
-
-            if (btnBack != null && btnBack.isDisplayed()) {
-                btnBack.tap();
+                LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
+                UIElement btnBack = mobileContext.find.byText("Back");
+                if (btnBack != null && btnBack.isDisplayed()) {
+                    btnBack.tap();
+                }
             } else {
                 LOGGER_BASE.debug("Will be used default navigation client.getDriver().navigate().back()");
                 mobileContext.client.getDriver().navigate().back();
             }
-
-
         } else if (mobileContext.settings.platform == PlatformType.Android) {
             // Api 24 and 25 emulators have no browsers.
             // When you open a link it is opened in WebView Tester.
