@@ -151,7 +151,7 @@ public class NavigationHelper {
     public static void navigateBack(MobileContext mobileContext) {
         // TODO(svetli): Can we use App.navigate back and move iOS 10 logic there?
         if (mobileContext.settings.platform == PlatformType.iOS) {
-            if (mobileContext.settings.platformVersion >= 10) {
+            if ((mobileContext.settings.platformVersion >= 10) && (mobileContext.settings.platformVersion < 11)) {
                 Find find = mobileContext.find;
                 LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
                 UIElement btnBack = find.byText("Back");
