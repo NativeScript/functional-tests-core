@@ -149,18 +149,30 @@ public class NavigationHelper {
      * @param mobileContext
      */
     public static void navigateBack(MobileContext mobileContext) {
-        // TODO(svetli): Can we use App.navigate back and move iOS 10 logic there?
         if (mobileContext.settings.platform == PlatformType.iOS) {
-            if (mobileContext.settings.platformVersion >= 10) {
-                Find find = mobileContext.find;
-                LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
-                UIElement btnBack = find.byText("Back");
-                if (btnBack != null && btnBack.isDisplayed()) {
-                    btnBack.tap();
-                }
+            UIElement btnBack = null;
+            Find find = mobileContext.find;
+            String text = "";
+
+            if (mobileContext.settings.platformVersion >= 10 && mobileContext.settings.platformVersion < 11) {
+                text = "Back";
+            } else if (mobileContext.settings.platformVersion >= 11) {
+                text = "go back";
+            }
+
+            if (mobileContext.settings.platformVersion > 10) {
+                btnBack = find.byText("go back");
+                LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(" + text + ")");
+            }
+
+            if (btnBack != null && btnBack.isDisplayed()) {
+                btnBack.tap();
             } else {
+                LOGGER_BASE.debug("Will be used default navigation client.getDriver().navigate().back()");
                 mobileContext.client.getDriver().navigate().back();
             }
+
+
         } else if (mobileContext.settings.platform == PlatformType.Android) {
             // Api 24 and 25 emulators have no browsers.
             // When you open a link it is opened in WebView Tester.
@@ -182,6 +194,7 @@ public class NavigationHelper {
      *
      * @param mobileContext
      */
+
     public static void navigateForward(MobileContext mobileContext) {
         mobileContext.client.getDriver().navigate().forward();
     }
