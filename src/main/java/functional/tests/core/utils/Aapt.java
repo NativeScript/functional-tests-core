@@ -59,7 +59,17 @@ public class Aapt {
         String value;
         String command = this.aaptPath +
                 " dump badging " + this.settings.BASE_TEST_APP_DIR +
-                File.separator + this.settings.testAppFileName + " | grep " + grep;
+                File.separator + this.settings.testAppFileName;
+        
+        //If os windows use findstr or use grep for all other
+        if (this.settings.os == OSType.Windows) {
+            command = command + " | findstr " + grep;
+        }
+        else
+        {
+            command = command + " | grep " + grep;
+        }
+
         String result = OSUtils.runProcess(command);
 
         // Parse result
