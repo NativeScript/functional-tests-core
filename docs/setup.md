@@ -93,6 +93,5 @@ brew install --HEAD ideviceinstaller
 brew install ios-webkit-debug-proxy
 brew install carthage 
 
-npm install -g deviceconsole
 npm install -g ios-deploy
 ```
