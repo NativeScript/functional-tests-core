@@ -12,11 +12,11 @@ public class SettingsAndroid {
     public String emulatorCreateOptions;
     public boolean isRealDevice;
     public int memoryMaxUsageLimit;
-    public int appLaunchTimeLimit;
+    int appLaunchTimeLimit;
 
     /**
      * Init Android settings.
      */
-    public SettingsAndroid() {
+    SettingsAndroid() {
     }
 }

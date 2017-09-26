@@ -4,7 +4,6 @@ import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.android.AndroidDevice;
-import functional.tests.core.mobile.device.ios.IOSDevice;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.Aapt;
 import functional.tests.core.utils.Archive;
@@ -26,13 +25,12 @@ import java.io.IOException;
 public class MobileSettings extends Settings {
 
     private static LoggerBase loggerBase = LoggerBase.getLogger("MobileSettings");
-    public boolean reuseDevice;
+    String appiumVersion;
     public boolean restartRealDevice;
     public boolean isRealDevice;
     public Double platformVersion;
     public String packageId;
     public String deviceId;
-    public String appiumVersion;
     public String automationName;
     public String appiumLogLevel;
     public String appiumLogFile;
@@ -58,7 +56,7 @@ public class MobileSettings extends Settings {
      *
      * @return Android settings.
      */
-    public SettingsAndroid initSettingsAndroid() {
+    private SettingsAndroid initSettingsAndroid() {
         // Aapt need so know OS Type.
         this.aapt = new Aapt(this);
 
@@ -88,7 +86,7 @@ public class MobileSettings extends Settings {
         this.android.appWaitPackage = this.getAppWaitPackage();
         loggerBase.info("App Wait Package: " + this.android.appWaitPackage);
 
-        this.testAppFriendlyName = this.aapt.getApplicationLabel(this);
+        this.testAppFriendlyName = this.aapt.getApplicationLabel();
         loggerBase.info("TestApp Friendly Name: " + this.testAppFriendlyName);
 
         if (this.deviceType == DeviceType.Emulator) {
@@ -107,11 +105,7 @@ public class MobileSettings extends Settings {
                 + (this.android.appLaunchTimeLimit > -1 ? this.android.appLaunchTimeLimit : "not set"));
 
         // Set isRealDevice
-        if (this.deviceType == DeviceType.Emulator) {
-            this.isRealDevice = false;
-        } else {
-            this.isRealDevice = true;
-        }
+        this.isRealDevice = this.deviceType == DeviceType.Emulator;
 
         this.android.isRealDevice = this.isRealDevice;
         return this.android;
@@ -130,13 +124,13 @@ public class MobileSettings extends Settings {
      *
      * @return iOS settings.
      */
-    public SettingsIOS initSettingsIOS() {
+    private SettingsIOS initSettingsIOS() {
         this.ios = new SettingsIOS();
         loggerBase.separatorIOS();
 
         if (this.deviceId == null && !this.isRealDevice) {
 
-            this.deviceId = IOSDevice.getDeviceUidid(this.deviceName);
+            this.deviceId = null;
         }
 
         loggerBase.info("Device Id: " + this.deviceId);
@@ -192,17 +186,7 @@ public class MobileSettings extends Settings {
         this.appiumLogFile = this.baseLogDir + File.separator + "appium.log";
 
         this.orientation = this.getScreenOrientation();
-        // Set reuse device
-        this.reuseDevice = this.propertyToBoolean("reuseDevice", false);
-        String reuseEnv = System.getenv("REUSE_DEVICE");
-        if (reuseEnv != null) {
-            if (reuseEnv.toLowerCase().contains("true")) {
-                this.reuseDevice = true;
-            }
-        }
 
-        // Set orientation
-        this.orientation = this.getScreenOrientation();
         // If defaultTimeout is not specified set it to 30 sec.
         this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", 30);
         this.shortTimeout = this.defaultTimeout / 5;
@@ -227,7 +211,6 @@ public class MobileSettings extends Settings {
         if (this.isRealDevice) {
             loggerBase.info("Restart real device:  " + this.restartRealDevice);
         }
-        loggerBase.info("ReuseDevice: " + this.reuseDevice);
         loggerBase.info("Appium Version: " + this.appiumVersion);
         loggerBase.info("Appium Log File: " + this.appiumLogFile);
         loggerBase.info("Appium Log Level: " + this.appiumLogLevel);
@@ -243,8 +226,6 @@ public class MobileSettings extends Settings {
      * Extract test application.
      * For iOS Simulator test app (*.app) must be packaged in tgz archive.
      * This method will extract the archive.
-     *
-     * @throws IOException When fail extract tgz package.
      */
     private void extractApp() {
         // Make sure no old app is available.
@@ -281,8 +262,7 @@ public class MobileSettings extends Settings {
      * @return default activity.
      */
     private String getDefaultActivity() {
-        String appDefaultActivityString = this.aapt.getLaunchableActivity(this);
-        return appDefaultActivityString;
+        return this.aapt.getLaunchableActivity();
     }
 
     /**
@@ -366,7 +346,7 @@ public class MobileSettings extends Settings {
      */
     private int getMemoryMaxUsageLimit() {
         String value = this.properties.getProperty("memoryMaxUsageLimit");
-        if (value != "" && value != null) {
+        if (value != null && value.equals("")) {
             return Integer.parseInt(value);
         } else {
             return -1;
@@ -380,7 +360,7 @@ public class MobileSettings extends Settings {
      */
     private int getappLaunchTimeLimit() {
         String value = this.properties.getProperty("appLaunchTimeLimit");
-        if (value != "" && value != null) {
+        if (value != null && value.equals("")) {
             return Integer.parseInt(value);
         } else {
             return -1;

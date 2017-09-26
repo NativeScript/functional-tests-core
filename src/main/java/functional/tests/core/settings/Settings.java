@@ -25,6 +25,7 @@ public class Settings {
     protected static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Settings");
     protected static final String APP_CONFIG_PATH = System.getProperty("appConfig");
     protected static final String STORAGE_ENVIRONMENT_VARIABLE = "STORAGE";
+    protected static final String DEBUG_ENVIRONMENT_VARIABLE = "DEBUG";
     protected static final String USER_DIR = System.getProperty("user.dir");
 
     public static final int DEFAULT_TAP_DURATION = 250;
@@ -97,7 +98,7 @@ public class Settings {
                 new Boolean(this.properties.getProperty("logImageVerificationStatus")) : false;
 
         // Set debug
-        this.debug = this.propertyToBoolean("debug", false) ||
+        this.debug = Boolean.valueOf(this.getEnvironmentVariable(DEBUG_ENVIRONMENT_VARIABLE, "False")) ||
                 java.lang.management.ManagementFactory
                         .getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;
 
@@ -263,14 +264,7 @@ public class Settings {
      * @return value of STORAGE environment variable
      */
     private String getStorage() {
-        String env = System.getenv(STORAGE_ENVIRONMENT_VARIABLE);
-        if (env == null) {
-            LOGGER_BASE.info(String.format("LOCAL STORAGE %s", BASE_RESOURCE_DIR));
-            return BASE_RESOURCE_DIR;
-        } else {
-            LOGGER_BASE.info(String.format("%s=%s", STORAGE_ENVIRONMENT_VARIABLE, env));
-            return env;
-        }
+        return this.getEnvironmentVariable(STORAGE_ENVIRONMENT_VARIABLE, BASE_RESOURCE_DIR);
     }
 
     /**
@@ -313,5 +307,15 @@ public class Settings {
         }
 
         return platformType;
+    }
+
+    private String getEnvironmentVariable(String variable, String defaultValue) {
+        String finalValue = defaultValue;
+        String env = System.getenv(variable);
+        if (env != null) {
+            finalValue = env;
+        }
+        LOGGER_BASE.info(String.format("%s=%s", variable, finalValue));
+        return finalValue;
     }
 }

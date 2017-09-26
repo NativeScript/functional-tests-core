@@ -66,7 +66,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws Exception When ANDROID_HOME is not set.
      */
-    protected static void verifyAndroidHome(MobileSettings mobileSettings) throws Exception {
+    private static void verifyAndroidHome(MobileSettings mobileSettings) throws Exception {
         if (mobileSettings.platform == PlatformType.Android) {
             String androidHome = System.getenv("ANDROID_HOME");
             if (androidHome == null) {
@@ -82,7 +82,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws Exception When aapt is not available.
      */
-    protected static void verifyAapt(MobileSettings mobileSettings) throws Exception {
+    private static void verifyAapt(MobileSettings mobileSettings) throws Exception {
         if (mobileSettings.platform == PlatformType.Android) {
             Aapt aapt = new Aapt(mobileSettings);
             if (aapt.aaptPath == null) {
@@ -98,7 +98,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws MobilePlatformException When mobile OS is not Android or iOS.
      */
-    protected static void verifyMobileOS(MobileSettings mobileSettings) throws MobilePlatformException {
+    private static void verifyMobileOS(MobileSettings mobileSettings) throws MobilePlatformException {
         if (mobileSettings.platform == PlatformType.Other) {
             String error = "Unknown mobile platform.";
             throw new MobilePlatformException(error);
@@ -111,7 +111,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws DeviceException When mobile device type mobileSettings is not correct.
      */
-    protected static void verifyDeviceType(MobileSettings mobileSettings) throws DeviceException {
+    private static void verifyDeviceType(MobileSettings mobileSettings) throws DeviceException {
         if (mobileSettings.deviceType == DeviceType.Other) {
             String error = "Unknown device type.";
             throw new DeviceException(error);
@@ -124,7 +124,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws FileNotFoundException When test application is not found.
      */
-    protected static void verifyTestAppPath(MobileSettings mobileSettings) throws FileNotFoundException {
+    private static void verifyTestAppPath(MobileSettings mobileSettings) throws FileNotFoundException {
         File appDir = new File(MobileSettings.BASE_TEST_APP_DIR);
         File app = new File(appDir, mobileSettings.testAppFileName);
 
@@ -144,7 +144,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws Exception Exception when host OS is not compatible with mobile OS.
      */
-    protected static void verifyOSTypeAndMobilePlatform(MobileSettings mobileSettings) throws Exception {
+    private static void verifyOSTypeAndMobilePlatform(MobileSettings mobileSettings) throws Exception {
         if ((mobileSettings.platform == PlatformType.iOS) && (mobileSettings.os != OSType.MacOS)) {
             String error = "Can not run iOS tests on Windows and Linux";
             throw new Exception(error);
@@ -157,7 +157,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws Exception When xcrun is not available.
      */
-    protected static void verifyXcrun(MobileSettings mobileSettings) throws Exception {
+    private static void verifyXcrun(MobileSettings mobileSettings) throws Exception {
         if (mobileSettings.platform == PlatformType.iOS) {
             String output = OSUtils.runProcess("xcrun --version");
             if (!output.contains("xcrun version")) {
@@ -173,7 +173,7 @@ public class MobileDoctor extends Doctor {
      * @param mobileSettings Current mobileSettings.
      * @throws Exception When ideviceinstaller is not available.
      */
-    protected static void verifyIdeviceinstaller(MobileSettings mobileSettings) throws Exception {
+    private static void verifyIdeviceinstaller(MobileSettings mobileSettings) throws Exception {
         if (mobileSettings.deviceType == DeviceType.iOS) {
             String output = OSUtils.runProcess("ideviceinstaller");
             if (!output.contains("Manage apps on iOS devices")) {

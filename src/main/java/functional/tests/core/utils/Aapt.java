@@ -1,7 +1,6 @@
 package functional.tests.core.utils;
 
 import functional.tests.core.enums.OSType;
-import functional.tests.core.log.LoggerBase;
 import functional.tests.core.settings.Settings;
 
 import java.io.File;
@@ -11,7 +10,6 @@ import java.io.File;
  */
 public class Aapt {
 
-    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Aapt");
     private Settings settings;
     public String aaptPath;
 
@@ -60,13 +58,11 @@ public class Aapt {
         String command = this.aaptPath +
                 " dump badging " + this.settings.BASE_TEST_APP_DIR +
                 File.separator + this.settings.testAppFileName;
-        
+
         //If os windows use findstr or use grep for all other
         if (this.settings.os == OSType.Windows) {
             command = command + " | findstr " + grep;
-        }
-        else
-        {
+        } else {
             command = command + " | grep " + grep;
         }
 
@@ -97,7 +93,7 @@ public class Aapt {
      *
      * @return Default activity.
      */
-    public String getLaunchableActivity(Settings settings) {
+    public String getLaunchableActivity() {
         return this.runAaptCommand("activity:");
     }
 
@@ -106,7 +102,7 @@ public class Aapt {
      *
      * @return Application name.
      */
-    public String getApplicationLabel(Settings settings) {
+    public String getApplicationLabel() {
         String label = this.runAaptCommand("label:");
 
         // TODO(): Replace this hack with better fix (will require re-work for adb class).

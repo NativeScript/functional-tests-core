@@ -1,157 +1,48 @@
 package functional.tests.core.mobile.device.ios;
 
+import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.log.LoggerBase;
+import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
-import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
- * TODO(dtopuzov): Add docs for everything in this class.
+ * Simctl wrapper.
  */
 public class Simctl {
 
-    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Simctl");
     private MobileSettings settings;
-    private static String xcrun = "xcrun simctl ";
-    private static String xcrunFormat = xcrun + " %s ";
-    private static String xcrunListDevices = String.format(xcrunFormat, "list devices ");
-    private static String xcrunListDevicesWithParamsFormat = xcrunListDevices + " %s ";
+    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Simctl");
+    private static final String SIM_ROOT = System.getProperty("user.home") + "/Library/Developer/CoreSimulator/Devices/";
 
     /**
-     * Using to controls simulators.
+     * Initialize Simctl.
      *
-     * @param settings
+     * @param settings Settings object.
      */
     public Simctl(MobileSettings settings) {
         this.settings = settings;
     }
 
     /**
-     * This will reset content and setting of emulator only if the emulator is not booted.
-     */
-    public static void eraseData(String deviceId) {
-        Simctl.LOGGER_BASE.warn("Erase data from simulator");
-        String command = String.format(xcrunFormat, "erase " + deviceId);
-        Simctl.LOGGER_BASE.warn(command);
-        OSUtils.runProcess(command);
-    }
-
-    /**
-     * Deletes simulator.
-     */
-    public static void deleteSimulator(String name) {
-        Simctl.getAvailableSimulatorUdidsByName(name).forEach(s -> {
-            LOGGER_BASE.info("Deleting " + name + " simulator with udid: " + s);
-            OSUtils.runProcess(String.format(xcrunFormat, "delete " + s));
-        });
-    }
-
-    /**
-     * Check if simulator is alive.
-     *
-     * @param deviceId
-     * @return
-     */
-    public static boolean checkIfSimulatorIsBooted(String deviceId) {
-        return Simctl.getSimulatorsBy(deviceId, "Booted").size() > 0;
-    }
-
-    /**
-     * Check if simulator already exists.
-     *
-     * @param deviceName
-     * @return
-     */
-    public static boolean checkIfSimulatorExists(String deviceName) {
-        List<String> devices = Simctl.getSimulatorsBy(deviceName);
-        return devices.size() > 0;
-    }
-
-    /**
-     * Get all devices.
-     *
-     * @param params
-     * @return
-     */
-    public static List<String> getSimulatorsBy(String... params) {
-        String paramsList = "";
-        for (String param : params) {
-            paramsList += String.format(" | grep  '%s'", param);
-        }
-
-        String command = String.format(xcrunListDevicesWithParamsFormat, paramsList);
-        String output = OSUtils.runProcess(command);
-
-        if (output.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<String> lines = Arrays.asList(output.split(System.lineSeparator()));
-        lines.removeIf(l -> l.isEmpty());
-        List<String> results = new ArrayList<>();
-        lines.forEach(l -> results.add(l.trim()));
-
-        return results;
-    }
-
-    /**
-     * Get all simulators by name.
-     *
-     * @param name
-     * @return
-     */
-    public static List<String> getAvailableSimulatorUdidsByName(String name) {
-        List<String> lines = Simctl.getSimulatorsBy(name);
-        ArrayList<String> listOfDevices = new ArrayList<>();
-        lines.forEach(l -> {
-            if (!l.contains("unavailable") && !l.isEmpty()) {
-                String udid = l.substring(l.indexOf('(') + 1, l.indexOf(')')).trim();
-                listOfDevices.add(udid);
-            }
-        });
-
-        return listOfDevices;
-    }
-
-    public String ensureOnlyOneSimulatorExist() {
-        List<String> simulators = Simctl.getSimulatorsBy(this.settings.deviceName);
-        if (simulators.size() > 1) {
-            LOGGER_BASE.error("Multiple simulators with name " + this.settings.deviceName + " found. Deleting them ...");
-            Simctl.deleteSimulator(this.settings.deviceName);
-            return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
-        } else if (simulators.size() == 0) {
-            LOGGER_BASE.error("No simulators found with name " + this.settings.deviceName);
-            return this.createSimulator(this.settings.deviceName, this.settings.ios.simulatorType, this.settings.platformVersion.toString());
-        } else {
-            LOGGER_BASE.error(String.format("Ensured only single simulator %s with uidid: %s found!", this.settings.deviceName, this.settings.deviceId));
-            return this.settings.deviceId;
-        }
-    }
-
-    /**
      * Creates simulator by name, type, iOS version.
      *
-     * @param simulatorName
-     * @param deviceType
-     * @param iOSVersion
-     * @return
+     * @param simulatorName Simulator display name.
+     * @param deviceType    Device type, for example "iPhone 6" (How you see them in Xcode).
+     * @param iOSVersion    iOS version, for example 10.0 (How you see them in Xcode).
+     * @return UDID of created iOS Simulator.
      */
-    public String createSimulator(String simulatorName, String deviceType, String iOSVersion) {
-        LOGGER_BASE.info("Create simulator with following command:");
-//        String command = "xcrun simctl create \"" + simulatorName +
-//                "\" \"com.apple.CoreSimulator.SimDeviceType." + deviceType.trim().replace(" ", "-") +
-//                "\" \"com.apple.CoreSimulator.SimRuntime.iOS-" + iOSVersion.trim().replace(".", "-") + "\"";
-
-
+    public String create(String simulatorName, String deviceType, String iOSVersion) throws DeviceException {
         String deviceTypeNameSpace = deviceType.trim().replace(" ", "-");
         String iOSVersionParsed = iOSVersion.trim().replace(".", "-");
         String createSimulatorCommand = String.format(
@@ -160,16 +51,13 @@ public class Simctl {
                 deviceTypeNameSpace,
                 iOSVersionParsed);
 
+        LOGGER_BASE.info("Create simulator with following command:");
         LOGGER_BASE.info(createSimulatorCommand);
         String output = OSUtils.runProcess(createSimulatorCommand);
 
         if (output.toLowerCase().contains("error") || output.toLowerCase().contains("invalid")) {
-            Simctl.LOGGER_BASE.fatal("Failed to create simulator. Error: " + output);
-            try {
-                throw new DeviceException("Failed to create simulator. Error: " + output);
-            } catch (DeviceException e) {
-                e.printStackTrace();
-            }
+            LOGGER_BASE.fatal("Failed to create simulator. Error: " + output);
+            throw new DeviceException("Failed to create simulator. Error: " + output);
         } else {
             String udid = output;
             String[] list = output.split("\\r?\\n");
@@ -178,7 +66,7 @@ public class Simctl {
                     udid = line.trim();
                 }
                 this.settings.deviceId = udid.trim();
-                Simctl.LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
+                LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
             }
         }
 
@@ -186,41 +74,276 @@ public class Simctl {
     }
 
     /**
-     * Reset simulator default settings.
+     * Check if iOS Simulator is running.
+     *
+     * @param simId iOS Simulator identifier.
+     * @return True if iOS Simulator is running.
      */
-    protected void resetSimulatorSettings() {
-        if (this.settings.debug) {
-            LOGGER_BASE.info("[Debug mode] Do not reset sim settings.");
-        } else {
-            String path = this.settings.screenshotResDir + File.separator + this.settings.testAppName;
-            if (FileSystem.exist(path)) {
-                LOGGER_BASE.info("This test run will compare images. Reset simulator zoom.");
-                try {
-                    FileSystem.deletePath(System.getProperty("user.home") + "/Library/Preferences/com.apple.iphonesimulator.plist");
-                    Wait.sleep(1000);
-                    OSUtils.runProcess("defaults write ~/Library/Preferences/com.apple.iphonesimulator SimulatorWindowLastScale \"1\"");
-                    Wait.sleep(1000);
-                    LOGGER_BASE.info("Global simulator settings restarted");
-                } catch (IOException e) {
-                    LOGGER_BASE.error("Failed to restart global simulator settings.");
-                }
+    Boolean isRunning(String simId) {
+        String out = this.runSimctlCommand("spawn", simId, "launchctl print system | grep com.apple.springboard.services");
+        return out.contains("M   A   com.apple.springboard.services");
+    }
+
+    /**
+     * Start iOS Simulator.
+     *
+     * @param simId   iOS Simulator identifier.
+     * @param timeout Timeout for iOS Simulator to boot.
+     */
+    public void start(String simId, int timeout) throws DeviceException {
+
+        // Start it...
+        LOGGER_BASE.info("Start iOS Simulator: " + simId);
+        this.runSimctlCommand("boot", this.settings.deviceId, "");
+
+        // Wait until it boot...
+        for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeout); stop > System.nanoTime(); ) {
+            if (this.isRunning(simId)) {
+                LOGGER_BASE.info(simId + " booted!");
+                break;
             } else {
-                LOGGER_BASE.info("No need to restart simulator settings.");
+                Wait.sleep(this.settings.shortTimeout);
             }
+        }
+
+        // Trow exception in case it failed to start
+        if (!this.isRunning(simId)) {
+            throw new DeviceException("Failed to boot simulator: " + simId);
         }
     }
 
     /**
-     * TODO(): Add docs.
+     * Stop iOS Simulator.
+     *
+     * @param simId iOS Simulator identifier.
      */
-    public void reinstallApp() {
-        String uninstallCommand = String.format(xcrunFormat, "uninstall booted " + this.settings.packageId);
-        String installCommand = String.format(xcrunFormat, "install booted " + Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName);
-        OSUtils.runProcess(uninstallCommand);
-        Wait.sleep(250);
-        OSUtils.runProcess(installCommand);
-        Wait.sleep(250);
-        LOGGER_BASE.info(this.settings.packageId + " re installed.");
+    public void stop(String simId) {
+        Simctl.LOGGER_BASE.info("Stop iOS Simulator: " + simId);
+        this.runSimctlCommand("shutdown", simId, "");
     }
 
+
+    /**
+     * Stop simulators used for more than X minutes.
+     *
+     * @param minutes Minutes.
+     */
+    public void stopUsedSimulators(int minutes) {
+        List<EmulatorInfo> usedSimulators = this.getSimulatorsInfo(EmulatorState.Used);
+        usedSimulators.forEach((sim) -> {
+            if (sim.usedFrom > minutes * 60 * 1000) {
+                LOGGER_BASE.warn(String.format("Simulator used more than %s minutes detected!", String.valueOf(minutes)));
+                this.stop(sim.id);
+            }
+        });
+    }
+
+    /**
+     * Delete all the settings and data from iOS Simulator.
+     *
+     * @param simId iOS Simulator identifier.
+     * @throws DeviceException When iOS Simulator is booted (this operation can be performed only if it is shutdown).
+     */
+    public void erase(String simId) throws DeviceException {
+        if (this.isRunning(simId)) {
+            throw new DeviceException("Can not erase simulator while it is running!");
+        } else {
+            Simctl.LOGGER_BASE.info("Erase iOS Simulator: " + simId);
+            this.runSimctlCommand("erase", this.settings.deviceId, "");
+        }
+    }
+
+    /**
+     * Get location of iOS Simulator.
+     *
+     * @param simId iOS Simulator identifier.
+     * @return Location to root folder of the simulator.
+     */
+    public String getSimLocation(String simId) {
+        return SIM_ROOT + simId;
+    }
+
+    public List<String> getInstalledApps(String simId) {
+        List<String> list = new ArrayList<>();
+        String rowData = OSUtils.runProcess("find " + this.getSimLocation(simId) + "/data/Containers/Bundle/Application -type d -name *.app");
+        String[] rowList = rowData.split("\\r?\\n");
+        for (String item : rowList) {
+            String rowBundle = OSUtils.runProcess("defaults read " + item + "/Info.plist | grep CFBundleIdentifier");
+            String appId = rowBundle.split("\"")[1];
+            list.add(appId);
+        }
+        return list;
+    }
+
+
+    /**
+     * Install application under test.
+     */
+    public void installApp() {
+        String app = Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName;
+        this.runSimctlCommand("install", this.settings.deviceId, app);
+        Wait.sleep(250);
+        LOGGER_BASE.info(this.settings.packageId + " installed.");
+    }
+
+    /**
+     * Uninstall application under test.
+     */
+    public void uninstallApp() {
+        this.uninstallApp(this.settings.packageId);
+    }
+
+    /**
+     * Uninstall application.
+     */
+    public void uninstallApp(String bundleId) {
+        this.runSimctlCommand("uninstall", this.settings.deviceId, bundleId);
+        Wait.sleep(250);
+    }
+
+    /**
+     * Return time since iOS Simulator is in use.
+     *
+     * @param simId iOS Simulator identifier.
+     * @return Time since iOS Simulator is in use in milliseconds (0 if iOS Simulator is not in used).
+     */
+    long usedSince(String simId) {
+        File temp = new File(this.getSimLocation(simId) + "/data/tmp/used.tmp");
+        if (temp.exists()) {
+            long now = new Date().getTime();
+            long lastModified = temp.lastModified();
+            long usedFrom = now - lastModified;
+            LOGGER_BASE.debug(simId + " is in use from " + String.valueOf(TimeUnit.MILLISECONDS.toSeconds(usedFrom)) + " seconds.");
+            return usedFrom;
+        } else {
+            LOGGER_BASE.debug(simId + " is not used!");
+            return 0;
+        }
+    }
+
+    /**
+     * Mark iOS Simulator as used.
+     *
+     * @param simId iOS Simulator identifier.
+     */
+    void markUsed(String simId) {
+        LOGGER_BASE.info("Mark iOS Simulator as used: " + simId);
+        String command = "touch " + this.getSimLocation(simId) + "/data/tmp/used.tmp";
+        OSUtils.runProcess(command);
+    }
+
+    /**
+     * Mark iOS Simulator as unused.
+     *
+     * @param simId iOS Simulator identifier.
+     */
+    void markUnused(String simId) {
+        LOGGER_BASE.info("Mark iOS Simulator as unused: " + simId);
+        String command = "rm -rf " + this.getSimLocation(simId) + "/data/tmp/used.tmp";
+        OSUtils.runProcess(command);
+    }
+
+    /**
+     * Get iOS Simulators info - id, name, state.
+     *
+     * @param state EmulatorState filter.
+     * @return List of EmulatorInfo objects.
+     */
+    List<EmulatorInfo> getSimulatorsInfo(EmulatorState state) {
+        List<EmulatorInfo> simulators = this.getSimulatorsInfo();
+        return simulators.stream().filter(p -> p.state == state).collect(Collectors.toList());
+    }
+
+    /**
+     * Get free iOS Simulator.
+     *
+     * @return Identifier of free iOS Simulator.
+     */
+    String getFreeSimulator(String name) {
+        List<EmulatorInfo> simList = this.getSimulatorsInfo();
+        simList = simList.stream().filter(p -> p.name.equals(name)).collect(Collectors.toList());
+        if (this.settings.debug) {
+            LOGGER_BASE.info("[DEBUG MODE] All iOS Simulators matching desired name will be free.");
+        } else {
+            simList = simList.stream().filter(p -> p.usedFrom == 0).collect(Collectors.toList());
+        }
+        if (simList.size() > 0) {
+            return simList.get(0).id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get free iOS Simulator.
+     *
+     * @return Identifier of free iOS Simulator.
+     */
+    String getOffineSimulator(String name) {
+        List<EmulatorInfo> allSim = this.getSimulatorsInfo();
+        List<EmulatorInfo> sameNameSims = allSim.stream().filter(p -> p.name.equals(name)).collect(Collectors.toList());
+        List<EmulatorInfo> freeSim = sameNameSims.stream().filter(p -> p.state == EmulatorState.Shutdown).collect(Collectors.toList());
+        if (freeSim.size() > 0) {
+            return freeSim.get(0).id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get number of maximum iOS Simulators that can be executed on Single machine.
+     *
+     * @return Number of maximum iOS Simulators that can be executed on Single machine.
+     */
+    int getMaxCountOfRunningSimulators() {
+        String maxCountVar = System.getenv("MAX_SIM_COUNT");
+        if (maxCountVar == null) {
+            maxCountVar = "1";
+        }
+        return Integer.parseInt(maxCountVar);
+    }
+
+    /**
+     * Get iOS Simulators info - id, name, state.
+     *
+     * @return List of EmulatorInfo objects.
+     */
+    private List<EmulatorInfo> getSimulatorsInfo() {
+        List<EmulatorInfo> list = new ArrayList<>();
+        String rowData = this.runSimctlCommand("list", "devices", "");
+        String[] rowList = rowData.split("\\r?\\n");
+        for (String item : rowList) {
+            if (item.contains("(") && item.contains(")")) {
+                String name = item.split("\\(")[0].trim();
+                String id = item.split("\\(")[1].split("\\)")[0].trim();
+                String rowState = item.split("\\(")[2].split("\\)")[0].trim();
+                EmulatorState state = EmulatorState.Shutdown;
+                long usedFrom = -1;
+                if (rowState.equalsIgnoreCase("Booted")) {
+                    usedFrom = this.usedSince(id);
+                    if (usedFrom == 0) {
+                        state = EmulatorState.Free;
+                    } else {
+                        state = EmulatorState.Used;
+                    }
+                }
+                EmulatorInfo info = new EmulatorInfo(id, name, state, usedFrom);
+                list.add(info);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Run simctl command.
+     *
+     * @param command   Command.
+     * @param simId     iOS Simulator identifier.
+     * @param arguments Arguments.
+     * @return Result as String.
+     */
+    private String runSimctlCommand(String command, String simId, String arguments) {
+        String finalCommand = String.format("xcrun simctl %s %s %s", command, simId, arguments);
+        return OSUtils.runProcess(60, finalCommand);
+    }
 }

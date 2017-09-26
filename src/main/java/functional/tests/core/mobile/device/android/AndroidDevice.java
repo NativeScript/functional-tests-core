@@ -126,10 +126,10 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void stop() {
-        if (this.getType() == DeviceType.Emulator) {
-            if (this.settings.debug) {
-                LOGGER_BASE.info("[DEBUG MODE] Skip emulator stop.");
-            } else {
+        if (this.settings.debug) {
+            LOGGER_BASE.info("[DEBUG MODE] Skip emulator stop.");
+        } else {
+            if (this.getType() == DeviceType.Emulator) {
                 this.adb.stopAllEmulators();
             }
         }
@@ -163,20 +163,6 @@ public class AndroidDevice implements IDevice {
             this.client.driver.closeApp();
         } else {
             LOGGER_BASE.error("Failed to close application.");
-        }
-    }
-
-    @Override
-    public void stopApps(List<String> uninstallAppsList) {
-        List<String> installedApps = this.adb.getInstalledApps();
-
-        for (String appToUninstall : uninstallAppsList) {
-            for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)) {
-                    LOGGER_BASE.info("Stop " + appId);
-                    this.adb.stopApp(appId);
-                }
-            }
         }
     }
 
@@ -429,7 +415,7 @@ public class AndroidDevice implements IDevice {
 
     private void startEmulator() throws DeviceException, TimeoutException {
         // Kill all emulators if reuseDevice is false.
-        if (!this.settings.reuseDevice && !this.settings.debug) {
+        if (!this.settings.debug) {
             this.stop();
         }
         if (this.adb.checkIfEmulatorIsRunning(this.getId())) {

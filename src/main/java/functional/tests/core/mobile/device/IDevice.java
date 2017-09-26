@@ -40,7 +40,7 @@ public interface IDevice {
     /**
      * Stop emulators/simulators.
      */
-    void stop();
+    void stop() throws DeviceException;
 
     /**
      * Get id of current device.
@@ -59,19 +59,19 @@ public interface IDevice {
     void installApp(String appName, String packageId) throws IOException;
 
     /**
-     * TODO(): Add docs.
+     * Start application.
      *
-     * @param packageId
+     * @param packageId Bundle identifier.
      */
     void startApplication(String packageId);
 
     /**
-     * TODO(): Add docs.
+     * Restart application under test.
      */
     void restartApp();
 
     /**
-     * TODO(): Add docs.
+     * Close application under test.
      */
     void closeApp();
 
@@ -103,14 +103,7 @@ public interface IDevice {
      *
      * @param uninstallAppsList
      */
-    void stopApps(List<String> uninstallAppsList);
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param uninstallAppsList
-     */
-    void uninstallApps(List<String> uninstallAppsList);
+    void uninstallApps(List<String> uninstallAppsList) throws DeviceException;
 
     /**
      * TODO(): Add docs.     // Get file system of device

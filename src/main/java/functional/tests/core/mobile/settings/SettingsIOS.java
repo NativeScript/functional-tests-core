@@ -14,6 +14,6 @@ public class SettingsIOS {
     /**
      * Init iOS settings.
      */
-    public SettingsIOS() {
+    SettingsIOS() {
     }
 }

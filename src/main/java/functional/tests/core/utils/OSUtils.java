@@ -156,7 +156,7 @@ public class OSUtils {
                 }
             }
         } catch (Exception e) {
-            LOGGER_BASE.debug("Failed to fullStop process: " + name);
+            LOGGER_BASE.debug("Failed to stop process: " + name);
         }
     }
 
