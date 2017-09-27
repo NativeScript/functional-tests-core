@@ -23,8 +23,8 @@ public class App {
     /**
      * Initialize Application object.
      *
-     * @param device
-     * @param settings
+     * @param device Device object.
+     * @param settings MobileSettings object.
      */
     public App(Device device, MobileSettings settings) {
         this.device = device;

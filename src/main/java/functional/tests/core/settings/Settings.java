@@ -114,7 +114,7 @@ public class Settings {
         this.shortTimeout = this.defaultTimeout / 5;
 
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
-        this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
+        this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 120);
 
         this.deviceName = this.properties.getProperty("deviceName");
 

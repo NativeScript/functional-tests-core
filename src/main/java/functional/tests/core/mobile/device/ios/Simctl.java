@@ -102,6 +102,7 @@ public class Simctl {
                 LOGGER_BASE.info(simId + " booted!");
                 break;
             } else {
+                LOGGER_BASE.info(simId + " still booting...");
                 Wait.sleep(this.settings.shortTimeout);
             }
         }
@@ -133,7 +134,14 @@ public class Simctl {
         usedSimulators.forEach((sim) -> {
             if (sim.usedFrom > minutes * 60 * 1000) {
                 LOGGER_BASE.warn(String.format("Simulator used more than %s minutes detected!", String.valueOf(minutes)));
+
+                // Stop all simulators via xcrun simctl
                 this.stop(sim.id);
+                Wait.sleep(1000);
+
+                // Kill all the processes related with sim.id (for example WDA agents).
+                String killCommand = "ps aux | grep -ie " + sim.id + " | awk '{print $2}' | xargs kill -9";
+                OSUtils.runProcess(killCommand);
             }
         });
     }

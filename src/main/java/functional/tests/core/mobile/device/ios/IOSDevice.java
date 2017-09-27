@@ -340,6 +340,9 @@ public class IOSDevice implements IDevice {
         // Kill simulators used more than 2 hours
         this.simctl.stopUsedSimulators(120);
 
+        // Kill all WebDriver sessions that are not un use.
+
+
         String simId = this.simctl.getFreeSimulator(this.settings.deviceName);
         if (simId != null) {
             // If appropriate device is already running and free -> use it!
