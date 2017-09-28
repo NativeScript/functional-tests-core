@@ -1,22 +1,27 @@
 package functional.tests.core.mobile.device.android;
 
+import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.enums.OSType;
-import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.log.LoggerBase;
+import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
- * TODO(dtopuzov): Add docs.
+ * Adb wrapper.
  */
 public class Adb {
 
@@ -30,9 +35,9 @@ public class Adb {
     private MobileSettings settings;
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Init adb wrapper.
      *
-     * @param settings
+     * @param settings MobileSettings object.
      */
     public Adb(MobileSettings settings) {
         this.avdPath = this.getAvdPath();
@@ -222,9 +227,9 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Uninstall application.
      *
-     * @param appId
+     * @param appId Bundle identifier.
      */
     public void uninstallApp(String appId) {
         this.stopApp(appId);
@@ -255,66 +260,6 @@ public class Adb {
 
     /**
      * TODO(dtopuzov): Add docs.
-     * If emulator with same name exists, do nothing, else create emulator.
-     *
-     * @param avdName
-     * @param options
-     * @param force
-     * @throws DeviceException
-     */
-    public void createEmulator(String avdName, String options, Boolean force) throws DeviceException {
-
-        String avds = OSUtils.runProcess(this.avdPath + " list avds");
-        Boolean emulatorExists = false;
-        if (avds.contains(avdName + ".avd")) {
-            LOGGER_BASE.info(avdName + " already exists.");
-            emulatorExists = true;
-        }
-        if (force || !emulatorExists) {
-            // Create emulator
-            String command;
-            if (this.settings.os == OSType.Windows) {
-                LOGGER_BASE.fatal("Create emulator not implemented for Windows systems.");
-                throw new UnsupportedOperationException("Create emulator not implemented for Windows systems.");
-            } else {
-                // Please, have in mind that the `emulatorCreateOptions` should comply with the Android SDK Tools version installed.
-                // Example:
-                // SDK Tools 25.2.5: `-t android-24 --abi default/x86`
-                // SDK Tools 25.3.0: `-k "system-images;android-24;default;x86" -b default/x86`
-                command = "echo no | " + this.avdPath + " create avd -n " + avdName + " " + options + " -f";
-            }
-
-            LOGGER_BASE.info("Create emulator with command: ");
-            LOGGER_BASE.info(command);
-            String output = OSUtils.runProcess(command);
-            LOGGER_BASE.info(output);
-
-            // Verify it exists
-            avds = OSUtils.runProcess(this.avdPath + " list avds");
-            if (avds.contains(avdName + ".avd")) {
-                LOGGER_BASE.info(avdName + " created successfully.");
-            } else {
-                String error = "Emulator " + avdName + " is not available!";
-                LOGGER_BASE.fatal(error);
-                throw new DeviceException(error);
-            }
-        }
-    }
-
-    /**
-     * TODO(dtopuzov): Add docs.
-     * If emulator with same name exists, do nothing, else create emulator.
-     *
-     * @param avdName
-     * @param options
-     * @throws DeviceException
-     */
-    public void createEmulator(String avdName, String options) throws DeviceException {
-        this.createEmulator(avdName, options, false);
-    }
-
-    /**
-     * TODO(dtopuzov): Add docs.
      *
      * @param avdName
      * @param port
@@ -329,8 +274,14 @@ public class Adb {
         OSUtils.runProcess(false, Integer.MAX_VALUE, command);
     }
 
+
+    protected void stopEmulator(String deviceId) {
+        this.runAdbCommand(deviceId, "emu kill");
+        LOGGER_BASE.info("Emulator " + deviceId + " killed.");
+    }
+
     /**
-     * TODO(dtopuzov): Add docs.
+     * Stop all emulator processes.
      */
     protected void stopAllEmulators() {
         if (this.settings.os == OSType.Windows) {
@@ -363,13 +314,13 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Check if emulator is running.
      *
-     * @param deviceId
-     * @return
+     * @param deviceId Device identifier.
+     * @return True if it is running.
      */
-    protected boolean checkIfEmulatorIsRunning(String deviceId) {
-        boolean hasBooted = false;
+    protected boolean isRunning(String deviceId) {
+        boolean booted = false;
 
         String rowData = this.runAdbCommand(deviceId, "shell dumpsys activity");
         String[] list = rowData.split("\\r?\\n");
@@ -381,27 +332,27 @@ public class Adb {
                     || line.contains("com.google.android.googlequicksearchbox")
                     || line.contains("com.google.android.apps.nexuslauncher")
                     || line.contains(this.settings.packageId))) {
-                hasBooted = true;
+                booted = true;
                 break;
             }
         }
 
-        if (hasBooted) {
-            LOGGER_BASE.info("Emulator is up and running.");
+        if (booted) {
+            LOGGER_BASE.info(deviceId + " is up and running.");
             this.setScreenOffTimeOut(deviceId, 180000);
         } else {
-            LOGGER_BASE.debug("Emulator is not running.");
+            LOGGER_BASE.debug(deviceId + " is not running.");
         }
 
-        return hasBooted;
+        return booted;
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Wait until emulator boot.
      *
-     * @param deviceId
-     * @param timeOut
-     * @throws TimeoutException
+     * @param deviceId Device identifier.
+     * @param timeOut  Timeout in seconds.
+     * @throws TimeoutException When if fails to boot.
      */
     protected void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
@@ -410,7 +361,7 @@ public class Adb {
 
         while ((currentTime - startTime) < timeOut * 1000) {
             currentTime = new Date().getTime();
-            found = this.checkIfEmulatorIsRunning(deviceId);
+            found = this.isRunning(deviceId);
 
             if (found) {
                 break;
@@ -628,6 +579,18 @@ public class Adb {
         }
     }
 
+    public String getAvdName(String deviceId) {
+        String command = "(sleep 1; echo avd name) | telnet localhost " + deviceId.split("-")[1];
+        String output = OSUtils.runProcess(command);
+        try {
+            return StringUtils.substringBetween(output, "OK", "OK").trim();
+        }catch (Exception e){
+            LOGGER_BASE.error("Failed to get name of " + deviceId);
+            LOGGER_BASE.error(output);
+            return "";
+        }
+    }
+
     /**
      * TODO(dtopuzov): Add docs.
      *
@@ -682,17 +645,17 @@ public class Adb {
      *
      * @param deviceId
      * @param command
-     * @param deviceBootTime
+     * @param timeout
      * @param waitFor
      * @return
      */
-    private static String runAdbCommandStatic(String deviceId, String command, int deviceBootTime, boolean waitFor) {
+    private static String runAdbCommandStatic(String deviceId, String command, int timeout, boolean waitFor) {
         String adbCommand = ADB_PATH;
         if (deviceId != null && deviceId != "") {
             adbCommand += " -s " + deviceId;
         }
         adbCommand += " " + command;
-        String output = OSUtils.runProcess(waitFor, deviceBootTime, adbCommand);
+        String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
 
         return output;
     }
@@ -734,5 +697,110 @@ public class Adb {
         }
 
         return "";
+    }
+
+    /**
+     * Return time since emulator is in use.
+     *
+     * @param deviceId Device identifier.
+     * @return Time since emulator is in use in milliseconds (0 if emulator is not in used).
+     */
+    long usedSince(String deviceId) {
+        this.runAdbCommand(deviceId, "pull /data/local/tmp/used.tmp used.tmp");
+        File temp = new File("used.tmp");
+        if (temp.exists()) {
+            long now = new Date().getTime();
+            long lastModified = temp.lastModified();
+            long usedFrom = now - lastModified;
+            temp.delete();
+            LOGGER_BASE.info(deviceId + " is in use from " + String.valueOf(TimeUnit.MILLISECONDS.toSeconds(usedFrom)) + " seconds.");
+            return usedFrom;
+        } else {
+            LOGGER_BASE.info(deviceId + " is not used!");
+            return 0;
+        }
+    }
+
+    /**
+     * Mark emulator as used.
+     *
+     * @param deviceId emulator identifier.
+     */
+    void markUsed(String deviceId) {
+        LOGGER_BASE.info("Mark emulator as used: " + deviceId);
+        this.runAdbCommand(deviceId, "shell touch /data/local/tmp/used.tmp");
+    }
+
+    /**
+     * Mark emulator as unused.
+     *
+     * @param deviceId emulator identifier.
+     */
+    void markUnused(String deviceId) {
+        LOGGER_BASE.info("Mark emulator as unused: " + deviceId);
+        this.runAdbCommand(deviceId, "shell rm -rf /data/local/tmp/used.tmp");
+    }
+
+    /**
+     * Get emulator info - id, name, state.
+     *
+     * @param state EmulatorState filter.
+     * @return List of EmulatorInfo objects.
+     */
+    List<EmulatorInfo> getEmulatorInfo(EmulatorState state) {
+        List<EmulatorInfo> simulators = this.getEmulatorInfo();
+        return simulators.stream().filter(p -> p.state == state).collect(Collectors.toList());
+    }
+
+    /**
+     * Get emulator info - id, name, state.
+     *
+     * @return List of EmulatorInfo objects.
+     */
+    List<EmulatorInfo> getEmulatorInfo() {
+        List<EmulatorInfo> list = new ArrayList<>();
+        for (String item : this.getDevices()) {
+            if (item.contains("emulator-")) {
+                String id = item.split("\t")[0].trim();
+                String name = this.getAvdName(id);
+                EmulatorState state = EmulatorState.Shutdown;
+                long usedFrom = -1;
+                if (item.contains("device")) {
+                    usedFrom = this.usedSince(id);
+                    if (usedFrom == 0) {
+                        state = EmulatorState.Free;
+                    } else {
+                        state = EmulatorState.Used;
+                    }
+                }
+                EmulatorInfo info = new EmulatorInfo(id, name, state, usedFrom);
+                list.add(info);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Stop emulators used for more than X minutes.
+     *
+     * @param minutes Minutes.
+     */
+    public void stopUsedEmulators(int minutes) {
+        List<EmulatorInfo> usedEmulators = this.getEmulatorInfo(EmulatorState.Used);
+        usedEmulators.forEach((emu) -> {
+            if (emu.usedFrom > minutes * 60 * 1000) {
+                LOGGER_BASE.warn(String.format("Emulators used more than %s minutes detected!", String.valueOf(minutes)));
+
+                // Stop all emulators
+                this.stopEmulator(emu.id);
+                Wait.sleep(1000);
+
+                // Kill all the processes related with emulator (on linux and mac)
+                if (this.settings.os != OSType.Windows) {
+                    String killCommand = "ps aux | grep -ie " + emu.id + " | awk '{print $2}' | xargs kill -9";
+                    OSUtils.runProcess(killCommand);
+                }
+            }
+        });
     }
 }

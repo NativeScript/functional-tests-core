@@ -2,6 +2,7 @@ package functional.tests.core.mobile.device.ios;
 
 import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.exceptions.DeviceException;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
@@ -54,23 +55,22 @@ public class Simctl {
         LOGGER_BASE.info("Create simulator with following command:");
         LOGGER_BASE.info(createSimulatorCommand);
         String output = OSUtils.runProcess(createSimulatorCommand);
-
-        if (output.toLowerCase().contains("error") || output.toLowerCase().contains("invalid")) {
-            LOGGER_BASE.fatal("Failed to create simulator. Error: " + output);
-            throw new DeviceException("Failed to create simulator. Error: " + output);
-        } else {
-            String udid = output;
-            String[] list = output.split("\\r?\\n");
-            for (String line : list) {
-                if (line.contains("-")) {
-                    udid = line.trim();
-                }
-                this.settings.deviceId = udid.trim();
-                LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
+        String udid = "";
+        String[] list = output.split("\\r?\\n");
+        for (String line : list) {
+            if (line.contains("-")) {
+                udid = line.trim();
             }
+            this.settings.deviceId = udid.trim();
+            LOGGER_BASE.info("Simulator created with UDID: " + this.settings.deviceId);
         }
 
-        return output.trim();
+        // Make sure iOS Simulator is created.
+        if (!udid.contains("-")) {
+            SystemExtension.interruptProcess("Failed to create desired iOS Simulator!");
+        }
+
+        return udid;
     }
 
     /**
@@ -296,19 +296,6 @@ public class Simctl {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Get number of maximum iOS Simulators that can be executed on Single machine.
-     *
-     * @return Number of maximum iOS Simulators that can be executed on Single machine.
-     */
-    int getMaxCountOfRunningSimulators() {
-        String maxCountVar = System.getenv("MAX_SIM_COUNT");
-        if (maxCountVar == null) {
-            maxCountVar = "1";
-        }
-        return Integer.parseInt(maxCountVar);
     }
 
     /**

@@ -164,7 +164,7 @@ public class MobileSetupManager {
     /**
      * Stop app under test, appium client and server.
      */
-    public void stopSession() {
+    public void stopSession() throws DeviceException {
         this.context.app.close();
         this.context.client.stopDriver();
         this.context.server.stopServer();
@@ -182,8 +182,8 @@ public class MobileSetupManager {
      * This will also start Appium client session.
      *
      * @throws MobileAppException When app can not be deployed or started.
-     * @throws DeviceException When device is not attached or emulator can not start.
-     * @throws TimeoutException When device can not be started in appropriate time.
+     * @throws DeviceException    When device is not attached or emulator can not start.
+     * @throws TimeoutException   When device can not be started in appropriate time.
      */
     public void initDevice() throws MobileAppException, DeviceException, TimeoutException {
         try {
@@ -192,14 +192,6 @@ public class MobileSetupManager {
             Log.logScreenOfHost(this.settings, "onStartDevice");
             throw ex;
         }
-    }
-
-    /**
-     * Cleanup device (delete apps, logs) and stop it.
-     */
-    public void cleanDevice() throws DeviceException {
-        this.context.device.uninstallApps();
-        this.context.device.stop();
     }
 
     /**

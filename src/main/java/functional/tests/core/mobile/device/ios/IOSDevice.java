@@ -7,6 +7,7 @@ import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.device.IDevice;
 import functional.tests.core.mobile.find.Wait;
@@ -132,15 +133,13 @@ public class IOSDevice implements IDevice {
 
     /**
      * Uninstall apps in uninstallAppsList.
-     *
-     * @param uninstallAppsList List of prefixes (example: org.nativescript.)
      */
     @Override
-    public void uninstallApps(List<String> uninstallAppsList) throws DeviceException {
+    public void uninstallApps() throws DeviceException {
         IOSDevice.LOGGER_BASE.info("Uninstalling apps...");
         List<String> installedApps = this.getInstalledApps();
 
-        for (String appToUninstall : uninstallAppsList) {
+        for (String appToUninstall : Device.uninstallAppsList()) {
             for (String appId : installedApps) {
                 if (appId.contains(appToUninstall)) {
                     this.uninstallApp(appId);
@@ -337,11 +336,8 @@ public class IOSDevice implements IDevice {
      */
     private void startSimulator() throws DeviceException {
 
-        // Kill simulators used more than 2 hours
-        this.simctl.stopUsedSimulators(120);
-
-        // Kill all WebDriver sessions that are not un use.
-
+        // Kill simulators and web driver sessions used more than 90 min
+        this.simctl.stopUsedSimulators(90);
 
         String simId = this.simctl.getFreeSimulator(this.settings.deviceName);
         if (simId != null) {
@@ -353,7 +349,7 @@ public class IOSDevice implements IDevice {
 
             LOGGER_BASE.info("Can not find free and booted simulator with name " + this.settings.deviceName);
 
-            int maxSimCount = this.simctl.getMaxCountOfRunningSimulators();
+            int maxSimCount = this.settings.ios.maxSimCount;
             int free = this.simctl.getSimulatorsInfo(EmulatorState.Free).size();
             int used = this.simctl.getSimulatorsInfo(EmulatorState.Used).size();
             int currentSimCount = free + used;
@@ -366,9 +362,12 @@ public class IOSDevice implements IDevice {
             }
 
             // Start desired simulator
+            free = this.simctl.getSimulatorsInfo(EmulatorState.Free).size();
+            used = this.simctl.getSimulatorsInfo(EmulatorState.Used).size();
+            currentSimCount = free + used;
             if (currentSimCount >= maxSimCount) {
                 // If still running iOS Simulators are more than limit we can't help.
-                throw new DeviceException("Maximum number of running iOS Simulator limit exceeded.");
+                SystemExtension.interruptProcess("Maximum number of running iOS Simulator limit exceeded.");
             } else {
                 // If desired iOS Simulator do not exists -> create it!
                 String offlineSim = this.simctl.getOffineSimulator(this.settings.deviceName);

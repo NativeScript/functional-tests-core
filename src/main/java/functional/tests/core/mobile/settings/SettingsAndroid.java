@@ -5,6 +5,7 @@ package functional.tests.core.mobile.settings;
  */
 public class SettingsAndroid {
 
+    public int maxEmuCount;
     public String appWaitActivity;
     public String appWaitPackage;
     public String defaultActivity;

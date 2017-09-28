@@ -99,11 +99,12 @@ public interface IDevice {
     void runAppInBackGround(int seconds);
 
     /**
-     * TODO(): Add docs.
+     * Android: Uninstall all third party apps.
+     * iOS: Uninstall all apps matching org.nativescript. and com.telerik.
      *
-     * @param uninstallAppsList
+     * @throws DeviceException When uninstall fails
      */
-    void uninstallApps(List<String> uninstallAppsList) throws DeviceException;
+    void uninstallApps() throws DeviceException;
 
     /**
      * TODO(): Add docs.     // Get file system of device

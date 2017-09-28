@@ -98,9 +98,9 @@ public abstract class MobileTest {
     }
 
     /**
-     * Executed before each UI Test method.
+     * Executed before each test class.
      *
-     * @throws Exception
+     * @throws Exception When something fails.
      */
     @BeforeClass(alwaysRun = true)
     public void beforeMethodUIBaseClass() throws Exception {
@@ -120,8 +120,8 @@ public abstract class MobileTest {
     /**
      * Executed before each UI Test method.
      *
-     * @param method
-     * @throws Exception
+     * @param method TestMethod.
+     * @throws Exception When something fails.
      */
     @BeforeMethod(alwaysRun = true)
     public void beforeMethodUIBaseTest(Method method) throws Exception {
@@ -205,7 +205,13 @@ public abstract class MobileTest {
         try {
             this.context.device.logPerfInfo();
             this.mobileSetupManager.stopSession();
-            this.mobileSetupManager.cleanDevice();
+
+            // Uninstall test apps
+            if (!this.settings.debug) {
+                this.context.device.uninstallApps();
+            }
+
+            this.context.device.stop();
         } catch (Exception e) {
             this.context.device.stop();
             throw e;

@@ -142,6 +142,9 @@ public class Device {
      * Stop device (kills emulator/simulator).
      */
     public void stop() throws DeviceException {
+        if (!this.settings.debug) {
+            this.device.uninstallApps();
+        }
         this.device.stop();
     }
 
@@ -290,7 +293,7 @@ public class Device {
      * Uninstall user application.
      */
     public void uninstallApps() throws DeviceException {
-        this.device.uninstallApps(uninstallAppsList());
+        this.device.uninstallApps();
     }
 
     /**
@@ -321,7 +324,7 @@ public class Device {
     }
 
     /**
-     * List of user apps (apps that are safe to be uninstalled.
+     * List of user apps (apps that are safe to be uninstalled).
      *
      * @return List of package ids.
      */

@@ -10,8 +10,6 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
-import java.net.ServerSocket;
-import java.util.Random;
 
 /**
  * Appium Desired Capabilities.
@@ -105,12 +103,10 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.SCREENSHOT_WAIT_TIMEOUT, settings.defaultTimeout);
         capabilities.setCapability(IOSMobileCapabilityType.SHOW_IOS_LOG, true);
 
-        // Find free port for wdaLocalPort capability
-        int port = OSUtils.getFreePort(8100, 8200);
-        capabilities.setCapability("wdaLocalPort", port);
-
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
+            int port = OSUtils.getFreePort(8100, 8200);
+            capabilities.setCapability("wdaLocalPort", port);
             capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
 

@@ -47,7 +47,6 @@ public class MobileSettings extends Settings {
      */
     public MobileSettings() {
         this.deviceId = this.properties.getProperty("udid");
-        // Init Platform MobileSettings
         this.initSettings();
     }
 
@@ -63,9 +62,12 @@ public class MobileSettings extends Settings {
         this.android = new SettingsAndroid();
         loggerBase.separatorAndroid();
 
-        if (this.deviceId == null && this.deviceType == DeviceType.Emulator) {
+        this.android.maxEmuCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_EMU_COUNT", "1"));
+        loggerBase.info("Maximum number of parallel emulators: " + String.valueOf(this.android.maxEmuCount));
+
+        if (this.deviceType == DeviceType.Emulator) {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
-            this.deviceId = AndroidDevice.generateDeviceId(this.platformVersion);
+            this.deviceId = AndroidDevice.getEmulatorId(this.platformVersion);
         }
         loggerBase.info("Device Id: " + this.deviceId);
 
@@ -128,11 +130,12 @@ public class MobileSettings extends Settings {
         this.ios = new SettingsIOS();
         loggerBase.separatorIOS();
 
-        if (this.deviceId == null && !this.isRealDevice) {
+        this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
+        loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
 
+        if (this.deviceId == null && !this.isRealDevice) {
             this.deviceId = null;
         }
-
         loggerBase.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
@@ -209,7 +212,7 @@ public class MobileSettings extends Settings {
         loggerBase.info("Device Type: " + this.deviceType);
         loggerBase.info("Real device: " + this.isRealDevice);
         if (this.isRealDevice) {
-            loggerBase.info("Restart real device:  " + this.restartRealDevice);
+            loggerBase.info("Restart real device: " + this.restartRealDevice);
         }
         loggerBase.info("Appium Version: " + this.appiumVersion);
         loggerBase.info("Appium Log File: " + this.appiumLogFile);

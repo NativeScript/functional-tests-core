@@ -5,6 +5,7 @@ import functional.tests.core.enums.OSType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.exceptions.HostException;
 import functional.tests.core.log.LoggerBase;
+import functional.tests.core.utils.OSUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -98,7 +99,7 @@ public class Settings {
                 new Boolean(this.properties.getProperty("logImageVerificationStatus")) : false;
 
         // Set debug
-        this.debug = Boolean.valueOf(this.getEnvironmentVariable(DEBUG_ENVIRONMENT_VARIABLE, "False")) ||
+        this.debug = Boolean.valueOf(OSUtils.getEnvironmentVariable(DEBUG_ENVIRONMENT_VARIABLE, "False")) ||
                 java.lang.management.ManagementFactory
                         .getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;
 
@@ -264,7 +265,7 @@ public class Settings {
      * @return value of STORAGE environment variable
      */
     private String getStorage() {
-        return this.getEnvironmentVariable(STORAGE_ENVIRONMENT_VARIABLE, BASE_RESOURCE_DIR);
+        return OSUtils.getEnvironmentVariable(STORAGE_ENVIRONMENT_VARIABLE, BASE_RESOURCE_DIR);
     }
 
     /**
@@ -307,15 +308,5 @@ public class Settings {
         }
 
         return platformType;
-    }
-
-    private String getEnvironmentVariable(String variable, String defaultValue) {
-        String finalValue = defaultValue;
-        String env = System.getenv(variable);
-        if (env != null) {
-            finalValue = env;
-        }
-        LOGGER_BASE.info(String.format("%s=%s", variable, finalValue));
-        return finalValue;
     }
 }

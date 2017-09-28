@@ -260,6 +260,15 @@ public class OSUtils {
         return hostname;
     }
 
+    public static String getEnvironmentVariable(String variable, String defaultValue) {
+        String finalValue = defaultValue;
+        String env = System.getenv(variable);
+        if (env != null) {
+            finalValue = env;
+        }
+        return finalValue;
+    }
+
     public static int getFreePort(int minValue, int maxValue) {
         int port;
         do {
