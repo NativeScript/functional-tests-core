@@ -6,7 +6,6 @@ import functional.tests.core.exceptions.MobileAppException;
 import org.openqa.selenium.html5.Location;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**

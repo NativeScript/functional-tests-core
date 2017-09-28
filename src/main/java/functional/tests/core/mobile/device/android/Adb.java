@@ -584,7 +584,7 @@ public class Adb {
         String output = OSUtils.runProcess(command);
         try {
             return StringUtils.substringBetween(output, "OK", "OK").trim();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER_BASE.error("Failed to get name of " + deviceId);
             LOGGER_BASE.error(output);
             return "";
