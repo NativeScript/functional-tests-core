@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utils for host operating system.
@@ -297,5 +298,42 @@ public class OSUtils {
         }
 
         return false;
+    }
+
+    public static int executeCommand(final String commandLine, final long timeout)
+            throws IOException, InterruptedException, TimeoutException {
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec(commandLine);
+
+        Worker worker = new Worker(process);
+        worker.start();
+        try {
+            worker.join(timeout*1000);
+            if (worker.exit != null)
+                return worker.exit;
+            else
+                throw new TimeoutException();
+        } catch(InterruptedException ex) {
+            worker.interrupt();
+            Thread.currentThread().interrupt();
+            throw ex;
+        } finally {
+            process.destroy();
+        }
+    }
+
+    private static class Worker extends Thread {
+        private final Process process;
+        private Integer exit;
+        private Worker(Process process) {
+            this.process = process;
+        }
+        public void run() {
+            try {
+                exit = process.waitFor();
+            } catch (InterruptedException ignore) {
+                return;
+            }
+        }
     }
 }

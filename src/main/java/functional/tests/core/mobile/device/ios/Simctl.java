@@ -11,10 +11,12 @@ import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.OSUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -94,7 +96,16 @@ public class Simctl {
 
         // Start it...
         LOGGER_BASE.info("Start iOS Simulator: " + simId);
-        this.runSimctlCommand("boot", this.settings.deviceId, "");
+        try {
+            OSUtils.executeCommand("xcrun simctl erase " + this.settings.deviceId, this.settings.deviceBootTimeout);
+            OSUtils.executeCommand("xcrun simctl boot " + this.settings.deviceId, this.settings.deviceBootTimeout);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
 
         // Wait until it boot...
         for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeout); stop > System.nanoTime(); ) {
@@ -182,7 +193,6 @@ public class Simctl {
         }
         return list;
     }
-
 
     /**
      * Install application under test.
