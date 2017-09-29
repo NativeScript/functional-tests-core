@@ -308,12 +308,12 @@ public class OSUtils {
         Worker worker = new Worker(process);
         worker.start();
         try {
-            worker.join(timeout*1000);
-            if (worker.exit != null)
+            worker.join(timeout * 1000);
+            if (worker.exit != null) {
                 return worker.exit;
-            else
+            } else
                 throw new TimeoutException();
-        } catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             worker.interrupt();
             Thread.currentThread().interrupt();
             throw ex;
@@ -325,9 +325,11 @@ public class OSUtils {
     private static class Worker extends Thread {
         private final Process process;
         private Integer exit;
+
         private Worker(Process process) {
             this.process = process;
         }
+
         public void run() {
             try {
                 exit = process.waitFor();
