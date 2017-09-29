@@ -311,8 +311,9 @@ public class OSUtils {
             worker.join(timeout * 1000);
             if (worker.exit != null) {
                 return worker.exit;
-            } else
+            } else {
                 throw new TimeoutException();
+            }
         } catch (InterruptedException ex) {
             worker.interrupt();
             Thread.currentThread().interrupt();
@@ -332,7 +333,7 @@ public class OSUtils {
 
         public void run() {
             try {
-                exit = process.waitFor();
+                this.exit = this.process.waitFor();
             } catch (InterruptedException ignore) {
                 return;
             }
