@@ -233,14 +233,19 @@ public class Adb {
      * @param appId Bundle identifier.
      */
     public void uninstallApp(String appId) {
-        this.stopApp(appId);
-        String uninstallResult = this.runAdbCommand(this.settings.deviceId, "shell pm uninstall -k " + appId);
+        if (appId.contains(".")) {
+            this.stopApp(appId);
+            String uninstallResult = this.runAdbCommand(this.settings.deviceId, "shell pm uninstall " + appId);
 
-        if (uninstallResult.contains("Success")) {
-            LOGGER_BASE.info(appId + " successfully uninstalled.");
+            if (uninstallResult.contains("Success")) {
+                LOGGER_BASE.info(appId + " successfully uninstalled.");
+            } else {
+                LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+            }
         } else {
-            LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+            LOGGER_BASE.error("Invalid appId: " + appId);
         }
+
     }
 
     /**

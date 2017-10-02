@@ -142,9 +142,6 @@ public class Device {
      * Stop device (kills emulator/simulator).
      */
     public void stop() throws DeviceException {
-        if (!this.settings.debug) {
-            this.device.uninstallApps();
-        }
         this.device.stop();
     }
 
