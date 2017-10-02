@@ -270,10 +270,10 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Start emulator image.
      *
-     * @param avdName
-     * @param port
+     * @param avdName Name of AVD image.
+     * @param port    Port.
      */
     protected void startEmulator(String avdName, int port) {
         String command = EMULATOR_PATH + " -port " + port + " -avd " + avdName;
@@ -723,8 +723,12 @@ public class Adb {
      * @return Time since emulator is in use in milliseconds (0 if emulator is not in used).
      */
     long usedSince(String deviceId) {
-        this.runAdbCommand(deviceId, "pull /data/local/tmp/used.tmp used.tmp");
         File temp = new File("used.tmp");
+        if (temp.exists()) {
+            temp.delete();
+        }
+        this.runAdbCommand(deviceId, "pull -a /data/local/tmp/used.tmp used.tmp");
+        temp = new File("used.tmp");
         if (temp.exists()) {
             long now = new Date().getTime();
             long lastModified = temp.lastModified();
