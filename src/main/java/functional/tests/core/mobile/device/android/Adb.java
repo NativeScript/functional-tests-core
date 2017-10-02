@@ -168,7 +168,7 @@ public class Adb {
     public List<String> getInstalledApps() {
         String rowData = this.runAdbCommand(this.settings.deviceId, "shell pm list packages -3");
         String trimData = rowData.replace("package:", "");
-        LOGGER_BASE.info("Installed Apps: " + trimData) ø;
+        LOGGER_BASE.info("Installed Apps: " + trimData);
         String[] list = trimData.split("\\r?\\n");
         return Arrays.asList(list);
     }
