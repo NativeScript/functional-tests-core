@@ -2,6 +2,7 @@ package functional.tests.core.mobile.device.android;
 
 import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.enums.OSType;
+import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
@@ -579,16 +580,22 @@ public class Adb {
         }
     }
 
-    public String getAvdName(String deviceId) {
+    public String getAvdName(String deviceId) throws DeviceException {
         String command = "(sleep 1; echo avd name) | telnet localhost " + deviceId.split("-")[1];
-        String output = OSUtils.runProcess(command);
-        try {
-            return StringUtils.substringBetween(output, "OK", "OK").trim();
-        } catch (Exception e) {
-            LOGGER_BASE.error("Failed to get name of " + deviceId);
-            LOGGER_BASE.error(output);
-            return "";
+        String name = "";
+        for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(30); stop > System.nanoTime(); ) {
+            String output = OSUtils.runProcess(command);
+            try {
+                name = StringUtils.substringBetween(output, "OK", "OK").trim();
+                break;
+            } catch (Exception e) {
+                LOGGER_BASE.debug("Failed to get name of " + deviceId);
+            }
         }
+        if (name.equalsIgnoreCase("")) {
+            throw new DeviceException("Failed to get name of " + deviceId);
+        }
+        return name;
     }
 
     /**
@@ -746,8 +753,9 @@ public class Adb {
      *
      * @param state EmulatorState filter.
      * @return List of EmulatorInfo objects.
+     * @throws DeviceException When fails to get AVD name.
      */
-    List<EmulatorInfo> getEmulatorInfo(EmulatorState state) {
+    List<EmulatorInfo> getEmulatorInfo(EmulatorState state) throws DeviceException {
         List<EmulatorInfo> simulators = this.getEmulatorInfo();
         return simulators.stream().filter(p -> p.state == state).collect(Collectors.toList());
     }
@@ -756,8 +764,9 @@ public class Adb {
      * Get emulator info - id, name, state.
      *
      * @return List of EmulatorInfo objects.
+     * @throws DeviceException When fails to get AVD name.
      */
-    List<EmulatorInfo> getEmulatorInfo() {
+    List<EmulatorInfo> getEmulatorInfo() throws DeviceException {
         List<EmulatorInfo> list = new ArrayList<>();
         for (String item : this.getDevices()) {
             if (item.contains("emulator-")) {
@@ -784,8 +793,9 @@ public class Adb {
      * Stop emulators used for more than X minutes.
      *
      * @param minutes Minutes.
+     * @throws DeviceException When fails to get AVD name.
      */
-    public void stopUsedEmulators(int minutes) {
+    public void stopUsedEmulators(int minutes) throws DeviceException {
         List<EmulatorInfo> usedEmulators = this.getEmulatorInfo(EmulatorState.Used);
         usedEmulators.forEach((emu) -> {
             if (emu.usedFrom > minutes * 60 * 1000) {

@@ -10,6 +10,7 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.File;
+import java.lang.reflect.AnnotatedArrayType;
 
 /**
  * Appium Desired Capabilities.
@@ -79,10 +80,9 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, settings.android.appWaitActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
-            if (settings.isRealDevice == false && !settings.debug) {
-                // This line of code restart always the emulator
-                // capabilities.setCapability(AndroidMobileCapabilityType.AVD, settings.deviceName);
-                // capabilities.setCapability(AndroidMobileCapabilityType.AVD_ARGS, settings.android.emulatorOptions);
+            if (settings.automationName.equalsIgnoreCase("UIAutomator2")) {
+                int port = OSUtils.getFreePort(8201, 8300);
+                capabilities.setCapability("systemPort", port);
             }
         }
 

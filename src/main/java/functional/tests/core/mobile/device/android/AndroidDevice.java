@@ -483,8 +483,10 @@ public class AndroidDevice implements IDevice {
 
     /**
      * Stop emulators that run on ports that do not follow core convention.
+     *
+     * @throws DeviceException When fails to get AVD name.
      */
-    public void stopWrongPortEmulators() {
+    public void stopWrongPortEmulators() throws DeviceException {
         List<EmulatorInfo> usedEmulators = this.adb.getEmulatorInfo();
         usedEmulators.forEach((emu) -> {
 
