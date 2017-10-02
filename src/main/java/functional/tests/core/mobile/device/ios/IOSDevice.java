@@ -336,8 +336,8 @@ public class IOSDevice implements IDevice {
      */
     private void startSimulator() throws DeviceException {
 
-        // Kill simulators and web driver sessions used more than 90 min
-        this.simctl.stopUsedSimulators(90);
+        // Kill simulators and web driver sessions used more than 60 min
+        this.simctl.stopUsedSimulators(60);
 
         String simId = this.simctl.getFreeSimulator(this.settings.deviceName);
         if (simId != null) {

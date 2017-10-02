@@ -166,13 +166,11 @@ public class Adb {
      * @return List of apps.
      */
     public List<String> getInstalledApps() {
-        LOGGER_BASE.info("Installed Apps: ");
         List<String> list = new ArrayList<String>();
         String rowData = this.runAdbCommand(this.settings.deviceId, "shell pm list packages -3");
         for (String line : rowData.split("\\r?\\n")) {
             if (line.contains(".") && !line.contains("WARNING")) {
                 String appId = line.replace("package:", "").trim();
-                LOGGER_BASE.info(appId);
                 list.add(appId);
             }
         }
@@ -240,11 +238,10 @@ public class Adb {
      * @param appId Bundle identifier.
      */
     public void uninstallApp(String appId) {
-        if (appId.contains(".")) {
+        if (this.isAppInstalled(appId)) {
+            this.stopApp(appId);
             if (!appId.contains("appium")) {
-                this.stopApp(appId);
                 String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
-
                 if (uninstallResult.contains("Success")) {
                     LOGGER_BASE.info(appId + " successfully uninstalled.");
                 } else {
@@ -253,10 +250,7 @@ public class Adb {
             } else {
                 LOGGER_BASE.info("Skip uninstall: " + appId);
             }
-        } else {
-            LOGGER_BASE.error("Invalid appId: " + appId);
         }
-
     }
 
     /**

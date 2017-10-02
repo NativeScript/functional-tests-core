@@ -1,5 +1,6 @@
 package functional.tests.core.mobile.basetest;
 
+import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.image.ImageUtils;
@@ -140,25 +141,8 @@ public class MobileSetupManager {
     /**
      * Init Appium Server.
      */
-    public void initServer() {
-        boolean initFailed = false;
-        try {
-            this.context.server.initServer();
-            this.checkAppiumServerLogs();
-        } catch (Exception ex) {
-            initFailed = true;
-        }
-
-        // Retry starting server.
-        if (initFailed) {
-            // Force set "debug" log level and increase boot timeout twice.
-            LOGGER_BASE.info("Retry initializing appium server and client");
-            this.context.settings.appiumLogLevel = "debug";
-            this.context.settings.deviceBootTimeout = this.context.settings.deviceBootTimeout * 2;
-
-            this.initServer();
-            this.checkAppiumServerLogs();
-        }
+    public void initServer() throws IOException, AppiumException {
+        this.context.server.initServer();
     }
 
     /**
@@ -171,7 +155,7 @@ public class MobileSetupManager {
     }
 
 
-    public void restartSession() throws MobileAppException, DeviceException, TimeoutException {
+    public void restartSession() throws MobileAppException, DeviceException, TimeoutException, IOException, AppiumException {
         this.stopSession();
         this.initServer();
         this.initDevice();
