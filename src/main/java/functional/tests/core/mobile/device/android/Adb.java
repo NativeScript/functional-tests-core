@@ -166,11 +166,17 @@ public class Adb {
      * @return List of apps.
      */
     public List<String> getInstalledApps() {
+        LOGGER_BASE.info("Installed Apps: ");
+        List<String> list = new ArrayList<String>();
         String rowData = this.runAdbCommand(this.settings.deviceId, "shell pm list packages -3");
-        String trimData = rowData.replace("package:", "");
-        LOGGER_BASE.info("Installed Apps: " + trimData);
-        String[] list = trimData.split("\\r?\\n");
-        return Arrays.asList(list);
+        for (String line : rowData.split("\\r?\\n")) {
+            if (line.contains(".") && !line.contains("WARNING")) {
+                String appId = line.replace("package:", "").trim();
+                LOGGER_BASE.info(appId);
+                list.add(appId);
+            }
+        }
+        return list;
     }
 
     /**
@@ -237,7 +243,7 @@ public class Adb {
         if (appId.contains(".")) {
             if (!appId.contains("appium")) {
                 this.stopApp(appId);
-                String uninstallResult = this.runAdbCommand(this.settings.deviceId, "shell pm uninstall " + appId);
+                String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
 
                 if (uninstallResult.contains("Success")) {
                     LOGGER_BASE.info(appId + " successfully uninstalled.");

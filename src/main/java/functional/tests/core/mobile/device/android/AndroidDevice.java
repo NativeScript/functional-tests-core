@@ -172,9 +172,14 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void uninstallApps() {
+        // Explicitly uninstall app under test
+        this.adb.uninstallApp(this.settings.packageId);
+
+        // Install all other installed apps.
         for (String appId : this.adb.getInstalledApps()) {
             this.adb.uninstallApp(appId);
         }
+
     }
 
     @Override
