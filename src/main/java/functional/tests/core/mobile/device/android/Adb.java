@@ -161,13 +161,14 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Get list of installed android apps.
      *
-     * @return
+     * @return List of apps.
      */
     public List<String> getInstalledApps() {
         String rowData = this.runAdbCommand(this.settings.deviceId, "shell pm list packages -3");
         String trimData = rowData.replace("package:", "");
+        LOGGER_BASE.info("Installed Apps: " + trimData) ø;
         String[] list = trimData.split("\\r?\\n");
         return Arrays.asList(list);
     }
@@ -234,13 +235,17 @@ public class Adb {
      */
     public void uninstallApp(String appId) {
         if (appId.contains(".")) {
-            this.stopApp(appId);
-            String uninstallResult = this.runAdbCommand(this.settings.deviceId, "shell pm uninstall " + appId);
+            if (!appId.contains("appium")) {
+                this.stopApp(appId);
+                String uninstallResult = this.runAdbCommand(this.settings.deviceId, "shell pm uninstall " + appId);
 
-            if (uninstallResult.contains("Success")) {
-                LOGGER_BASE.info(appId + " successfully uninstalled.");
+                if (uninstallResult.contains("Success")) {
+                    LOGGER_BASE.info(appId + " successfully uninstalled.");
+                } else {
+                    LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+                }
             } else {
-                LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
+                LOGGER_BASE.info("Skip uninstall: " + appId);
             }
         } else {
             LOGGER_BASE.error("Invalid appId: " + appId);

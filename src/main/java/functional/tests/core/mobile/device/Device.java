@@ -38,7 +38,6 @@ public class Device {
     private IDevice device;
     private MobileSettings settings;
     private Client client;
-    //private MobileContext context;
     private Dimension windowSize;
 
     /**
