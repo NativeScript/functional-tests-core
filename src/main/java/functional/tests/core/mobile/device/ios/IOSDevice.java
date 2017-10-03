@@ -378,8 +378,8 @@ public class IOSDevice implements IDevice {
                 // Start iOS Simulator
                 LOGGER_BASE.info("Another " + this.settings.deviceName + " found!");
                 this.settings.deviceId = offlineSim;
-                this.simctl.start(offlineSim, this.settings.deviceBootTimeout);
                 this.simctl.markUsed(offlineSim);
+                this.simctl.start(offlineSim, this.settings.deviceBootTimeout);
             }
         }
     }
