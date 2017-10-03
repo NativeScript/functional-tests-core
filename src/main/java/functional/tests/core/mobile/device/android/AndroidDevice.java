@@ -223,8 +223,6 @@ public class AndroidDevice implements IDevice {
 
         // Handle error activity hack for newer Android emulators.
         this.adb.closeErrorActivty(this.getId());
-
-        // Additional notes: If UiAutomator2 is used on Api21 lines above will fail (only for Api21).
     }
 
     @Override
@@ -443,6 +441,7 @@ public class AndroidDevice implements IDevice {
                 }
             }
         } else {
+            LOGGER_BASE.info(this.getId() + " is not running!");
             int maxEmuCount = this.settings.android.maxEmuCount;
             int free = this.adb.getEmulatorInfo(EmulatorState.Free).size();
             int used = this.adb.getEmulatorInfo(EmulatorState.Used).size();

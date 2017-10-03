@@ -591,14 +591,16 @@ public class Adb {
     }
 
     public String getAvdName(String deviceId) throws DeviceException {
-        String command = "(sleep 1; echo avd name) | telnet localhost " + deviceId.split("-")[1];
+        int sleep = 1;
         String name = "";
         for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(30); stop > System.nanoTime(); ) {
+            String command = "(sleep " + String.valueOf(sleep) + "; echo avd name) | telnet localhost " + deviceId.split("-")[1];
             String output = OSUtils.runProcess(command);
             try {
                 name = StringUtils.substringBetween(output, "OK", "OK").trim();
                 break;
             } catch (Exception e) {
+                sleep = sleep + 1;
                 LOGGER_BASE.debug("Failed to get name of " + deviceId);
             }
         }
