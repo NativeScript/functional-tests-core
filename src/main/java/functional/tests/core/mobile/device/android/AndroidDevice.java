@@ -426,7 +426,7 @@ public class AndroidDevice implements IDevice {
         this.stopWrongPortEmulators();
 
         // Handle a case of two parallel emulators with same AVD image.
-        this.stopDuplicatedEmulators();
+        // this.stopDuplicatedEmulators();
 
         // Kill simulators and web driver sessions used more than 90 min
         this.adb.stopUsedEmulators(60);
