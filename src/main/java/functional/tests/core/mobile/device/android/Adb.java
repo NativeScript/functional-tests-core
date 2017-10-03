@@ -617,14 +617,17 @@ public class Adb {
             } catch (Exception e) {
                 sleep = sleep + 1;
                 try {
+                    LOGGER_BASE.info("Try to get AVD by searching in processes...");
                     String result = OSUtils.runProcess("ps aux | grep qemu | grep " + port);
+                    LOGGER_BASE.info("Processes: " + result);
                     String avd = result.split("-avd")[1].split(" ")[1].trim();
+                    LOGGER_BASE.info("AVD: " + avd);
                     name = avd;
                     break;
                 } catch (Exception ex) {
-                    LOGGER_BASE.debug("Failed to get name of " + deviceId);
+                    LOGGER_BASE.info("Failed to get name of " + deviceId);
                 }
-                LOGGER_BASE.debug("Failed to get name of " + deviceId);
+                LOGGER_BASE.info("Failed to get name of " + deviceId);
             }
         }
         if (name.equalsIgnoreCase("")) {
