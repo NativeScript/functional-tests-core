@@ -595,6 +595,12 @@ public class Adb {
         }
     }
 
+    /**
+     * Get name of AVD image based on device identifier.
+     * @param deviceId Device identifier.
+     * @return
+     * @throws DeviceException
+     */
     public String getAvdName(String deviceId) throws DeviceException {
         int sleep = 1;
         String name = "";
@@ -622,6 +628,7 @@ public class Adb {
             }
         }
         if (name.equalsIgnoreCase("")) {
+            LOGGER_BASE.debug("Failed to get name of " + deviceId);
             throw new DeviceException("Failed to get name of " + deviceId);
         }
         return name;
