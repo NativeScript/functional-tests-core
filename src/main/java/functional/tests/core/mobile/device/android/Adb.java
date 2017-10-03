@@ -609,7 +609,7 @@ public class Adb {
             String command = "(sleep " + String.valueOf(sleep) + "; echo avd name) | telnet localhost " + deviceId.split("-")[1];
             LOGGER_BASE.info("Execute: " + command);
             String output = OSUtils.runProcess(command);
-            LOGGER_BASE.info(("Output: " + output));
+            LOGGER_BASE.info("Output: " + output);
             try {
                 name = StringUtils.substringBetween(output, "OK", "OK").trim();
                 break;
