@@ -600,12 +600,24 @@ public class Adb {
         String name = "";
         for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(30); stop > System.nanoTime(); ) {
             String command = "(sleep " + String.valueOf(sleep) + "; echo avd name) | telnet localhost " + deviceId.split("-")[1];
+            LOGGER_BASE.info("Execute: " + command);
             String output = OSUtils.runProcess(command);
+            LOGGER_BASE.info(("Output: " + output));
             try {
                 name = StringUtils.substringBetween(output, "OK", "OK").trim();
                 break;
             } catch (Exception e) {
                 sleep = sleep + 1;
+                try {
+                    String result = OSUtils.runProcess("ps aux | grep qemu | grep -ie " + deviceId);
+                    String avd = result.split("-avd")[1].split("-")[0].trim();
+                    if (avd.contains("Emulator-")) {
+                        name = avd;
+                        break;
+                    }
+                } catch (Exception ex) {
+                    LOGGER_BASE.debug("Failed to get name of " + deviceId);
+                }
                 LOGGER_BASE.debug("Failed to get name of " + deviceId);
             }
         }
