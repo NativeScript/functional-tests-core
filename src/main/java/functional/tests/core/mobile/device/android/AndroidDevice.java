@@ -324,7 +324,7 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public int getMemUsage(String appPackageId) {
-        if (this.adb.isAvailable(this.getId()) || this.adb.isRunning(this.getId())) {
+        if (this.adb.isAvailable(this.getId()) || this.adb.isBooted(this.getId())) {
             String command = "shell dumpsys meminfo | grep " + appPackageId;
             String output = this.adb.runAdbCommand(this.getId(), command);
             if (output.contains(this.settings.packageId)) {
@@ -425,14 +425,11 @@ public class AndroidDevice implements IDevice {
         // Kill all simulators not matching framework convention
         this.stopWrongPortEmulators();
 
-        // Handle a case of two parallel emulators with same AVD image.
-        // this.stopDuplicatedEmulators();
-
         // Kill simulators and web driver sessions used more than 90 min
         this.adb.stopUsedEmulators(60);
 
         // Ensure emulator is running
-        if (this.adb.isRunning(this.getId())) {
+        if (this.adb.isBooted(this.getId())) {
             if (this.settings.debug) {
                 LOGGER_BASE.info("[DEBUG] All emulators will ");
             } else {
@@ -440,6 +437,7 @@ public class AndroidDevice implements IDevice {
                     LOGGER_BASE.info(this.getId() + " is already running and free. Will reuse it!");
                 } else {
                     String error = this.getId() + " is already running, but it is in use!";
+                    LOGGER_BASE.info(error);
                     SystemExtension.interruptProcess(error);
                 }
             }
@@ -449,20 +447,7 @@ public class AndroidDevice implements IDevice {
             int free = this.adb.getEmulatorInfo(EmulatorState.Free).size();
             int used = this.adb.getEmulatorInfo(EmulatorState.Used).size();
             int currentEmuCount = free + used;
-
-            // If limit of maximum parallel simulators is reached kill free simulators.
             if (currentEmuCount >= maxEmuCount) {
-                LOGGER_BASE.warn("Maximum number of running emulators limit exceeded.");
-                List<EmulatorInfo> freeEmulators = this.adb.getEmulatorInfo(EmulatorState.Free);
-                freeEmulators.forEach(emu -> this.adb.stopEmulator(emu.id));
-            }
-
-            // Start desired simulator
-            free = this.adb.getEmulatorInfo(EmulatorState.Free).size();
-            used = this.adb.getEmulatorInfo(EmulatorState.Used).size();
-            currentEmuCount = free + used;
-            if (currentEmuCount >= maxEmuCount) {
-                // If still running iOS Simulators are more than limit we can't help.
                 throw new DeviceException("Maximum number of running emulators limit exceeded.");
             } else {
                 // Start

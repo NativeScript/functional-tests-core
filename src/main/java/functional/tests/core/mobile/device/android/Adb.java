@@ -330,12 +330,12 @@ public class Adb {
     }
 
     /**
-     * Check if emulator is running.
+     * Check if emulator is up and running.
      *
      * @param deviceId Device identifier.
-     * @return True if it is running.
+     * @return True if it is fully booted and running.
      */
-    protected boolean isRunning(String deviceId) {
+    protected boolean isBooted(String deviceId) {
         boolean booted = false;
 
         String rowData = this.runAdbCommand(deviceId, "shell dumpsys activity");
@@ -344,9 +344,8 @@ public class Adb {
         for (String line : list) {
 
             if (line.contains("Recent #0")
-                    && (line.contains("com.android.launcher")
-                    || line.contains("com.google.android.googlequicksearchbox")
-                    || line.contains("com.google.android.apps.nexuslauncher")
+                    && (line.contains("com.android")
+                    || line.contains("com.google.android")
                     || line.contains(this.settings.packageId))) {
                 booted = true;
                 break;
@@ -377,7 +376,7 @@ public class Adb {
 
         while ((currentTime - startTime) < timeOut * 1000) {
             currentTime = new Date().getTime();
-            found = this.isRunning(deviceId);
+            found = this.isBooted(deviceId);
 
             if (found) {
                 break;
@@ -631,7 +630,7 @@ public class Adb {
             }
         }
         if (name.equalsIgnoreCase("")) {
-            LOGGER_BASE.debug("Failed to get name of " + deviceId);
+            LOGGER_BASE.info("Failed to get name of " + deviceId);
             throw new DeviceException("Failed to get name of " + deviceId);
         }
         return name;
