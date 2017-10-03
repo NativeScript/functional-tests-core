@@ -254,11 +254,11 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Check if app is running.
      *
-     * @param deviceId
-     * @param appId
-     * @return
+     * @param deviceId Device identifier.
+     * @param appId    Application identifier.
+     * @return True if application is running.
      */
     public boolean isAppRunning(String deviceId, String appId) {
         String processes = this.runAdbCommand(deviceId, "shell ps");
@@ -289,6 +289,11 @@ public class Adb {
     protected void stopEmulator(String deviceId) {
         this.runAdbCommand(deviceId, "emu kill");
         LOGGER_BASE.info("Emulator " + deviceId + " killed.");
+
+        // Kill all the processes related with emulator port.
+        String port = deviceId.split("-")[1];
+        String killCommand = "ps aux | grep -ie " + port + " | awk '{print $2}' | xargs kill -9";
+        OSUtils.runProcess(killCommand);
     }
 
     /**
@@ -660,13 +665,13 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Run adb command.
      *
-     * @param deviceId
-     * @param command
-     * @param timeout
-     * @param waitFor
-     * @return
+     * @param deviceId Device identifier.
+     * @param command  Command.
+     * @param timeout  Timeout for command execution in seconds.
+     * @param waitFor  Wait for command to complete.
+     * @return Output of the command.
      */
     private static String runAdbCommandStatic(String deviceId, String command, int timeout, boolean waitFor) {
         String adbCommand = ADB_PATH;
@@ -675,26 +680,25 @@ public class Adb {
         }
         adbCommand += " " + command;
         String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
-
         return output;
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Run adb command.
      *
-     * @param deviceId
-     * @param command
-     * @param deviceBootTime
-     * @param waitFor
-     * @return
+     * @param deviceId Device identifier.
+     * @param command  Command.
+     * @param timeout  Timeout for command execution in seconds.
+     * @param waitFor  Wait for command to complete.
+     * @return Output of the command.
      */
-    private String runAdbCommand(String deviceId, String command, int deviceBootTime, boolean waitFor) {
+    private String runAdbCommand(String deviceId, String command, int timeout, boolean waitFor) {
         String adbCommand = ADB_PATH;
         if (deviceId != null && deviceId != "") {
             adbCommand += " -s " + deviceId;
         }
         adbCommand += " " + command;
-        String output = OSUtils.runProcess(waitFor, deviceBootTime, adbCommand);
+        String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             this.killAdbProcess();
             output = OSUtils.runProcess(adbCommand);
