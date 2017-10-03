@@ -336,27 +336,16 @@ public class Adb {
      * @return True if it is fully booted and running.
      */
     protected boolean isBooted(String deviceId) {
-        boolean booted = false;
+        Boolean booted = false;
+        String isBooted = this.runAdbCommand(deviceId, "shell getprop sys.boot_completed").trim();
+        String animComplete = this.runAdbCommand(deviceId, "shell getprop init.svc.bootanim").trim();
 
-        String rowData = this.runAdbCommand(deviceId, "shell dumpsys activity");
-        String[] list = rowData.split("\\r?\\n");
-
-        for (String line : list) {
-
-            if (line.contains("Recent #0")
-                    && (line.contains("com.android")
-                    || line.contains("com.google.android")
-                    || line.contains(this.settings.packageId))) {
-                booted = true;
-                break;
-            }
-        }
-
-        if (booted) {
+        if (isBooted.equalsIgnoreCase("1") && animComplete.equalsIgnoreCase("stopped")) {
+            booted = true;
             LOGGER_BASE.info(deviceId + " is up and running.");
             this.setScreenOffTimeOut(deviceId, 180000);
         } else {
-            LOGGER_BASE.debug(deviceId + " is not running.");
+            LOGGER_BASE.info(deviceId + " is not running.");
         }
 
         return booted;

@@ -491,19 +491,4 @@ public class AndroidDevice implements IDevice {
             }
         });
     }
-
-    /**
-     * Handle a case when two instances of same avd image are started.
-     */
-    private void stopDuplicatedEmulators() {
-        String getProcessCommand = "ps aux | grep qemu | grep -ie " + this.settings.deviceName;
-        String rowData = OSUtils.runProcess(getProcessCommand);
-        for (String item : rowData.split("\\r?\\n")) {
-            LOGGER_BASE.info("Two emulators using same avd image detected! Kill all processes related to " + this.settings.deviceName);
-            if (item.contains("port")) {
-                String killCommand = "ps aux | grep qemu | grep -ie " + this.settings.deviceName + " | awk '{print $2}' | xargs kill -9";
-                OSUtils.runProcess(killCommand);
-            }
-        }
-    }
 }
