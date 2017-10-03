@@ -597,9 +597,10 @@ public class Adb {
 
     /**
      * Get name of AVD image based on device identifier.
+     *
      * @param deviceId Device identifier.
-     * @return
-     * @throws DeviceException
+     * @return AVD name.
+     * @throws DeviceException When fail to get AVD name.
      */
     public String getAvdName(String deviceId) throws DeviceException {
         int sleep = 1;
