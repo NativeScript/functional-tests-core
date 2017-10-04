@@ -39,8 +39,8 @@ public class AndroidDevice implements IDevice {
     /**
      * Init Android device.
      *
-     * @param client
-     * @param settings
+     * @param client   Applium client object.
+     * @param settings MobileSettings object.
      */
     public AndroidDevice(Client client, MobileSettings settings) {
         this.client = client;
@@ -88,18 +88,18 @@ public class AndroidDevice implements IDevice {
     }
 
     /**
-     * TODO(): Add docs.
+     * Get maximum used memory during test run.
      *
-     * @return
+     * @return Maximum used memory.
      */
     public int getMaxUsedMemory() {
         return this.maxUsedMemory;
     }
 
     /**
-     * TODO(): Add docs.
+     * Set maximum used memory.
      *
-     * @param maxUsedMemory
+     * @param maxUsedMemory Memory.
      */
     public void setMaxUsedMemory(int maxUsedMemory) {
         this.maxUsedMemory = maxUsedMemory;
@@ -358,7 +358,7 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void setLocation(Location location) {
-        ((AndroidDriver) this.client.driver).setLocation(location);
+        (this.client.driver).setLocation(location);
     }
 
     @Override
@@ -400,15 +400,15 @@ public class AndroidDevice implements IDevice {
      * @return File size of the application in kB.
      */
     private String getAppSize() {
-        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName;
+        String appPath = settings.BASE_TEST_APP_DIR + File.separator + settings.testAppFileName;
         return String.valueOf(FileSystem.getFileSize(appPath));
     }
 
     /**
-     * TODO(): Add docs.
+     * Start Android activity.
      *
-     * @param appPackage
-     * @param appActivity
+     * @param appPackage  Application identifier.
+     * @param appActivity Activity name.
      */
     public void startActivity(String appPackage, String appActivity) {
         ((AndroidDriver) this.client.driver).startActivity(appPackage, appActivity);
@@ -483,7 +483,7 @@ public class AndroidDevice implements IDevice {
         usedEmulators.forEach((emu) -> {
 
             String actualVersion = this.adb.runAdbCommand(emu.id, "shell getprop ro.build.version.release");
-            Double expectedVersion = this.emulatorMap().entrySet().stream().filter(e -> e.getValue().equals(emu.id)).map(HashMap.Entry::getKey).findFirst().orElse(null);
+            Double expectedVersion = emulatorMap().entrySet().stream().filter(e -> e.getValue().equals(emu.id)).map(HashMap.Entry::getKey).findFirst().orElse(null);
             if (!actualVersion.contains(String.valueOf(expectedVersion))) {
                 LOGGER_BASE.warn(emu.id + " is running Android " + actualVersion + " while expected is " + String.valueOf(expectedVersion) + "! Kill it...");
                 this.adb.stopEmulator(emu.id);
