@@ -5,8 +5,9 @@ package functional.tests.core.mobile.settings;
  */
 public class SettingsIOS {
 
+    public int maxSimCount;
     public Boolean acceptAlerts;
-    public boolean isRealDevice;
+    public Boolean isRealDevice;
     public String simulatorType;
     public String testAppArchive;
     public String xCode8ConfigFile;
@@ -14,6 +15,6 @@ public class SettingsIOS {
     /**
      * Init iOS settings.
      */
-    public SettingsIOS() {
+    SettingsIOS() {
     }
 }

@@ -4,7 +4,6 @@ import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.android.AndroidDevice;
-import functional.tests.core.mobile.device.ios.IOSDevice;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.Aapt;
 import functional.tests.core.utils.Archive;
@@ -26,13 +25,12 @@ import java.io.IOException;
 public class MobileSettings extends Settings {
 
     private static LoggerBase loggerBase = LoggerBase.getLogger("MobileSettings");
-    public boolean reuseDevice;
+    String appiumVersion;
     public boolean restartRealDevice;
     public boolean isRealDevice;
     public Double platformVersion;
     public String packageId;
     public String deviceId;
-    public String appiumVersion;
     public String automationName;
     public String appiumLogLevel;
     public String appiumLogFile;
@@ -49,7 +47,6 @@ public class MobileSettings extends Settings {
      */
     public MobileSettings() {
         this.deviceId = this.properties.getProperty("udid");
-        // Init Platform MobileSettings
         this.initSettings();
     }
 
@@ -58,16 +55,19 @@ public class MobileSettings extends Settings {
      *
      * @return Android settings.
      */
-    public SettingsAndroid initSettingsAndroid() {
+    private SettingsAndroid initSettingsAndroid() {
         // Aapt need so know OS Type.
         this.aapt = new Aapt(this);
 
         this.android = new SettingsAndroid();
         loggerBase.separatorAndroid();
 
-        if (this.deviceId == null && this.deviceType == DeviceType.Emulator) {
+        this.android.maxEmuCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_EMU_COUNT", "1"));
+        loggerBase.info("Maximum number of parallel emulators: " + String.valueOf(this.android.maxEmuCount));
+
+        if (this.deviceType == DeviceType.Emulator) {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
-            this.deviceId = AndroidDevice.generateDeviceId(this.platformVersion);
+            this.deviceId = AndroidDevice.getEmulatorId(this.platformVersion);
         }
         loggerBase.info("Device Id: " + this.deviceId);
 
@@ -88,7 +88,7 @@ public class MobileSettings extends Settings {
         this.android.appWaitPackage = this.getAppWaitPackage();
         loggerBase.info("App Wait Package: " + this.android.appWaitPackage);
 
-        this.testAppFriendlyName = this.aapt.getApplicationLabel(this);
+        this.testAppFriendlyName = this.aapt.getApplicationLabel();
         loggerBase.info("TestApp Friendly Name: " + this.testAppFriendlyName);
 
         if (this.deviceType == DeviceType.Emulator) {
@@ -107,11 +107,7 @@ public class MobileSettings extends Settings {
                 + (this.android.appLaunchTimeLimit > -1 ? this.android.appLaunchTimeLimit : "not set"));
 
         // Set isRealDevice
-        if (this.deviceType == DeviceType.Emulator) {
-            this.isRealDevice = false;
-        } else {
-            this.isRealDevice = true;
-        }
+        this.isRealDevice = this.deviceType == DeviceType.Emulator;
 
         this.android.isRealDevice = this.isRealDevice;
         return this.android;
@@ -130,15 +126,16 @@ public class MobileSettings extends Settings {
      *
      * @return iOS settings.
      */
-    public SettingsIOS initSettingsIOS() {
+    private SettingsIOS initSettingsIOS() {
         this.ios = new SettingsIOS();
         loggerBase.separatorIOS();
 
+        this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
+        loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
+
         if (this.deviceId == null && !this.isRealDevice) {
-
-            this.deviceId = IOSDevice.getDeviceUidid(this.deviceName);
+            this.deviceId = null;
         }
-
         loggerBase.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
@@ -192,17 +189,7 @@ public class MobileSettings extends Settings {
         this.appiumLogFile = this.baseLogDir + File.separator + "appium.log";
 
         this.orientation = this.getScreenOrientation();
-        // Set reuse device
-        this.reuseDevice = this.propertyToBoolean("reuseDevice", false);
-        String reuseEnv = System.getenv("REUSE_DEVICE");
-        if (reuseEnv != null) {
-            if (reuseEnv.toLowerCase().contains("true")) {
-                this.reuseDevice = true;
-            }
-        }
 
-        // Set orientation
-        this.orientation = this.getScreenOrientation();
         // If defaultTimeout is not specified set it to 30 sec.
         this.defaultTimeout = this.convertPropertyToInt("defaultTimeout", 30);
         this.shortTimeout = this.defaultTimeout / 5;
@@ -225,9 +212,8 @@ public class MobileSettings extends Settings {
         loggerBase.info("Device Type: " + this.deviceType);
         loggerBase.info("Real device: " + this.isRealDevice);
         if (this.isRealDevice) {
-            loggerBase.info("Restart real device:  " + this.restartRealDevice);
+            loggerBase.info("Restart real device: " + this.restartRealDevice);
         }
-        loggerBase.info("ReuseDevice: " + this.reuseDevice);
         loggerBase.info("Appium Version: " + this.appiumVersion);
         loggerBase.info("Appium Log File: " + this.appiumLogFile);
         loggerBase.info("Appium Log Level: " + this.appiumLogLevel);
@@ -243,8 +229,6 @@ public class MobileSettings extends Settings {
      * Extract test application.
      * For iOS Simulator test app (*.app) must be packaged in tgz archive.
      * This method will extract the archive.
-     *
-     * @throws IOException When fail extract tgz package.
      */
     private void extractApp() {
         // Make sure no old app is available.
@@ -281,8 +265,7 @@ public class MobileSettings extends Settings {
      * @return default activity.
      */
     private String getDefaultActivity() {
-        String appDefaultActivityString = this.aapt.getLaunchableActivity(this);
-        return appDefaultActivityString;
+        return this.aapt.getLaunchableActivity();
     }
 
     /**
@@ -366,7 +349,7 @@ public class MobileSettings extends Settings {
      */
     private int getMemoryMaxUsageLimit() {
         String value = this.properties.getProperty("memoryMaxUsageLimit");
-        if (value != "" && value != null) {
+        if (value != null && value.equals("")) {
             return Integer.parseInt(value);
         } else {
             return -1;
@@ -380,7 +363,7 @@ public class MobileSettings extends Settings {
      */
     private int getappLaunchTimeLimit() {
         String value = this.properties.getProperty("appLaunchTimeLimit");
-        if (value != "" && value != null) {
+        if (value != null && value.equals("")) {
             return Integer.parseInt(value);
         } else {
             return -1;
@@ -446,7 +429,7 @@ public class MobileSettings extends Settings {
                 if (this.platformVersion <= 4.1) {
                     this.automationName = AutomationName.SELENDROID;
                 } else if (this.platformVersion >= 7.0) {
-                    // TODO(): Update to AutomationName.ANDROID_UIAUTOMATOR2 when Appium Client 5.0 is released.
+                    // TODO(dtopuzov): Update to AutomationName.ANDROID_UIAUTOMATOR2 migrate to Appium Client 5.0+.
                     this.automationName = "UIAutomator2";
                 } else {
                     this.automationName = AutomationName.APPIUM;
@@ -454,10 +437,10 @@ public class MobileSettings extends Settings {
             }
 
             if (this.platform == PlatformType.iOS) {
-                if (this.platformVersion < 10) {
-                    this.automationName = AutomationName.APPIUM;
-                } else {
+                if (this.platformVersion >= 9.3) {
                     this.automationName = AutomationName.IOS_XCUI_TEST;
+                } else {
+                    this.automationName = AutomationName.APPIUM;
                 }
             }
         }

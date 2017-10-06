@@ -75,16 +75,13 @@ public abstract class MobileTest {
 
     /**
      * Executed before suite with UI Tests.
-     * Actions:
-     * 1. Start Appium server (retry once on failure).
-     * 2. Start emulator/simulator or ensure device is available.
-     * 3. Start appium client (and deploy app under test).
-     * 4. Verify app under test is running and track loading time.     *
      *
      * @throws Exception
      */
     @BeforeSuite(alwaysRun = true)
     public void beforeSuiteUIBaseTest() throws Exception {
+
+        // Run doctor to detect issues with setup and settings.
         if (this.settings.debug) {
             this.log.info("[DEBUG MODE] Skip doctor.");
         } else {
@@ -92,33 +89,21 @@ public abstract class MobileTest {
             mobileDoctor.check();
         }
 
-        // TODO(dtopuzov): For iOS it will be nice to retry starting session if this.mobileSetupManager.startDevice(); fails.
-        // And on second call of this.mobileSetupManager.initServer() we should force debug log level.
-        // It will be very usefull to get logs on failure.
-
-        // Start server (and retry on failure)
-        if (!this.mobileSetupManager.initServer()) {
-            this.mobileSetupManager.restartServer();
-        }
-
-        // Start device and init client (Init Appium Client is done on Device.start())
-        this.mobileSetupManager.startDevice();
+        // Start Appium server and init device (this include Appium client start)
+        this.mobileSetupManager.initServer();
+        this.mobileSetupManager.initDevice();
 
         // Mark this test as first in suite
         this.firstTest = true;
     }
 
     /**
-     * Executed before each UI Test method.
-     * Actions:
-     * 1. [If restartApp=true] Restart app under test.
-     * 2. [Only if previous test failed] Restart appium session and app under test.
+     * Executed before each test class.
      *
-     * @throws Exception
+     * @throws Exception When something fails.
      */
     @BeforeClass(alwaysRun = true)
     public void beforeMethodUIBaseClass() throws Exception {
-
         // Perform set of actions on test fail.
         if (this.context.lastTestResult == ITestResult.FAILURE && this.context.shouldRestartAppOnFailure) {
             try {
@@ -134,12 +119,9 @@ public abstract class MobileTest {
 
     /**
      * Executed before each UI Test method.
-     * Actions:
-     * 1. [If restartApp=true] Restart app under test.
-     * 2. [Only if previous test failed] Restart appium session and app under test.
      *
-     * @param method
-     * @throws Exception
+     * @param method TestMethod.
+     * @throws Exception When something fails.
      */
     @BeforeMethod(alwaysRun = true)
     public void beforeMethodUIBaseTest(Method method) throws Exception {
@@ -173,8 +155,6 @@ public abstract class MobileTest {
 
         // First test is already started, so set this.firstTest = false;
         this.firstTest = false;
-        // Set value to true in case of valid failures
-        this.context.shouldRestartAppOnFailure = true;
 
         this.imagesResults = new HashMap<String, Boolean>();
         this.imageCounter = 1;
@@ -185,9 +165,6 @@ public abstract class MobileTest {
 
     /**
      * Executed after each UI Test.
-     * Actions:
-     * 1. Get and log performance info for app under test (and check if specified in settings).
-     * 2. Log test results (on failure include logs and screenshots, see this.mobileSetupManager.logTestResult).
      *
      * @param result
      * @throws IOException
@@ -219,18 +196,26 @@ public abstract class MobileTest {
     }
 
     /**
-     * Execited after all tests complete.
-     * Actions:
-     * 1. Write perf info to file.
-     * 2. Stop Appium Client and Server
-     * 3. [Only if reuseDevices==false] Stop emulator/simulator.
+     * Executed after all tests complete.
      *
      * @throws Exception
      */
     @AfterSuite(alwaysRun = true)
     public void afterSuiteUIBaseTest() throws Exception {
-        this.context.device.logPerfInfo();
-        this.mobileSetupManager.fullStop();
+        try {
+            this.context.device.logPerfInfo();
+            this.mobileSetupManager.stopSession();
+
+            // Uninstall test apps
+            if (!this.settings.debug) {
+                this.context.device.uninstallApps();
+            }
+
+            this.context.device.stop();
+        } catch (Exception e) {
+            this.context.device.stop();
+            throw e;
+        }
     }
 
 
@@ -240,7 +225,6 @@ public abstract class MobileTest {
      *
      * @param result
      */
-
     protected void checkMemoryPerformance(ITestResult result) {
         if (this.settings.platform == PlatformType.Android) {
             int usedMemory = this.device.getMemUsage(this.settings.packageId);

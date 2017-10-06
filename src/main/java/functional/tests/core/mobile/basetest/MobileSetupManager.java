@@ -1,5 +1,6 @@
 package functional.tests.core.mobile.basetest;
 
+import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.image.ImageUtils;
@@ -138,130 +139,50 @@ public class MobileSetupManager {
     }
 
     /**
-     * Init Appium server wrapper.
-     *
-     * @return True if server is started successfully.
+     * Init Appium Server.
      */
-    public boolean initServer() {
-        boolean hasInit = true;
-        try {
-            this.context.server.initServer();
-        } catch (Exception ex) {
-            Log.logScreenOfHost(this.settings, "Host_Fail_to_Init_Server");
-            hasInit = false;
-        }
-
-        return hasInit;
-    }
-
-    /**
-     * Restart Appium server.
-     */
-    public void restartServer() {
-        // TODO(dtopuzov): It looks this need improvements.
-        this.checkLogsForCrash();
-        Log.logScreenOfHost(this.settings, "HostOS_Failed_To_Init_Appium_Session");
-        LOGGER_BASE.info("Retry initializing appium server and client");
-        this.context.settings.appiumLogLevel = "debug";
-        this.context.settings.deviceBootTimeout = this.context.settings.deviceBootTimeout * 2;
-        try {
-            try {
-                String log = this.context.server.service.getStdOut();
-                if (log != null) {
-                    this.context.log.separator();
-                    this.context.log.info(log);
-                    this.context.log.separator();
-                } else {
-                    LOGGER_BASE.error("Server log not available!");
-                }
-            } catch (Exception ex) {
-                LOGGER_BASE.error("Failed to get appium logs.");
-            }
-            this.initServer();
-        } catch (Exception re) {
-            try {
-                Log.logScreenOfHost(this.settings, "HostOS_Failed_To_Init_Appium_Session_After_Retry");
-                String log = this.context.server.service.getStdOut();
-                if (log != null) {
-                    LOGGER_BASE.separator();
-                    LOGGER_BASE.info(log);
-                    LOGGER_BASE.separator();
-                } else {
-                    LOGGER_BASE.error("Server log not available!");
-                }
-            } catch (Exception ex) {
-                LOGGER_BASE.error("Failed to get appium logs.");
-            }
-            this.checkLogsForCrash();
-            String error = "Failed to init appium session. Please see appium logs.";
-            LOGGER_BASE.fatal(error);
-            LOGGER_BASE.info(re.toString());
-            LOGGER_BASE.info(re.getStackTrace().toString());
-            try {
-                throw re;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public void initServer() throws IOException, AppiumException {
+        this.context.server.initServer();
     }
 
     /**
      * Stop app under test, appium client and server.
-     * If reuseDevice is false, stop emulator/simulator.
      */
-    public void fullStop() {
+    public void stopSession() throws DeviceException {
         this.context.app.close();
         this.context.client.stopDriver();
         this.context.server.stopServer();
-        if (!this.context.settings.reuseDevice) {
-            this.stopDevice();
-        }
+    }
+
+
+    public void restartSession() throws MobileAppException, DeviceException, TimeoutException, IOException, AppiumException {
+        this.stopSession();
+        this.initServer();
+        this.initDevice();
     }
 
     /**
-     * Restart Appium server and client (only if Appium session is not available).
-     */
-    public void restartSession() {
-        // TODO(dtopuzov): This need refactoring. Do not stop server if it is running.
-        this.fullStop(); // For sure we don't need full stop here!
-        this.restartServer();
-        LOGGER_BASE.info("Failed to restart test app. Resets apppium client/server.");
-
-        try {
-            this.startDevice();
-        } catch (Exception e2) {
-            this.context.log.logScreen("Emulator", this.context.settings.packageId + " failed at startup.");
-            Log.logScreenOfHost(this.settings, "HostOS");
-        }
-    }
-
-    /**
-     * TODO(): Add docs.
+     * Init device - ensure it is up and running and test app is deployed.
+     * This will also start Appium client session.
      *
-     * @throws MobileAppException
-     * @throws DeviceException
-     * @throws TimeoutException
+     * @throws MobileAppException When app can not be deployed or started.
+     * @throws DeviceException    When device is not attached or emulator can not start.
+     * @throws TimeoutException   When device can not be started in appropriate time.
      */
-    public void startDevice() throws MobileAppException, DeviceException, TimeoutException {
+    public void initDevice() throws MobileAppException, DeviceException, TimeoutException {
         try {
             this.context.device.start();
         } catch (Exception ex) {
             Log.logScreenOfHost(this.settings, "onStartDevice");
+            throw ex;
         }
     }
 
     /**
-     * TODO(): Add docs.
-     */
-    public void stopDevice() {
-        this.context.device.stop();
-    }
-
-    /**
-     * TODO(): Add docs.
+     * Log test results.
      *
-     * @param previousTestStatus
-     * @param testCase
+     * @param previousTestStatus Outcome of the test.
+     * @param testCase           Test name.
      */
     public void logTestResult(int previousTestStatus, String testCase) {
         if (this.context.device == null) {
@@ -290,15 +211,16 @@ public class MobileSetupManager {
     }
 
     /**
-     * TODO(): Add docs.
+     * Check Appium server log iOS crashes.
+     * Note: Implemented only for iOS.
      */
-    private void checkLogsForCrash() {
+    private void checkAppiumServerLogs() {
         try {
             String appiumLog = FileSystem.readFile(this.context.settings.appiumLogFile);
             String[] lines = appiumLog.split("\\r?\\n");
             for (String line : lines) {
                 if (line.contains("IOS_SYSLOG_ROW") && line.contains("crashed.")) {
-                    LOGGER_BASE.fatal("app crashes at startup. Please see appium logs.");
+                    LOGGER_BASE.fatal("App crashes at startup. Please see appium logs.");
                 }
             }
         } catch (IOException e) {

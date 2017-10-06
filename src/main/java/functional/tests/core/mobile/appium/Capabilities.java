@@ -3,6 +3,7 @@ package functional.tests.core.mobile.appium;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
+import functional.tests.core.utils.OSUtils;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -78,10 +79,9 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, settings.android.appWaitActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
-            if (settings.isRealDevice == false && !settings.debug) {
-                // This line of code restart always the emulator
-                // capabilities.setCapability(AndroidMobileCapabilityType.AVD, settings.deviceName);
-                // capabilities.setCapability(AndroidMobileCapabilityType.AVD_ARGS, settings.android.emulatorOptions);
+            if (settings.automationName.equalsIgnoreCase("UIAutomator2")) {
+                int port = OSUtils.getFreePort(8201, 8300);
+                capabilities.setCapability("systemPort", port);
             }
         }
 
@@ -104,6 +104,8 @@ public class Capabilities {
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
+            int port = OSUtils.getFreePort(8100, 8200);
+            capabilities.setCapability("wdaLocalPort", port);
             capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
 

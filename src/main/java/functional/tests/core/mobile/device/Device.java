@@ -38,7 +38,6 @@ public class Device {
     private IDevice device;
     private MobileSettings settings;
     private Client client;
-    //private MobileContext context;
     private Dimension windowSize;
 
     /**
@@ -132,7 +131,6 @@ public class Device {
 
         // Verify app is running.
         this.verifyAppRunning(this.settings.packageId);
-
         this.logAppStartupTime(this.settings.packageId);
 
         // Set windowSize
@@ -142,7 +140,7 @@ public class Device {
     /**
      * Stop device (kills emulator/simulator).
      */
-    public void stop() {
+    public void stop() throws DeviceException {
         this.device.stop();
     }
 
@@ -276,12 +274,8 @@ public class Device {
      * @throws IOException When log fail to be writen in file.
      */
     private String getLogContent(String testName) throws IOException {
-        // TODO(): Can we somehow get log without writing in file?
-        // Now we
         this.writeConsoleLogToFile(testName);
-        String logContent = this.device.getContent(testName);
-
-        return logContent;
+        return this.device.getContent(testName);
     }
 
     /**
@@ -294,8 +288,8 @@ public class Device {
     /**
      * Uninstall user application.
      */
-    public void uninstallApps() {
-        this.device.stopApps(uninstallAppsList());
+    public void uninstallApps() throws DeviceException {
+        this.device.uninstallApps();
     }
 
     /**
@@ -310,7 +304,7 @@ public class Device {
     /**
      * Run current application in background.
      *
-     * @param seconds
+     * @param seconds Seconds to run in background.
      */
     public void runAppInBackground(int seconds) {
         LOGGER_BASE.info("Run current app in background for " + seconds + " seconds.");
@@ -326,7 +320,7 @@ public class Device {
     }
 
     /**
-     * List of user apps (apps that are safe to be uninstalled.
+     * List of user apps (apps that are safe to be uninstalled).
      *
      * @return List of package ids.
      */
@@ -363,7 +357,7 @@ public class Device {
     /**
      * Rotate the device.
      *
-     * @param screenOrientation
+     * @param screenOrientation ScreenOrientation enum value.
      */
     public void rotate(ScreenOrientation screenOrientation) {
         this.client.driver.rotate(screenOrientation);

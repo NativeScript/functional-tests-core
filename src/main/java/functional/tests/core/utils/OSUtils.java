@@ -9,20 +9,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utils for host operating system.
  */
 public class OSUtils {
 
-    public static final String[] WIN_RUNTIME = {"cmd.exe", "/C"};
+    private static final String[] WIN_RUNTIME = {"cmd.exe", "/C"};
     public static final String[] OS_LINUX_RUNTIME = {"/bin/bash", "-l", "-c"};
     public static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("OSUtils");
 
@@ -66,8 +70,7 @@ public class OSUtils {
      * @return Output of command execution.
      */
     public static String runProcess(boolean waitFor, int timeOut, String... command) {
-        String[] allCommand = null;
-
+        String[] allCommand;
         String finalCommand = "";
         for (String s : command) {
             finalCommand = finalCommand + s;
@@ -156,7 +159,7 @@ public class OSUtils {
                 }
             }
         } catch (Exception e) {
-            LOGGER_BASE.debug("Failed to fullStop process: " + name);
+            LOGGER_BASE.debug("Failed to stop process: " + name);
         }
     }
 
@@ -193,7 +196,6 @@ public class OSUtils {
         }
 
         if (!contextRoot.isDirectory()) {
-            Object[] filler = {contextRoot.getAbsolutePath()};
             String message = "NotDirectory";
             throw new IllegalArgumentException(message);
         }
@@ -257,5 +259,84 @@ public class OSUtils {
             LOGGER_BASE.info("Hostname can not be resolved!");
         }
         return hostname;
+    }
+
+    public static String getEnvironmentVariable(String variable, String defaultValue) {
+        String finalValue = defaultValue;
+        String env = System.getenv(variable);
+        if (env != null) {
+            finalValue = env;
+        }
+        return finalValue;
+    }
+
+    public static int getFreePort(int minValue, int maxValue) {
+        int port;
+        do {
+            Random rand = new Random();
+            port = rand.nextInt(maxValue - minValue) + minValue;
+        } while (!isPortAvailable(port));
+
+        return port;
+    }
+
+    private static boolean isPortAvailable(final int port) {
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            return true;
+        } catch (final IOException e) {
+        } finally {
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static int executeCommand(final String commandLine, final long timeout)
+            throws IOException, InterruptedException, TimeoutException {
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec(commandLine);
+
+        Worker worker = new Worker(process);
+        worker.start();
+        try {
+            worker.join(timeout * 1000);
+            if (worker.exit != null) {
+                return worker.exit;
+            } else {
+                throw new TimeoutException();
+            }
+        } catch (InterruptedException ex) {
+            worker.interrupt();
+            Thread.currentThread().interrupt();
+            throw ex;
+        } finally {
+            process.destroy();
+        }
+    }
+
+    private static class Worker extends Thread {
+        private final Process process;
+        private Integer exit;
+
+        private Worker(Process process) {
+            this.process = process;
+        }
+
+        public void run() {
+            try {
+                this.exit = this.process.waitFor();
+            } catch (InterruptedException ignore) {
+                return;
+            }
+        }
     }
 }

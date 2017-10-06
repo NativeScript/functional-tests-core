@@ -5,6 +5,7 @@ package functional.tests.core.mobile.settings;
  */
 public class SettingsAndroid {
 
+    public int maxEmuCount;
     public String appWaitActivity;
     public String appWaitPackage;
     public String defaultActivity;
@@ -12,11 +13,11 @@ public class SettingsAndroid {
     public String emulatorCreateOptions;
     public boolean isRealDevice;
     public int memoryMaxUsageLimit;
-    public int appLaunchTimeLimit;
+    int appLaunchTimeLimit;
 
     /**
      * Init Android settings.
      */
-    public SettingsAndroid() {
+    SettingsAndroid() {
     }
 }

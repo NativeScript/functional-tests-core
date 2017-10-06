@@ -6,7 +6,6 @@ import functional.tests.core.exceptions.MobileAppException;
 import org.openqa.selenium.html5.Location;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -40,7 +39,7 @@ public interface IDevice {
     /**
      * Stop emulators/simulators.
      */
-    void stop();
+    void stop() throws DeviceException;
 
     /**
      * Get id of current device.
@@ -59,19 +58,19 @@ public interface IDevice {
     void installApp(String appName, String packageId) throws IOException;
 
     /**
-     * TODO(): Add docs.
+     * Start application.
      *
-     * @param packageId
+     * @param packageId Bundle identifier.
      */
     void startApplication(String packageId);
 
     /**
-     * TODO(): Add docs.
+     * Restart application under test.
      */
     void restartApp();
 
     /**
-     * TODO(): Add docs.
+     * Close application under test.
      */
     void closeApp();
 
@@ -99,18 +98,12 @@ public interface IDevice {
     void runAppInBackGround(int seconds);
 
     /**
-     * TODO(): Add docs.
+     * Android: Uninstall all third party apps.
+     * iOS: Uninstall all apps matching org.nativescript. and com.telerik.
      *
-     * @param uninstallAppsList
+     * @throws DeviceException When uninstall fails
      */
-    void stopApps(List<String> uninstallAppsList);
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @param uninstallAppsList
-     */
-    void uninstallApps(List<String> uninstallAppsList);
+    void uninstallApps() throws DeviceException;
 
     /**
      * TODO(): Add docs.     // Get file system of device

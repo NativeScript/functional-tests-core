@@ -3,6 +3,7 @@ package functional.tests.core.mobile.appium;
 import functional.tests.core.enums.OSType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.exceptions.AppiumException;
+import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
@@ -80,7 +81,8 @@ public class Server {
 
         // Verify Appium server started
         if (this.service == null || !this.service.isRunning()) {
-            String error = "Appium server not running!";
+            Log.logScreenOfHost(this.settings, "Host_Fail_to_Init_Server");
+            String error = "Appium server failed to start! Please check appium log file.";
             LOGGER_BASE.fatal(error);
             throw new RuntimeException(error);
         } else {
@@ -97,7 +99,7 @@ public class Server {
                 this.service.stop();
                 LOGGER_BASE.info("Appium server stopped.");
             } catch (Exception e) {
-                LOGGER_BASE.fatal("Failed to fullStop appium server!");
+                LOGGER_BASE.fatal("Failed to stopSession appium server!");
             }
         } else {
             LOGGER_BASE.info("Appium server already stopped.");

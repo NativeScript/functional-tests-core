@@ -172,7 +172,6 @@ public class Log {
         Device device = MobileSetupManager.getTestSetupManager().getContext().device;
         try {
             String fullFileName = this.settings.screenshotOutDir + File.separator + imageName;
-
             ImageUtils.saveScreen(fullFileName, device);
         } catch (AppiumException e) {
             this.error("Failed to get screenshot.");

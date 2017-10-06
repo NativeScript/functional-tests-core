@@ -1,11 +1,13 @@
 package functional.tests.core.mobile.device.android;
 
 import functional.tests.core.enums.DeviceType;
+import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
-import functional.tests.core.mobile.device.Device;
+import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.device.IDevice;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
@@ -17,11 +19,12 @@ import org.openqa.selenium.html5.Location;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
- * TODO(dtopuzov): Add docs for everything in this class.
+ * Android Device implementation.
  */
 public class AndroidDevice implements IDevice {
 
@@ -36,8 +39,8 @@ public class AndroidDevice implements IDevice {
     /**
      * Init Android device.
      *
-     * @param client
-     * @param settings
+     * @param client   Applium client object.
+     * @param settings MobileSettings object.
      */
     public AndroidDevice(Client client, MobileSettings settings) {
         this.client = client;
@@ -46,23 +49,27 @@ public class AndroidDevice implements IDevice {
     }
 
     /**
-     * Generates device id for emulators based on Android version.
-     * <p>
-     * Algorithm:
-     * Main port is 5 next two numbers comes from platform version and last one is like minor version * 2.
+     * Get emulator id based on platform version.
      *
      * @param platformVersion Android version (for example 6.0).
      * @return Device id (for example emulator-5600).
      */
-    public static String generateDeviceId(double platformVersion) {
-        // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
-        String mainPort = "5";
-        String platformVersionString = platformVersion + "";
-        String port = String.format("emulator-%s%s", mainPort, platformVersionString.replace(".", ""));
-        int platformVersionMinor = (int) ((platformVersion - (int) platformVersion) * 10);
-        int endPort = platformVersionMinor * 2;
-        port += endPort + "";
-        return port;
+    public static String getEmulatorId(double platformVersion) {
+        return emulatorMap().get(platformVersion);
+    }
+
+    private static HashMap<Double, String> emulatorMap() {
+        HashMap<Double, String> emulatorMap = new HashMap<>();
+        emulatorMap.put(4.2, "emulator-5554");
+        emulatorMap.put(4.3, "emulator-5556");
+        emulatorMap.put(4.4, "emulator-5558");
+        emulatorMap.put(5.0, "emulator-5560");
+        emulatorMap.put(5.1, "emulator-5562");
+        emulatorMap.put(6.0, "emulator-5564");
+        emulatorMap.put(7.0, "emulator-5566");
+        emulatorMap.put(7.1, "emulator-5568");
+        emulatorMap.put(8.0, "emulator-5570");
+        return emulatorMap;
     }
 
     @Override
@@ -81,18 +88,18 @@ public class AndroidDevice implements IDevice {
     }
 
     /**
-     * TODO(): Add docs.
+     * Get maximum used memory during test run.
      *
-     * @return
+     * @return Maximum used memory.
      */
     public int getMaxUsedMemory() {
         return this.maxUsedMemory;
     }
 
     /**
-     * TODO(): Add docs.
+     * Set maximum used memory.
      *
-     * @param maxUsedMemory
+     * @param maxUsedMemory Memory.
      */
     public void setMaxUsedMemory(int maxUsedMemory) {
         this.maxUsedMemory = maxUsedMemory;
@@ -103,6 +110,7 @@ public class AndroidDevice implements IDevice {
 
         if (this.getType() == DeviceType.Emulator) {
             this.startEmulator();
+            this.adb.markUsed(this.getId());
         }
 
         // Check if device is available
@@ -112,7 +120,7 @@ public class AndroidDevice implements IDevice {
 
         // Uninstall test apps
         if (!this.settings.debug) {
-            this.uninstallApps(Device.uninstallAppsList());
+            this.uninstallApps();
         }
 
         // Handle error activity
@@ -126,12 +134,8 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void stop() {
-        if (this.getType() == DeviceType.Emulator) {
-            if (this.settings.debug) {
-                LOGGER_BASE.info("[DEBUG MODE] Skip emulator stop.");
-            } else {
-                this.adb.stopAllEmulators();
-            }
+        if (this.settings.deviceType == DeviceType.Emulator) {
+            this.adb.markUnused(this.getId());
         }
     }
 
@@ -167,30 +171,15 @@ public class AndroidDevice implements IDevice {
     }
 
     @Override
-    public void stopApps(List<String> uninstallAppsList) {
-        List<String> installedApps = this.adb.getInstalledApps();
+    public void uninstallApps() {
+        // Explicitly uninstall app under test
+        this.adb.uninstallApp(this.settings.packageId);
 
-        for (String appToUninstall : uninstallAppsList) {
-            for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)) {
-                    LOGGER_BASE.info("Stop " + appId);
-                    this.adb.stopApp(appId);
-                }
-            }
+        // Install all other installed apps.
+        for (String appId : this.adb.getInstalledApps()) {
+            this.adb.uninstallApp(appId);
         }
-    }
 
-    @Override
-    public void uninstallApps(List<String> uninstallAppsList) {
-        List<String> installedApps = this.adb.getInstalledApps();
-
-        for (String appToUninstall : uninstallAppsList) {
-            for (String appId : installedApps) {
-                if (appId.contains(appToUninstall)) {
-                    this.adb.uninstallApp(appId);
-                }
-            }
-        }
     }
 
     @Override
@@ -234,8 +223,6 @@ public class AndroidDevice implements IDevice {
 
         // Handle error activity hack for newer Android emulators.
         this.adb.closeErrorActivty(this.getId());
-
-        // Additional notes: If UiAutomator2 is used on Api21 lines above will fail (only for Api21).
     }
 
     @Override
@@ -337,7 +324,7 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public int getMemUsage(String appPackageId) {
-        if (this.adb.isAvailable(this.getId()) || this.adb.checkIfEmulatorIsRunning(this.getId())) {
+        if (this.adb.isAvailable(this.getId()) || this.adb.isBooted(this.getId())) {
             String command = "shell dumpsys meminfo | grep " + appPackageId;
             String output = this.adb.runAdbCommand(this.getId(), command);
             if (output.contains(this.settings.packageId)) {
@@ -371,7 +358,7 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void setLocation(Location location) {
-        ((AndroidDriver) this.client.driver).setLocation(location);
+        (this.client.driver).setLocation(location);
     }
 
     @Override
@@ -418,48 +405,57 @@ public class AndroidDevice implements IDevice {
     }
 
     /**
-     * TODO(): Add docs.
+     * Start Android activity.
      *
-     * @param appPackage
-     * @param appActivity
+     * @param appPackage  Application identifier.
+     * @param appActivity Activity name.
      */
     public void startActivity(String appPackage, String appActivity) {
         ((AndroidDriver) this.client.driver).startActivity(appPackage, appActivity);
     }
 
+    /**
+     * Start Android Emulator.
+     *
+     * @throws DeviceException  When fail to find desired emulator.
+     * @throws TimeoutException When it fail to boot in desired time.
+     */
     private void startEmulator() throws DeviceException, TimeoutException {
-        // Kill all emulators if reuseDevice is false.
-        if (!this.settings.reuseDevice && !this.settings.debug) {
-            this.stop();
-        }
-        if (this.adb.checkIfEmulatorIsRunning(this.getId())) {
-            LOGGER_BASE.info(this.getId() + " is already running. Will reuse it!");
+
+        // Kill all simulators not matching framework convention
+        this.stopWrongPortEmulators();
+
+        // Kill simulators and web driver sessions used more than 90 min
+        this.adb.stopUsedEmulators(60);
+
+        // Ensure emulator is running
+        if (this.adb.isBooted(this.getId())) {
+            if (this.settings.debug) {
+                LOGGER_BASE.info("[DEBUG] All emulators will ");
+            } else {
+                if (this.adb.usedSince(this.getId()) == 0) {
+                    LOGGER_BASE.info(this.getId() + " is already running and free. Will reuse it!");
+                } else {
+                    String error = this.getId() + " is already running, but it is in use!";
+                    LOGGER_BASE.info(error);
+                    SystemExtension.interruptProcess(error);
+                }
+            }
         } else {
-            // Create emulator (if it does not exists)
-            if (this.settings.android.emulatorCreateOptions != null) {
-                this.adb.createEmulator(this.getName(), this.settings.android.emulatorCreateOptions);
-            }
+            LOGGER_BASE.info(this.getId() + " is not running!");
+            int maxEmuCount = this.settings.android.maxEmuCount;
+            int free = this.adb.getEmulatorInfo(EmulatorState.Free).size();
+            int used = this.adb.getEmulatorInfo(EmulatorState.Used).size();
+            int currentEmuCount = free + used;
+            if (currentEmuCount >= maxEmuCount) {
+                throw new DeviceException("Maximum number of running emulators limit exceeded.");
+            } else {
+                // Start
+                String port = this.getId().split("-")[1];
+                this.adb.startEmulator(this.getName(), Integer.valueOf(port));
 
-            // Start
-            String port = this.getId().split("-")[1];
-            this.adb.startEmulator(this.getName(), Integer.valueOf(port));
-
-            // Wait until emulator boot
-            this.adb.waitUntilEmulatorBoot(this.getId(), this.settings.deviceBootTimeout);
-
-            // Unlock
-            int waitToUnlock = 6000;
-            while (this.adb.isLocked(this.getId()) && waitToUnlock >= 0) {
-                LOGGER_BASE.info("device is locked. Unlocking it ...");
-                this.adb.unlock(this.getId());
-                Wait.sleep(3000);
-                LOGGER_BASE.info("device locked: " + String.valueOf(this.adb.isLocked(this.getId())));
-                waitToUnlock -= 3000;
-            }
-
-            if (this.adb.isLocked(this.getId())) {
-                LOGGER_BASE.info("device is locked. We couldn't unlock it!!!");
-                OSUtils.getScreenshot("HostOS_Emulator_Failed_UnLock", this.settings);
+                // Wait until emulator boot
+                this.adb.waitUntilEmulatorBoot(this.getId(), this.settings.deviceBootTimeout);
             }
         }
     }
@@ -475,5 +471,24 @@ public class AndroidDevice implements IDevice {
         } else {
             throw new DeviceException(String.format("Device %s is not connected!!!", this.getId()));
         }
+    }
+
+    /**
+     * Stop emulators that run on ports that do not follow core convention.
+     *
+     * @throws DeviceException When fails to get AVD name.
+     */
+    private void stopWrongPortEmulators() throws DeviceException {
+        List<EmulatorInfo> usedEmulators = this.adb.getEmulatorInfo();
+        usedEmulators.forEach((emu) -> {
+
+            String actualVersion = this.adb.runAdbCommand(emu.id, "shell getprop ro.build.version.release");
+            Double expectedVersion = emulatorMap().entrySet().stream().filter(e -> e.getValue().equals(emu.id)).map(HashMap.Entry::getKey).findFirst().orElse(null);
+            if (!actualVersion.contains(String.valueOf(expectedVersion))) {
+                LOGGER_BASE.warn(emu.id + " is running Android " + actualVersion + " while expected is " + String.valueOf(expectedVersion) + "! Kill it...");
+                this.adb.stopEmulator(emu.id);
+                Wait.sleep(1000);
+            }
+        });
     }
 }

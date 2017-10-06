@@ -1,11 +1,14 @@
 package functional.tests.core.mobile.device.ios;
 
 import functional.tests.core.enums.DeviceType;
+import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
+import functional.tests.core.mobile.device.Device;
+import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.device.IDevice;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
@@ -26,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO(dtopuzov): Add docs for everything in this class.
+ * iOS Device implementation.
  */
 public class IOSDevice implements IDevice {
 
@@ -42,8 +45,8 @@ public class IOSDevice implements IDevice {
     /**
      * Init IOS device.
      *
-     * @param client
-     * @param settings
+     * @param client   Appium client.
+     * @param settings MobileSettings.
      */
     public IOSDevice(Client client, MobileSettings settings) {
         this.client = client;
@@ -51,20 +54,13 @@ public class IOSDevice implements IDevice {
         this.simulatorLogPath = this.settings.baseLogDir + File.separator + "simulator.log";
         this.name = this.settings.deviceName;
         this.type = this.settings.deviceType;
-        // TODO(): Refactor this logic.
+
         if (this.settings.deviceType == DeviceType.Simulator) {
             this.simctl = new Simctl(this.settings);
         }
 
         this.iosDeviceLog = new IOSDeviceLog(this.getId(), this.settings);
     }
-
-    public static String getDeviceUidid(String name) {
-        List<String> simulators = Simctl.getAvailableSimulatorUdidsByName(name);
-
-        return simulators.size() > 0 ? simulators.get(0) : "";
-    }
-
 
     @Override
     public String getName() {
@@ -83,12 +79,12 @@ public class IOSDevice implements IDevice {
 
     @Override
     public IDevice start() throws DeviceException {
-        // Simulator
+        // Start simulator
         if (this.getType() == DeviceType.Simulator) {
             this.startSimulator();
         }
 
-        // Ensure device is avalable
+        // Ensure device is available
         if (this.getType() == DeviceType.iOS) {
             this.startRealDevice();
         }
@@ -119,8 +115,7 @@ public class IOSDevice implements IDevice {
                 IOSDevice.LOGGER_BASE.error("Failed to install " + appName + ". Error: " + result);
             }
         } else {
-            // TODO(dtopuzov): Implement it.
-            LOGGER_BASE.warn("Not implemented for simulators.");
+            this.simctl.installApp();
         }
     }
 
@@ -130,60 +125,32 @@ public class IOSDevice implements IDevice {
     }
 
     @Override
-    public void stop() {
-        if (this.getType() == DeviceType.Simulator && !this.settings.reuseDevice) {
-            OSUtils.runProcess("killall \"iOS Simulator\"");
-            OSUtils.runProcess("killall Simulator");
-            IOSDevice.LOGGER_BASE.info("iOS Simulator killed.");
+    public void stop() throws DeviceException {
+        if (this.getType() == DeviceType.Simulator) {
+            this.simctl.markUnused(this.settings.deviceId);
         }
     }
 
-    @Override
-    public void stopApps(List<String> uninstallAppsList) {
-        IOSDevice.LOGGER_BASE.warn("iOSDevice.stopApps method is not implemented");
-        this.uninstallApps(uninstallAppsList);
-    }
-
     /**
-     * Uninstall old applications.
-     * Physical devices: Uninstall apps in uninstallAppsList.
-     * iOS Simulators: Erase simulator image.
-     *
-     * @param uninstallAppsList
+     * Uninstall apps in uninstallAppsList.
      */
     @Override
-    public void uninstallApps(List<String> uninstallAppsList) {
+    public void uninstallApps() throws DeviceException {
+        IOSDevice.LOGGER_BASE.info("Uninstalling apps...");
+        List<String> installedApps = this.getInstalledApps();
 
-        if (this.settings.isRealDevice) {
-            IOSDevice.LOGGER_BASE.info("Uninstalling apps.");
-
-            for (String appToUninstall : uninstallAppsList) {
-                for (String appId : uninstallAppsList) {
-                    if (appId.contains(appToUninstall)) {
-                        this.uninstallApp(appId);
-                    }
+        for (String appToUninstall : Device.uninstallAppsList()) {
+            for (String appId : installedApps) {
+                if (appId.contains(appToUninstall)) {
+                    this.uninstallApp(appId);
                 }
             }
-
-            IOSDevice.LOGGER_BASE.info("Old apps uninstalled.");
-
-        } else {
-            // Still not working
-            // String command = "rm -rf ~/Library/Developer/CoreSimulator/Devices/" + this.settings.deviceId + "data/Containers/Bundle/Application/*";
-            // String command = "xcrun simctl uninstall" + this.settings.deviceId + " " + this.settings.packageId;
-
-            // IOSDevice.LOGGER_BASE.debug(command);
-            // OSUtils.runProcess(command);
-
-            IOSDevice.LOGGER_BASE.error("Uninstall apps is not implemented for simulators");
         }
     }
 
     @Override
     public String getContent(String testName) throws IOException {
-        String logContent = FileSystem.readFile(this.settings.consoleLogDir + File.separator + "syslog_" + testName + ".log");
-
-        return logContent;
+        return FileSystem.readFile(this.settings.consoleLogDir + File.separator + "syslog_" + testName + ".log");
     }
 
     @Override
@@ -306,9 +273,18 @@ public class IOSDevice implements IDevice {
 
     @Override
     public void closeApp() {
-        this.client.driver.closeApp();
+        if (this.client.driver != null) {
+            this.client.driver.closeApp();
+        } else {
+            LOGGER_BASE.error("Appium driver is dead. Can not close the app!");
+        }
     }
 
+    /**
+     * Ensure iOS physical device is available.
+     *
+     * @throws DeviceException When device is not available.
+     */
     private void startRealDevice() throws DeviceException {
         String commandGetAvailableDevices = "idevice_id --list";
         String devices = OSUtils.runProcess(commandGetAvailableDevices);
@@ -353,60 +329,88 @@ public class IOSDevice implements IDevice {
         }
     }
 
+    /**
+     * Start iOS Simulator (or reuse available).
+     *
+     * @throws DeviceException When iOS Simulator can't start.
+     */
     private void startSimulator() throws DeviceException {
-        if (!this.settings.reuseDevice && !this.settings.debug) {
-            this.stop();
-            this.simctl.eraseData(this.settings.deviceId);
-        }
 
-        if (!this.simctl.checkIfSimulatorIsBooted(this.getId())) {
-            boolean available = this.simctl.checkIfSimulatorExists(this.getName());
-            if (!available) {
-                if (String.valueOf(this.settings.platformVersion).contains("9")) {
-                    this.simctl.resetSimulatorSettings();
-                }
+        // Kill simulators and web driver sessions used more than 60 min
+        this.simctl.stopUsedSimulators(60);
+
+        String simId = this.simctl.getFreeSimulator(this.settings.deviceName);
+        if (simId != null) {
+            // If appropriate device is already running and free -> use it!
+            LOGGER_BASE.info(this.settings.deviceName + " simulator with id " + simId + " is free!");
+            this.settings.deviceId = simId;
+            this.simctl.markUsed(simId);
+        } else {
+
+            LOGGER_BASE.info("Can not find free and booted simulator with name " + this.settings.deviceName);
+
+            int maxSimCount = this.settings.ios.maxSimCount;
+            int free = this.simctl.getSimulatorsInfo(EmulatorState.Free).size();
+            int used = this.simctl.getSimulatorsInfo(EmulatorState.Used).size();
+            int currentSimCount = free + used;
+
+            // If limit of maximum parallel simulators is reached kill free simulators.
+            if (currentSimCount >= maxSimCount) {
+                LOGGER_BASE.warn("Maximum number of running iOS Simulator limit exceeded.");
+                List<EmulatorInfo> freeSimulators = this.simctl.getSimulatorsInfo(EmulatorState.Free);
+                freeSimulators.forEach(sim -> this.simctl.stop(sim.id));
             }
 
-            this.settings.deviceId = this.simctl.ensureOnlyOneSimulatorExist();
-        }
+            // Start desired simulator
+            free = this.simctl.getSimulatorsInfo(EmulatorState.Free).size();
+            used = this.simctl.getSimulatorsInfo(EmulatorState.Used).size();
+            currentSimCount = free + used;
+            if (currentSimCount >= maxSimCount) {
+                // If still running iOS Simulators are more than limit we can't help.
+                SystemExtension.interruptProcess("Maximum number of running iOS Simulator limit exceeded.");
+            } else {
+                // If desired iOS Simulator do not exists -> create it!
+                String offlineSim = this.simctl.getOffineSimulator(this.settings.deviceName);
+                if (offlineSim == null) {
+                    offlineSim = this.simctl.create(this.settings.deviceName, this.settings.ios.simulatorType, String.valueOf(this.settings.platformVersion));
+                }
 
-        // Verify simulator is available
-        List<String> simulators = Simctl.getAvailableSimulatorUdidsByName(this.settings.deviceName);
-        if (simulators.size() == 0) {
-            String error = String.format("Simulator %s does not exist. Hint: verify SDKs installed.%s Simulator info: %s",
-                    this.settings.deviceName,
-                    System.lineSeparator(),
-                    Simctl.getSimulatorsBy(this.settings.deviceName));
-            SystemExtension.interruptProcess(error);
-            throw new DeviceException(error);
-        } else if (simulators.size() > 2) {
-            String error = String.format("Found more simulator with name: %s",
-                    this.settings.deviceName,
-                    System.lineSeparator(),
-                    Simctl.getSimulatorsBy(this.settings.deviceName));
-            SystemExtension.interruptProcess(error);
-            throw new DeviceException(error);
+                // Start iOS Simulator
+                LOGGER_BASE.info("Another " + this.settings.deviceName + " found!");
+                this.settings.deviceId = offlineSim;
+                this.simctl.markUsed(offlineSim);
+                this.simctl.start(offlineSim, this.settings.deviceBootTimeout);
+            }
         }
     }
 
-    // TODO(): Research how to uninstall app on booted simulator
-    private void uninstallApp(String appId) {
+    /**
+     * Uninstall application from device.
+     *
+     * @param appId Bundle identifier.
+     * @throws DeviceException If uninstall operation fails.
+     */
+    private void uninstallApp(String appId) throws DeviceException {
         if (this.settings.isRealDevice) {
-            String uninstallResult = OSUtils.runProcess("ideviceinstaller --udid " + appId + " --uninstall " + appId);
+            String uninstallResult = OSUtils.runProcess("ideviceinstaller --udid " + this.settings.deviceId + " --uninstall " + appId);
             if (!uninstallResult.contains("Complete")) {
-                IOSDevice.LOGGER_BASE.error(String.format("Failed to uninstall %s with ideviceinstaller tool. Error: ", appId, uninstallResult));
-            } else {
-                IOSDevice.LOGGER_BASE.info(appId + " successfully uninstalled.");
+                IOSDevice.LOGGER_BASE.error(String.format("Failed to uninstall %s with ideviceinstaller tool. Error: %s", appId, uninstallResult));
+                throw new DeviceException("Failed to uninstall " + appId + " from " + this.settings.deviceId);
             }
         } else {
-            IOSDevice.LOGGER_BASE.error("Uninstall apps is not implemented for simulators");
+            this.simctl.uninstallApp(appId);
         }
+        IOSDevice.LOGGER_BASE.info(appId + " successfully uninstalled.");
     }
 
+    /**
+     * Get list of installed applications.
+     *
+     * @return List of bundle identifiers.
+     */
     private List<String> getInstalledApps() {
-        List<String> list = new ArrayList<>();
-
         if (this.settings.isRealDevice) {
+            List<String> list = new ArrayList<>();
             String rowData = OSUtils.runProcess("ideviceinstaller -u " + this.settings.deviceId + " -l");
             String trimData = rowData.replace("package:", "");
             String[] rowList = trimData.split("\\r?\\n");
@@ -417,29 +421,15 @@ public class IOSDevice implements IDevice {
                     list.add(appId);
                 }
             }
+            return list;
         } else {
-            IOSDevice.LOGGER_BASE.warn("Not implemented for simulators!!!");
+            return this.simctl.getInstalledApps(this.settings.deviceId);
         }
-        return list;
     }
 
-    private boolean verifyAppAreUninstalled(List<String> uninstallAppsList) {
-        if (this.settings.isRealDevice) {
-            List<String> installedApps = this.getInstalledApps();
-
-            for (String appToUninstall : uninstallAppsList) {
-                for (String appId : installedApps) {
-                    if (appId.contains(appToUninstall)) {
-                        IOSDevice.LOGGER_BASE.error(String.format("%s still exists!!!", appId));
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
+    /**
+     * Start watcher on iOS physical device logs.
+     */
     public void startIOSRealDeviceLogWatcher() {
         try {
             String command = "/usr/local/bin/idevicesyslog -u "
@@ -449,9 +439,7 @@ public class IOSDevice implements IDevice {
             String[] commands = new String[]{command};
             String[] allCommand = OSUtils.concat(OSUtils.OS_LINUX_RUNTIME, commands);
             ProcessBuilder pb = new ProcessBuilder(allCommand);
-            Process p = pb.start();
-
-            //p.waitFor();
+            pb.start();
 
             IOSDevice.LOGGER_BASE.info("IOS device log is running!!!");
         } catch (Exception e) {

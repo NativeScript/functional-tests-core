@@ -3,14 +3,6 @@ version '0.0.5'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
-//apply plugin: 'findbugs'
-
-//tasks.withType(FindBugs) {
-//    reports {
-//        xml.enabled false
-//        html.enabled true
-//    }
-//}
 
 sourceCompatibility = 1.8
 

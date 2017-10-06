@@ -115,12 +115,12 @@ public class Client {
         if (this.driver != null) {
             try {
                 this.driver.quit();
-                LOGGER_BASE.info("appium client stopped.");
+                LOGGER_BASE.info("Appium client stopped.");
             } catch (Exception e) {
                 LOGGER_BASE.fatal("Failed to stop appium client!");
             }
         } else {
-            LOGGER_BASE.info("appium client already stopped.");
+            LOGGER_BASE.info("Appium client already stopped.");
         }
     }
 
