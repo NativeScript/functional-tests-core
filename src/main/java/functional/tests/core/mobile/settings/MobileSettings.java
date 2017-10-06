@@ -437,10 +437,10 @@ public class MobileSettings extends Settings {
             }
 
             if (this.platform == PlatformType.iOS) {
-                if (this.platformVersion < 10) {
-                    this.automationName = AutomationName.APPIUM;
-                } else {
+                if (this.platformVersion >= 9.3) {
                     this.automationName = AutomationName.IOS_XCUI_TEST;
+                } else {
+                    this.automationName = AutomationName.APPIUM;
                 }
             }
         }
