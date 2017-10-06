@@ -384,10 +384,10 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Wait until device is available.
      *
-     * @param deviceId
-     * @param timeOut
+     * @param deviceId Device identifier.
+     * @param timeOut Timeout in seconds.
      * @throws TimeoutException
      */
     protected void waitForDevice(String deviceId, int timeOut) throws TimeoutException {
@@ -419,10 +419,10 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
+     * Check if device is available.
      *
-     * @param deviceId
-     * @return
+     * @param deviceId Device identifier.
+     * @return True if device is connected (and trusted).
      */
     protected boolean isAvailable(String deviceId) {
         boolean found = false;
@@ -445,30 +445,6 @@ public class Adb {
     protected void setScreenOffTimeOut(String deviceId, int timeOut) {
         LOGGER_BASE.info("Set SCREEN_OFF_TIMEOUT to " + String.valueOf(timeOut));
         this.runAdbCommand(deviceId, "shell settings put system screen_off_timeout " + timeOut);
-    }
-
-    /**
-     * TODO(dtopuzov): Add docs.
-     *
-     * @param deviceId
-     * @return
-     */
-    public boolean isLocked(String deviceId) {
-        String output = this.runAdbCommand(deviceId, "shell dumpsys window windows");
-        if (output.contains("mDrawState=HAS_DRAWN mLastHidden=true")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * TODO(dtopuzov): Add docs.
-     *
-     * @param deviceId
-     */
-    public void unlock(String deviceId) {
-        this.runAdbCommand(deviceId, "shell input keyevent 82");
     }
 
     /**
@@ -596,30 +572,25 @@ public class Adb {
         String name = "";
         for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(30); stop > System.nanoTime(); ) {
             String command = "(sleep " + String.valueOf(sleep) + "; echo avd name) | telnet localhost " + port;
-            LOGGER_BASE.info("Execute: " + command);
             String output = OSUtils.runProcess(command);
-            LOGGER_BASE.info("Output: " + output);
             try {
                 name = StringUtils.substringBetween(output, "OK", "OK").trim();
                 break;
             } catch (Exception e) {
                 sleep = sleep + 1;
                 try {
-                    LOGGER_BASE.info("Try to get AVD by searching in processes...");
                     String result = OSUtils.runProcess("ps aux | grep qemu | grep " + port);
-                    LOGGER_BASE.info("Processes: " + result);
                     String avd = result.split("-avd")[1].split(" ")[1].trim();
-                    LOGGER_BASE.info("AVD: " + avd);
                     name = avd;
                     break;
                 } catch (Exception ex) {
-                    LOGGER_BASE.info("Failed to get name of " + deviceId);
+                    LOGGER_BASE.error("Failed to get name of " + deviceId);
                 }
-                LOGGER_BASE.info("Failed to get name of " + deviceId);
+                LOGGER_BASE.error("Failed to get name of " + deviceId);
             }
         }
         if (name.equalsIgnoreCase("")) {
-            LOGGER_BASE.info("Failed to get name of " + deviceId);
+            LOGGER_BASE.error("Failed to get name of " + deviceId);
             throw new DeviceException("Failed to get name of " + deviceId);
         }
         return name;

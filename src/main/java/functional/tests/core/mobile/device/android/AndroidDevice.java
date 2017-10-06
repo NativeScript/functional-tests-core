@@ -400,7 +400,7 @@ public class AndroidDevice implements IDevice {
      * @return File size of the application in kB.
      */
     private String getAppSize() {
-        String appPath = settings.BASE_TEST_APP_DIR + File.separator + settings.testAppFileName;
+        String appPath = this.settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName;
         return String.valueOf(FileSystem.getFileSize(appPath));
     }
 
