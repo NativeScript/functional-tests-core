@@ -97,10 +97,14 @@ public class Capabilities {
     public DesiredCapabilities loadIOSCapabilities(MobileSettings settings) {
         DesiredCapabilities capabilities = this.loadDesiredCapabilities(settings);
 
+        // Please refer to https://www.npmjs.com/package/appium-xcuitest-driver
         capabilities.setCapability(IOSMobileCapabilityType.AUTO_ACCEPT_ALERTS, settings.ios.acceptAlerts);
         capabilities.setCapability(IOSMobileCapabilityType.LAUNCH_TIMEOUT, settings.deviceBootTimeout * 1000); // In ms.
         capabilities.setCapability(IOSMobileCapabilityType.SCREENSHOT_WAIT_TIMEOUT, settings.defaultTimeout);
         capabilities.setCapability(IOSMobileCapabilityType.SHOW_IOS_LOG, true);
+        capabilities.setCapability("useNewWDA", false);
+        capabilities.setCapability("wdaStartupRetries", 5);
+        capabilities.setCapability("shouldUseSingletonTestManager", false);
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
