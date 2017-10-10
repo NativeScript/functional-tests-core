@@ -128,6 +128,10 @@ public class IOSDevice implements IDevice {
     public void stop() throws DeviceException {
         if (this.getType() == DeviceType.Simulator) {
             this.simctl.markUnused(this.settings.deviceId);
+
+            // Kill all Appium sessions to this device
+            String killCommand = "ps aux | grep -i appium | grep -ie " + this.settings.deviceId + " | awk '{print $2}' | xargs kill -9";
+            OSUtils.runProcess(killCommand);
         }
     }
 

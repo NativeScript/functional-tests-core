@@ -134,9 +134,14 @@ public class AndroidDevice implements IDevice {
 
     @Override
     public void stop() {
+        String deviceId = this.getId();
         if (this.settings.deviceType == DeviceType.Emulator) {
-            this.adb.markUnused(this.getId());
+            this.adb.markUnused(deviceId);
         }
+
+        // Kill all Appium sessions to this device
+        String killCommand = "ps aux | grep -i appium | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
+        OSUtils.runProcess(killCommand);
     }
 
     @Override
