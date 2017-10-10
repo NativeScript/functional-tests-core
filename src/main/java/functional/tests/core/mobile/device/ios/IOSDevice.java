@@ -115,7 +115,7 @@ public class IOSDevice implements IDevice {
                 IOSDevice.LOGGER_BASE.error("Failed to install " + appName + ". Error: " + result);
             }
         } else {
-            this.simctl.installApp();
+            this.simctl.installApp(appName);
         }
     }
 

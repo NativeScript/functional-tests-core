@@ -198,7 +198,14 @@ public class Simctl {
      * Install application under test.
      */
     public void installApp() {
-        String app = Settings.BASE_TEST_APP_DIR + File.separator + this.settings.testAppFileName;
+        this.installApp(this.settings.testAppFileName);
+    }
+
+    /**
+     * Install application under test.
+     */
+    public void installApp(String appName) {
+        String app = Settings.BASE_TEST_APP_DIR + File.separator + appName;
         this.runSimctlCommand("install", this.settings.deviceId, app);
         Wait.sleep(250);
         LOGGER_BASE.info(this.settings.packageId + " installed.");
