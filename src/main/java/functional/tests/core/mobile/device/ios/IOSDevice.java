@@ -14,12 +14,7 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.ios.IOSDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.html5.Location;
 
 import java.io.File;
@@ -246,28 +241,7 @@ public class IOSDevice implements IDevice {
 
     @Override
     public void runAppInBackGround(int seconds) {
-        if (this.settings.platformVersion >= 10) {
-            this.client.getDriver().runAppInBackground(seconds);
-        } else {
-            try {
-                JavascriptExecutor jse = (JavascriptExecutor) this.client.getDriver();
-                jse.executeScript("var x = target.deactivateAppForDuration(" + String.valueOf(seconds) + "); " +
-                        "var MAX_RETRY=5, retry_count = 0; while (!x && retry_count < MAX_RETRY) " +
-                        "{ x = target.deactivateAppForDuration(2); retry_count += 1}; x");
-            } catch (WebDriverException e) {
-                if (e.getMessage().contains("An error occurred while executing user supplied JavaScript")) {
-                    this.client.getDriver().findElement(By.id(this.settings.testAppFriendlyName)).click();
-                } else {
-                    // This hack workarounds run in background issue on iOS9
-                    By appLocator = By.xpath("//UIAScrollView[@name='AppSwitcherScrollView']/UIAElement");
-
-                    MobileElement element = (MobileElement) this.client.getDriver().findElement(appLocator);
-                    int offset = 5; // 5px offset within the top-left corner of element
-                    Point elementTopLeft = element.getLocation();
-                    this.client.getDriver().tap(1, elementTopLeft.x + offset, elementTopLeft.y + offset, 500);
-                }
-            }
-        }
+        this.client.getDriver().runAppInBackground(seconds);
     }
 
     @Override
