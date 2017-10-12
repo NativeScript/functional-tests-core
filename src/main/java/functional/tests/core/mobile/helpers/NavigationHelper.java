@@ -198,7 +198,7 @@ public class NavigationHelper {
 
         if (demoBtn == null && retryCount > 0) {
             LOGGER_BASE.info("Sroll to \"" + example + "\" ...");
-            demoBtn = mobileContext.gestures.scrollToElement(SwipeElementDirection.DOWN, example, 5);
+            demoBtn = mobileContext.gestures.scrollToElement(SwipeElementDirection.DOWN, example, retryCount);
         }
 
         if (demoBtn == null) {
