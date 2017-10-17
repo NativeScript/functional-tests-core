@@ -158,7 +158,8 @@ public abstract class MobileTest {
 
         this.imagesResults = new HashMap<String, Boolean>();
         this.imageCounter = 1;
-        if (this.settings.platform == PlatformType.iOS && (this.settings.isRealDevice || this.settings.platformVersion >= 10)) {
+        if (this.settings.platform == PlatformType.iOS
+                && (this.settings.isRealDevice || this.settings.platformVersion >= 10)) {
             this.device.getIOSDevice().startIOSDeviceLogWatcher();
         }
     }
@@ -177,6 +178,9 @@ public abstract class MobileTest {
 
         this.context.lastTestResult = result.getStatus();
         this.mobileSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
+        if (this.settings.platformVersion >= 10 && this.settings.platform == PlatformType.iOS) {
+            this.device.getIOSDevice().stopIOSLogging();
+        }
     }
 
     /**

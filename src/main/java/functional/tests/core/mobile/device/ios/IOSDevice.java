@@ -36,6 +36,7 @@ public class IOSDevice implements IDevice {
     private MobileSettings settings;
     private String name;
     private DeviceType type;
+    private Process deviceLogProcess;
 
     /**
      * Init IOS device.
@@ -422,12 +423,17 @@ public class IOSDevice implements IDevice {
             String[] commands = new String[]{command};
             String[] allCommand = OSUtils.concat(OSUtils.OS_LINUX_RUNTIME, commands);
             ProcessBuilder pb = new ProcessBuilder(allCommand);
-            pb.start();
-
+            this.deviceLogProcess = pb.start();
             IOSDevice.LOGGER_BASE.info("IOS device log is running!!!");
         } catch (Exception e) {
             e.printStackTrace();
             IOSDevice.LOGGER_BASE.error("IOS device log has stopped!!! Exception:" + e.getMessage());
+        }
+    }
+
+    public void stopIOSLogging() {
+        if (this.deviceLogProcess != null && this.deviceLogProcess.isAlive()) {
+            this.deviceLogProcess.destroy();
         }
     }
 }

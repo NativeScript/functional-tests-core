@@ -24,8 +24,8 @@ public class IOSDeviceLog {
     public String getDeviceLogTail() {
         String entireLog = "";
         if (this.settings.isRealDevice || this.settings.platformVersion >= 10) {
-        this.lastByteIndex = -1;
-        entireLog = IOSDeviceLog.getDeviceLog(this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE);
+            this.lastByteIndex = -1;
+            entireLog = IOSDeviceLog.getDeviceLog(this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE);
         } else {
             entireLog = IOSDeviceLog.getSimulatorLog(this.settings.deviceId);
         }
@@ -38,6 +38,8 @@ public class IOSDeviceLog {
         if (!entireLog.isEmpty()) {
             logTail = entireLog.substring(this.lastByteIndex, entireLog.length() - 1);
         }
+
+
         this.lastByteIndex = entireLog.length() - 1;
 
         return logTail;
