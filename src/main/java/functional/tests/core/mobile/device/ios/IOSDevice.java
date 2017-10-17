@@ -53,8 +53,6 @@ public class IOSDevice implements IDevice {
         if (this.settings.deviceType == DeviceType.Simulator) {
             this.simctl = new Simctl(this.settings);
         }
-
-        this.iosDeviceLog = new IOSDeviceLog(this.getId(), this.settings);
     }
 
     @Override
@@ -88,6 +86,8 @@ public class IOSDevice implements IDevice {
         if (!this.settings.debug) {
             this.uninstallApp(this.settings.packageId);
         }
+
+        this.iosDeviceLog = new IOSDeviceLog(this.settings);
 
         // Start Appium Client
         try {
@@ -359,6 +359,8 @@ public class IOSDevice implements IDevice {
                 this.simctl.markUsed(offlineSim);
                 this.simctl.start(offlineSim, this.settings.deviceBootTimeout);
             }
+
+            this.settings.deviceId = simId;
         }
     }
 
@@ -408,12 +410,15 @@ public class IOSDevice implements IDevice {
     /**
      * Start watcher on iOS physical device logs.
      */
-    public void startIOSRealDeviceLogWatcher() {
+    public void startIOSDeviceLogWatcher() {
         try {
-            String command = "/usr/local/bin/idevicesyslog -u "
-                    + this.settings.deviceId
-                    + " > "
-                    + this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE;
+            String command = "xcrun simctl spawn  " + this.settings.deviceId
+                    + " log stream --level debug --predicate 'senderImagePath contains \"NativeScript\"' ";
+            if (this.settings.isRealDevice) {
+                command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
+            }
+
+            command += " > " + this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE;
             String[] commands = new String[]{command};
             String[] allCommand = OSUtils.concat(OSUtils.OS_LINUX_RUNTIME, commands);
             ProcessBuilder pb = new ProcessBuilder(allCommand);

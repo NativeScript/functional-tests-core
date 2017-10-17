@@ -9,14 +9,12 @@ import java.io.File;
  * IOS device log.
  */
 public class IOSDeviceLog {
-    private String deviceId;
     private int lastByteIndex;
     private MobileSettings settings;
 
     public static final String IOS_REAL_DEVICE_LOG_FILE = "iOS_log.txt";
 
-    public IOSDeviceLog(String deviceId, MobileSettings settings) {
-        this.deviceId = deviceId;
+    public IOSDeviceLog(MobileSettings settings) {
         this.settings = settings;
     }
 
@@ -25,11 +23,11 @@ public class IOSDeviceLog {
      */
     public String getDeviceLogTail() {
         String entireLog = "";
-        if (this.settings.isRealDevice) {
-            this.lastByteIndex = -1;
-            entireLog = IOSDeviceLog.getDeviceLog(this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE);
+        if (this.settings.isRealDevice || this.settings.platformVersion >= 10) {
+        this.lastByteIndex = -1;
+        entireLog = IOSDeviceLog.getDeviceLog(this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE);
         } else {
-            entireLog = IOSDeviceLog.getSimulatorLog(this.deviceId);
+            entireLog = IOSDeviceLog.getSimulatorLog(this.settings.deviceId);
         }
 
         if (this.lastByteIndex < 0 || this.lastByteIndex >= entireLog.length()) {
@@ -54,7 +52,6 @@ public class IOSDeviceLog {
         return entireLog;
     }
 
-
     /**
      * Gets the whole device log.
      */
@@ -63,5 +60,4 @@ public class IOSDeviceLog {
 
         return entireLog;
     }
-
 }
