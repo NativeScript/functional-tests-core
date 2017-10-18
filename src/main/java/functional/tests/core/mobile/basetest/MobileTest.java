@@ -159,7 +159,7 @@ public abstract class MobileTest {
         this.imagesResults = new HashMap<String, Boolean>();
         this.imageCounter = 1;
         if (this.settings.platform == PlatformType.iOS
-                && (this.settings.isRealDevice || this.settings.platformVersion >= 10)) {
+                && (this.settings.isRealDevice || this.settings.platformVersion >= 11)) {
             this.device.getIOSDevice().startIOSDeviceLogWatcher();
         }
     }
