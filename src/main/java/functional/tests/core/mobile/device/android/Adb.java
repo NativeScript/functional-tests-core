@@ -285,6 +285,16 @@ public class Adb {
         OSUtils.runProcess(false, Integer.MAX_VALUE, command);
     }
 
+    /**
+     * Reboot device.
+     *
+     * @param deviceId Device identifier.
+     */
+    protected void rebootEmulator(String deviceId) {
+        this.runAdbCommand(deviceId, "reboot");
+        LOGGER_BASE.info("Reboot " + deviceId);
+    }
+
 
     protected void stopEmulator(String deviceId) {
         this.runAdbCommand(deviceId, "emu kill");
@@ -387,7 +397,7 @@ public class Adb {
      * Wait until device is available.
      *
      * @param deviceId Device identifier.
-     * @param timeOut Timeout in seconds.
+     * @param timeOut  Timeout in seconds.
      * @throws TimeoutException
      */
     protected void waitForDevice(String deviceId, int timeOut) throws TimeoutException {

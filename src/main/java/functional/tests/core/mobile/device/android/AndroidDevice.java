@@ -439,7 +439,9 @@ public class AndroidDevice implements IDevice {
                 LOGGER_BASE.info("[DEBUG] All emulators will ");
             } else {
                 if (this.adb.usedSince(this.getId()) == 0) {
-                    LOGGER_BASE.info(this.getId() + " is already running and free. Will reuse it!");
+                    LOGGER_BASE.info(this.getId() + " is already running and free. Will reboot and use it!");
+                    this.adb.rebootEmulator(this.getId());
+                    this.adb.waitUntilEmulatorBoot(this.getId(), this.settings.deviceBootTimeout);
                 } else {
                     String error = this.getId() + " is already running, but it is in use!";
                     LOGGER_BASE.info(error);
