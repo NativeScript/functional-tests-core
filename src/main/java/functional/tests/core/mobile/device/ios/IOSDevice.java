@@ -349,19 +349,23 @@ public class IOSDevice implements IDevice {
                 SystemExtension.interruptProcess("Maximum number of running iOS Simulator limit exceeded.");
             } else {
                 // If desired iOS Simulator do not exists -> create it!
-                String offlineSim = this.simctl.getOffineSimulator(this.settings.deviceName);
-                if (offlineSim == null) {
-                    offlineSim = this.simctl.create(this.settings.deviceName, this.settings.ios.simulatorType, String.valueOf(this.settings.platformVersion));
+                String offlineSimId = this.simctl.getOffineSimulator(this.settings.deviceName);
+                if (offlineSimId == null) {
+                    offlineSimId = this.simctl.create(this.settings.deviceName, this.settings.ios.simulatorType, String.valueOf(this.settings.platformVersion));
                 }
 
                 // Start iOS Simulator
                 LOGGER_BASE.info("Another " + this.settings.deviceName + " found!");
-                this.settings.deviceId = offlineSim;
-                this.simctl.markUsed(offlineSim);
-                this.simctl.start(offlineSim, this.settings.deviceBootTimeout);
+                this.settings.deviceId = offlineSimId;
+                this.simctl.markUsed(offlineSimId);
+                this.simctl.start(offlineSimId, this.settings.deviceBootTimeout);
             }
+        }
 
-            this.settings.deviceId = simId;
+        if (this.settings.deviceId == null) {
+            String error = "Device id is null!";
+            LOGGER_BASE.fatal(error);
+            SystemExtension.interruptProcess(error);
         }
     }
 
