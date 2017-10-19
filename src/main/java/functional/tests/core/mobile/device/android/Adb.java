@@ -577,27 +577,24 @@ public class Adb {
      * @throws DeviceException When fail to get AVD name.
      */
     public String getAvdName(String deviceId) throws DeviceException {
-        int sleep = 1;
         String port = deviceId.split("-")[1];
         String name = "";
-        for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(30); stop > System.nanoTime(); ) {
-            String command = "(sleep " + String.valueOf(sleep) + "; echo avd name) | telnet localhost " + port;
+        try {
+            String result = OSUtils.runProcess("ps aux | grep qemu | grep " + port);
+            String avd = result.split("-avd")[1].split(" ")[1].trim();
+            name = avd;
+        } catch (Exception ex) {
+            LOGGER_BASE.error("Failed to get name of " + deviceId);
+            String command = "(sleep 10; echo avd name) | telnet localhost " + port;
             String output = OSUtils.runProcess(command);
             try {
                 name = StringUtils.substringBetween(output, "OK", "OK").trim();
-                break;
             } catch (Exception e) {
-                sleep = sleep + 1;
-                try {
-                    String result = OSUtils.runProcess("ps aux | grep qemu | grep " + port);
-                    String avd = result.split("-avd")[1].split(" ")[1].trim();
-                    name = avd;
-                    break;
-                } catch (Exception ex) {
-                    LOGGER_BASE.error("Failed to get name of " + deviceId);
-                }
                 LOGGER_BASE.error("Failed to get name of " + deviceId);
+                LOGGER_BASE.error("Telnet output is:");
+                LOGGER_BASE.error(output);
             }
+
         }
         if (name.equalsIgnoreCase("")) {
             LOGGER_BASE.error("Failed to get name of " + deviceId);
@@ -611,6 +608,7 @@ public class Adb {
      *
      * @param deviceId
      */
+
     public void goHome(String deviceId) {
         String command = "shell am start -a android.intent.action.MAIN -c android.intent.category.HOME";
         this.runAdbCommand(deviceId, command);
