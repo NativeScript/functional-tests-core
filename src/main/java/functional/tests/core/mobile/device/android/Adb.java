@@ -73,7 +73,11 @@ public class Adb {
      * @return
      */
     public String runAdbCommand(String deviceId, String command) {
-        return this.runAdbCommand(deviceId, command, this.settings.deviceBootTimeout, true);
+        return this.runAdbCommand(deviceId, command, this.settings.defaultTimeout, true);
+    }
+
+    public String runAdbCommand(String deviceId, String command, int timeout) {
+        return this.runAdbCommand(deviceId, command, timeout, true);
     }
 
     /**
@@ -691,7 +695,7 @@ public class Adb {
         String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             this.killAdbProcess();
-            output = OSUtils.runProcess(adbCommand);
+            output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         }
         return output;
     }
