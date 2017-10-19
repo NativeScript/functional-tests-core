@@ -65,12 +65,12 @@ public class Gestures {
 
         if (startPosition == Position.FromCorner) {
             //windowRectangle.height = (int) (windowRectangle.height - windowRectangle.height * 0.10D);
-            offsetX = (int) (windowRectangle.height * 0.2D);
+            offsetX = (int) (windowRectangle.height * 0.25D);
 
             if (direction == SwipeElementDirection.RIGHT) {
                 offsetX *= -1;
             }
-            offsetY = (int) (windowRectangle.height * 0.2D);
+            offsetY = (int) (windowRectangle.height * 0.25D);
         }
 
         this.scrollInRectangle(direction, windowRectangle, startPosition, offsetX, offsetY, waitAfterSwipe);
