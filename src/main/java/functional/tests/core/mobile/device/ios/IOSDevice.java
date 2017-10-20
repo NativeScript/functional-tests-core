@@ -424,6 +424,7 @@ public class IOSDevice implements IDevice {
             }
 
             command += " > " + this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE;
+            LOGGER_BASE.info(command);
             String[] commands = new String[]{command};
             String[] allCommand = OSUtils.concat(OSUtils.OS_LINUX_RUNTIME, commands);
             ProcessBuilder pb = new ProcessBuilder(allCommand);
@@ -435,10 +436,9 @@ public class IOSDevice implements IDevice {
         }
     }
 
-    public void stopIOSLogging() {
-        if (this.deviceLogProcess != null && this.deviceLogProcess.isAlive()) {
-            this.deviceLogProcess.destroy();
-        }
+    public void stopIOSLogging(String deviceId) {
+        String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
+        OSUtils.runProcess(killCommand);
     }
 }
 
