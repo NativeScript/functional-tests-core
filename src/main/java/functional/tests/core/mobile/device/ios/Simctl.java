@@ -188,8 +188,14 @@ public class Simctl {
         String[] rowList = rowData.split("\\r?\\n");
         for (String item : rowList) {
             String rowBundle = OSUtils.runProcess("defaults read " + item + "/Info.plist | grep CFBundleIdentifier");
-            String appId = rowBundle.split("\"")[1];
-            list.add(appId);
+            try {
+                String appId = rowBundle.split("\"")[1];
+                list.add(appId);
+            } catch (Exception e) {
+                LOGGER_BASE.error("Failed to get installed apps!");
+                LOGGER_BASE.error("Row bundle data:");
+                LOGGER_BASE.error(rowBundle);
+            }
         }
         return list;
     }
