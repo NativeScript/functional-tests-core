@@ -48,7 +48,8 @@ public class Simctl {
     public String create(String simulatorName, String deviceType, String iOSVersion) throws DeviceException {
         String deviceTypeNameSpace = deviceType.trim().replace(" ", "-");
         if (deviceTypeNameSpace.toLowerCase().contains("x")) {
-            deviceTypeNameSpace = deviceTypeNameSpace.replace("-" + iOSVersion, "");
+            String[] spittedParts = deviceTypeNameSpace.split("-");
+            deviceTypeNameSpace = spittedParts[0] + "-" + spittedParts[1];
         }
         String iOSVersionParsed = iOSVersion.trim().replace(".", "-");
         String createSimulatorCommand = String.format(
