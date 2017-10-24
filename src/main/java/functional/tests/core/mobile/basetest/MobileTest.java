@@ -179,7 +179,7 @@ public abstract class MobileTest {
         this.context.lastTestResult = result.getStatus();
         this.mobileSetupManager.logTestResult(this.context.lastTestResult, this.context.getTestName());
         if (this.settings.platformVersion >= 10 && this.settings.platform == PlatformType.iOS) {
-            this.device.getIOSDevice().stopIOSLogging();
+            this.device.getIOSDevice().stopIOSLogging(this.settings.deviceId);
         }
     }
 

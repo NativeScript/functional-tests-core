@@ -47,6 +47,9 @@ public class Simctl {
      */
     public String create(String simulatorName, String deviceType, String iOSVersion) throws DeviceException {
         String deviceTypeNameSpace = deviceType.trim().replace(" ", "-");
+        if (deviceTypeNameSpace.toLowerCase().contains("x")) {
+            deviceTypeNameSpace = deviceTypeNameSpace.replace("-" + iOSVersion, "");
+        }
         String iOSVersionParsed = iOSVersion.trim().replace(".", "-");
         String createSimulatorCommand = String.format(
                 "xcrun simctl create '%s' 'com.apple.CoreSimulator.SimDeviceType.%s' 'com.apple.CoreSimulator.SimRuntime.iOS-%s'",
@@ -188,8 +191,14 @@ public class Simctl {
         String[] rowList = rowData.split("\\r?\\n");
         for (String item : rowList) {
             String rowBundle = OSUtils.runProcess("defaults read " + item + "/Info.plist | grep CFBundleIdentifier");
-            String appId = rowBundle.split("\"")[1];
-            list.add(appId);
+            try {
+                String appId = rowBundle.split("\"")[1];
+                list.add(appId);
+            } catch (Exception e) {
+                LOGGER_BASE.error("Failed to get installed apps!");
+                LOGGER_BASE.error("Row bundle data:");
+                LOGGER_BASE.error(rowBundle);
+            }
         }
         return list;
     }
