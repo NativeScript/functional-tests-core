@@ -101,7 +101,7 @@ public class Simctl {
         LOGGER_BASE.info("Start iOS Simulator: " + simId);
         try {
             OSUtils.executeCommand("xcrun simctl erase " + this.settings.deviceId, this.settings.deviceBootTimeout);
-            OSUtils.executeCommand("xcrun simctl boot " + this.settings.deviceId, this.settings.deviceBootTimeout);
+            OSUtils.executeCommand("xcrun instruments -w " + this.settings.deviceId + " -t Blank -l ", this.settings.deviceBootTimeout);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
