@@ -416,6 +416,9 @@ public class IOSDevice implements IDevice {
      * Start watcher on iOS physical device logs.
      */
     public void startIOSDeviceLogWatcher() {
+        if (this.settings.deviceId == null) {
+            SystemExtension.interruptProcess("Device id is null");
+        }
         try {
             String command = "xcrun simctl spawn  " + this.settings.deviceId
                     + " log stream --level debug --predicate 'senderImagePath contains \"NativeScript\"' ";
