@@ -9,6 +9,7 @@ import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.basetest.MobileSetupManager;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.find.Wait;
+import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import functional.tests.core.utils.FileSystem;
 import org.testng.Assert;
@@ -388,6 +389,9 @@ public class ImageVerification {
                     startY = (int) (height1 * 0.07);
                 } else if (this.settings.platform == PlatformType.iOS) {
                     startY = (int) (height1 * 0.03);
+                    if (((MobileSettings) this.settings).ios.simulatorType.toLowerCase().contains("x")) {
+                        startY = (int) (height1 * 0.05);
+                    }
                 }
             }
 
