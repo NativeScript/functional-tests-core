@@ -416,7 +416,7 @@ public class IOSDevice implements IDevice {
      * Start watcher on iOS physical device logs.
      */
     public void startIOSDeviceLogWatcher() {
-        if (this.settings.deviceId == null) {
+        if (this.settings.deviceId == null || this.settings.deviceId == "") {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
