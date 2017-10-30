@@ -185,6 +185,10 @@ public class AndroidDevice implements IDevice {
             this.adb.uninstallApp(appId);
         }
 
+        // Cleanup temp folder on real devices
+        if (this.settings.isRealDevice) {
+            this.adb.runAdbCommand(this.settings.deviceId, "shell rm -rf /data/local/tmp/*");
+        }
     }
 
     @Override
