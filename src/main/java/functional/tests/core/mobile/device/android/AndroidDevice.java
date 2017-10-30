@@ -186,7 +186,7 @@ public class AndroidDevice implements IDevice {
         }
 
         // Cleanup temp folder on real devices
-        if (this.settings.isRealDevice) {
+        if (this.settings.deviceType == DeviceType.Android) {
             this.adb.runAdbCommand(this.settings.deviceId, "shell rm -rf /data/local/tmp/*");
         }
     }

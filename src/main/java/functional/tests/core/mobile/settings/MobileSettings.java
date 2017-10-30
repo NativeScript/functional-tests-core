@@ -107,9 +107,9 @@ public class MobileSettings extends Settings {
                 + (this.android.appLaunchTimeLimit > -1 ? this.android.appLaunchTimeLimit : "not set"));
 
         // Set isRealDevice
-        this.isRealDevice = this.deviceType == DeviceType.Emulator;
-
+        this.isRealDevice = this.deviceType == DeviceType.Android;
         this.android.isRealDevice = this.isRealDevice;
+
         return this.android;
     }
 
