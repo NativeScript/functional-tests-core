@@ -123,6 +123,9 @@ public class AndroidDevice implements IDevice {
             this.uninstallApps();
         }
 
+        // Clean logcat
+        this.adb.runAdbCommand(this.getId(), "logcat -c");
+
         // Handle error activity
         this.adb.closeErrorActivty(this.getId());
 
