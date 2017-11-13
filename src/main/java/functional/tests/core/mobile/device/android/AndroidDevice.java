@@ -125,6 +125,9 @@ public class AndroidDevice implements IDevice {
             this.uninstallApps();
         }
 
+        // Clean logcat
+        this.adb.runAdbCommand(this.getId(), "logcat -c");
+
         // Handle error activity
         this.adb.closeErrorActivty(this.getId());
 
@@ -187,6 +190,10 @@ public class AndroidDevice implements IDevice {
             this.adb.uninstallApp(appId);
         }
 
+        // Cleanup temp folder on real devices
+        if (this.settings.deviceType == DeviceType.Android) {
+            this.adb.runAdbCommand(this.settings.deviceId, "shell rm -rf /data/local/tmp/*");
+        }
     }
 
     @Override

@@ -83,6 +83,9 @@ public class Capabilities {
                 int port = OSUtils.getFreePort(8201, 8300);
                 capabilities.setCapability("systemPort", port);
             }
+            if (settings.isRealDevice) {
+                capabilities.setCapability(MobileCapabilityType.NO_RESET, false);
+            }
         }
 
         return capabilities;

@@ -242,18 +242,17 @@ public class Adb {
      * @param appId Bundle identifier.
      */
     public void uninstallApp(String appId) {
-        if (this.isAppInstalled(appId)) {
-            this.stopApp(appId);
-            if (!appId.contains("appium")) {
-                String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
-                if (uninstallResult.contains("Success")) {
-                    LOGGER_BASE.info(appId + " successfully uninstalled.");
-                } else {
-                    LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
-                }
+        // Check if app is installed is removed on purpose!
+        this.stopApp(appId);
+        if (!appId.contains("appium")) {
+            String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
+            if (uninstallResult.contains("Success")) {
+                LOGGER_BASE.info(appId + " successfully uninstalled.");
             } else {
-                LOGGER_BASE.info("Skip uninstall: " + appId);
+                LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
             }
+        } else {
+            LOGGER_BASE.info("Skip uninstall: " + appId);
         }
     }
 
