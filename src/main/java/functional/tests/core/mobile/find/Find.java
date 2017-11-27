@@ -1,15 +1,16 @@
 package functional.tests.core.mobile.find;
 
+import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.settings.Settings;
+import functional.tests.core.utils.OSUtils;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * TODO(): Add docs.
  */
