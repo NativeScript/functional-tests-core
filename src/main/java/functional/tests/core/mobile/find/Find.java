@@ -78,11 +78,20 @@ public class Find {
         return result;
     }
 
-    public UIElement byText(String value, Boolean exactMatch, int timeOut) {
+    public UIElement byText(String value, int timeOut) {
         this.client.setWait(timeOut);
         UIElement result;
         try {
-            result = this.byLocator(this.locators.byText(value, exactMatch, false));
+            if (this.settings.platform == PlatformType.iOS) {
+                String xcodeVersionString = OSUtils.runProcess("xcodebuild -version").split("/n")[0].replace("Xcode", "").trim();
+                if (xcodeVersionString.startsWith("9")) {
+                    result = this.byLocator(By.id(value));
+                } else {
+                    result = this.byLocator(this.locators.byText(value));
+                }
+            } else {
+                result = this.byLocator(this.locators.byText(value));
+            }
         } catch (Exception e) {
             LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
