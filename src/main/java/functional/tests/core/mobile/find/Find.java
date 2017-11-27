@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * TODO(): Add docs.
  */
@@ -70,19 +71,6 @@ public class Find {
         this.client.setWait(timeOut);
         UIElement result;
         try {
-            result = this.byLocator(this.locators.byText(value));
-        } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
-            result = null;
-        }
-        this.client.setWait(this.settings.defaultTimeout);
-        return result;
-    }
-
-    public UIElement byText(String value, int timeOut) {
-        this.client.setWait(timeOut);
-        UIElement result;
-        try {
             if (this.settings.platform == PlatformType.iOS) {
                 String xcodeVersionString = OSUtils.runProcess("xcodebuild -version").split("/n")[0].replace("Xcode", "").trim();
                 if (xcodeVersionString.startsWith("9")) {
@@ -93,6 +81,19 @@ public class Find {
             } else {
                 result = this.byLocator(this.locators.byText(value));
             }
+        } catch (Exception e) {
+            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            result = null;
+        }
+        this.client.setWait(this.settings.defaultTimeout);
+        return result;
+    }
+
+    public UIElement byText(String value, Boolean exactMatch, int timeOut) {
+        this.client.setWait(timeOut);
+        UIElement result;
+        try {
+            result = this.byLocator(this.locators.byText(value, exactMatch, false));
         } catch (Exception e) {
             LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
             result = null;
