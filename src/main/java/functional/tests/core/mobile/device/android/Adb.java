@@ -691,7 +691,6 @@ public class Adb {
             adbCommand += " -s " + deviceId;
         }
         adbCommand += " " + command;
-        LOGGER_BASE.info(adbCommand);
         String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             this.killAdbProcess();
@@ -824,6 +823,26 @@ public class Adb {
                     String killCommand = "ps aux | grep -ie " + emu.id + " | awk '{print $2}' | xargs kill -9";
                     OSUtils.runProcess(killCommand);
                 }
+            }
+        });
+    }
+
+    /**
+     * Stop unused emulators.
+     *
+     * @throws DeviceException When fails to get AVD name.
+     */
+    public void stopUnusedEmulators() throws DeviceException {
+        List<EmulatorInfo> usedEmulators = this.getEmulatorInfo(EmulatorState.Free);
+        usedEmulators.forEach((emu) -> {
+                this.stopEmulator(emu.id);
+                Wait.sleep(1000);
+
+                // Kill all the processes related with emulator (on linux and mac)
+                if (this.settings.os != OSType.Windows) {
+                    String killCommand = "ps aux | grep -ie " + emu.id + " | awk '{print $2}' | xargs kill -9";
+                    OSUtils.runProcess(killCommand);
+
             }
         });
     }
