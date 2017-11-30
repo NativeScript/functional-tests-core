@@ -3,6 +3,7 @@ package functional.tests.core.mobile.device.android;
 import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.enums.OSType;
 import functional.tests.core.exceptions.DeviceException;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
@@ -392,7 +393,7 @@ public class Adb {
             String error = deviceId + " failed to boot in " + String.valueOf(timeOut) + " seconds.";
             LOGGER_BASE.fatal(error);
             OSUtils.getScreenshot("HostOS_Failed_To_Boot_Emulator", this.settings);
-            throw new TimeoutException(error);
+            SystemExtension.interruptProcess(error);
         }
     }
 
