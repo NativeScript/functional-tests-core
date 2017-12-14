@@ -3,6 +3,7 @@ package functional.tests.core.mobile.device.android;
 import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.enums.OSType;
 import functional.tests.core.exceptions.DeviceException;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.EmulatorInfo;
 import functional.tests.core.mobile.find.Wait;
@@ -392,7 +393,7 @@ public class Adb {
             String error = deviceId + " failed to boot in " + String.valueOf(timeOut) + " seconds.";
             LOGGER_BASE.fatal(error);
             OSUtils.getScreenshot("HostOS_Failed_To_Boot_Emulator", this.settings);
-            throw new TimeoutException(error);
+            SystemExtension.interruptProcess(error);
         }
     }
 
@@ -690,7 +691,6 @@ public class Adb {
             adbCommand += " -s " + deviceId;
         }
         adbCommand += " " + command;
-        LOGGER_BASE.info(adbCommand);
         String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             this.killAdbProcess();
@@ -823,6 +823,26 @@ public class Adb {
                     String killCommand = "ps aux | grep -ie " + emu.id + " | awk '{print $2}' | xargs kill -9";
                     OSUtils.runProcess(killCommand);
                 }
+            }
+        });
+    }
+
+    /**
+     * Stop unused emulators.
+     *
+     * @throws DeviceException When fails to get AVD name.
+     */
+    public void stopUnusedEmulators() throws DeviceException {
+        List<EmulatorInfo> usedEmulators = this.getEmulatorInfo(EmulatorState.Free);
+        usedEmulators.forEach((emu) -> {
+                this.stopEmulator(emu.id);
+                Wait.sleep(1000);
+
+                // Kill all the processes related with emulator (on linux and mac)
+                if (this.settings.os != OSType.Windows) {
+                    String killCommand = "ps aux | grep -ie " + emu.id + " | awk '{print $2}' | xargs kill -9";
+                    OSUtils.runProcess(killCommand);
+
             }
         });
     }

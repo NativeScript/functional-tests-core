@@ -461,8 +461,15 @@ public class AndroidDevice implements IDevice {
             int free = this.adb.getEmulatorInfo(EmulatorState.Free).size();
             int used = this.adb.getEmulatorInfo(EmulatorState.Used).size();
             int currentEmuCount = free + used;
+
+            // If max number of emulators in reached kill unused emulators
             if (currentEmuCount >= maxEmuCount) {
-                throw new DeviceException("Maximum number of running emulators limit exceeded.");
+                LOGGER_BASE.info("Kill all unused emulators to free some resources.");
+                this.adb.stopUnusedEmulators();
+            }
+            // If emu count is still on the limit exit.
+            if (currentEmuCount >= maxEmuCount) {
+                SystemExtension.interruptProcess("Maximum number of running emulators limit exceeded.");
             } else {
                 // Start
                 String port = this.getId().split("-")[1];
