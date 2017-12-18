@@ -55,7 +55,12 @@ public class AndroidDevice implements IDevice {
      * @return Device id (for example emulator-5600).
      */
     public static String getEmulatorId(double platformVersion) {
-        return emulatorMap().get(platformVersion);
+        String emuId = emulatorMap().get(platformVersion);
+        if (emuId == null) {
+            String error = String.format("Android %s is not supported by functional-tests-core!", platformVersion);
+            SystemExtension.interruptProcess(error);
+        }
+        return emuId;
     }
 
     private static HashMap<Double, String> emulatorMap() {
