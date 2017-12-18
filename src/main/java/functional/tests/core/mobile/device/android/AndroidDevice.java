@@ -116,6 +116,8 @@ public class AndroidDevice implements IDevice {
         // Check if device is available
         if (this.settings.isRealDevice) {
             this.startRealDevice();
+            Adb.unlockDevice(this.settings.deviceId);
+            Wait.sleep(5);
         }
 
         // Uninstall test apps
@@ -492,6 +494,7 @@ public class AndroidDevice implements IDevice {
         } else {
             throw new DeviceException(String.format("Device %s is not connected!!!", this.getId()));
         }
+
     }
 
     /**

@@ -647,6 +647,10 @@ public class Adb {
         LOGGER_BASE.info(command);
     }
 
+    public static void unlockDevice(String deviceId) {
+        Adb.runAdbCommandStatic(deviceId, "  adb shell input keyevent 82 && adb shell input keyevent 26 && adb shell input keyevent 26  ", 2, true);
+    }
+
     /**
      * TODO(dtopuzov): Add docs.
      *
