@@ -91,10 +91,7 @@ public class NavigationHelper {
 
             if (i < demos.length - 1) {
                 String nextBtnText = demos[i + 1];
-                UIElement nextDemoBtn = find.byText(nextBtnText, 3);
-                if (nextDemoBtn == null) {
-                    nextDemoBtn = find.byText(nextBtnText, 3);
-                }
+                UIElement nextDemoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(nextBtnText), 5, false);
             }
         }
 
@@ -164,15 +161,12 @@ public class NavigationHelper {
             // Api 24 and 25 emulators have no browsers.
             // When you open a link it is opened in WebView Tester.
             // In this case client.driver.navigate().back() successfully navigate back, but throws exception.
-            if (mobileContext.settings.platformVersion >= 7.0) {
-                try {
-                    mobileContext.client.getDriver().navigate().back();
-                } catch (Exception e) {
-                    LOGGER_BASE.warn("Navigate back throws exception.");
-                }
-            } else {
+            try {
                 mobileContext.client.getDriver().navigate().back();
+            } catch (Exception e) {
+                LOGGER_BASE.warn("Navigate back throws exception.");
             }
+
         }
     }
 
@@ -197,7 +191,7 @@ public class NavigationHelper {
         UIElement demoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(example, true, false), 3, false);
 
         if (demoBtn == null && retryCount > 0) {
-            LOGGER_BASE.info("Sroll to \"" + example + "\" ...");
+            LOGGER_BASE.info("Sсroll to \"" + example + "\" ...");
             demoBtn = mobileContext.gestures.scrollToElement(SwipeElementDirection.DOWN, example, retryCount);
         }
 
