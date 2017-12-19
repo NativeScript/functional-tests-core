@@ -583,9 +583,17 @@ public class Adb {
     public String getAvdName(String deviceId) throws DeviceException {
         String port = deviceId.split("-")[1];
         String name = "";
+        String avd = "";
         try {
             String result = OSUtils.runProcess("ps aux | grep qemu | grep " + port);
-            String avd = result.split("-avd")[1].split(" ")[1].trim();
+            if (result.contains("-avd")) {
+                avd = result.split("-avd")[1].split(" ")[1].trim();
+            } else {
+                result = OSUtils.runProcess("ps aux | grep qemu");
+                if (result.contains("-avd")) {
+                    avd = result.split("-avd")[1].split("\\s+")[1].trim();
+                }
+            }
             name = avd;
         } catch (Exception ex) {
             LOGGER_BASE.error("Failed to get name of " + deviceId);
