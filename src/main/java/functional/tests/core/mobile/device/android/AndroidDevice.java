@@ -444,7 +444,9 @@ public class AndroidDevice implements IDevice {
         }
 
         // Kill all simulators not matching framework convention
-        this.stopWrongPortEmulators();
+        if (!this.settings.debug) {
+            this.stopWrongPortEmulators();
+        }
 
         // Kill simulators and web driver sessions used more than 90 min
         this.adb.stopUsedEmulators(60);
