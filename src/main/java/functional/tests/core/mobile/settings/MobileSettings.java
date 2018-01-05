@@ -25,6 +25,7 @@ import java.io.IOException;
 public class MobileSettings extends Settings {
 
     private static LoggerBase loggerBase = LoggerBase.getLogger("MobileSettings");
+    private Aapt aapt;
     String appiumVersion;
     public boolean restartRealDevice;
     public boolean isRealDevice;
@@ -40,7 +41,7 @@ public class MobileSettings extends Settings {
     public SettingsIOS ios;
     public SettingsAndroid android;
     public DeviceType deviceType;
-    private Aapt aapt;
+    public boolean reuseDevice;
 
     /**
      * Init settings.
@@ -65,7 +66,7 @@ public class MobileSettings extends Settings {
         this.android.maxEmuCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_EMU_COUNT", "1"));
         loggerBase.info("Maximum number of parallel emulators: " + String.valueOf(this.android.maxEmuCount));
 
-        if (this.deviceType == DeviceType.Emulator) {
+        if (this.deviceType == DeviceType.Emulator && this.deviceId == "") {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
             this.deviceId = AndroidDevice.getEmulatorId(this.platformVersion);
         }
@@ -198,6 +199,11 @@ public class MobileSettings extends Settings {
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
         this.deviceType = this.getDeviceType();
 
+        String deviceToken = System.getenv("DEVICE_TOKEN");
+        if (deviceToken != null && deviceToken != "") {
+            this.deviceId = deviceToken;
+            this.reuseDevice = true;
+        }
         if (this.platform == PlatformType.Android) {
             loggerBase = LoggerBase.getLogger("AndroidSettings");
             this.android = this.initSettingsAndroid();

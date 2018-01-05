@@ -315,6 +315,9 @@ public class IOSDevice implements IDevice {
      */
     private void startSimulator() throws DeviceException {
 
+        if (this.settings.reuseDevice) {
+            return;
+        }
         // Kill simulators and web driver sessions used more than 60 min
         this.simctl.stopUsedSimulators(60);
 

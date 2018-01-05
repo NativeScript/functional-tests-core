@@ -114,7 +114,7 @@ public class AndroidDevice implements IDevice {
     @Override
     public IDevice start() throws TimeoutException, DeviceException {
 
-        if (this.getType() == DeviceType.Emulator) {
+        if (this.getType() == DeviceType.Emulator && !this.settings.reuseDevice) {
             this.startEmulator();
             this.adb.markUsed(this.getId());
         }
@@ -439,6 +439,9 @@ public class AndroidDevice implements IDevice {
      * @throws TimeoutException When it fail to boot in desired time.
      */
     private void startEmulator() throws DeviceException, TimeoutException {
+        if (this.settings.reuseDevice) {
+            return;
+        }
 
         // Kill all simulators not matching framework convention
         this.stopWrongPortEmulators();
