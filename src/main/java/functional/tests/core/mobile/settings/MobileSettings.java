@@ -131,6 +131,9 @@ public class MobileSettings extends Settings {
         this.ios = new SettingsIOS();
         loggerBase.separatorIOS();
 
+        String wdaLocalPortAsString = System.getenv("WDA_LOCAL_PORT");
+        this.ios.wdaLocalPort = wdaLocalPortAsString == null ? 0 : Integer.parseInt(wdaLocalPortAsString);
+
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
         loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
 
@@ -200,7 +203,7 @@ public class MobileSettings extends Settings {
         this.deviceType = this.getDeviceType();
 
         String deviceToken = System.getenv("DEVICE_TOKEN");
-        if (deviceToken != null && deviceToken != "") {
+        if (deviceToken != null) {
             this.deviceId = deviceToken;
             this.reuseDevice = true;
         }

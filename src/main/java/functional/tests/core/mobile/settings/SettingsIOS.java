@@ -11,6 +11,7 @@ public class SettingsIOS {
     public String simulatorType;
     public String testAppArchive;
     public String xCode8ConfigFile;
+    public int wdaLocalPort;
 
     /**
      * Init iOS settings.

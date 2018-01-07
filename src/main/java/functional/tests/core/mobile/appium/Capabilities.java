@@ -111,7 +111,11 @@ public class Capabilities {
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
-            int port = OSUtils.getFreePort(8100, 8200);
+            int port = settings.ios.wdaLocalPort;
+
+            if (port == 0) {
+                port = OSUtils.getFreePort(8100, 8200);
+            }
             capabilities.setCapability("wdaLocalPort", port);
             capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
