@@ -132,9 +132,9 @@ public class MobileSettings extends Settings {
         loggerBase.separatorIOS();
 
         String wdaLocalPortAsString = System.getenv("WDA_LOCAL_PORT");
-        this.ios.wdaLocalPort = wdaLocalPortAsString == null ? 0 : Integer.parseInt(wdaLocalPortAsString);
+        this.ios.wdaLocalPort = (wdaLocalPortAsString == null || wdaLocalPortAsString.isEmpty()) ? 0 : Integer.parseInt(wdaLocalPortAsString);
         if (this.ios.wdaLocalPort != 0) {
-            this.log.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
+            loggerBase.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
         }
 
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
@@ -143,7 +143,7 @@ public class MobileSettings extends Settings {
         if (this.deviceId == null && !this.isRealDevice) {
             this.deviceId = null;
         }
-        this.log.info("Device Id: " + this.deviceId);
+        loggerBase.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
         loggerBase.info("Auto Accept Alerts: " + this.ios.acceptAlerts);
@@ -214,10 +214,16 @@ public class MobileSettings extends Settings {
         }
 
         String deviceToken = System.getenv("DEVICE_TOKEN");
-        if (deviceToken != null && deviceToken != "") {
-            this.log.info("DEVICE_TOKEN: " + deviceToken);
+        if (deviceToken != null && !deviceToken.isEmpty()) {
+            loggerBase.info("DEVICE_TOKEN: " + deviceToken);
             this.deviceId = deviceToken;
             this.reuseDevice = true;
+        } else {
+            loggerBase.info("DEVICE_TOKEN not set!");
+        }
+
+        if (this.reuseDevice) {
+            loggerBase.info("Reuse device: " + this.reuseDevice);
         }
 
         loggerBase.info("Device Id: " + this.deviceId);
