@@ -66,7 +66,7 @@ public class MobileSettings extends Settings {
         this.android.maxEmuCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_EMU_COUNT", "1"));
         loggerBase.info("Maximum number of parallel emulators: " + String.valueOf(this.android.maxEmuCount));
 
-        if (this.deviceType == DeviceType.Emulator && this.deviceId == "") {
+        if (this.deviceType == DeviceType.Emulator && (this.deviceId == "" || this.deviceId == null)) {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
             this.deviceId = AndroidDevice.getEmulatorId(this.platformVersion);
         }
