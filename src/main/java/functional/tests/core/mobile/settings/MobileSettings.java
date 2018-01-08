@@ -133,6 +133,9 @@ public class MobileSettings extends Settings {
 
         String wdaLocalPortAsString = System.getenv("WDA_LOCAL_PORT");
         this.ios.wdaLocalPort = wdaLocalPortAsString == null ? 0 : Integer.parseInt(wdaLocalPortAsString);
+        if (this.ios.wdaLocalPort != 0) {
+            log.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
+        }
 
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
         loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
@@ -202,11 +205,6 @@ public class MobileSettings extends Settings {
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
         this.deviceType = this.getDeviceType();
 
-        String deviceToken = System.getenv("DEVICE_TOKEN");
-        if (deviceToken != null) {
-            this.deviceId = deviceToken;
-            this.reuseDevice = true;
-        }
         if (this.platform == PlatformType.Android) {
             loggerBase = LoggerBase.getLogger("AndroidSettings");
             this.android = this.initSettingsAndroid();
@@ -214,6 +212,15 @@ public class MobileSettings extends Settings {
             loggerBase = LoggerBase.getLogger("IOSSettings");
             this.ios = this.initSettingsIOS();
         }
+
+        String deviceToken = System.getenv("DEVICE_TOKEN");
+        if (deviceToken != null && deviceToken != "") {
+            log.info("DEVICE_TOKEN: " + deviceToken);
+            this.deviceId = deviceToken;
+            this.reuseDevice = true;
+        }
+
+        loggerBase.info("Device Id: " + this.deviceId);
 
         this.setPerfStorage();
 
