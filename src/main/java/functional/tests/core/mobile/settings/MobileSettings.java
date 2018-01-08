@@ -134,7 +134,7 @@ public class MobileSettings extends Settings {
         String wdaLocalPortAsString = System.getenv("WDA_LOCAL_PORT");
         this.ios.wdaLocalPort = wdaLocalPortAsString == null ? 0 : Integer.parseInt(wdaLocalPortAsString);
         if (this.ios.wdaLocalPort != 0) {
-            log.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
+            this.log.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
         }
 
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
@@ -143,7 +143,7 @@ public class MobileSettings extends Settings {
         if (this.deviceId == null && !this.isRealDevice) {
             this.deviceId = null;
         }
-        loggerBase.info("Device Id: " + this.deviceId);
+        this.log.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
         loggerBase.info("Auto Accept Alerts: " + this.ios.acceptAlerts);
@@ -215,7 +215,7 @@ public class MobileSettings extends Settings {
 
         String deviceToken = System.getenv("DEVICE_TOKEN");
         if (deviceToken != null && deviceToken != "") {
-            log.info("DEVICE_TOKEN: " + deviceToken);
+            this.log.info("DEVICE_TOKEN: " + deviceToken);
             this.deviceId = deviceToken;
             this.reuseDevice = true;
         }
