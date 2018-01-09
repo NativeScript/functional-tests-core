@@ -99,7 +99,7 @@ public class Settings {
                 new Boolean(this.properties.getProperty("logImageVerificationStatus")) : false;
 
         // Set debug
-        this.debug = Boolean.valueOf(OSUtils.getEnvironmentVariable(DEBUG_ENVIRONMENT_VARIABLE, "False")) ||
+        this.debug = this.propertyToBoolean("debug", false) || Boolean.valueOf(OSUtils.getEnvironmentVariable(DEBUG_ENVIRONMENT_VARIABLE, "False")) ||
                 java.lang.management.ManagementFactory
                         .getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;
 
