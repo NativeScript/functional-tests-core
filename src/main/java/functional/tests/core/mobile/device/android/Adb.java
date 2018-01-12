@@ -803,7 +803,7 @@ public class Adb {
                         state = EmulatorState.Used;
                     }
                 }
-                EmulatorInfo info = new EmulatorInfo(id, name, state, usedFrom);
+                EmulatorInfo info = new EmulatorInfo(id, name, null,state, usedFrom);
                 list.add(info);
             }
         }
