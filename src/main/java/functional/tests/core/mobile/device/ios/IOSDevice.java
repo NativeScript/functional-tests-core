@@ -352,7 +352,7 @@ public class IOSDevice implements IDevice {
                 SystemExtension.interruptProcess("Maximum number of running iOS Simulator limit exceeded.");
             } else {
                 // If desired iOS Simulator do not exists -> create it!
-                String offlineSimId = this.simctl.getOffineSimulator(this.settings.deviceName);
+                String offlineSimId = this.simctl.getOffineSimulator(this.settings.deviceName, String.valueOf(this.settings.platformVersion));
                 if (offlineSimId == null) {
                     offlineSimId = this.simctl.create(this.settings.deviceName, this.settings.ios.simulatorType, String.valueOf(this.settings.platformVersion));
                 }
