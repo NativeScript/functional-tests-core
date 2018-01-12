@@ -350,7 +350,7 @@ public class Simctl {
                         state = EmulatorState.Used;
                     }
                 }
-                String platformVersion = this.runSimctlCommand("getenv", "id", "SIMULATOR_RUNTIME_VERSION").trim();
+                String platformVersion = this.runSimctlCommand("getenv", id, "SIMULATOR_RUNTIME_VERSION").trim();
                 EmulatorInfo info = new EmulatorInfo(id, name, platformVersion, state, usedFrom);
                 list.add(info);
             }
