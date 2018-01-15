@@ -269,6 +269,7 @@ public class Adb {
         if (processes.contains(appId)) {
             return true;
         } else {
+            LOGGER_BASE.info(processes);
             return false;
         }
     }
