@@ -423,8 +423,7 @@ public class IOSDevice implements IDevice {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
-            String command = "xcrun simctl spawn  " + this.settings.deviceId
-                    + " log stream --level debug --predicate 'senderImagePath contains \"NativeScript\"' ";
+            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\"' ";
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
             }
@@ -443,6 +442,11 @@ public class IOSDevice implements IDevice {
     }
 
     public void stopIOSLogging(String deviceId) {
+        try {
+            this.deviceLogProcess.destroyForcibly();
+        } catch (Exception e) {
+            IOSDevice.LOGGER_BASE.error("Destroy log process!!!");
+        }
         String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
     }
