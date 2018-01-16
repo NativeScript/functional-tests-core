@@ -269,7 +269,6 @@ public class Adb {
         if (processes.contains(appId)) {
             return true;
         } else {
-            LOGGER_BASE.info(processes);
             return false;
         }
     }
@@ -700,7 +699,6 @@ public class Adb {
             adbCommand += " -s " + deviceId;
         }
         adbCommand += " " + command;
-        LOGGER_BASE.info(adbCommand);
         String output = OSUtils.runProcess(waitFor, timeout, adbCommand);
         if (output.toLowerCase().contains("address already in use")) {
             this.killAdbProcess();

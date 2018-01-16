@@ -53,9 +53,7 @@ public class Capabilities {
             capabilities.setCapability(MobileCapabilityType.ORIENTATION, settings.orientation);
         }
 
-        if (settings.isRealDevice == true) {
-            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
-        }
+        capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
 
         capabilities.setCapability(MobileCapabilityType.APP,
                 settings.BASE_TEST_APP_DIR + File.separator + settings.testAppFileName);
@@ -117,7 +115,6 @@ public class Capabilities {
                 port = OSUtils.getFreePort(8100, 8200);
             }
             capabilities.setCapability("wdaLocalPort", port);
-            capabilities.setCapability(MobileCapabilityType.UDID, settings.deviceId.trim());
         }
 
         if (settings.isRealDevice) {
