@@ -314,10 +314,11 @@ public class Simctl {
      *
      * @return Identifier of free iOS Simulator.
      */
-    String getOffineSimulator(String name) {
+    String getOffineSimulator(String name, String platformVersion) {
         List<EmulatorInfo> allSim = this.getSimulatorsInfo();
         List<EmulatorInfo> sameNameSims = allSim.stream().filter(p -> p.name.equals(name)).collect(Collectors.toList());
-        List<EmulatorInfo> freeSim = sameNameSims.stream().filter(p -> p.state == EmulatorState.Shutdown).collect(Collectors.toList());
+        List<EmulatorInfo> samePlatformVersion = sameNameSims.stream().filter(p -> p.platformVersion.equals(platformVersion)).collect(Collectors.toList());
+        List<EmulatorInfo> freeSim = samePlatformVersion.stream().filter(p -> p.state == EmulatorState.Shutdown).collect(Collectors.toList());
         if (freeSim.size() > 0) {
             return freeSim.get(0).id;
         } else {
@@ -349,7 +350,8 @@ public class Simctl {
                         state = EmulatorState.Used;
                     }
                 }
-                EmulatorInfo info = new EmulatorInfo(id, name, state, usedFrom);
+                String platformVersion = this.runSimctlCommand("getenv", id, "SIMULATOR_RUNTIME_VERSION").trim();
+                EmulatorInfo info = new EmulatorInfo(id, name, platformVersion, state, usedFrom);
                 list.add(info);
             }
         }
