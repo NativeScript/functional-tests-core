@@ -148,6 +148,10 @@ public class AndroidDevice implements IDevice {
             this.adb.markUnused(deviceId);
         }
 
+        if ((this.settings.reuseDevice == false) && (this.settings.debug == false)) {
+            this.adb.stopEmulator(this.settings.deviceId);
+        }
+
         // Kill all Appium sessions to this device
         String killCommand = "ps aux | grep -i appium | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
