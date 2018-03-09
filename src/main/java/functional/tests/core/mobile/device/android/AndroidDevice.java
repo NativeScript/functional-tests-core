@@ -148,7 +148,7 @@ public class AndroidDevice implements IDevice {
             this.adb.markUnused(deviceId);
         }
 
-        if ((this.settings.reuseDevice == false) && (this.settings.debug == false)) {
+        if ((!this.settings.reuseDevice) && (!this.settings.debug) && (!this.settings.isRealDevice)) {
             this.adb.stopEmulator(this.settings.deviceId);
         }
 
