@@ -245,7 +245,7 @@ public class Adb {
     public void uninstallApp(String appId) {
         // Check if app is installed is removed on purpose!
         this.stopApp(appId);
-        if (!appId.contains("appium")) {
+        if ((!this.settings.isRealDevice) && (!appId.contains("appium"))) {
             String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
             if (uninstallResult.contains("Success")) {
                 LOGGER_BASE.info(appId + " successfully uninstalled.");
