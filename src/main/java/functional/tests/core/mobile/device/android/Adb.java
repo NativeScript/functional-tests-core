@@ -245,15 +245,16 @@ public class Adb {
     public void uninstallApp(String appId) {
         // Check if app is installed is removed on purpose!
         this.stopApp(appId);
-        if ((!this.settings.isRealDevice) && (!appId.contains("appium"))) {
+        if ((appId.contains("appium")) && (!this.settings.isRealDevice)) {
+            LOGGER_BASE.info("Skip uninstall: " + appId);
+        } else {
+            LOGGER_BASE.info("Uninstall: " + appId);
             String uninstallResult = this.runAdbCommand(this.settings.deviceId, "uninstall " + appId);
             if (uninstallResult.contains("Success")) {
                 LOGGER_BASE.info(appId + " successfully uninstalled.");
             } else {
                 LOGGER_BASE.error("Failed to uninstall " + appId + ". Error: " + uninstallResult);
             }
-        } else {
-            LOGGER_BASE.info("Skip uninstall: " + appId);
         }
     }
 
