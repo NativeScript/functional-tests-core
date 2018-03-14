@@ -148,6 +148,14 @@ public class Server {
 
         // Check if exists
         File appiumExecutable = new File(appiumPath);
+        if (java.nio.file.Files.isSymbolicLink(appiumExecutable.toPath())) {
+            try {
+                appiumExecutable = appiumExecutable.toPath().toRealPath().toFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (!appiumExecutable.exists()) {
             String error = "Appium does not exist at: " + appiumPath;
             LOGGER_BASE.fatal(error);
