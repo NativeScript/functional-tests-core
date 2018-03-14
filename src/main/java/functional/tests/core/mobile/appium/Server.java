@@ -15,6 +15,7 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.concurrent.TimeUnit;
 
 /**
