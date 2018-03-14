@@ -15,6 +15,7 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -148,6 +149,14 @@ public class Server {
 
         // Check if exists
         File appiumExecutable = new File(appiumPath);
+        if (java.nio.file.Files.isSymbolicLink(appiumExecutable.toPath())) {
+            try {
+                appiumExecutable = appiumExecutable.toPath().toRealPath().toFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (!appiumExecutable.exists()) {
             String error = "Appium does not exist at: " + appiumPath;
             LOGGER_BASE.fatal(error);
