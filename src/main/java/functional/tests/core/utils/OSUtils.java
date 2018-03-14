@@ -264,7 +264,7 @@ public class OSUtils {
     public static String getEnvironmentVariable(String variable, String defaultValue) {
         String finalValue = defaultValue;
         String env = System.getenv(variable);
-        if (env != null && env !="undefined") {
+        if (env != null && !env.equalsIgnoreCase("undefined")) {
             finalValue = env;
         }
         return finalValue;
