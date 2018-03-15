@@ -153,7 +153,7 @@ public class Server {
             appiumExecutable = new File(appiumPath).toPath().toRealPath().toFile();
             LOGGER_BASE.info("APPIUM EXECUTABLE: " + appiumExecutable.toPath().toString());
         } catch (Exception e) {
-            LOGGER_BASE.error(e.getMessage())x;
+            LOGGER_BASE.error(e.getMessage());
             e.printStackTrace();
         }
 
