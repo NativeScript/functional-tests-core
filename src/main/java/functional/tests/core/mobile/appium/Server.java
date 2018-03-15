@@ -150,6 +150,7 @@ public class Server {
         File appiumExecutable = null;
         try {
             appiumExecutable = new File(appiumPath).toPath().toRealPath().toFile();
+            LOGGER_BASE.info("APPIUM EXECUTABLE: "  + appiumExecutable.toPath().toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
