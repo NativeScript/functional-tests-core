@@ -148,6 +148,27 @@ public class Server {
 
         // Check if exists
         File appiumExecutable = new File(appiumPath);
+        try {
+            if (isSymlink(appiumExecutable)) {
+                LOGGER_BASE.info("Symlink");
+                LOGGER_BASE.info(appiumExecutable.getAbsolutePath());
+                try {
+                    LOGGER_BASE.info(appiumExecutable.getCanonicalPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                LOGGER_BASE.info("Not a Symlink");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LOGGER_BASE.info(appiumExecutable.getAbsolutePath());
+        try {
+            LOGGER_BASE.info(appiumExecutable.getCanonicalPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (!appiumExecutable.exists()) {
             String error = "Appium does not exist at: " + appiumPath;
@@ -173,5 +194,18 @@ public class Server {
             LOGGER_BASE.error("Failed to get Appium Server logs form " + this.settings.appiumLogFile);
             return "";
         }
+    }
+
+    public static boolean isSymlink(File file) throws IOException {
+        if (file == null)
+            throw new NullPointerException("File must not be null");
+        File canon;
+        if (file.getParent() == null) {
+            canon = file;
+        } else {
+            File canonDir = file.getParentFile().getCanonicalFile();
+            canon = new File(canonDir, file.getName());
+        }
+        return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
     }
 }
