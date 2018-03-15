@@ -149,9 +149,11 @@ public class Server {
         // Check if exists
         File appiumExecutable = null;
         try {
+            LOGGER_BASE.info("CHECK APPIUM EXECUTABLE!!!");
             appiumExecutable = new File(appiumPath).toPath().toRealPath().toFile();
             LOGGER_BASE.info("APPIUM EXECUTABLE: " + appiumExecutable.toPath().toString());
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LOGGER_BASE.error(e.getMessage())x;
             e.printStackTrace();
         }
 
