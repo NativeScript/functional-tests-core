@@ -30,7 +30,7 @@ public class Adb {
     private static final String ADB_PATH = System.getenv("ANDROID_HOME") + File.separator + "platform-tools" + File.separator + "adb";
     private static final String ANDROID_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "android";
     private static final String AVDMANAGER_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "bin" + File.separator + "avdmanager";
-    private static final String EMULATOR_PATH = System.getenv("ANDROID_HOME") + File.separator + "tools" + File.separator + "emulator";
+    private static final String EMULATOR_PATH = System.getenv("ANDROID_HOME") + File.separator + "emulator" + File.separator + "emulator";
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Adb");
     private String avdPath;
     private String emulatorStartLogPath;
