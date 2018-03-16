@@ -129,10 +129,10 @@ public class Capabilities {
     }
 
     private String getPlatformVersion(double version) {
-        String version = String.valueOf(version);
-        if (version.equals("8.1")) {
-            version = "api27";
+        String versionString = String.valueOf(version);
+        if (versionString.equals("8.1")) {
+            versionString = "api27";
         }
-        return version;
+        return versionString;
     }
 }
