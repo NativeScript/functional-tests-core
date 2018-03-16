@@ -26,7 +26,7 @@ public class Capabilities {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, settings.automationName);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, settings.platform);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, String.valueOf(settings.platformVersion));
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, this.getPlatformVersion(settings.platformVersion));
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, settings.deviceName);
 
         // Increase the NEW_COMMAND_TIMEOUT capability
@@ -126,5 +126,13 @@ public class Capabilities {
         }
 
         return capabilities;
+    }
+
+    private String getPlatformVersion(double version) {
+        String version = String.valueOf(version);
+        if (version.equals("8.1")) {
+            version = "api27";
+        }
+        return version;
     }
 }
