@@ -147,7 +147,15 @@ public class Server {
         }
 
         // Check if exists
-        File appiumExecutable = new File(appiumPath);
+        File appiumExecutable = null;
+        try {
+            LOGGER_BASE.info("CHECK APPIUM EXECUTABLE!!!");
+            appiumExecutable = (new File(appiumPath)).toPath().toRealPath().toFile();
+            LOGGER_BASE.info("APPIUM EXECUTABLE: " + appiumExecutable.toPath().toString());
+        } catch (Exception e) {
+            LOGGER_BASE.error(e.getMessage());
+            e.printStackTrace();
+        }
 
         if (!appiumExecutable.exists()) {
             String error = "Appium does not exist at: " + appiumPath;
