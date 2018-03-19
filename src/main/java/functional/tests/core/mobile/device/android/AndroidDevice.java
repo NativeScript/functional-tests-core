@@ -55,7 +55,18 @@ public class AndroidDevice implements IDevice {
      * @return Device id (for example emulator-5600).
      */
     public static String getEmulatorId(double platformVersion) {
-        String emuId = emulatorMap().get(platformVersion);
+        Double correctPlatformVersion = newEmulatorMap().get(platformVersion);
+        String emuId;
+        if(correctPlatformVersion != null)
+        {
+            emuId = emulatorMap().get(correctPlatformVersion);
+
+        }
+        else
+        {
+            emuId = emulatorMap().get(platformVersion);
+        }
+
         if (emuId == null) {
             String error = String.format("Android %s is not supported by functional-tests-core!", platformVersion);
             SystemExtension.interruptProcess(error);
@@ -76,6 +87,12 @@ public class AndroidDevice implements IDevice {
         emulatorMap.put(8.0, "emulator-5570");
         emulatorMap.put(8.1, "emulator-5572");
         return emulatorMap;
+    }
+
+    private static HashMap<Double, Double> newEmulatorMap() {
+        HashMap<Double, Double> newEmulatorMap = new HashMap<>();
+        newEmulatorMap.put(27.0, 8.1);
+        return newEmulatorMap;
     }
 
     @Override
