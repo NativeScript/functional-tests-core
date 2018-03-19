@@ -57,13 +57,10 @@ public class AndroidDevice implements IDevice {
     public static String getEmulatorId(double platformVersion) {
         Double correctPlatformVersion = newEmulatorMap().get(platformVersion);
         String emuId;
-        if(correctPlatformVersion != null)
-        {
+        if (correctPlatformVersion != null) {
             emuId = emulatorMap().get(correctPlatformVersion);
 
-        }
-        else
-        {
+        } else {
             emuId = emulatorMap().get(platformVersion);
         }
 
