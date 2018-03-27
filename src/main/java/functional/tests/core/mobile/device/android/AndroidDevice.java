@@ -541,4 +541,10 @@ public class AndroidDevice implements IDevice {
             }
         });
     }
+
+    @Override
+    public void remove_auto_fill() {
+        // remove uato fill from android device
+        this.adb.runAdbCommand(this.getId(), "shell settings put secure autofill_service null");
+    }
 }

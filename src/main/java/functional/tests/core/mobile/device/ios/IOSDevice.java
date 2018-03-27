@@ -450,5 +450,10 @@ public class IOSDevice implements IDevice {
         String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
     }
+
+    @Override
+    public void remove_auto_fill() {
+        IOSDevice.LOGGER_BASE.debug("iOSDevice.remove_autofill method is not implemented");
+    }
 }
 
