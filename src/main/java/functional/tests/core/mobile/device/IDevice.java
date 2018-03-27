@@ -177,4 +177,6 @@ public interface IDevice {
      * @param location
      */
     void setLocation(Location location);
+
+    void remove_auto_fill();
 }
