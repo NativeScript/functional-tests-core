@@ -83,6 +83,7 @@ public class AndroidDevice implements IDevice {
         emulatorMap.put(7.1, "emulator-5568");
         emulatorMap.put(8.0, "emulator-5570");
         emulatorMap.put(8.1, "emulator-5572");
+        emulatorMap.put(8.2, "emulator-5574");
         return emulatorMap;
     }
 

@@ -15,6 +15,7 @@ import org.openqa.selenium.ScreenOrientation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * MobileSettings.
@@ -182,6 +183,11 @@ public class MobileSettings extends Settings {
         return this.ios;
     }
 
+    private static HashMap<String, Double> emulatorMap() {
+        HashMap<String, Double> emulatorMap = new HashMap<>();
+        emulatorMap.put("P", 8.2);
+        return emulatorMap;
+    }
     /**
      * Init common settings.
      */
@@ -189,7 +195,16 @@ public class MobileSettings extends Settings {
         super.initSettings();
 
         this.restartRealDevice = this.propertyToBoolean("restartRealDevice", false);
-        this.platformVersion = Double.parseDouble(this.properties.getProperty("platformVersion").trim());
+        Double correctPlatformVersion = emulatorMap().get(this.properties.getProperty("platformVersion").trim());
+
+        if (correctPlatformVersion != null) {
+            this.platformVersion =  correctPlatformVersion;
+        }
+        else
+        {
+            this.platformVersion = Double.parseDouble(this.properties.getProperty("platformVersion").trim());
+        }
+
         this.appiumVersion = this.properties.getProperty("appiumVersion");
         this.automationName = this.getAutomationName();
         this.appiumLogLevel = this.properties.getProperty("appiumLogLevel", "warn");
