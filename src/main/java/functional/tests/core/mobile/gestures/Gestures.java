@@ -12,6 +12,7 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -227,10 +228,7 @@ public class Gestures {
             finalX = rectangle.width - 1;
         }
 
-        Gestures.swipe(duration, Settings.DEFAULT_TAP_DURATION * 2, initialX, initialY, finalX, finalY, this.client, this.settings);
-        if (waitAfter > 0) {
-            Wait.sleep(waitAfter);
-        }
+        Gestures.swipe(duration, waitAfter, initialX, initialY, finalX, finalY, this.client, this.settings);
     }
 
     /**
@@ -396,11 +394,12 @@ public class Gestures {
         }
 
         try {
-            TouchAction action = new TouchAction(client.driver);
-            action.press(PointOption.point(initialX, initialY))
+            TouchAction swipe = new TouchAction(client.driver)
+                    .press(PointOption.point(initialX, initialY))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
                     .moveTo(PointOption.point(finalX, finalY))
-                    .release()
-                    .perform();
+                    .release();
+            swipe.perform();
 
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);
