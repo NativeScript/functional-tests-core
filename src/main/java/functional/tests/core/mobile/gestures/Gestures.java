@@ -266,7 +266,12 @@ public class Gestures {
         }
 
         try {
-            new TouchAction(this.client.driver).press(PointOption.point(startX, startY)).waitAction(duration).moveTo(endX, endY).release().perform();
+            new TouchAction(this.client.driver)
+                    .press(PointOption.point(startX, startY))
+                    .waitAction(duration)
+                    .moveTo(PointOption.point(endX, endY))
+                    .release()
+                    .perform();
         } catch (Exception ex) {
             // This method throws exception for api17 for Android even though it is working.
         }

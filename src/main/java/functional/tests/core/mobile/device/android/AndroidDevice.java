@@ -2,6 +2,7 @@ package functional.tests.core.mobile.device.android;
 
 import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.EmulatorState;
+import functional.tests.core.enums.OSType;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.extensions.SystemExtension;
@@ -169,8 +170,10 @@ public class AndroidDevice implements IDevice {
         }
 
         // Kill all Appium sessions to this device
-        String killCommand = "ps aux | grep -i appium | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
-        OSUtils.runProcess(killCommand);
+        if (this.settings.os != OSType.Windows) {
+            String killCommand = "ps aux | grep -i appium | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
+            OSUtils.runProcess(killCommand);
+        }
     }
 
     @Override
@@ -464,13 +467,13 @@ public class AndroidDevice implements IDevice {
             return;
         }
 
-        // Kill all simulators not matching framework convention
         if (!this.settings.debug) {
+            // Kill all simulators not matching framework convention
             this.stopWrongPortEmulators();
-        }
 
-        // Kill simulators and web driver sessions used more than 90 min
-        this.adb.stopUsedEmulators(60);
+            // Kill simulators and web driver sessions used more than 90 min
+            this.adb.stopUsedEmulators(60);
+        }
 
         // Ensure emulator is running
         if (this.adb.isBooted(this.getId())) {

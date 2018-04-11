@@ -191,7 +191,7 @@ public class NavigationHelper {
         UIElement demoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(example, true, false), 3, false);
 
         if (demoBtn == null && retryCount > 0) {
-            LOGGER_BASE.info("Sсroll to \"" + example + "\" ...");
+            LOGGER_BASE.info("Scroll to \"" + example + "\" ...");
             demoBtn = mobileContext.gestures.scrollToElement(SwipeElementDirection.DOWN, example, retryCount);
         }
 
