@@ -20,6 +20,7 @@ import org.openqa.selenium.html5.Location;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -242,7 +243,7 @@ public class IOSDevice implements IDevice {
 
     @Override
     public void runAppInBackGround(int seconds) {
-        this.client.getDriver().runAppInBackground(seconds);
+        this.client.getDriver().runAppInBackground(Duration.ofSeconds(seconds));
     }
 
     @Override

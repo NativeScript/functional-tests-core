@@ -2,6 +2,7 @@ package functional.tests.core.mobile.element;
 
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.enums.Position;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.basetest.MobileContext;
@@ -11,9 +12,9 @@ import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.MultiTouchAction;
-import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.offset.PointOption;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -23,6 +24,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import java.awt.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +76,8 @@ public class UIElement {
             int currentLegth = this.element.getText().length();
             int x = this.element.getLocation().getX() + this.element.getSize().width - 5;
             int y = this.element.getLocation().getY() + (this.element.getSize().height / 3);
-            this.client.driver.tap(1, x, y, Settings.DEFAULT_TAP_DURATION);
+            TouchAction action = new TouchAction(this.client.driver);
+            action.tap(PointOption.point(x, y));
             Wait.sleep(Settings.DEFAULT_TAP_DURATION);
 
             // Clean old value
@@ -228,10 +231,11 @@ public class UIElement {
         LOGGER_BASE.info("Click on " + description);
     }
 
-    public void tap(int fingers, int duration, int waitAfterTap) {
+    public void tap(int waitAfterTap) {
         String text = this.getDescription();
 
-        this.element.tap(fingers, duration);
+        TouchAction action = new TouchAction(this.client.driver);
+        action.tap(PointOption.point(element.getCenter().getX(), element.getCenter().getY()));
         if (waitAfterTap > 0) {
             Wait.sleep(waitAfterTap);
         }
@@ -240,15 +244,7 @@ public class UIElement {
     }
 
     public void tap() {
-        this.tap(1, Settings.DEFAULT_TAP_DURATION, Settings.DEFAULT_TAP_DURATION);
-    }
-
-    public void tap(int fingers, int duration) {
-        this.tap(fingers, duration, Settings.DEFAULT_TAP_DURATION);
-    }
-
-    public void tap(int fingers) {
-        this.tap(fingers, Settings.DEFAULT_TAP_DURATION, Settings.DEFAULT_TAP_DURATION);
+        this.tap(Settings.DEFAULT_TAP_DURATION);
     }
 
     public void doubleTap() {
@@ -275,13 +271,18 @@ public class UIElement {
         }
     }
 
+    /**
+     * Long press.
+     *
+     * @param duration Duration in milliseconds.
+     */
     public void longPress(int duration) {
         LOGGER_BASE.info("LongPress: "); // + Elements.getElementDetails(element));
         TouchAction action = new TouchAction(this.client.driver);
         if (this.client.settings.platform == PlatformType.iOS && this.client.settings.platformVersion >= 10) {
             action.longPress(this.element).perform();
         } else {
-            action.press(this.element).waitAction(duration).release().perform();
+            action.press(this.element).waitAction(Duration.ofMillis(duration)).release().perform();
         }
     }
 
@@ -388,7 +389,11 @@ public class UIElement {
     public void dragAndDrop(int xOffset, int yOffset, int duration) {
         Point point = this.element.getLocation();
         try {
-            this.client.driver.swipe(point.getX(), point.getY(), point.getX() + xOffset, point.getY() + yOffset, duration);
+            TouchAction action = new TouchAction(this.client.driver);
+            action.press(PointOption.point(point.getX(), point.getY()))
+                    .moveTo(PointOption.point(point.getX() + xOffset, point.getY() + yOffset))
+                    .release()
+                    .perform();
         } catch (Exception ex) {
             // This method throws exception for api17 for Android even though it is working.
         }

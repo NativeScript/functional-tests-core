@@ -4,8 +4,12 @@ import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.basetest.MobileSetupManager;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.LongPressOptions;
+import io.appium.java_client.touch.offset.PointOption;
 
 import java.awt.*;
+import java.time.Duration;
 
 /**
  * TODO(): Add docs.
@@ -31,14 +35,17 @@ public class UIRectangle {
 
     public void longPress() {
         LOGGER_BASE.info("UIRectangle longPress on x: " + this.rectangle.x + " y: " + this.rectangle.y);
-        io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
-        action.longPress(this.rectangle.x, this.rectangle.y, 2000).perform();
+        TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
+        LongPressOptions options = LongPressOptions.longPressOptions()
+                .withDuration(Duration.ofMillis(2000))
+                .withPosition(PointOption.point(this.rectangle.x, this.rectangle.y));
+        action.longPress(options).release().perform();
     }
 
     public void tap() {
         LOGGER_BASE.info("UIRectangle tap on x: " + this.rectangle.x + " y: " + this.rectangle.y);
         io.appium.java_client.TouchAction action = new io.appium.java_client.TouchAction(this.client.getDriver());
-        action.tap(this.rectangle.x, this.rectangle.y).perform();
+        action.tap(PointOption.point(this.rectangle.x, this.rectangle.y)).perform();
     }
 
     public Rectangle extendRectangle(int xOffset, int yOffset, int widthOffset, int heightOffset) {

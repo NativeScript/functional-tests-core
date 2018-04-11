@@ -2,6 +2,7 @@ package functional.tests.core.mobile.gestures;
 
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.enums.Position;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.device.Device;
@@ -10,13 +11,14 @@ import functional.tests.core.mobile.find.Locators;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
-import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 
 import java.awt.*;
+import java.time.Duration;
 
 /**
  * Gestures.
@@ -258,13 +260,13 @@ public class Gestures {
      */
     public void scrollTo(int startX, int startY, int endX, int endY) {
         // Calculating the speed to avoid inertia. It is like pixel per milliseconds except for iOS9
-        int duration = (startY - endY) * 10;
+        Duration duration = Duration.ofMillis((startY - endY) * 10);
         if (this.settings.platform == PlatformType.iOS) {
             endY = endY - startY;
         }
 
         try {
-            new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
+            new TouchAction(this.client.driver).press(PointOption.point(startX, startY)).waitAction(duration).moveTo(endX, endY).release().perform();
         } catch (Exception ex) {
             // This method throws exception for api17 for Android even though it is working.
         }
@@ -285,11 +287,19 @@ public class Gestures {
     public static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
         try {
             if (settings.platform == PlatformType.Android) {
-                new TouchAction(client.driver).press(initialX, initialY).waitAction(250).moveTo(finalX, finalY).perform();
+                new TouchAction(client.driver)
+                        .press(PointOption.point(initialX, initialY))
+                        .waitAction(Duration.ofMillis(250))
+                        .moveTo(PointOption.point(finalX, finalY))
+                        .perform();
             }
 
             if (settings.platform == PlatformType.iOS) {
-                new TouchAction(client.driver).press(initialX, initialY).moveTo(finalX, finalY).release().perform();
+                new TouchAction(client.driver)
+                        .press(PointOption.point(initialX, initialY))
+                        .moveTo(PointOption.point(finalX, finalY))
+                        .release()
+                        .perform();
             }
 
             if (waitAfterSwipe > 0) {
@@ -381,7 +391,11 @@ public class Gestures {
         }
 
         try {
-            client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            TouchAction action = new TouchAction(client.driver);
+            action.press(PointOption.point(initialX, initialY))
+                    .moveTo(PointOption.point(finalX, finalY))
+                    .release()
+                    .perform();
 
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);

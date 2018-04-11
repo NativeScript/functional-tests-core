@@ -6,7 +6,7 @@ import functional.tests.core.enums.Position;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.helpers.NavigationManager;
-import io.appium.java_client.SwipeElementDirection;
+import functional.tests.core.enums.SwipeElementDirection;
 
 /**
  * This page basically contains extended logic to help you to navigate through the application using NavigationManager.

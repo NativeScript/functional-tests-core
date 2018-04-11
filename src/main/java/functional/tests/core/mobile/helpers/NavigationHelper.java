@@ -2,12 +2,12 @@ package functional.tests.core.mobile.helpers;
 
 import functional.tests.core.enums.ClickType;
 import functional.tests.core.enums.PlatformType;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.mobile.find.Find;
-import io.appium.java_client.SwipeElementDirection;
 import org.testng.Assert;
 
 import java.awt.*;

@@ -13,6 +13,7 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
+import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.html5.Location;
 
@@ -448,7 +449,8 @@ public class AndroidDevice implements IDevice {
      * @param appActivity Activity name.
      */
     public void startActivity(String appPackage, String appActivity) {
-        ((AndroidDriver) this.client.driver).startActivity(appPackage, appActivity);
+        Activity activity = new Activity(appPackage, appActivity);
+        ((AndroidDriver) this.client.driver).startActivity(activity);
     }
 
     /**
