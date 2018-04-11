@@ -235,7 +235,7 @@ public class UIElement {
         String text = this.getDescription();
 
         TouchAction action = new TouchAction(this.client.driver);
-        action.tap(PointOption.point(element.getCenter().getX(), element.getCenter().getY()));
+        action.tap(PointOption.point(this.element.getCenter().getX(), this.element.getCenter().getY()));
         if (waitAfterTap > 0) {
             Wait.sleep(waitAfterTap);
         }

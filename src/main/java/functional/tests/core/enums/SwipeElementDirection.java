@@ -1,20 +1,23 @@
 package functional.tests.core.enums;
 
+/**
+ * SwipeElementDirection enum.
+ */
 public enum SwipeElementDirection {
     /**
-     * Up from the center of the lower
+     * Up from the center of the lower.
      */
     UP,
     /**
-     * Down from the center of the upper
+     * Down from the center of the upper.
      */
     DOWN,
     /**
-     * To the left from the center of the rightmost
+     * To the left from the center of the rightmost.
      */
     LEFT,
     /**
-     * To the right from the center of the leftmost
+     * To the right from the center of the leftmost.
      */
     RIGHT;
 }
