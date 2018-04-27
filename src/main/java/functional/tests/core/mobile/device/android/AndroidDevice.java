@@ -139,6 +139,9 @@ public class AndroidDevice implements IDevice {
             this.startRealDevice();
         }
 
+        // Ensure device is available
+        this.adb.waitForDevice(this.settings.deviceId, this.settings.defaultTimeout);
+
         // Uninstall test apps
         if (!this.settings.debug) {
             this.uninstallApps();
@@ -478,7 +481,7 @@ public class AndroidDevice implements IDevice {
                 if (this.adb.usedSince(this.getId()) == 0) {
                     LOGGER_BASE.info(this.getId() + " is already running and free. Will reboot and use it!");
                     this.adb.rebootEmulator(this.getId());
-                    this.adb.waitUntilEmulatorBoot(this.getId(), this.settings.deviceBootTimeout);
+                    this.adb.waitUntilBoot(this.getId(), this.settings.deviceBootTimeout);
                 } else {
                     String error = this.getId() + " is already running, but it is in use!";
                     LOGGER_BASE.info(error);
@@ -506,7 +509,7 @@ public class AndroidDevice implements IDevice {
                 this.adb.startEmulator(this.getName(), Integer.valueOf(port));
 
                 // Wait until emulator boot
-                this.adb.waitUntilEmulatorBoot(this.getId(), this.settings.deviceBootTimeout);
+                this.adb.waitUntilBoot(this.getId(), this.settings.deviceBootTimeout);
             }
         }
     }
