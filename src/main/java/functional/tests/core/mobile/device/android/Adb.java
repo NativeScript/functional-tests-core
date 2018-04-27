@@ -373,7 +373,7 @@ public class Adb {
      * @param timeOut  Timeout in seconds.
      * @throws TimeoutException When if fails to boot.
      */
-    protected void waitUntilEmulatorBoot(String deviceId, int timeOut) throws TimeoutException {
+    protected void waitUntilBoot(String deviceId, int timeOut) throws TimeoutException {
         long startTime = new Date().getTime();
         long currentTime = new Date().getTime();
         boolean found = false;
@@ -385,7 +385,7 @@ public class Adb {
             if (found) {
                 break;
             } else {
-                LOGGER_BASE.info("Booting emulator ...");
+                LOGGER_BASE.info("Wait " + deviceId + " to boot...");
                 Wait.sleep(3000);
             }
         }
@@ -393,7 +393,7 @@ public class Adb {
         if (!found) {
             String error = deviceId + " failed to boot in " + String.valueOf(timeOut) + " seconds.";
             LOGGER_BASE.fatal(error);
-            OSUtils.getScreenshot("HostOS_Failed_To_Boot_Emulator", this.settings);
+            OSUtils.getScreenshot("HostOS_Failed_To_Boot", this.settings);
             SystemExtension.interruptProcess(error);
         }
     }
