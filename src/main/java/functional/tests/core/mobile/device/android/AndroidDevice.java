@@ -140,6 +140,7 @@ public class AndroidDevice implements IDevice {
         }
 
         // Ensure device is available
+        this.adb.waitForDevice(this.settings.deviceId, this.settings.deviceBootTimeout);
         this.adb.waitUntilBoot(this.settings.deviceId, this.settings.deviceBootTimeout);
 
         // Force reboot emulator
