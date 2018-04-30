@@ -189,6 +189,7 @@ public class MobileSettings extends Settings {
         emulatorMap.put("7.1.1", 7.1);
         return emulatorMap;
     }
+
     /**
      * Init common settings.
      */
@@ -199,10 +200,8 @@ public class MobileSettings extends Settings {
         Double correctPlatformVersion = emulatorMap().get(this.properties.getProperty("platformVersion").trim());
 
         if (correctPlatformVersion != null) {
-            this.platformVersion =  correctPlatformVersion;
-        }
-        else
-        {
+            this.platformVersion = correctPlatformVersion;
+        } else {
             this.platformVersion = Double.parseDouble(this.properties.getProperty("platformVersion").trim());
         }
 

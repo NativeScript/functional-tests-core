@@ -4,6 +4,7 @@ import functional.tests.core.enums.PlatformType;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.IDevice;
+import functional.tests.core.mobile.device.android.Adb;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import io.appium.java_client.AppiumDriver;
@@ -11,6 +12,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,6 +103,13 @@ public class Client {
             String error = "Appium client failed to start!";
             LOGGER_BASE.fatal(error);
             Log.logScreenOfHost(this.settings, "failed to start appium driver");
+
+            // Try to get emulator/device picture
+            if (this.settings.platform == PlatformType.Android) {
+                String path = this.settings.baseLogDir + File.separator + this.settings.deviceId + "_screen";
+                new Adb(this.settings).getScreenshot(path);
+            }
+
             throw new RuntimeException(error);
         }
     }
