@@ -371,9 +371,8 @@ public class Adb {
      *
      * @param deviceId Device identifier.
      * @param timeOut  Timeout in seconds.
-     * @throws TimeoutException When if fails to boot.
      */
-    protected void waitUntilBoot(String deviceId, int timeOut) throws TimeoutException {
+    protected void waitUntilBoot(String deviceId, int timeOut) {
         long startTime = new Date().getTime();
         long currentTime = new Date().getTime();
         boolean found = false;
