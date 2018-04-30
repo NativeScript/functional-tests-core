@@ -102,11 +102,12 @@ public class Client {
         } else {
             String error = "Appium client failed to start!";
             LOGGER_BASE.fatal(error);
-            Log.logScreenOfHost(this.settings, "failed to start appium driver");
+            Log.logScreenOfHost(this.settings, "failed_to_start_appium driver");
 
             // Try to get emulator/device picture
             if (this.settings.platform == PlatformType.Android) {
                 String path = this.settings.baseLogDir + File.separator + this.settings.deviceId + "_screen";
+                LOGGER_BASE.info("Save screen of " + this.settings.deviceId + " at " + path);
                 new Adb(this.settings).getScreenshot(path);
             }
 
