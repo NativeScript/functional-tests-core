@@ -77,6 +77,7 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, settings.android.appWaitActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
+            capabilities.setCapability(AndroidMobileCapabilityType.ADB_PORT, OSUtils.getFreePort(5037, 5137));
             if (settings.automationName.equalsIgnoreCase("UIAutomator2")) {
                 int port = OSUtils.getFreePort(8201, 8300);
                 capabilities.setCapability("systemPort", port);
