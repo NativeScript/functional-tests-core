@@ -1,7 +1,6 @@
 package functional.tests.core.web.element;
 
 import functional.tests.core.log.LoggerBase;
-import io.appium.java_client.MobileElement;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -139,10 +138,10 @@ public class UIElement {
     }
 
     public ArrayList<UIElement> findElements(By by) {
-        List<MobileElement> elements = this.element.findElements(by);
+        List<WebElement> elements = this.element.findElements(by);
         ArrayList<UIElement> uiElements = new ArrayList<>();
 
-        for (MobileElement elment : elements) {
+        for (WebElement elment : elements) {
             uiElements.add(new UIElement(this.element));
         }
 
