@@ -8,6 +8,7 @@ import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.mobile.find.Find;
+import functional.tests.core.mobile.find.Wait;
 import org.testng.Assert;
 
 import java.awt.*;
@@ -155,7 +156,9 @@ public class NavigationHelper {
                 }
             } else {
                 LOGGER_BASE.debug("Will be used default navigation client.getDriver().navigate().back()");
+                Wait.sleep(500);
                 mobileContext.client.getDriver().navigate().back();
+                Wait.sleep(500);
             }
         } else if (mobileContext.settings.platform == PlatformType.Android) {
             // Api 24 and 25 emulators have no browsers.

@@ -289,21 +289,11 @@ public class Gestures {
      */
     public static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
         try {
-            if (settings.platform == PlatformType.Android) {
-                new TouchAction(client.driver)
-                        .press(PointOption.point(initialX, initialY))
-                        .waitAction(Duration.ofMillis(250))
-                        .moveTo(PointOption.point(finalX, finalY))
-                        .perform();
-            }
-
-            if (settings.platform == PlatformType.iOS) {
-                new TouchAction(client.driver)
-                        .press(PointOption.point(initialX, initialY))
-                        .moveTo(PointOption.point(finalX, finalY))
-                        .release()
-                        .perform();
-            }
+            new TouchAction(client.driver)
+                    .press(PointOption.point(initialX, initialY))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
+                    .moveTo(PointOption.point(finalX, finalY))
+                    .perform();
 
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);
@@ -342,16 +332,16 @@ public class Gestures {
         int finalY = 0;
 
         if (direction == SwipeElementDirection.DOWN) {
-            initialY = window.height + window.y - offsetY;
-            finalY = window.y - initialY;
             initialX = window.x + offsetX;
-            finalX = initialX;
+            initialY = window.height + window.y - offsetY;
+            finalX = window.x + offsetX;
+            finalY = window.y + offsetY;
         }
         if (direction == SwipeElementDirection.UP) {
+            initialX = window.x + offsetX;
             initialY = window.y + offsetY;
-            finalY = window.height - 1 + window.y;
-            initialX = window.x + window.width + offsetX;
-            finalX = initialX;
+            finalX = window.x + offsetX;
+            finalY = window.height + window.y - offsetY;
         }
         if (direction == SwipeElementDirection.RIGHT) {
             initialY = window.y + offsetY;
