@@ -2,12 +2,13 @@ package functional.tests.core.mobile.helpers;
 
 import functional.tests.core.enums.ClickType;
 import functional.tests.core.enums.PlatformType;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.mobile.find.Find;
-import io.appium.java_client.SwipeElementDirection;
+import functional.tests.core.mobile.find.Wait;
 import org.testng.Assert;
 
 import java.awt.*;
@@ -155,7 +156,9 @@ public class NavigationHelper {
                 }
             } else {
                 LOGGER_BASE.debug("Will be used default navigation client.getDriver().navigate().back()");
+                Wait.sleep(500);
                 mobileContext.client.getDriver().navigate().back();
+                Wait.sleep(500);
             }
         } else if (mobileContext.settings.platform == PlatformType.Android) {
             // Api 24 and 25 emulators have no browsers.
@@ -191,7 +194,7 @@ public class NavigationHelper {
         UIElement demoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(example, true, false), 3, false);
 
         if (demoBtn == null && retryCount > 0) {
-            LOGGER_BASE.info("Sсroll to \"" + example + "\" ...");
+            LOGGER_BASE.info("Scroll to \"" + example + "\" ...");
             demoBtn = mobileContext.gestures.scrollToElement(SwipeElementDirection.DOWN, example, retryCount);
         }
 

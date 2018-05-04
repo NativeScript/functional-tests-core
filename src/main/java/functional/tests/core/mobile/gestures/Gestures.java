@@ -2,6 +2,7 @@ package functional.tests.core.mobile.gestures;
 
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.enums.Position;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.device.Device;
@@ -10,13 +11,15 @@ import functional.tests.core.mobile.find.Locators;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
-import io.appium.java_client.SwipeElementDirection;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 
 import java.awt.*;
+import java.time.Duration;
 
 /**
  * Gestures.
@@ -225,10 +228,7 @@ public class Gestures {
             finalX = rectangle.width - 1;
         }
 
-        Gestures.swipe(duration, Settings.DEFAULT_TAP_DURATION * 2, initialX, initialY, finalX, finalY, this.client, this.settings);
-        if (waitAfter > 0) {
-            Wait.sleep(waitAfter);
-        }
+        Gestures.swipe(duration, waitAfter, initialX, initialY, finalX, finalY, this.client, this.settings);
     }
 
     /**
@@ -258,13 +258,18 @@ public class Gestures {
      */
     public void scrollTo(int startX, int startY, int endX, int endY) {
         // Calculating the speed to avoid inertia. It is like pixel per milliseconds except for iOS9
-        int duration = (startY - endY) * 10;
+        Duration duration = Duration.ofMillis((startY - endY) * 10);
         if (this.settings.platform == PlatformType.iOS) {
             endY = endY - startY;
         }
 
         try {
-            new TouchAction(this.client.driver).press(startX, startY).waitAction(duration).moveTo(endX, endY).release().perform();
+            new TouchAction(this.client.driver)
+                    .press(PointOption.point(startX, startY))
+                    .waitAction(duration)
+                    .moveTo(PointOption.point(endX, endY))
+                    .release()
+                    .perform();
         } catch (Exception ex) {
             // This method throws exception for api17 for Android even though it is working.
         }
@@ -284,13 +289,11 @@ public class Gestures {
      */
     public static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
         try {
-            if (settings.platform == PlatformType.Android) {
-                new TouchAction(client.driver).press(initialX, initialY).waitAction(250).moveTo(finalX, finalY).perform();
-            }
-
-            if (settings.platform == PlatformType.iOS) {
-                new TouchAction(client.driver).press(initialX, initialY).moveTo(finalX, finalY).release().perform();
-            }
+            new TouchAction(client.driver)
+                    .press(PointOption.point(initialX, initialY))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))
+                    .moveTo(PointOption.point(finalX, finalY))
+                    .perform();
 
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);
@@ -329,16 +332,16 @@ public class Gestures {
         int finalY = 0;
 
         if (direction == SwipeElementDirection.DOWN) {
-            initialY = window.height + window.y - offsetY;
-            finalY = window.y - initialY;
             initialX = window.x + offsetX;
-            finalX = initialX;
+            initialY = window.height + window.y - offsetY;
+            finalX = window.x + offsetX;
+            finalY = window.y + offsetY;
         }
         if (direction == SwipeElementDirection.UP) {
+            initialX = window.x + offsetX;
             initialY = window.y + offsetY;
-            finalY = window.height - 1 + window.y;
-            initialX = window.x + window.width + offsetX;
-            finalX = initialX;
+            finalX = window.x + offsetX;
+            finalY = window.height + window.y - offsetY;
         }
         if (direction == SwipeElementDirection.RIGHT) {
             initialY = window.y + offsetY;
@@ -381,7 +384,12 @@ public class Gestures {
         }
 
         try {
-            client.driver.swipe(initialX, initialY, finalX, finalY, duration);
+            TouchAction swipe = new TouchAction(client.driver)
+                    .press(PointOption.point(initialX, initialY))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
+                    .moveTo(PointOption.point(finalX, finalY))
+                    .release();
+            swipe.perform();
 
             if (waitAfterSwipe > 0) {
                 Wait.sleep(waitAfterSwipe);

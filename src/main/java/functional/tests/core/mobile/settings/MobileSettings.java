@@ -15,6 +15,7 @@ import org.openqa.selenium.ScreenOrientation;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -421,7 +422,7 @@ public class MobileSettings extends Settings {
         String fileContext = String.format("DEVELOPMENT_TEAM=%s\nCODE_SIGN_IDENTITY=iPhone Developer", teamId);
 
         try {
-            FileUtils.write(file, fileContext);
+            FileUtils.write(file, fileContext, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }

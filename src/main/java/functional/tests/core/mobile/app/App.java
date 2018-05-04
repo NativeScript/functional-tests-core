@@ -2,12 +2,12 @@ package functional.tests.core.mobile.app;
 
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.enums.Position;
+import functional.tests.core.enums.SwipeElementDirection;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileSetupManager;
 import functional.tests.core.mobile.device.Device;
 import functional.tests.core.mobile.helpers.NavigationHelper;
 import functional.tests.core.mobile.settings.MobileSettings;
-import io.appium.java_client.SwipeElementDirection;
 
 import java.awt.*;
 
@@ -23,7 +23,7 @@ public class App {
     /**
      * Initialize Application object.
      *
-     * @param device Device object.
+     * @param device   Device object.
      * @param settings MobileSettings object.
      */
     public App(Device device, MobileSettings settings) {
@@ -96,7 +96,7 @@ public class App {
      * Close current application.
      */
     public void close() {
-        this.LOGGER_BASE.info("Close the app.");
+        LOGGER_BASE.info("Close the app.");
         this.device.closeApp();
     }
 }
