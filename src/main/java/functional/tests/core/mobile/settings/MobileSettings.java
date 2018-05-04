@@ -464,8 +464,7 @@ public class MobileSettings extends Settings {
                 if (this.platformVersion <= 4.1) {
                     this.automationName = AutomationName.SELENDROID;
                 } else if (this.platformVersion >= 7.0) {
-                    // TODO(dtopuzov): Update to AutomationName.ANDROID_UIAUTOMATOR2 migrate to Appium Client 5.0+.
-                    this.automationName = "UIAutomator2";
+                    this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
                 } else {
                     this.automationName = AutomationName.APPIUM;
                 }

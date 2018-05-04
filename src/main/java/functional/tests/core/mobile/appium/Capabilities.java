@@ -5,6 +5,7 @@ import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -78,7 +79,7 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
             capabilities.setCapability(AndroidMobileCapabilityType.ADB_PORT, OSUtils.getFreePort(5037, 5137));
-            if (settings.automationName.equalsIgnoreCase("UIAutomator2")) {
+            if (settings.automationName.equalsIgnoreCase(AutomationName.ANDROID_UIAUTOMATOR2)) {
                 int port = OSUtils.getFreePort(8201, 8300);
                 capabilities.setCapability("systemPort", port);
             }
