@@ -143,12 +143,6 @@ public class AndroidDevice implements IDevice {
         this.adb.waitForDevice(this.settings.deviceId, this.settings.deviceBootTimeout);
         this.adb.waitUntilBoot(this.settings.deviceId, this.settings.deviceBootTimeout);
 
-        // Force reboot emulator
-        this.adb.rebootEmulator(this.settings.deviceId);
-
-        // Ensure device is available
-        this.adb.waitUntilBoot(this.settings.deviceId, this.settings.deviceBootTimeout);
-
         // Uninstall test apps
         if (!this.settings.debug) {
             this.uninstallApps();
