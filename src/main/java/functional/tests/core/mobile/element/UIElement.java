@@ -14,6 +14,7 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.MultiTouchAction;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
@@ -277,13 +278,14 @@ public class UIElement {
      * @param duration Duration in milliseconds.
      */
     public void longPress(int duration) {
-        LOGGER_BASE.info("LongPress: "); // + Elements.getElementDetails(element));
+        LOGGER_BASE.info("LongPress at " + this.element.getCenter().toString());
         TouchAction action = new TouchAction(this.client.driver);
-        if (this.client.settings.platform == PlatformType.iOS && this.client.settings.platformVersion >= 10) {
-            action.longPress(this.element).perform();
-        } else {
-            action.press(this.element).waitAction(Duration.ofMillis(duration)).release().perform();
-        }
+        action
+                .press(PointOption.point(this.element.getCenter().getX(), this.element.getCenter().getY()))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
+                .release()
+                .perform();
+
     }
 
     public void pressAndHold() {
