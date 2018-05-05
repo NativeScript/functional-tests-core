@@ -142,34 +142,19 @@ public class NavigationHelper {
     }
 
     /**
-     * TODO(): Add docs.
+     * Navigate back.
      *
-     * @param mobileContext
+     * @param mobileContext MobileContext object.
      */
     public static void navigateBack(MobileContext mobileContext) {
-        if (mobileContext.settings.platform == PlatformType.iOS) {
-            if (mobileContext.settings.platformVersion >= 10 && mobileContext.settings.platformVersion < 11) {
-                LOGGER_BASE.debug("In iOS 10 navigate back is using client.driver.findElement(Locators.byText(\"Back\")");
-                UIElement btnBack = mobileContext.find.byText("Back");
-                if (btnBack != null && btnBack.isDisplayed()) {
-                    btnBack.tap();
-                }
-            } else {
-                LOGGER_BASE.debug("Will be used default navigation client.getDriver().navigate().back()");
-                Wait.sleep(500);
-                mobileContext.client.getDriver().navigate().back();
-                Wait.sleep(500);
-            }
-        } else if (mobileContext.settings.platform == PlatformType.Android) {
-            // Api 24 and 25 emulators have no browsers.
-            // When you open a link it is opened in WebView Tester.
-            // In this case client.driver.navigate().back() successfully navigate back, but throws exception.
-            try {
-                mobileContext.client.getDriver().navigate().back();
-            } catch (Exception e) {
-                LOGGER_BASE.warn("Navigate back throws exception.");
-            }
-
+        // Api 24 and 25 emulators have no browsers.
+        // When you open a link it is opened in WebView Tester.
+        // In this case client.driver.navigate().back() successfully navigate back, but throws exception.
+        try {
+            mobileContext.client.getDriver().navigate().back();
+            Wait.sleep(500);
+        } catch (Exception e) {
+            LOGGER_BASE.warn("Navigate back throws exception.");
         }
     }
 
