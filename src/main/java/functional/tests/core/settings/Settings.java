@@ -117,7 +117,8 @@ public class Settings {
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 120);
 
-        this.deviceName = this.properties.getProperty("deviceName");
+        this.deviceName = OSUtils.getEnvironmentVariable("DEVICE_NAME",
+                this.properties.getProperty("deviceName"));
 
         // Set restartApp
         this.restartApp = this.propertyToBoolean("restartApp", false);

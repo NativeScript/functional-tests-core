@@ -133,11 +133,10 @@ public class MobileSettings extends Settings {
         this.ios = new SettingsIOS();
         loggerBase.separatorIOS();
 
-        String wdaLocalPortAsString = System.getenv("WDA_LOCAL_PORT");
-        this.ios.wdaLocalPort = (wdaLocalPortAsString == null || wdaLocalPortAsString.isEmpty()) ? 0 : Integer.parseInt(wdaLocalPortAsString);
-        if (this.ios.wdaLocalPort != 0) {
-            loggerBase.info("WDA_LOCAL_PORT: " + this.ios.wdaLocalPort);
-        }
+        String wdaLocalPortAsString = OSUtils.getEnvironmentVariable("WDA_LOCAL_PORT",
+                String.valueOf(OSUtils.getFreePort(8000, 9000)));
+        this.ios.wdaLocalPort = Integer.parseInt(wdaLocalPortAsString);
+        loggerBase.info("WDA_LOCAL_PORT: " + wdaLocalPortAsString);
 
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
         loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
