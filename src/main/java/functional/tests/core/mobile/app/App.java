@@ -58,7 +58,7 @@ public class App {
     public void slideBack() {
         if (this.settings.platform == PlatformType.iOS) {
             Rectangle window = new Rectangle(0, 120, this.device.getWindowSize().width, this.device.getWindowSize().height);
-            MobileSetupManager.getTestSetupManager().getContext().gestures.scrollInRectangle(SwipeElementDirection.LEFT, window, Position.FromCorner, 0, 0, 100);
+            MobileSetupManager.getTestSetupManager().getContext().gestures.scrollInRectangle(SwipeElementDirection.LEFT, window, Position.FromCorner, 0, 0, 250);
         } else {
             App.LOGGER_BASE.error("Slide back is implemented only for iOS!!!");
         }

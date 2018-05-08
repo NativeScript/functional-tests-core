@@ -289,6 +289,7 @@ public class Gestures {
      */
     public static void scroll(int waitAfterSwipe, int initialX, int initialY, int finalX, int finalY, MobileSettings settings, Client client) {
         try {
+            Wait.sleep(100);
             new TouchAction(client.driver)
                     .press(PointOption.point(initialX, initialY))
                     .waitAction(WaitOptions.waitOptions(Duration.ofMillis(1000)))

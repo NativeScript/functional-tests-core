@@ -331,7 +331,7 @@ public class NavigationManager {
         if (this.getLevel() > 0) {
             this.updatePagesOnNavigateBack();
             this.mobileContext.app.slideBack();
-            LOGGER_BASE.info("Navigated back.");
+            LOGGER_BASE.info("Slide back.");
         } else {
             LOGGER_BASE.info("This is the main page!");
         }
