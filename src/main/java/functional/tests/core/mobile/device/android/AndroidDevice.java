@@ -153,9 +153,6 @@ public class AndroidDevice implements IDevice {
         // Clean logcat
         this.adb.runAdbCommand(this.getId(), "logcat -c");
 
-        // Handle error activity
-        this.adb.closeErrorActivty(this.getId());
-
         // Start appium client (this will install app under test)
         this.client.initDriver();
 
@@ -265,9 +262,6 @@ public class AndroidDevice implements IDevice {
         this.adb.runAdbCommand(this.getId(), "shell input keyevent 3");
         Wait.sleep(seconds * 1000);
         this.adb.runAdbCommand(this.getId(), "shell monkey -p " + this.settings.packageId + " -c android.intent.category.LAUNCHER 1");
-
-        // Handle error activity hack for newer Android emulators.
-        this.adb.closeErrorActivty(this.getId());
     }
 
     @Override

@@ -656,16 +656,6 @@ public class Adb {
     }
 
     /**
-     * TODO(dtopuzov): Add docs.
-     *
-     * @param deviceId
-     */
-    protected void closeErrorActivty(String deviceId) {
-        String command = "shell am force-stop com.android.launcher3";
-        this.runAdbCommand(deviceId, command);
-    }
-
-    /**
      * Run adb command.
      *
      * @param deviceId Device identifier.
