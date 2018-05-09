@@ -78,9 +78,6 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_ACTIVITY, settings.android.appWaitActivity);
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
-            String adbPortString = OSUtils.getEnvironmentVariable("ADB_PORT",
-                    String.valueOf(OSUtils.getFreePort(5037, 5537)));
-            capabilities.setCapability(AndroidMobileCapabilityType.ADB_PORT, adbPortString);
             if (settings.automationName.equalsIgnoreCase(AutomationName.ANDROID_UIAUTOMATOR2)) {
                 String systemPortString = OSUtils.getEnvironmentVariable("SYSTEM_PORT",
                         String.valueOf(OSUtils.getFreePort(8201, 8501)));
