@@ -146,9 +146,12 @@ public class Gestures {
      */
     public UIElement scrollToElement(SwipeElementDirection direction, By locator, int retryCount) {
         LOGGER_BASE.debug("Swipe " + direction.toString());
-
+        int searchTimeout = 2;
+        if (this.settings.platform == PlatformType.iOS) {
+            searchTimeout = 3;
+        }
         for (int i = 0; i < retryCount; i++) {
-            UIElement element = this.wait.waitForVisible(locator, 2, false);
+            UIElement element = this.wait.waitForVisible(locator, searchTimeout, false);
             if (element != null) {
                 LOGGER_BASE.info("element found by locator \"" + locator.toString() + "\".");
                 return element;
