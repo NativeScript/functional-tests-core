@@ -433,7 +433,7 @@ public class Adb {
 
         // Check if it is responding
         LOGGER_BASE.info("Check if device " + deviceId + " is OK.");
-        String output = this.runAdbCommand(deviceId, "shell ls", timeOut = 10);
+        String output = this.runAdbCommand(deviceId, "shell ls", 10);
         if (output.toLowerCase().contains("sys")) {
             LOGGER_BASE.info(deviceId + " is OK.");
         } else {
