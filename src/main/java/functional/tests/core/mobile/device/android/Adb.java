@@ -402,13 +402,15 @@ public class Adb {
      *
      * @param deviceId Device identifier.
      * @param timeOut  Timeout in seconds.
-     * @throws TimeoutException
+     * @throws TimeoutException if device not found.
+     * @throws DeviceException  if device is found, but not responding.
      */
-    protected void waitForDevice(String deviceId, int timeOut) throws TimeoutException {
+    protected void waitForDevice(String deviceId, int timeOut) throws TimeoutException, DeviceException {
         long startTime = new Date().getTime();
         long currentTime = new Date().getTime();
         boolean found = false;
 
+        // Wait until `adb devices` list the device.
         while ((currentTime - startTime) < timeOut * 1000) {
             currentTime = new Date().getTime();
             if (this.isAvailable(deviceId)) {
@@ -418,7 +420,6 @@ public class Adb {
             } else {
                 Wait.sleep(1000);
             }
-
             LOGGER_BASE.info("device " + deviceId + " not found. Wait...");
         }
 
@@ -427,8 +428,18 @@ public class Adb {
                     + deviceId + " in " + String.valueOf(timeOut)
                     + " seconds.";
             LOGGER_BASE.fatal(error);
-
             throw new TimeoutException(error);
+        }
+
+        // Check if it is responding
+        LOGGER_BASE.info("Check if device " + deviceId + " is OK.");
+        String output = this.runAdbCommand(deviceId, "shell ls", timeOut = 10);
+        if (output.toLowerCase().contains("sys")) {
+            LOGGER_BASE.info(deviceId + " is OK.");
+        } else {
+            String error = "Device " + deviceId + " found, but it is not responding!";
+            LOGGER_BASE.fatal(error);
+            throw new DeviceException(error);
         }
     }
 
