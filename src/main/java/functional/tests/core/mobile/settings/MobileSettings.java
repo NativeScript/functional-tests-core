@@ -2,6 +2,7 @@ package functional.tests.core.mobile.settings;
 
 import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
+import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.device.android.AndroidDevice;
 import functional.tests.core.settings.Settings;
@@ -233,6 +234,13 @@ public class MobileSettings extends Settings {
             loggerBase.info("DEVICE_TOKEN: " + deviceToken);
             this.deviceId = deviceToken;
             this.reuseDevice = true;
+
+            // Check if device token is undefined
+            if (deviceToken.equalsIgnoreCase("undefined")) {
+                String error = "Invalid device token was passed!";
+                loggerBase.fatal(error);
+                SystemExtension.interruptProcess(error);
+            }
         } else {
             loggerBase.info("DEVICE_TOKEN not set!");
         }
