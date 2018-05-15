@@ -234,7 +234,11 @@ public class NavigationManager {
 
         if (this.getHomePageLocator() != null) {
             try {
-                UIElement checked = this.wait.waitForVisible(this.getHomePageLocator(), 2, false);
+                int timeout = 2;
+                if (this.mobileContext.settings.platform == PlatformType.iOS) {
+                    timeout = 3;
+                }
+                UIElement checked = this.wait.waitForVisible(this.getHomePageLocator(), timeout, false);
                 LOGGER_BASE.info(this.mainPage + " in navigateToHomePage is displayed: " + (checked != null ? checked.isDisplayed() : "null"));
                 if (checked == null) {
                     this.mobileContext.lastTestResult = ITestResult.FAILURE;

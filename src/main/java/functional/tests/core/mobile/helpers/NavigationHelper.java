@@ -151,8 +151,14 @@ public class NavigationHelper {
         // When you open a link it is opened in WebView Tester.
         // In this case client.driver.navigate().back() successfully navigate back, but throws exception.
         try {
+            if (mobileContext.settings.platform == PlatformType.iOS) {
+                Wait.sleep(250);
+            }
             mobileContext.client.getDriver().navigate().back();
             Wait.sleep(500);
+            if (mobileContext.settings.platform == PlatformType.iOS) {
+                Wait.sleep(500);
+            }
         } catch (Exception e) {
             LOGGER_BASE.warn("Navigate back throws exception.");
         }
