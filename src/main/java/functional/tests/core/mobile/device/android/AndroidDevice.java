@@ -514,7 +514,7 @@ public class AndroidDevice implements IDevice {
         }
     }
 
-    private void startRealDevice() throws TimeoutException, DeviceException {
+    private void startRealDevice() throws DeviceException {
         boolean isDeviceAvailable = this.adb.isAvailable(this.getId());
         if (!isDeviceAvailable && this.settings.debug) {
             AndroidDevice.LOGGER_BASE.error(String.format("Device %s is not connected!!!", this.getId()));

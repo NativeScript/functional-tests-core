@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -402,10 +401,8 @@ public class Adb {
      *
      * @param deviceId Device identifier.
      * @param timeOut  Timeout in seconds.
-     * @throws TimeoutException if device not found.
-     * @throws DeviceException  if device is found, but not responding.
      */
-    protected void waitForDevice(String deviceId, int timeOut) throws TimeoutException, DeviceException {
+    protected void waitForDevice(String deviceId, int timeOut) {
         long startTime = new Date().getTime();
         long currentTime = new Date().getTime();
         boolean found = false;
@@ -428,7 +425,7 @@ public class Adb {
                     + deviceId + " in " + String.valueOf(timeOut)
                     + " seconds.";
             LOGGER_BASE.fatal(error);
-            throw new TimeoutException(error);
+            SystemExtension.interruptProcess(error);
         }
 
         // Check if it is responding
@@ -439,7 +436,7 @@ public class Adb {
         } else {
             String error = "Device " + deviceId + " found, but it is not responding!";
             LOGGER_BASE.fatal(error);
-            throw new DeviceException(error);
+            SystemExtension.interruptProcess(error);
         }
     }
 
