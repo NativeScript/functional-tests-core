@@ -218,8 +218,19 @@ public class UIElement {
         return uiElements;
     }
 
-    public void sendKeys(String value) {
+    public void clear() {
+        this.element.clear();
+    }
+
+    public void sendKeys(String value, Boolean clean) {
+        if (clean) {
+            this.clear();
+        }
         this.element.sendKeys(value);
+    }
+
+    public void sendKeys(String value) {
+        this.sendKeys(value, false);
     }
 
     public void click() {
