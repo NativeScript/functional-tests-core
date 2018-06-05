@@ -28,7 +28,10 @@ public class Capabilities {
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, settings.automationName);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, settings.platform);
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, this.getPlatformVersion(settings.platformVersion));
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, settings.deviceName);
+
+        //
+        String deviceName = OSUtils.getEnvironmentVariable("DEVICE_NAME", settings.deviceName);
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
 
         // Increase the NEW_COMMAND_TIMEOUT capability
         // to avoid ending the session during debug.
