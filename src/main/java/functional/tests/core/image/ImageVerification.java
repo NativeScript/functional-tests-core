@@ -390,7 +390,7 @@ public class ImageVerification {
                 } else if (this.settings.platform == PlatformType.iOS) {
                     startY = (int) (height1 * 0.03);
                     if (((MobileSettings) this.settings).ios.simulatorType.toLowerCase().contains("x")) {
-                        startY = (int) (height1 * 0.05);
+                        startY = (int) (height1 * 0.06);
                     }
                 }
             }
