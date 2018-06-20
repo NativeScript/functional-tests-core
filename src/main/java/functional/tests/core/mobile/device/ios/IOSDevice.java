@@ -95,7 +95,8 @@ public class IOSDevice implements IDevice {
         try {
             this.client.initDriver();
         } catch (Exception e) {
-            SystemExtension.interruptProcess("Check logs for more information");
+            SystemExtension.interruptProcess("Check logs for more information.");
+            throw e;
         }
 
         return this;

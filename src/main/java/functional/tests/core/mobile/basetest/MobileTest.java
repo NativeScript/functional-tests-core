@@ -91,8 +91,12 @@ public abstract class MobileTest {
 
         // Start Appium server and init device (this include Appium client start)
         this.mobileSetupManager.initServer();
-        this.mobileSetupManager.initDevice();
-
+        try {
+            this.mobileSetupManager.initDevice();
+        } catch (Exception e) {
+            this.log.error("Failed to init session. Retry...");
+            this.mobileSetupManager.initDevice();
+        }
         // Mark this test as first in suite
         this.firstTest = true;
     }
