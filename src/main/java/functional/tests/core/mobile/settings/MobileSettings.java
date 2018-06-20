@@ -186,7 +186,8 @@ public class MobileSettings extends Settings {
 
     private static HashMap<String, Double> emulatorMap() {
         HashMap<String, Double> emulatorMap = new HashMap<>();
-        emulatorMap.put("P", 8.2);
+        emulatorMap.put("P", 9.0);
+        emulatorMap.put("P Preview", 9.0);
         emulatorMap.put("7.1.1", 7.1);
         return emulatorMap;
     }
