@@ -1,5 +1,6 @@
 package functional.tests.core.mobile.basetest;
 
+import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.image.ImageUtils;
 import functional.tests.core.image.ImageVerification;
@@ -10,6 +11,7 @@ import functional.tests.core.mobile.app.App;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.appium.Server;
 import functional.tests.core.mobile.device.Device;
+import functional.tests.core.mobile.device.android.Adb;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Locators;
@@ -95,6 +97,9 @@ public abstract class MobileTest {
             this.mobileSetupManager.initDevice();
         } catch (Exception e) {
             this.log.error("Failed to init session. Retry...");
+            if (this.settings.deviceType == DeviceType.Emulator) {
+                new Adb(this.settings).reboot(this.settings.deviceId);
+            }
             this.mobileSetupManager.initDevice();
         }
         // Mark this test as first in suite

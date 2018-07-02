@@ -294,7 +294,7 @@ public class Adb {
      *
      * @param deviceId Device identifier.
      */
-    protected void rebootEmulator(String deviceId) {
+    public void reboot(String deviceId) {
         this.runAdbCommand(deviceId, "reboot");
         LOGGER_BASE.info("Reboot " + deviceId);
     }

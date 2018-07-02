@@ -480,7 +480,7 @@ public class AndroidDevice implements IDevice {
             } else {
                 if (this.adb.usedSince(this.getId()) == 0) {
                     LOGGER_BASE.info(this.getId() + " is already running and free. Will reboot and use it!");
-                    this.adb.rebootEmulator(this.getId());
+                    this.adb.reboot(this.getId());
                     this.adb.waitUntilBoot(this.getId(), this.settings.deviceBootTimeout);
                 } else {
                     String error = this.getId() + " is already running, but it is in use!";
