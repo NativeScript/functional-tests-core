@@ -102,15 +102,15 @@ public class Find {
         return result;
     }
 
+    public UIElement byTextContains(String value, int timeOut) {
+        return this.byLocator(this.locators.byText(value, false, false), timeOut);
+    }
+
     public UIElement byTextContains(String value) {
-        return this.byLocator(this.locators.byText(value, false, false), this.settings.shortTimeout);
+        return this.byTextContains(value, this.settings.shortTimeout);
     }
 
     public List<UIElement> elementsByLocator(By locator) {
-//        if (this.settings.platform == PlatformType.Andorid && this.settings.platformVersion >= 7.0) {
-//            this.client.setWait(this.settings.shortTimeout / 4);
-//        }
-
         return this.convertListOfMobileElementToUIElement((List<MobileElement>) this.client.driver.findElements(locator));
     }
 
