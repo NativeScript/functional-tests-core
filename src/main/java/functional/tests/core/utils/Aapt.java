@@ -1,6 +1,7 @@
 package functional.tests.core.utils;
 
 import functional.tests.core.enums.OSType;
+import functional.tests.core.log.LoggerBase;
 import functional.tests.core.settings.Settings;
 
 import java.io.File;
@@ -9,6 +10,8 @@ import java.io.File;
  * Android Asset Packaging Tool.
  */
 public class Aapt {
+
+    private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Adb");
 
     private Settings settings;
     public String aaptPath;
@@ -43,7 +46,7 @@ public class Aapt {
         } else {
             aaptPath = aaptExecutablePath.getAbsolutePath();
         }
-
+        LOGGER_BASE.info("aapt executable: " + aaptPath);
         return aaptPath;
     }
 
@@ -67,6 +70,7 @@ public class Aapt {
         }
 
         String result = OSUtils.runProcess(command);
+        LOGGER_BASE.info(result);
 
         // Parse result
         if (result.contains(grep)) {
@@ -75,7 +79,7 @@ public class Aapt {
         } else {
             value = null;
         }
-
+        LOGGER_BASE.info(value);
         return value;
     }
 
