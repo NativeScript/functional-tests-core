@@ -92,7 +92,7 @@ public class AndroidDevice implements IDevice {
     private static HashMap<Double, Double> newEmulatorMap() {
         HashMap<Double, Double> newEmulatorMap = new HashMap<>();
         newEmulatorMap.put(27.0, 8.1);
-        newEmulatorMap.put(28.0, 9.1);
+        newEmulatorMap.put(28.0, 9.0);
         return newEmulatorMap;
     }
 
