@@ -108,9 +108,9 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.LAUNCH_TIMEOUT, settings.deviceBootTimeout * 1000); // In ms.
         capabilities.setCapability(IOSMobileCapabilityType.SCREENSHOT_WAIT_TIMEOUT, settings.defaultTimeout);
         capabilities.setCapability(IOSMobileCapabilityType.SHOW_IOS_LOG, true);
-        capabilities.setCapability("useNewWDA", false);
-        capabilities.setCapability("wdaStartupRetries", 5);
-        capabilities.setCapability("shouldUseSingletonTestManager", false);
+        capabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA, false);
+        capabilities.setCapability(IOSMobileCapabilityType.WDA_STARTUP_RETRIES, 5);
+        capabilities.setCapability(IOSMobileCapabilityType.SHOULD_USE_SINGLETON_TESTMANAGER, false);
 
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
@@ -119,12 +119,12 @@ public class Capabilities {
             if (port == 0) {
                 port = OSUtils.getFreePort(8100, 8200);
             }
-            capabilities.setCapability("wdaLocalPort", port);
+            capabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT, port);
         }
 
         if (settings.isRealDevice) {
             if (FileSystem.exist(settings.ios.xCode8ConfigFile)) {
-                capabilities.setCapability("xcodeConfigFile", settings.ios.xCode8ConfigFile);
+                capabilities.setCapability(IOSMobileCapabilityType.XCODE_CONFIG_FILE, settings.ios.xCode8ConfigFile);
             }
             capabilities.setCapability(MobileCapabilityType.NO_RESET, false);
             capabilities.setCapability(MobileCapabilityType.FULL_RESET, true);
