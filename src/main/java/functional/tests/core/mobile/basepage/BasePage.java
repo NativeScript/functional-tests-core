@@ -78,7 +78,7 @@ public class BasePage {
     }
 
     public boolean navigateTo(UIElement example) {
-        return NavigationHelper.navigateTo(example, ClickType.Click, null, "");
+        return NavigationHelper.navigateTo(example, ClickType.Tap, null, "");
     }
 
     /**

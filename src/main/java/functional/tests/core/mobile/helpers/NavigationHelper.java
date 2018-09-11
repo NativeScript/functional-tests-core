@@ -9,6 +9,7 @@ import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.element.UIRectangle;
 import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Wait;
+import org.openqa.selenium.By;
 import org.testng.Assert;
 
 import java.awt.*;
@@ -149,16 +150,21 @@ public class NavigationHelper {
     public static void navigateBack(MobileContext mobileContext) {
         // Api 24 and 25 emulators have no browsers.
         // When you open a link it is opened in WebView Tester.
-        // In this case client.driver.navigate().back() successfully navigate back, but throws exception.
+        // In this case client.driver.navigate().back) successfully navigate back, but throws exception.
         try {
             if (mobileContext.settings.platform == PlatformType.iOS) {
                 Wait.sleep(250);
-            }
-            mobileContext.client.getDriver().navigate().back();
-            Wait.sleep(500);
-            if (mobileContext.settings.platform == PlatformType.iOS) {
+                UIElement backButton = mobileContext.wait.waitForVisible(By.id("Back"), 3, false);
+                if (backButton != null) {
+                    backButton.tap();
+                } else {
+                    mobileContext.client.getDriver().navigate().back();
+                }
                 Wait.sleep(500);
+            } else {
+                mobileContext.client.getDriver().navigate().back();
             }
+            Wait.sleep(500);
         } catch (Exception e) {
             LOGGER_BASE.warn("Navigate back throws exception.");
         }
