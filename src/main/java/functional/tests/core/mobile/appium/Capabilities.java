@@ -84,10 +84,12 @@ public class Capabilities {
             if (settings.automationName.equalsIgnoreCase(AutomationName.ANDROID_UIAUTOMATOR2)) {
                 String systemPortString = OSUtils.getEnvironmentVariable("SYSTEM_PORT",
                         String.valueOf(OSUtils.getFreePort(8201, 8501)));
-                capabilities.setCapability("systemPort", systemPortString);
+                capabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT, Integer.valueOf(systemPortString));
             }
             if (settings.isRealDevice) {
                 capabilities.setCapability(MobileCapabilityType.NO_RESET, false);
+            } else {
+                capabilities.setCapability("skipUnlock", true);
             }
         }
 
