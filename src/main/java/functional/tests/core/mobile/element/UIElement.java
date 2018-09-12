@@ -75,7 +75,7 @@ public class UIElement {
     public void setText(String value) {
         if (this.settings.platform == PlatformType.Android) {
             // Tap at the and of the text box (this is very important)
-            int currentLegth = this.element.getText().length();
+            int currentLength = this.element.getText().length();
             int x = this.element.getLocation().getX() + this.element.getSize().width - 5;
             int y = this.element.getLocation().getY() + (this.element.getSize().height / 3);
             TouchAction action = new TouchAction(this.client.driver);
@@ -83,7 +83,7 @@ public class UIElement {
             Wait.sleep(Settings.DEFAULT_TAP_DURATION);
 
             // Clean old value
-            for (int l = 0; l < currentLegth; l++) {
+            for (int l = 0; l < currentLength; l++) {
                 ((AndroidDriver) this.client.driver).pressKeyCode(67);
                 Wait.sleep(100);
             }
@@ -94,7 +94,7 @@ public class UIElement {
             this.sendKeys(value);
             Wait.sleep(Settings.DEFAULT_TAP_DURATION);
         } else {
-            this.element.click();
+            this.tap();
             try {
                 // If keyboard is above text field clear throws exception.
                 this.element.clear();
