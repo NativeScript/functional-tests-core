@@ -269,7 +269,7 @@ public class Gestures {
         try {
             new TouchAction(this.client.driver)
                     .press(PointOption.point(startX, startY))
-                    .waitAction(duration)
+                    .waitAction(WaitOptions.waitOptions(duration))
                     .moveTo(PointOption.point(endX, endY))
                     .release()
                     .perform();

@@ -14,7 +14,9 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.MultiTouchAction;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.ElementOption;
 import io.appium.java_client.touch.offset.PointOption;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.openqa.selenium.By;
@@ -239,8 +241,13 @@ public class UIElement {
     }
 
     public void click(String description) {
-        this.element.click();
-        LOGGER_BASE.info("Click on " + description);
+        if (this.settings.platform == PlatformType.Android) {
+            this.element.click();
+            LOGGER_BASE.info("Click on " + description);
+        } else {
+            // Due to issue with Appium@1.9.0 fallback to tap();
+            this.tap();
+        }
     }
 
     public void tap(int waitAfterTap) {
@@ -302,7 +309,7 @@ public class UIElement {
     public void pressAndHold() {
         TouchAction action = new TouchAction(this.client.getDriver());
         Rectangle rect = this.getUIRectangle();
-        this.client.getDriver().performTouchAction(action.press(rect.x, rect.y));
+        this.client.getDriver().performTouchAction(action.press(PointOption.point(rect.x, rect.y)));
     }
 
     public void pinch() {
@@ -316,10 +323,10 @@ public class UIElement {
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
 
-            action1.press(this.element, 10, 10).moveTo(this.element, 50, 50);
+            action1.press(ElementOption.element(this.element, 10, 10)).moveTo(ElementOption.element(this.element, 50, 50));
 
-            action2.press(this.element, elementWidth - 10, elementHeight - 10)
-                    .moveTo(this.element, elementWidth - 50, elementHeight - 50);
+            action2.press(ElementOption.element(this.element, elementWidth - 10, elementHeight - 10))
+                    .moveTo(ElementOption.element(this.element, elementWidth - 50, elementHeight - 50));
 
             MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
@@ -333,10 +340,10 @@ public class UIElement {
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
 
-            action1.press(this.element, 10, 10).moveTo(this.element, 50, 50).release();
+            action1.press(ElementOption.element(this.element, 10, 10)).moveTo(ElementOption.element(this.element, 50, 50)).release();
 
-            action2.press(this.element, elementWidth - 10, elementHeight - 10)
-                    .moveTo(this.element, elementWidth - 50, elementHeight - 50)
+            action2.press(ElementOption.element(this.element, elementWidth - 10, elementHeight - 10))
+                    .moveTo(ElementOption.element(this.element, elementWidth - 50, elementHeight - 50))
                     .release();
 
             MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
@@ -356,10 +363,10 @@ public class UIElement {
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
 
-            action1.press(this.element, 10, 10).moveTo(this.element, 10, 50);
+            action1.press(ElementOption.element(this.element, 10, 10)).moveTo(ElementOption.element(this.element, 10, 50));
 
-            action2.press(this.element, elementWidth - 10, elementHeight - 10)
-                    .moveTo(this.element, elementWidth - 10, elementHeight - 50);
+            action2.press(ElementOption.element(this.element, elementWidth - 10, elementHeight - 10))
+                    .moveTo(ElementOption.element(this.element, elementWidth - 10, elementHeight - 50));
 
             MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
             multiAction.add(action1);
@@ -373,10 +380,10 @@ public class UIElement {
             int elementWidth = this.element.getSize().width;
             int elementHeight = this.element.getSize().height;
 
-            action1.press(this.element, 10, 10).moveTo(this.element, 10, 50).release();
+            action1.press(ElementOption.element(this.element, 10, 10)).moveTo(ElementOption.element(this.element, 10, 50)).release();
 
-            action2.press(this.element, elementWidth - 10, elementHeight - 10)
-                    .moveTo(this.element, elementWidth - 10, elementHeight - 50)
+            action2.press(ElementOption.element(this.element, elementWidth - 10, elementHeight - 10))
+                    .moveTo(ElementOption.element(this.element, elementWidth - 10, elementHeight - 50))
                     .release();
 
             MultiTouchAction multiAction = new MultiTouchAction(this.client.driver);
