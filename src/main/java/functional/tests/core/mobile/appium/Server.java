@@ -62,7 +62,8 @@ public class Server {
                 .withLogFile(logFile)
                 .usingAnyFreePort()
                 .withIPAddress("127.0.0.1")
-                .withAppiumJS(appiumExecutable);
+                .withAppiumJS(appiumExecutable)
+                .withArgument(GeneralServerFlag.RELAXED_SECURITY);
 
         // Set iOS specific Appium server arguments
         if (this.settings.platform == PlatformType.iOS) {
