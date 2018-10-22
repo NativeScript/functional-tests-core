@@ -411,6 +411,10 @@ public abstract class MobileTest {
         return this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, percentTolerance);
     }
 
+    public boolean compareScreens(int timeOut, double percentTolerance, boolean ignoreKeyboard) throws Exception {
+        return this.compareScreens(timeOut, this.defaultWaitTime, this.maxPixelTolerance, percentTolerance, ignoreKeyboard);
+    }
+
     /**
      * Assert the current screen.
      *
@@ -505,24 +509,29 @@ public abstract class MobileTest {
      */
     private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         String testName = this.createImageName();
-        boolean result = this.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance);
+        boolean result = this.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance, false);
 
         return result;
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param name
-     * @param timeOut
-     * @param waitTime
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @return
-     * @throws Exception
-     */
+
+    private boolean compareScreens(int timeOut, int waitTime, int pixelTolerance, double percentTolerance, boolean ignoreKeyboard) throws Exception {
+        String testName = this.createImageName();
+        boolean result = this.compareScreens(testName, timeOut, waitTime, pixelTolerance, percentTolerance, ignoreKeyboard);
+
+        return result;
+    }
+
     private boolean compareScreens(String name, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
-        boolean result = this.imageVerification.compareScreens(name, timeOut, waitTime, pixelTolerance, percentTolerance);
+        boolean result = this.imageVerification.compareScreens(name, timeOut, waitTime, pixelTolerance, percentTolerance, false);
+        this.imagesResults.put(name, result);
+        this.imageCounter++;
+
+        return result;
+    }
+
+    private boolean compareScreens(String name, int timeOut, int waitTime, int pixelTolerance, double percentTolerance, boolean ignoreKeyboard) throws Exception {
+        boolean result = this.imageVerification.compareScreens(name, timeOut, waitTime, pixelTolerance, percentTolerance, ignoreKeyboard);
         this.imagesResults.put(name, result);
         this.imageCounter++;
 

@@ -2,7 +2,6 @@ package functional.tests.core.image;
 
 import functional.tests.core.enums.ImageVerificationType;
 import functional.tests.core.enums.PlatformType;
-import functional.tests.core.exceptions.ImageVerificationException;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileContext;
@@ -20,6 +19,7 @@ import java.awt.image.BufferedImage;
 /**
  * TODO(): Add docs.
  */
+@SuppressWarnings("unused")
 public class ImageVerification {
 
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("ImageVerification");
@@ -46,12 +46,6 @@ public class ImageVerification {
         this.verificationType = this.mobileContext.settings.imageVerificationType;
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param source
-     * @return
-     */
     private static BufferedImage copyImage(BufferedImage source) {
         BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
         Graphics g = b.getGraphics();
@@ -60,191 +54,81 @@ public class ImageVerification {
         return b;
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param element
-     * @param expectedElementImage
-     * @param timeOut
-     * @param waitTime
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @return
-     * @throws Exception
-     */
     public boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return this.verifyImages(this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getElementImage(element);
             }
-        }, timeOut, waitTime, !IGNORE_HEADER);
+        }, timeOut, waitTime, !IGNORE_HEADER, false);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @param timeOut
-     * @param waitTime
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @return
-     * @throws Exception
-     */
     public boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
+        return this.compareScreens(pageName, timeOut, waitTime, pixelTolerance, percentTolerance, false);
+    }
+
+    public boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance, boolean ignoreKeyboard) throws Exception {
         return this.verifyImages(this.settings.testAppName, pageName, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getScreen();
             }
-        }, timeOut, waitTime, IGNORE_HEADER);
+        }, timeOut, waitTime, IGNORE_HEADER, ignoreKeyboard);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param element
-     * @param expectedElementImage
-     * @param percentTolerance
-     * @throws Exception
-     */
     public void verifyElement(final UIElement element, String expectedElementImage, double percentTolerance) throws Exception {
         this.verifyElement(element, expectedElementImage, Integer.MAX_VALUE, percentTolerance, MIN_TIMEOUT);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param element
-     * @param expectedElementImage
-     * @param pixelTolerance
-     * @throws Exception
-     */
     public void verifyElement(final UIElement element, String expectedElementImage, int pixelTolerance) throws Exception {
         this.verifyElement(element, expectedElementImage, pixelTolerance, Double.MAX_VALUE, MIN_TIMEOUT);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param element
-     * @param expectedElementImage
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @param timeOut
-     * @throws Exception
-     */
     public void verifyElement(final UIElement element, String expectedElementImage, int pixelTolerance, double percentTolerance, int timeOut) throws Exception {
         this.assertImages(new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getElementImage(element);
             }
-        }, this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false);
+        }, this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, timeOut, DEFAULT_WAIT_TIME, false, false);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @throws Exception
-     */
     public void verifyScreen(String pageName) throws Exception {
         this.verifyScreen(pageName, DEFAULT_PIXEL_TOLERANCE, DEFAULT_PERCENT_TOLERANCE);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @param percentTolerance
-     * @throws Exception
-     */
     public void verifyScreen(String pageName, double percentTolerance) throws Exception {
         this.verifyScreen(pageName, Integer.MAX_VALUE, percentTolerance);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @param pixelTolerance
-     * @throws Exception
-     */
     public void verifyScreen(String pageName, int pixelTolerance) throws Exception {
         this.verifyScreen(pageName, pixelTolerance, Double.MAX_VALUE);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @throws Exception
-     */
     public void verifyScreen(String pageName, int pixelTolerance, double percentTolerance) throws Exception {
         this.verifyScreen(pageName, pixelTolerance, percentTolerance, this.settings.defaultTimeout, 1000);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param pageName
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @param timeOut
-     * @param sleepTime
-     * @throws Exception
-     */
     public void verifyScreen(String pageName, int pixelTolerance, double percentTolerance, int timeOut, int sleepTime) throws Exception {
         this.assertImages(new IElementToImageConverter<BufferedImage>() {
             @Override
             public BufferedImage call(ImageUtils imageUtils) throws Exception {
                 return imageUtils.getScreen();
             }
-        }, this.settings.testAppName, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER);
+        }, this.settings.testAppName, pageName, pixelTolerance, percentTolerance, timeOut, sleepTime, IGNORE_HEADER, false);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param element
-     * @param appName
-     * @param imageName
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @param timeOut
-     * @param sleepTime
-     * @param ignoreHeader
-     * @throws Exception
-     */
     private void assertImages(IElementToImageConverter<BufferedImage> element, String appName, String imageName,
                               int pixelTolerance, double percentTolerance, int timeOut, int sleepTime,
-                              boolean ignoreHeader) throws Exception {
+                              boolean ignoreHeader, boolean ignoreKeyboard) throws Exception {
         boolean result = this.verifyImages(appName, imageName,
-                pixelTolerance, percentTolerance, element, timeOut, sleepTime, ignoreHeader);
+                pixelTolerance, percentTolerance, element, timeOut, sleepTime, ignoreHeader, ignoreKeyboard);
         Assert.assertTrue(result, String.format("Image comparison failed. %s is not as expected!", imageName));
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param appName
-     * @param imageName
-     * @param pixelTolerance
-     * @param percentTolerance
-     * @param actualImage
-     * @param timeOut
-     * @param sleepTime
-     * @param ignoreHeader
-     * @return
-     * @throws Exception
-     */
     private boolean verifyImages(String appName, String imageName, int pixelTolerance, double percentTolerance,
                                  IElementToImageConverter<BufferedImage> actualImage, int timeOut, int sleepTime,
-                                 boolean ignoreHeader) throws Exception {
+                                 boolean ignoreHeader, boolean ignoreKeyboard) throws Exception {
         BufferedImage expectedImage;
         Log log = this.mobileContext.log;
 
@@ -304,7 +188,7 @@ public class ImageVerification {
             ImageVerificationResult result = null;
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis() - startTime) < timeOut * 1000) {
-                result = this.compareImages(actualImage.call(this.imageUtils), expectedImage, ignoreHeader);
+                result = this.compareImages(actualImage.call(this.imageUtils), expectedImage, ignoreHeader, ignoreKeyboard);
                 if ((result.diffPixels > pixelTolerance) || (result.diffPercent > percentTolerance)) {
                     if (this.settings.logImageVerificationStatus) {
                         log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime + "_" + imageName));
@@ -327,15 +211,6 @@ public class ImageVerification {
         return areImagesEqual;
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param imageName
-     * @param actualImage
-     * @param expectedImageFolderName
-     * @param message
-     * @throws Exception
-     */
     private void saveImage(String imageName, IElementToImageConverter<BufferedImage> actualImage, String expectedImageFolderName, String message) throws Exception {
         Wait.sleep(ImageVerification.DEFAULT_WAIT_TIME); // Wait some time until animations finish
         this.LOGGER_BASE.warn(message);
@@ -343,17 +218,7 @@ public class ImageVerification {
         this.imageUtils.saveBufferedImage(actualImage.call(this.imageUtils), imageName);
     }
 
-    /**
-     * TODO(): Add docs.
-     *
-     * @param actualImage
-     * @param expectedImage
-     * @param ignoreHeader
-     * @return
-     * @throws ImageVerificationException
-     */
-    private ImageVerificationResult compareImages(BufferedImage actualImage, BufferedImage expectedImage, Boolean ignoreHeader)
-            throws ImageVerificationException {
+    private ImageVerificationResult compareImages(BufferedImage actualImage, BufferedImage expectedImage, Boolean ignoreHeader, Boolean ignoreKeyboard) {
 
         int diffPixels = 0;
         double diffPercent;
@@ -383,6 +248,7 @@ public class ImageVerification {
 
             // If ignoreHeader is True pixels at top are ignored in comparison
             int startY = 0;
+            int endY = height1;
             if (ignoreHeader) {
                 // TODO(): Reasearch if we can better define what is header
                 if (this.settings.platform == PlatformType.Android) {
@@ -395,8 +261,17 @@ public class ImageVerification {
                 }
             }
 
+            if (ignoreKeyboard) {
+                // TODO(): Reasearch if we can better define what is keybord
+                if (this.settings.platform == PlatformType.Android) {
+                    endY = (int) (height1 * 0.6);
+                } else if (this.settings.platform == PlatformType.iOS) {
+                    endY = (int) (height1 * 0.6);
+                }
+            }
+
             // Compare pixel by pixel
-            for (int i = startY; i < height1; i++) {
+            for (int i = startY; i < endY; i++) {
                 for (int j = 0; j < width1; j++) {
                     int rgb1 = diffImage.getRGB(j, i);
                     int blue1 = rgb1 & 0xFF;
@@ -427,8 +302,6 @@ public class ImageVerification {
     }
 
     /**
-     * TODO(): Add docs.
-     *
      * @param <V>
      */
     public interface IElementToImageConverter<V> {
