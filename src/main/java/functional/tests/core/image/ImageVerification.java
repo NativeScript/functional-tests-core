@@ -57,7 +57,7 @@ public class ImageVerification {
     public boolean compareElements(final UIElement element, String expectedElementImage, int timeOut, int waitTime, int pixelTolerance, double percentTolerance) throws Exception {
         return this.verifyImages(this.settings.testAppName, expectedElementImage, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
-            public BufferedImage call(ImageUtils imageUtils) throws Exception {
+            public BufferedImage call(ImageUtils imageUtils) {
                 return imageUtils.getElementImage(element);
             }
         }, timeOut, waitTime, !IGNORE_HEADER, false);
@@ -70,7 +70,7 @@ public class ImageVerification {
     public boolean compareScreens(String pageName, int timeOut, int waitTime, int pixelTolerance, double percentTolerance, boolean ignoreKeyboard) throws Exception {
         return this.verifyImages(this.settings.testAppName, pageName, pixelTolerance, percentTolerance, new IElementToImageConverter<BufferedImage>() {
             @Override
-            public BufferedImage call(ImageUtils imageUtils) throws Exception {
+            public BufferedImage call(ImageUtils imageUtils) {
                 return imageUtils.getScreen();
             }
         }, timeOut, waitTime, IGNORE_HEADER, ignoreKeyboard);
@@ -135,7 +135,7 @@ public class ImageVerification {
         // ImageVerificationType.Skip:
         // Do NOT perform image verification.
         if (this.verificationType == ImageVerificationType.Skip) {
-            this.LOGGER_BASE.warn("Skip image verification!");
+            LOGGER_BASE.warn("Skip image verification!");
 
             return true;
         }
@@ -194,10 +194,10 @@ public class ImageVerification {
                         log.logImageVerificationResult(result, "result_" + String.valueOf(System.currentTimeMillis() - startTime + "_" + imageName));
                     } else {
                         String message = String.format("%s does NOT look OK. Diff percents: %.2f%% . Waiting ...", imageName, result.diffPercent);
-                        this.LOGGER_BASE.error(message);
+                        LOGGER_BASE.error(message);
                     }
                 } else {
-                    this.LOGGER_BASE.info(imageName + " looks OK.");
+                    LOGGER_BASE.info(imageName + " looks OK.");
                     areImagesEqual = true;
                     break;
                 }
@@ -213,7 +213,7 @@ public class ImageVerification {
 
     private void saveImage(String imageName, IElementToImageConverter<BufferedImage> actualImage, String expectedImageFolderName, String message) throws Exception {
         Wait.sleep(ImageVerification.DEFAULT_WAIT_TIME); // Wait some time until animations finish
-        this.LOGGER_BASE.warn(message);
+        LOGGER_BASE.warn(message);
         FileSystem.ensureFolderExists(expectedImageFolderName);
         this.imageUtils.saveBufferedImage(actualImage.call(this.imageUtils), imageName);
     }
@@ -234,9 +234,9 @@ public class ImageVerification {
 
         // If image size is different then skip comparison
         if ((width1 != width2) || (height1 != height2)) {
-            this.LOGGER_BASE.error("Screenshot and expected image are with different size.");
-            this.LOGGER_BASE.error("Actual image: " + width1 + "x" + height1);
-            this.LOGGER_BASE.error("Expected image: " + width2 + "x" + height2);
+            LOGGER_BASE.error("Screenshot and expected image are with different size.");
+            LOGGER_BASE.error("Actual image: " + width1 + "x" + height1);
+            LOGGER_BASE.error("Expected image: " + width2 + "x" + height2);
 
             diffPixels = width1 * height1;
             //throw new ImageVerificationException("Screenshot and expected image are with different size.");
@@ -262,11 +262,9 @@ public class ImageVerification {
             }
 
             if (ignoreKeyboard) {
-                // TODO(): Reasearch if we can better define what is keybord
-                if (this.settings.platform == PlatformType.Android) {
-                    endY = (int) (height1 * 0.6);
-                } else if (this.settings.platform == PlatformType.iOS) {
-                    endY = (int) (height1 * 0.6);
+                endY = (int) (height1 * 0.6);
+                if (width1 > height1) {
+                    endY = (int) (height1 * 0.4);
                 }
             }
 
