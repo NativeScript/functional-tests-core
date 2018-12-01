@@ -425,7 +425,8 @@ public class IOSDevice implements IDevice {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
-            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"NativeScript\"' ";
+            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"" + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)","$1") +"\"'";
+            IOSDevice.LOGGER_BASE.info(command);
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
             }
