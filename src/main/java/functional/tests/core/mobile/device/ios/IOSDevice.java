@@ -425,7 +425,7 @@ public class IOSDevice implements IDevice {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
-            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\"' ";
+            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"NativeScript\"' ";
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
             }
@@ -449,7 +449,7 @@ public class IOSDevice implements IDevice {
         } catch (Exception e) {
             IOSDevice.LOGGER_BASE.error("Destroy log process!!!");
         }
-        String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | awk '{print $2}' | xargs kill -9";
+        String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | grep -ie NativeScript | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
     }
 
