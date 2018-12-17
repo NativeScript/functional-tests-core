@@ -123,7 +123,7 @@ public class IOSDevice implements IDevice {
     }
 
     @Override
-    public void stop() throws DeviceException {
+    public void stop() {
         if (this.getType() == DeviceType.Simulator) {
             this.simctl.markUnused(this.settings.deviceId);
 
@@ -173,17 +173,17 @@ public class IOSDevice implements IDevice {
     }
 
     @Override
-    public void verifyAppRunning(String packageId) throws MobileAppException {
+    public void verifyAppRunning(String packageId) {
         IOSDevice.LOGGER_BASE.debug("iOSDevice.verifyAppRunning method is not implemented");
     }
 
     @Override
-    public void pushFile(String localPath, String remotePath) throws Exception {
+    public void pushFile(String localPath, String remotePath) {
         IOSDevice.LOGGER_BASE.warn("iOSDevice.pushFile method is not implemented");
     }
 
     @Override
-    public void pullFile(String remotePath, String destinationFolder) throws Exception {
+    public void pullFile(String remotePath, String destinationFolder) {
         IOSDevice.LOGGER_BASE.warn("iOSDevice.pullFile method is not implemented");
     }
 
@@ -239,7 +239,7 @@ public class IOSDevice implements IDevice {
 
     @Override
     public void setLocation(Location location) {
-        ((IOSDriver) this.client.driver).setLocation(location);
+        this.client.driver.setLocation(location);
     }
 
     @Override
@@ -421,11 +421,11 @@ public class IOSDevice implements IDevice {
      * Start watcher on iOS physical device logs.
      */
     public void startIOSDeviceLogWatcher() {
-        if (this.settings.deviceId == null || this.settings.deviceId == "") {
+        if (this.settings.deviceId == null || this.settings.deviceId.equals("")) {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
-            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"" + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)","$1") +"\"'";
+            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"" + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1") + "\"'";
             IOSDevice.LOGGER_BASE.info(command);
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
