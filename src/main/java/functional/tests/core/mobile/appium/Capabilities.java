@@ -89,7 +89,11 @@ public class Capabilities {
             if (settings.isRealDevice) {
                 capabilities.setCapability(MobileCapabilityType.NO_RESET, false);
             } else {
-                capabilities.setCapability("skipUnlock", true);
+                if (settings.platformVersion < 5.0) {
+                    capabilities.setCapability("skipUnlock", false);
+                } else {
+                    capabilities.setCapability("skipUnlock", true);
+                }
             }
         }
 
