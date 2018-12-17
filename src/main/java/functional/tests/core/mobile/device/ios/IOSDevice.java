@@ -3,7 +3,6 @@ package functional.tests.core.mobile.device.ios;
 import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.EmulatorState;
 import functional.tests.core.exceptions.DeviceException;
-import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.extensions.SystemExtension;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
@@ -14,7 +13,6 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.utils.FileSystem;
 import functional.tests.core.utils.OSUtils;
-import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.html5.Location;
 
 import java.io.File;
@@ -425,7 +423,9 @@ public class IOSDevice implements IDevice {
             SystemExtension.interruptProcess("Device id is null");
         }
         try {
-            String command = " log stream --level debug --predicate 'senderImagePath contains \"" + this.settings.deviceId + "\" or senderImagePath contains \"" + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1") + "\"'";
+            String command = " log stream --level debug --predicate 'senderImagePath contains \""
+                    + this.settings.deviceId + "\" or senderImagePath contains \""
+                    + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1") + "\"'";
             IOSDevice.LOGGER_BASE.info(command);
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
