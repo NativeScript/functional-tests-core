@@ -424,13 +424,12 @@ public class IOSDevice implements IDevice {
         }
         try {
             String command = " log stream --level debug --predicate 'senderImagePath contains \""
-                    + this.settings.deviceId + "\" AND senderImagePath contains \""
+                    + this.settings.deviceId + "\" OR senderImagePath contains \""
                     + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1") + "\"'";
             IOSDevice.LOGGER_BASE.info(command);
             if (this.settings.isRealDevice) {
                 command = "/usr/local/bin/idevicesyslog -u " + this.settings.deviceId;
             }
-
             command += " > " + this.settings.consoleLogDir + File.separator + IOSDeviceLog.IOS_REAL_DEVICE_LOG_FILE;
             LOGGER_BASE.info(command);
             String[] commands = new String[]{command};
@@ -450,10 +449,12 @@ public class IOSDevice implements IDevice {
         } catch (Exception e) {
             IOSDevice.LOGGER_BASE.error("Destroy log process!!!");
         }
-        String killCommand = "ps aux | grep -i 'log stream' | grep -ie "
-                + deviceId
-                + " | grep -ie "
-                + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1")
+        String killCommand = "ps aux"
+                + " | grep -ie \"log stream --level debug --predicate\""
+                + " | grep -ie \"senderImagePath contains\""
+                + " | grep -ie " + deviceId
+                + " | grep -ie \"OR senderImagePath contains\""
+                + " | grep " + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1")
                 + " | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
     }
