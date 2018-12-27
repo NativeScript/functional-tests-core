@@ -424,7 +424,7 @@ public class IOSDevice implements IDevice {
         }
         try {
             String command = " log stream --level debug --predicate 'senderImagePath contains \""
-                    + this.settings.deviceId + "\" or senderImagePath contains \""
+                    + this.settings.deviceId + "\" AND senderImagePath contains \""
                     + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1") + "\"'";
             IOSDevice.LOGGER_BASE.info(command);
             if (this.settings.isRealDevice) {
@@ -450,7 +450,11 @@ public class IOSDevice implements IDevice {
         } catch (Exception e) {
             IOSDevice.LOGGER_BASE.error("Destroy log process!!!");
         }
-        String killCommand = "ps aux | grep -i 'log stream' | grep -ie " + deviceId + " | grep -ie NativeScript | awk '{print $2}' | xargs kill -9";
+        String killCommand = "ps aux | grep -i 'log stream' | grep -ie "
+                + deviceId
+                + " | grep -ie "
+                + this.settings.packageId.replaceAll("\\w+.\\w+.(\\w+)", "$1")
+                + " | awk '{print $2}' | xargs kill -9";
         OSUtils.runProcess(killCommand);
     }
 
