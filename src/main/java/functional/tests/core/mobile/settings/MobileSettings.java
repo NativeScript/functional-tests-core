@@ -469,7 +469,11 @@ public class MobileSettings extends Settings {
             this.automationName = automationNameString.trim();
         } else {
             if (this.platform == PlatformType.Android) {
-                this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
+                if (this.platformVersion < 5.0) {
+                    this.automationName == AutomationName.APPIUM;
+                } else {
+                    this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
+                }
             } else if (this.platform == PlatformType.iOS) {
                 this.automationName = AutomationName.IOS_XCUI_TEST;
             }
