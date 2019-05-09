@@ -470,7 +470,7 @@ public class MobileSettings extends Settings {
         } else {
             if (this.platform == PlatformType.Android) {
                 if (this.platformVersion < 5.0) {
-                    this.automationName == AutomationName.APPIUM;
+                    this.automationName = AutomationName.APPIUM;
                 } else {
                     this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
                 }
