@@ -469,21 +469,9 @@ public class MobileSettings extends Settings {
             this.automationName = automationNameString.trim();
         } else {
             if (this.platform == PlatformType.Android) {
-                if (this.platformVersion <= 4.1) {
-                    this.automationName = AutomationName.SELENDROID;
-                } else if (this.platformVersion >= 7.0) {
-                    this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
-                } else {
-                    this.automationName = AutomationName.APPIUM;
-                }
-            }
-
-            if (this.platform == PlatformType.iOS) {
-                if (this.platformVersion >= 9.3) {
-                    this.automationName = AutomationName.IOS_XCUI_TEST;
-                } else {
-                    this.automationName = AutomationName.APPIUM;
-                }
+                this.automationName = AutomationName.ANDROID_UIAUTOMATOR2;
+            } else if (this.platform == PlatformType.iOS) {
+                this.automationName = AutomationName.IOS_XCUI_TEST;
             }
         }
 
