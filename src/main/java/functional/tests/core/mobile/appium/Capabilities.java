@@ -35,7 +35,7 @@ public class Capabilities {
 
         // Increase the NEW_COMMAND_TIMEOUT capability
         // to avoid ending the session during debug.
-        int newCommandTimeout = settings.deviceBootTimeout;
+        int newCommandTimeout = settings.deviceBootTimeout * 10;
         if (settings.debug) {
             newCommandTimeout *= 3;
         }
