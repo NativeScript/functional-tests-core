@@ -86,6 +86,7 @@ public class AndroidDevice implements IDevice {
         emulatorMap.put(8.0, "emulator-5570");
         emulatorMap.put(8.1, "emulator-5572");
         emulatorMap.put(9.0, "emulator-5574");
+        emulatorMap.put(10.0, "emulator-5576");
         return emulatorMap;
     }
 
@@ -93,6 +94,7 @@ public class AndroidDevice implements IDevice {
         HashMap<Double, Double> newEmulatorMap = new HashMap<>();
         newEmulatorMap.put(27.0, 8.1);
         newEmulatorMap.put(28.0, 9.0);
+        newEmulatorMap.put(29.0, 10.0);
         return newEmulatorMap;
     }
 
