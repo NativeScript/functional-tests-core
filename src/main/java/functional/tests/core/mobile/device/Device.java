@@ -347,7 +347,12 @@ public class Device {
     public BufferedImage getScreenshot() {
         try {
             File screen = this.client.driver.getScreenshotAs(OutputType.FILE);
-            return ImageIO.read(screen);
+            BufferedImage image = ImageIO.read(screen);
+            if (this.settings.automationName.equals("UiAutomator1")) {
+                return image.getSubimage(0, 0, image.getWidth() - 2, image.getHeight() - 2);
+            } else {
+                return image;
+            }
         } catch (Exception e) {
             LOGGER_BASE.error("Failed to take screenshot! May be appium driver is dead.");
             return null;
