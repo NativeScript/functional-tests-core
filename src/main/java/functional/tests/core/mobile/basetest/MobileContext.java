@@ -1,7 +1,6 @@
 package functional.tests.core.mobile.basetest;
 
 import functional.tests.core.image.ImageUtils;
-import functional.tests.core.image.Sikuli;
 import functional.tests.core.log.Log;
 import functional.tests.core.mobile.app.App;
 import functional.tests.core.mobile.appium.Client;
@@ -30,7 +29,6 @@ public class MobileContext {
     public Locators locators;
     public ImageUtils imageUtils;
     public Client client;
-    public Sikuli sikuliImageProcessing;
     public App app;
     public Device device;
     public boolean shouldRestartAppOnFailure;
@@ -39,13 +37,11 @@ public class MobileContext {
     private String testName;
 
     /**
-     *
      * @param settings
      * @param log
      * @param client
      * @param server
      * @param device
-     * @param sikuliImageProcessing
      * @param app
      * @param find
      * @param gestures
@@ -55,14 +51,12 @@ public class MobileContext {
      * @param uiElementClass
      */
     public MobileContext(MobileSettings settings, Log log, Client client,
-                         Server server, Device device, Sikuli sikuliImageProcessing,
-                         App app, Find find, Gestures gestures, ImageUtils imageUtils,
+                         Server server, Device device, App app, Find find, Gestures gestures, ImageUtils imageUtils,
                          Locators locators, Wait wait, UIElementClass uiElementClass) {
         this.settings = settings;
         this.log = log;
         this.client = client;
         this.device = device;
-        this.sikuliImageProcessing = sikuliImageProcessing;
         this.app = app;
         this.find = find;
         this.gestures = gestures;

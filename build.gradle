@@ -11,9 +11,8 @@ repositories {
 }
 
 dependencies {
-    compile group: 'io.appium', name: 'java-client', version: '7.1.0'
-    compile group: 'org.testng', name: 'testng', version: '6.14.3'
-    compile files('libs/sikulixsetup-1.1.0.jar', 'libs/sikulixsetup-1.1.0.jar')
+    compile group: 'io.appium', name: 'java-client', version: '7.2.0'
+    compile group: 'org.testng', name: 'testng', version: '7.0.0'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.15'

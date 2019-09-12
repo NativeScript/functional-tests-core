@@ -4,7 +4,6 @@ import functional.tests.core.exceptions.AppiumException;
 import functional.tests.core.exceptions.DeviceException;
 import functional.tests.core.exceptions.MobileAppException;
 import functional.tests.core.image.ImageUtils;
-import functional.tests.core.image.Sikuli;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.app.App;
@@ -44,7 +43,6 @@ public class MobileSetupManager {
     private Find find;
     private Wait wait;
     private Gestures gestures;
-    private Sikuli sikuliImageProcessing;
     private UIElementClass uiElements;
 
     private MobileSetupManager() {
@@ -86,18 +84,12 @@ public class MobileSetupManager {
                     mobileSetupManager.locators,
                     mobileSetupManager.settings);
 
-            mobileSetupManager.sikuliImageProcessing =
-                    new Sikuli(mobileSetupManager.settings.testAppName + "-map",
-                            mobileSetupManager.client,
-                            mobileSetupManager.imageUtils);
-
             mobileSetupManager.context = new MobileContext(
                     mobileSetupManager.settings,
                     mobileSetupManager.log,
                     mobileSetupManager.client,
                     mobileSetupManager.server,
                     mobileSetupManager.device,
-                    mobileSetupManager.sikuliImageProcessing,
                     mobileSetupManager.app,
                     mobileSetupManager.find,
                     mobileSetupManager.gestures,

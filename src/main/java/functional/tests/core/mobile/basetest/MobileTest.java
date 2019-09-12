@@ -4,7 +4,6 @@ import functional.tests.core.enums.DeviceType;
 import functional.tests.core.enums.PlatformType;
 import functional.tests.core.image.ImageUtils;
 import functional.tests.core.image.ImageVerification;
-import functional.tests.core.image.Sikuli;
 import functional.tests.core.log.Log;
 import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.app.App;
@@ -55,7 +54,6 @@ public abstract class MobileTest {
     private double minPercentTolerant = 0.003D;
     private boolean firstTest;
     private Map<String, Boolean> imagesResults;
-    private Sikuli sikuliImageProcessing;
     private Server server;
 
     /**
@@ -64,15 +62,6 @@ public abstract class MobileTest {
     public MobileTest() {
         this.initUITestHelpers();
         this.imageVerification = new ImageVerification();
-    }
-
-    /**
-     * TODO(): Add docs.
-     *
-     * @return
-     */
-    protected Sikuli getSikuliImagePorcessing() {
-        return this.sikuliImageProcessing;
     }
 
     /**
@@ -600,7 +589,6 @@ public abstract class MobileTest {
             this.find = this.context.find;
             this.wait = this.context.wait;
             this.gestures = this.context.gestures;
-            this.sikuliImageProcessing = this.context.sikuliImageProcessing;
         }
     }
 }
