@@ -13,7 +13,6 @@ import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.gestures.Gestures;
 import functional.tests.core.mobile.helpers.NavigationHelper;
 import functional.tests.core.mobile.settings.MobileSettings;
-import org.bridj.ann.Virtual;
 import org.testng.Assert;
 
 /**
@@ -61,7 +60,6 @@ public class BasePage {
      * @param example
      * @return
      */
-    @Virtual
     public UIElement scrollTo(String example, int retriesCount) {
         return NavigationHelper.scrollTo(example, this.context, retriesCount);
     }
