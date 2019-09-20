@@ -177,22 +177,21 @@ public class MobileSetupManager {
      * @param testCase           Test name.
      */
     public void logTestResult(int previousTestStatus, String testCase) {
-        if (this.context.device == null) {
-            LOGGER_BASE.error("The device is null");
-        } else {
-            try {
-                this.context.device.writeConsoleLogToFile(testCase);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         if (previousTestStatus == ITestResult.SUCCESS) {
             if (this.context.settings.takeScreenShotAfterTest) {
                 this.context.log.logScreen(testCase + "_pass", "Screenshot after " + testCase);
             }
             this.log.info("=> Test " + testCase + " passed!");
         } else if (previousTestStatus == ITestResult.FAILURE) {
+            if (this.context.device == null) {
+                LOGGER_BASE.error("The device is null");
+            } else {
+                try {
+                    this.context.device.writeConsoleLogToFile(testCase);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             this.context.log.logScreen(testCase + "_fail", "Screenshot after " + testCase);
             this.context.log.saveXmlTree(testCase + "_VisualTree.xml");
             this.log.error("=> Test " + testCase + " failed!");
