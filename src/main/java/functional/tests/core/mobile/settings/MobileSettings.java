@@ -45,6 +45,7 @@ public class MobileSettings extends Settings {
     public SettingsAndroid android;
     public DeviceType deviceType;
     public boolean reuseDevice;
+    public boolean usePrebuiltWDA;
 
     /**
      * Init settings.
@@ -221,6 +222,11 @@ public class MobileSettings extends Settings {
         // If deviceBootTimeout is not specified set it equal to defaultTimeout
         this.deviceBootTimeout = this.convertPropertyToInt("deviceBootTimeout", 300);
         this.deviceType = this.getDeviceType();
+
+        String usePreBuildWDAEnv = System.getenv("USE_PREBUILT_WDA");
+        if (usePreBuildWDAEnv != null && !usePreBuildWDAEnv.isEmpty()){
+            this.usePrebuiltWDA = usePreBuildWDAEnv == "true" ? true : false;
+        }
 
         if (this.platform == PlatformType.Android) {
             loggerBase = LoggerBase.getLogger("AndroidSettings");
