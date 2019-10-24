@@ -115,6 +115,7 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.SCREENSHOT_WAIT_TIMEOUT, settings.defaultTimeout);
         capabilities.setCapability(IOSMobileCapabilityType.SHOW_IOS_LOG, true);
         capabilities.setCapability(IOSMobileCapabilityType.USE_NEW_WDA, false);
+        capabilities.setCapability(IOSMobileCapabilityType.USE_PREBUILT_WDA, true);
         capabilities.setCapability(IOSMobileCapabilityType.WDA_STARTUP_RETRIES, 5);
         capabilities.setCapability(IOSMobileCapabilityType.SHOULD_USE_SINGLETON_TESTMANAGER, false);
 
