@@ -120,7 +120,7 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.SHOULD_USE_SINGLETON_TESTMANAGER, false);
 
         if (!System.getenv("DERIVED_DATA_PATH").isEmpty()) {
-            capabilities.setCapability("derivedDataPath", System.getenv("DERIVED_DATA_PATH") + "/" + settings.deviceId);
+            capabilities.setCapability("derivedDataPath", System.getenv("DERIVED_DATA_PATH") + File.separator + settings.deviceId);
         }
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
