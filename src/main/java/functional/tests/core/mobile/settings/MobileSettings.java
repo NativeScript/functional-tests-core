@@ -68,7 +68,7 @@ public class MobileSettings extends Settings {
         loggerBase.separatorAndroid();
 
         this.android.maxEmuCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_EMU_COUNT", "1"));
-        loggerBase.info("Maximum number of parallel emulators: " + String.valueOf(this.android.maxEmuCount));
+        loggerBase.info("Maximum number of parallel emulators: " + this.android.maxEmuCount);
 
         if (this.deviceType == DeviceType.Emulator) {
             // Main port is 5 next two numbers comes from platform version and last one is like minor version * 2
@@ -141,11 +141,7 @@ public class MobileSettings extends Settings {
         loggerBase.info("WDA_LOCAL_PORT: " + wdaLocalPortAsString);
 
         this.ios.maxSimCount = Integer.parseInt(OSUtils.getEnvironmentVariable("MAX_SIM_COUNT", "1"));
-        loggerBase.info("Maximum number of parallel iOS Simulators: " + String.valueOf(this.ios.maxSimCount));
-
-        if (this.deviceId == null && !this.isRealDevice) {
-            this.deviceId = null;
-        }
+        loggerBase.info("Maximum number of parallel iOS Simulators: " + this.ios.maxSimCount);
         loggerBase.info("Device Id: " + this.deviceId);
 
         this.ios.acceptAlerts = this.propertyToBoolean("acceptAlerts", false);
@@ -225,7 +221,7 @@ public class MobileSettings extends Settings {
 
         String usePreBuildWDAEnv = System.getenv("USE_PREBUILT_WDA");
         if (usePreBuildWDAEnv != null && !usePreBuildWDAEnv.isEmpty()){
-            this.usePrebuiltWDA = usePreBuildWDAEnv == "true" ? true : false;
+            this.usePrebuiltWDA = usePreBuildWDAEnv.equals("true");
         }
 
         if (this.platform == PlatformType.Android) {

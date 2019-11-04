@@ -82,7 +82,7 @@ public class Capabilities {
             capabilities.setCapability(AndroidMobileCapabilityType.APP_WAIT_PACKAGE, settings.android.appWaitPackage);
             capabilities.setCapability(AndroidMobileCapabilityType.NO_SIGN, true);
             if (settings.automationName.equalsIgnoreCase(AutomationName.ANDROID_UIAUTOMATOR2)) {
-                String systemPortString = OSUtils.getEnvironmentVariable("SYSTEM_PORT",
+                String systemPortString = OSUtils.getEnvironmentVariable(AndroidMobileCapabilityType.SYSTEM_PORT,
                         String.valueOf(OSUtils.getFreePort(8201, 8501)));
                 capabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT, Integer.valueOf(systemPortString));
             }
@@ -119,9 +119,11 @@ public class Capabilities {
         capabilities.setCapability(IOSMobileCapabilityType.WDA_STARTUP_RETRIES, 5);
         capabilities.setCapability(IOSMobileCapabilityType.SHOULD_USE_SINGLETON_TESTMANAGER, false);
 
-        if (!System.getenv("DERIVED_DATA_PATH").isEmpty()) {
-            capabilities.setCapability("derivedDataPath", System.getenv("DERIVED_DATA_PATH") + File.separator + settings.deviceId);
+        String derivedDataPath = System.getenv("DERIVED_DATA_PATH");
+        if (derivedDataPath != null && !derivedDataPath.isEmpty()) {
+            capabilities.setCapability("derivedDataPath", derivedDataPath + File.separator + settings.deviceId);
         }
+
         // It looks we need it for XCTest (iOS 10+ automation)
         if (settings.platformVersion >= 10) {
             int port = settings.ios.wdaLocalPort;
