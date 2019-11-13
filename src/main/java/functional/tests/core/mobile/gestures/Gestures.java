@@ -11,6 +11,7 @@ import functional.tests.core.mobile.find.Locators;
 import functional.tests.core.mobile.find.Wait;
 import functional.tests.core.mobile.settings.MobileSettings;
 import functional.tests.core.settings.Settings;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
@@ -129,8 +130,8 @@ public class Gestures {
      */
     public UIElement scrollToElement(SwipeElementDirection direction, String elementText, int retryCount) {
         By locator = this.locators.byText(elementText);
-        if (this.settings.platform == PlatformType.iOS && this.settings.platformVersion < 10) {
-            locator = By.id(elementText);
+        if (this.settings.platform == PlatformType.iOS) {
+            locator = MobileBy.AccessibilityId(elementText);
         }
 
         return this.scrollToElement(direction, locator, retryCount);

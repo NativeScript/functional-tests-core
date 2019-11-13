@@ -7,8 +7,8 @@ import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.basetest.MobileContext;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.mobile.element.UIRectangle;
-import functional.tests.core.mobile.find.Find;
 import functional.tests.core.mobile.find.Wait;
+import io.appium.java_client.MobileBy;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 
@@ -42,7 +42,6 @@ public class NavigationHelper {
      */
     public static boolean navigateTo(String demoPath, NavigationManager navigationManager, MobileContext mobileContext, int scrollToElementRetriesCount) {
         LOGGER_BASE.info("Navigating to \"" + demoPath + "\".");
-        Find find = mobileContext.find;
         String splitSeparator = demoPath.contains("/") ? "/" : ".";
         String[] demos = demoPath.split(splitSeparator);
 
@@ -56,14 +55,14 @@ public class NavigationHelper {
             UIElement demoBtn = null;
             UIRectangle rectBtn = null;
             if (navigationManager != null) {
-                if (navigationManager != null && navigationManager.getScrollMethod() != null) {
+                if (navigationManager.getScrollMethod() != null) {
                     demoBtn = navigationManager.getScrollMethod().apply(btnText);
-                } else if (navigationManager != null && navigationManager.getScrollToRectangleMethod() != null) {
+                } else if (navigationManager.getScrollToRectangleMethod() != null) {
                     Rectangle rect = navigationManager.getScrollToRectangleMethod().apply(btnText);
                     if (rect != null) {
                         rectBtn = new UIRectangle(rect, mobileContext);
                     }
-                } else if (navigationManager != null && navigationManager.getNavigationMethod() != null) {
+                } else if (navigationManager.getNavigationMethod() != null) {
                     navigationManager.getNavigationMethod().accept(btnText);
                 } else {
                     demoBtn = scrollTo(btnText, mobileContext, scrollToElementRetriesCount);
@@ -122,7 +121,7 @@ public class NavigationHelper {
      * @return
      */
     public static boolean navigateTo(UIElement element, ClickType clickType, NavigationManager navigationManager, String page) {
-        String btnContent = (page == "" || page == null) ? (element.getText() == "" ? element.getId() : element.getText()) : page;
+        String btnContent = (page.equals("") || page == null) ? (element.getText().equals("") ? element.getId() : element.getText()) : page;
         switch (clickType) {
             case Click:
                 element.click();
@@ -181,14 +180,19 @@ public class NavigationHelper {
     }
 
     /**
-     * TODO(): Add docs.
+     * Scroll to example.
      *
-     * @param example
-     * @param mobileContext
-     * @return
+     * @param example       Example name.
+     * @param mobileContext mobile context.
+     * @return UIElement.
      */
     public static UIElement scrollTo(String example, MobileContext mobileContext, int retryCount) {
-        UIElement demoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(example, true, false), 3, false);
+        UIElement demoBtn;
+        if (mobileContext.settings.platform == PlatformType.Android) {
+            demoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(example, true, false), 3, false);
+        } else {
+            demoBtn = mobileContext.wait.waitForVisible(MobileBy.AccessibilityId(example), 3, false);
+        }
 
         if (demoBtn == null && retryCount > 0) {
             LOGGER_BASE.info("Scroll to \"" + example + "\" ...");
