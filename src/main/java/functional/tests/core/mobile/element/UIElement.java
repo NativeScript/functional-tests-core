@@ -242,13 +242,8 @@ public class UIElement {
     }
 
     public void click(String description) {
-        if (this.settings.platform == PlatformType.Android) {
-            this.element.click();
-            LOGGER_BASE.info("Click on " + description);
-        } else {
-            // Due to issue with Appium@1.9.0 fallback to tap();
-            this.tap();
-        }
+        this.element.click();
+        LOGGER_BASE.info("Click on " + description);
     }
 
     public void tap(int waitAfterTap) {

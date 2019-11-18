@@ -73,15 +73,9 @@ public class NavigationHelper {
 
             if (demoBtn == null && rectBtn == null) {
                 return false;
-            }
-            if (demoBtn != null) {
-                if (mobileContext.settings.platformVersion < 10 && mobileContext.settings.platform == PlatformType.iOS) {
-                    demoBtn.click();
-                } else {
-                    demoBtn.tap();
-                }
-            }
-            if (rectBtn != null) {
+            } else if (demoBtn != null) {
+                demoBtn.click();
+            } else if (rectBtn != null) {
                 LOGGER_BASE.info(demoPath);
                 rectBtn.tap();
             }
@@ -92,7 +86,11 @@ public class NavigationHelper {
 
             if (i < demos.length - 1) {
                 String nextBtnText = demos[i + 1];
-                UIElement nextDemoBtn = mobileContext.wait.waitForVisible(mobileContext.locators.byText(nextBtnText), 5, false);
+                if (mobileContext.settings.platform == PlatformType.Android) {
+                    mobileContext.wait.waitForVisible(mobileContext.locators.byText(nextBtnText), 5, false);
+                } else {
+                    mobileContext.wait.waitForVisible(MobileBy.AccessibilityId(nextBtnText), 5, false);
+                }
             }
         }
 
