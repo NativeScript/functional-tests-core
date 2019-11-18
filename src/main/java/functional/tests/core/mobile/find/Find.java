@@ -5,7 +5,7 @@ import functional.tests.core.log.LoggerBase;
 import functional.tests.core.mobile.appium.Client;
 import functional.tests.core.mobile.element.UIElement;
 import functional.tests.core.settings.Settings;
-import functional.tests.core.utils.OSUtils;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * TODO(): Add docs.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Find {
     private static final LoggerBase LOGGER_BASE = LoggerBase.getLogger("Find");
 
@@ -38,7 +39,7 @@ public class Find {
         try {
             result = this.byLocator(locator);
         } catch (Exception e) {
-            LOGGER_BASE.debug("Failed to find element by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.debug("Failed to find element by locator: " + locator + " in " + timeOut + " seconds.");
             result = null;
         }
 
@@ -56,7 +57,7 @@ public class Find {
         try {
             result = this.byType(value);
         } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find element by value: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.error("Failed to find element by value: " + value + " in " + timeOut + " seconds.");
             result = null;
         }
         this.client.setWait(this.settings.defaultTimeout);
@@ -72,17 +73,12 @@ public class Find {
         UIElement result;
         try {
             if (this.settings.platform == PlatformType.iOS) {
-                String xcodeVersionString = OSUtils.runProcess("xcodebuild -version").split("/n")[0].replace("Xcode", "").trim();
-                if (xcodeVersionString.startsWith("9")) {
-                    result = this.byLocator(By.id(value));
-                } else {
-                    result = this.byLocator(this.locators.byText(value));
-                }
+                result = this.byLocator(MobileBy.AccessibilityId(value));
             } else {
                 result = this.byLocator(this.locators.byText(value));
             }
         } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + timeOut + " seconds.");
             result = null;
         }
         this.client.setWait(this.settings.defaultTimeout);
@@ -95,7 +91,7 @@ public class Find {
         try {
             result = this.byLocator(this.locators.byText(value, exactMatch, false));
         } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.error("Failed to find element by text: " + value + " in " + timeOut + " seconds.");
             result = null;
         }
         this.client.setWait(this.settings.defaultTimeout);
@@ -120,7 +116,7 @@ public class Find {
         try {
             result = this.elementsByLocator(locator);
         } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find elements by locator: " + locator + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.error("Failed to find elements by locator: " + locator + " in " + timeOut + " seconds.");
             result = null;
         }
         this.client.setWait(this.settings.defaultTimeout);
@@ -137,7 +133,7 @@ public class Find {
         try {
             result = this.elementsbyType(value);
         } catch (Exception e) {
-            LOGGER_BASE.error("Failed to find elements by type: " + value + " in " + String.valueOf(timeOut) + " seconds.");
+            LOGGER_BASE.error("Failed to find elements by type: " + value + " in " + timeOut + " seconds.");
             result = null;
         }
         this.client.setWait(this.settings.defaultTimeout);
